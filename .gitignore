@@ -1,0 +1,30 @@
+# Claude Code user-local overrides (not shared)
+.claude/settings.local.json
+.claude/rules
+
+# Node.js (predicted by architecture; safe to predeclare)
+node_modules/
+dist/
+build/
+.turbo/
+*.log
+.pnpm-store/
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Coverage / test artifacts
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
