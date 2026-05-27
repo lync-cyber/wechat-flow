@@ -1,9 +1,9 @@
 ---
 id: "prd-wechat-flow-f001-f014"
-version: "0.3.0"
+version: "0.5.0"
 doc_type: prd
 author: product-manager
-status: draft
+status: approved
 deps: ["prd-wechat-flow"]
 consumers: [architect, ui-designer, tech-lead]
 volume: features
@@ -26,19 +26,20 @@ required_sections:
 - **验收标准**:
   - [ ] AC-001: 支持 CommonMark 标准语法及 GFM 扩展（表格、删除线、任务列表、Footnote）。
   - [ ] AC-002: 支持基于容器指令的块级扩展语法（`::: card{variant=feature accent=blue}` … `:::`）与行内指令（`:badge[新]{type=hot}`）。用户文档与 onboarding 必须明示这是非 CommonMark 扩展约定。
-  - [ ] AC-003: 支持 YAML Frontmatter 声明主题、模板、作者、变量、单文档配色派生（`base-color`）与覆盖（`paint`）。
+  - [ ] AC-003: 支持 YAML Frontmatter 声明主题、模板、作者、变量、单文档配色派生与覆盖；核心字段：`theme:`（必需，指定所用主题）+ `template:`（可选，主题命名空间下的预设变体名）+ `paint:`（可选，单文档 token 覆盖）+ `base-color:`（可选，单色派生主色）。
   - [ ] AC-004: 支持源码 ↔ 预览双向高亮联动（点击预览定位源码光标，源码光标高亮对应预览块）。
   - [ ] AC-005: 支持多文档管理、本地草稿持久化、自动备份。
   - [ ] AC-006: 支持撤销/重做、查找/替换、字数统计。
-  - [ ] AC-007: 支持输入辅助：中英文自动加空格、智能引号转换、破折号转换。
-  - [ ] AC-008: 中文排版一键修订功能（4 类规则）集成在编辑器命令面板与"..."次级菜单，写作者显式触发，自动跳过代码块/inlineCode/链接 URL 等敏感区域。详见 F-014。
-  - [ ] AC-009: 万字文档键入 P95 延迟 < 50ms；万字文档主题切换到预览更新完成 P95 < 200ms。
+  - [ ] AC-007: 支持**可选**的实时输入辅助（中英文加空格、智能引号转换、破折号转换），**默认关**，写作者在 P-004 设置页显式启用；启用后实时单字符级生效，与 F-014 批量修订正交，不重叠触发。
+  - [ ] AC-008: 中文排版一键修订功能（4 类规则）集成在编辑器命令面板与"..."次级菜单，写作者显式触发，自动跳过代码块/inlineCode/链接 URL 等敏感区域。详见 F-014。命令面板含视图 / 主题 / 文档 / 内容 / 导出 / 帮助 6 组；内容组含 directive 插入与中文排版修订。
+  - [ ] AC-009: 满足 PRD §3.1 性能表「万字文档键入延迟」与「万字文档主题切换耗时」指标。
 - **优先级**: P0
 - **备注**:
   - 典型写作流程（写作者场景）：写完点击主题切换可瞬间换风格 → 兼容性面板显示微信兼容状态 → 点击"复制到公众号"按钮完成 CSS 内联化与粘贴过滤模拟 → 在公众号编辑器粘贴所见即所得。
+  - 新建文档必经主题模板市场（P-003），不直接生成空白文档；写作者从市场卡片起步后可在编辑器自由全选替换。
   - UI 骨架详见本条目子节。
 
-**[DRAFT_UI_INPUT] UI 界面规格参考输入**（本段为给 ui-designer 的参考输入，非 PRD 规范性约束；ui-spec 阶段以 ui-designer 产出为准）：
+**[DRAFT_UI_INPUT] UI 界面规格参考输入**（本段为给 ui-designer 的参考输入，非 PRD 规范性约束；v1 实际 UI 入口与菜单结构以 ui-spec C-001/C-009/C-016 为准；未在 ui-spec 落地的项不属于 v1 范围）：
 
 三栏布局：
 
@@ -48,11 +49,11 @@ required_sections:
 
 **顶部状态栏**：主题 / 视口 / 深浅色（仅风险预警模式）切换。
 
-**底部状态栏**：字数 + 阅读时长 / 微信渲染检查（"无风险 / 提醒 N 项 / 严重 N 项"分级标签，点击打开详情面板）/ 夜间模式风险 / 可读性 / 违规词。
+**底部状态栏**：字数 + 阅读时长 / 兼容性摘要（"无风险 / 提醒 N 项 / 严重 N 项"分级标签，点击打开详情面板）/ 可读性指示 / 夜间风险指示 / 违规词指示。优先级：兼容性摘要 / 可读性 / 夜间风险指示为 P0，违规词指示为 P1。
 
 **顶栏入口扩展**：
 
-- **命令面板**（Ctrl+K）：所有可执行动作的搜索式入口超集——主题切换 / directive 插入 / 视口切换 / 导出 / 跳转文档 / 视图操作。按 group 分桶，展示快捷键。命令注册中心与"..."次级菜单共享同一份 command registry。
+- **命令面板**（Ctrl+K）：所有可执行动作的搜索式入口超集，按 6 组分桶（视图 / 主题 / 文档 / 内容 / 导出 / 帮助），展示快捷键，命令规模 ~25-30；内容组含 directive 插入与中文排版修订。命令注册中心与"..."次级菜单共享同一份 command registry。
 - **「+」插入按钮**：触发左侧 directive 插入器抽屉（分类 tabs + 参数表单 + 右侧实时预览），消费 `describeBlock` / `describeMark` schema，严禁第二份组件清单。
 - **「...」次级菜单**：载入示例 / 一键修复中文排版（扫全文）/ 快捷键与帮助 / 发文清单 / 导出 Markdown / 导出长图 / 导出封面（横版 900×383 与方版 900×900，服务端渲染）/ 清空正文，末尾「更多...」跳命令面板。
 
@@ -71,7 +72,7 @@ required_sections:
   - [ ] AC-005: 兼容性报告列出当前文档中被微信过滤会损失的属性（基于规则集），分级显示（红色=会丢失，黄色=可能降级，绿色=安全）。
   - [ ] AC-006: 兼容性报告支持展开查看粘贴前后逐节点的变更对照，以及每条规则的命中记录。
 - **优先级**: P0
-- **备注**: 粘贴过滤模拟的核心逻辑与 F-011（质量保障）共享，兼容性报告是 F-011 粘贴过滤模拟产物的可视化呈现。
+- **备注**: 粘贴过滤模拟的核心逻辑与 F-011（质量保障）共享，兼容性报告是 F-011 粘贴过滤模拟产物的可视化呈现。AC-003/AC-004 夜间风险检测与预览底色切换为深底属于 v1 P0 范围。
 
 ---
 
@@ -86,6 +87,7 @@ required_sections:
     - `business`（商业财经）：适合行业观察、商业分析、数据洞察、财经评论、企业管理等专业内容；几何 sans-serif + 报告化排版 + 多色 KPI 强调。
     - `tech`（科技数码）：适合技术教程、产品评测、编程文章、开源项目介绍等技术内容；等宽字体 + 暗底终端美学 + 代码块强势。
   - [ ] AC-002: 主题热切换：源码不变，重跑后段管线（mdast→hast→HTML），无感切换。
+  - [ ] AC-012: 主题预设变体（template）— 每个内置主题须随主题落地 ≥ 1 份预设变体，作为市场卡片预填内容；预设变体内容必须覆盖完整基础元素白名单（H1-H6 / 段落 / 列表 / 引用 / 链接 / 代码块 / 分隔线 / 图片 / 表格 共 9 项）与核心 Block 容器白名单（callout / card / steps / quote / pull-quote / compare 等 ≥ 6 种）；CI 守护由 F-011 AC-009 落地。
   - [ ] AC-003: 主题面板含「社区扩展占位」卡片，引导写作者期待第三方主题（占位可点跳到 `/themes` stub 路由，真实接通由架构阶段规划）。
   - [ ] AC-004: Token 层注册 ≥ 60 个 token，覆盖五大类别：color / spacing / font / decoration / alignment。
   - [ ] AC-005: Mark 层（行内组件）内置数 ≥ 11，覆盖：粗体、斜体、链接、行内代码、徽章、强调着重号、高亮、下划线、波浪线、插入标记、上下标、引用链接、行内公式。
@@ -101,7 +103,7 @@ required_sections:
 - **优先级**: P0
 - **备注**:
   - paint 是单文档行为；品牌包是组织/企业级配色字体子集锁定（详见 F-009）。
-  - 主题守护维度：8 维静态校验（基线选择器密度、核心 block 覆盖率、token 覆盖率、跨主题身份 token 防碰撞、元数据完整性、theme.css 属性合规、WCAG 对比度自动校验、装饰资产完整性），详见 F-011。
+  - 主题守护维度：9 维静态校验（基线选择器密度、核心 block 覆盖率、token 覆盖率、跨主题身份 token 防碰撞、元数据完整性、theme.css 属性合规、WCAG 对比度自动校验、装饰资产完整性、内置 template 完整性），详见 F-011 AC-003 / AC-009。
 
 ---
 
@@ -113,9 +115,10 @@ required_sections:
   - [ ] AC-002: 复制操作通过 HTTPS + 用户手势触发（满足 Clipboard API 安全前提）。
   - [ ] AC-003: 复制前自动完成 CSS 内联化（所有样式写进每个元素的 `style` 属性）。
   - [ ] AC-004: 复制后产物必须先经过一次"粘贴过滤模拟"（预演微信编辑器对粘贴 HTML 的过滤行为），确保最终展示与本地预览一致。
-  - [ ] AC-005: 粘贴到公众号编辑器后，渲染与本地预览的视觉差异 ≤ 5%；验收口径 `mismatched_pixels / total_pixels ≤ 0.05`，算法 `pixelmatch` (threshold 0.2, `includeAA: false`)，样本固定在 `tests/visual/samples/{theme}/{1..5}.md`（5 主题 × 1 篇）。
+  - [ ] AC-005: **经 `simulatePaste` 模拟过滤后**，渲染产物与本地预览的视觉差异 ≤ 5%；验收规范引用 PRD §3.5；真实公众号粘贴回归由发布前周期任务验证（见 F-011 AC-008）。
   - [ ] AC-006: 支持 HTML 文件导出（独立可分享的 standalone 文件）。
-  - [ ] AC-007: 不支持 Clipboard API 的浏览器降级到 `textarea + document.execCommand('copy')`，并触发 Toast 提示用户使用系统快捷键完成复制。
+  - [ ] AC-007a: 桌面浏览器（vw ≥ 768px）不支持 Clipboard API 时降级到 `textarea + document.execCommand('copy')` 自动调用，并触发 Toast 提示用户使用 Ctrl/Cmd+C 完成复制。
+  - [ ] AC-007b: 移动端浏览器（vw < 768px）不支持 Clipboard API 时降级到内容全选高亮 + Toast 提示长按手动复制。
 - **优先级**: P0
 - **备注**: 不做 PDF 导出（详见主卷 §4）。
 
@@ -127,10 +130,10 @@ required_sections:
 - **验收标准**:
   - [ ] AC-001: 支持长图导出（服务端 Headless 渲染，不在浏览器内实现）。
   - [ ] AC-002: 支持封面导出，规格：横版 900×383 / 方版 900×900；长图导出与封面导出共享同一 Headless 渲染通道。
-  - [ ] AC-003: 支持图片素材上传到公众号素材库（需中继服务，AppID/AppSecret 不进浏览器）。
+  - [ ] AC-003: 支持图片素材上传到公众号素材库（需中继服务，AppID/AppSecret 不进浏览器）。`[v1 API only / UI deferred]`
   - [ ] AC-004: 长任务采用异步 job 模型，返回 `job_id`，调用方通过 `get_job(job_id)` 轮询获取状态/结果。
 - **优先级**: P1
-- **备注**: 长图/封面导出明确依赖服务端 Headless 渲染；素材库上传明确需要中继服务。具体服务端架构由 architect 决策。
+- **备注**: 长图/封面导出明确依赖服务端 Headless 渲染；素材库上传明确需要中继服务。具体服务端架构由 architect 决策。v1 P0 范围：仅 AC-001/002（长图与封面 Headless 渲染）+ AC-004（Job 模型）UI 落地；AC-003（素材库上传）v1 仅 API 暴露，UI 入口随后续版本。
 
 ---
 
@@ -139,11 +142,12 @@ required_sections:
 - **用户故事**: 作为写作者，我希望上传图片时工具自动处理格式与尺寸，以便满足公众号平台要求并减少手动操作。
 - **验收标准**:
   - [ ] AC-001: 支持多图床：本地、七牛、阿里云 OSS、腾讯云 COS、SM.MS、用户自定义。
-  - [ ] AC-002: 上传前执行压缩与尺寸规整（处理公众号正文图宽度上限）。
+  - [ ] AC-002a: 上传前执行尺寸规整，正文图最大宽度 ≤ 1080px（公众号正文渲染上限）。
+  - [ ] AC-002b: 上传单文件硬上限 10MB（公众号素材库限制）；压缩目标 ≤ 2.5MB 以优化流量。
   - [ ] AC-003: 上传前执行图片元数据剥离（去 EXIF）。
-  - [ ] AC-004: 支持占位图与上传失败重试。
+  - [ ] AC-004: 编辑器内上传 UI（v1 P0 必需）：支持占位图、上传失败重试、拖拽上传、粘贴上传、上传进度反馈。
 - **优先级**: P0
-- **备注**: 公众号正文图宽度上限数值以平台实测为准，[ASSUMPTION] 当前按常见限制 2.5MB 处理，architect 阶段确认压缩策略。
+- **备注**: 公众号正文图宽度上限 1080px、单文件硬上限 10MB 为平台行为基线；压缩目标 2.5MB 为流量优化值，[ASSUMPTION] 具体压缩参数（quality / format）以平台实测为准，architect 阶段确认 sharp pipeline 实现策略。
 
 ---
 
@@ -188,16 +192,16 @@ required_sections:
 
 ---
 
-### F-008: 模板市场
+### F-008: 主题预设变体（template）
 
-- **用户故事**: 作为写作者，我希望从内置场景模板快速开始写作，以便减少从空白文档起步的决策成本。
+- **用户故事**: 作为写作者，我希望从主题模板市场选择已带预填内容的卡片起步，以便基于该主题的活样本快速理解能力并填空写作。
 - **验收标准**:
-  - [ ] AC-001: 模板市场骨架覆盖典型场景：科技评测、诗歌赏析、产品发布、品牌通讯、商业季度报告、技术教程、采访问答、刊物前页等。
-  - [ ] AC-002: 每套内置主题随主题落地至少两个内容模板（主题作者维护），覆盖该主题最典型的写作场景。
-  - [ ] AC-003: 模板通过 frontmatter `template` 字段消费。
-  - [ ] AC-004: 模板是多个 Blocks 的预编排实例，不进入组件三层架构（Token/Mark/Block）。
+  - [ ] AC-001: 每内置主题须注册 ≥ 1 份预设变体（template），通过 `defineTheme.templates` 字段或独立 `defineTemplate({ themeId, templateId, render })` API 注册。
+  - [ ] AC-002: template 内容须覆盖 F-003 AC-012 声明的基础元素与核心 Block 容器白名单，CI 守护见 F-011 AC-009。
+  - [ ] AC-003: frontmatter `template` 字段为主题命名空间下的变体名，运行时仅作为审计标记不参与渲染；不同主题下同名 template 可独立定义。
+  - [ ] AC-004: MCP 工具 `describe_theme` 返回该主题的 template 清单（templateId + 缩略元数据）；新增 `describe_template(themeId, templateId)` 返回 template 预填 Markdown 与 mdast 覆盖统计。
 - **优先级**: P1
-- **备注**: 模板市场的架构扩展点（插件化接入）由 architect 阶段规划。
+- **备注**: 主题模板市场（P-003）按 (主题, template) 组合呈现卡片，缩略图为该组合的实际渲染预览；写作者新建文档必经市场页选起点；template 兼具写作起点与主题能力活样本双重职责。
 
 ---
 
@@ -227,7 +231,7 @@ required_sections:
   - [ ] AC-009: 注册式插件市场（架构扩展点，具体实现由 architect 阶段规划）。
 - **优先级**: P1
 - **备注**:
-  - 典型开发者工作流：`ts-cli init my-pack` → `ts-cli dev`（热重载）→ `ts-cli validate`（规则集校验）→ `ts-cli publish`。
+  - 典型开发者工作流：`wechat-flow init my-pack` → `wechat-flow dev`（热重载）→ `wechat-flow validate`（规则集校验）→ `wechat-flow publish`。
   - 插件沙箱的具体隔离机制由 architect 决策（"Web Worker + Comlink RPC" 为架构候选，不写入功能需求主体）。
 
 ---
@@ -245,8 +249,9 @@ required_sections:
   - [ ] AC-006（P1）: 可读性检查——颜色对比度（WCAG AA）、字号下限、段长上限；对比度检查在主题层为静态自动校验，在文档层为运行时风险提示。
   - [ ] AC-007（P1）: 违规关键词检测——词库可热更新，CI 周期性爬取/众包更新。
   - [ ] AC-008（P1）: 实地验证辅助——提供生成 HTML 测试用例的脚本（针对未稳定确认的微信渲染特性），输出可直接粘贴至微信草稿的对照页面，验证结果回写到平台行为约束矩阵。
-- **优先级**: P0（AC-001~004）/ P1（AC-005~008）
-- **备注**: 视觉回归基线中 Playwright 的具体运行环境（CI/CD 集成方式）由 architect/devops 阶段规划。
+  - [ ] AC-009（P0）: 主题预设 template 完整性守护——每内置主题的 ≥ 1 template 须 mdast 节点覆盖 F-003 AC-012 声明的基础元素白名单（9 项：H1-H6 / 段落 / 列表 / 引用 / 链接 / 代码块 / 分隔线 / 图片 / 表格）与核心 Block 容器白名单（≥ 6 种），CI 静态校验阻断发布。
+- **优先级**: P0（AC-001~004 + AC-009）/ P1（AC-005~008）
+- **备注**: 视觉回归基线中 Playwright 的具体运行环境（CI/CD 集成方式）由 architect/devops 阶段规划。主题守护维度升为 9 维静态校验（原有 8 维基础上追加「内置 template 完整性」）。
 
 ---
 
@@ -254,10 +259,10 @@ required_sections:
 
 - **用户故事**: 作为团队中的写作者，我希望云端同步草稿并查看版本历史，以便跨设备续写并在误操作后回滚。
 - **验收标准**:
-  - [ ] AC-001: 默认本地优先（local-first），云端能力以可选模块形态独立迭代，不影响离线使用。
-  - [ ] AC-002: 云端草稿同步（需用户自部署或托管后端）。
-  - [ ] AC-003: 版本历史、回滚、差异对比。
-  - [ ] AC-004: 支持基于 CRDT 的多人协作（具体协作框架由 architect 决策）。
+  - [ ] AC-001: 默认本地优先（local-first），云端能力以可选模块形态独立迭代，不影响离线使用。 `[ARCH 预留 / v1 不验收]`
+  - [ ] AC-002: 云端草稿同步（需用户自部署或托管后端）。 `[ARCH 预留 / v1 不验收]`
+  - [ ] AC-003: 版本历史、回滚、差异对比。 `[ARCH 预留 / v1 不验收 — 接口预留见 arch-wechat-flow-api API-027]`
+  - [ ] AC-004: 支持基于 CRDT 的多人协作（具体协作框架由 architect 决策）。 `[ARCH 预留 / v1 不验收 — 与主卷 §4 非目标一致，仅保留 arch-wechat-flow §6.2 可选拓扑]`
 - **优先级**: P2
 - **备注**:
   - 当前发布范围不交付本族任何 AC；架构以可选拓扑保留 y-websocket 与 Yjs Doc 路径（ARCH §6.2），不部署。
@@ -273,9 +278,10 @@ required_sections:
   - [ ] AC-002: Tool 契约入参/出参具备强类型 schema 定义（含运行时校验能力），保证调用方与组件开发者的类型契约一致性；具体类型系统共享机制（共用同一 schema 库 / 各自定义经契约对齐等）由 architect 阶段决策。契约包含以下工具：
     - `render_markdown`：主入口，返回 `{ html, diagnostics, rulesetVersion, themeVersion }`
     - `lint_markdown`：仅诊断、不渲染，供调用方预检查
-    - `list_themes` / `describe_theme`：枚举主题与其可配 token、paintable 范围、装饰资产清单
+    - `list_themes` / `describe_theme`：枚举主题与其可配 token、paintable 范围、装饰资产清单、该主题已注册的 template 预设变体清单（templateId + 缩略元数据）
     - `list_blocks` / `describe_block` / `list_marks` / `describe_mark` / `list_tokens` / `describe_token`：枚举可用 Block/Mark/Token 与 schema（attrsSchema 以 JSON Schema 形态返回），调用方据此生成合法 Markdown
     - `list_block_variants` / `describe_variant`：枚举某 Block 已注册的所有 variant 皮肤及其消费的 token/asset 依赖
+    - `describe_template(themeId, templateId)`：返回 template 预填 Markdown 与覆盖元素清单（mdast 覆盖统计）
     - `derive_palette`：接收 `{ primary, secondary?, accent?, dark? }` seed，返回派生 token 字典
     - `apply_zh_typo`：中文排版 4 类规则批量修订，返回 `{ fixed, perRule, totalChanges }`，跳过代码/inlineCode/链接 URL 等敏感区域
     - `simulate_paste`：跑一遍微信粘贴过滤模拟，返回过滤前后逐节点差异
@@ -286,7 +292,7 @@ required_sections:
   - [ ] AC-003: 分发形态覆盖：MCP server（stdio + HTTP/SSE 双 transport，供 LLM Agent 原生工具发现与调用）、Skill bundle（含 SKILL.md 与资源目录，负责语义级任务编排）、CLI（同一 Tool 契约的命令行壳，供 CI 调度）。
   - [ ] AC-004: 鉴权与配额：API key + per-key 配额；长任务通过 job 队列异步推进，调用方以 `Idempotency-Key`（约定 `sha256(input + toolsetVersion)`）去重。
   - [ ] AC-005: Public Tool Schema 破坏性变更走 semver major + 不少于一个 minor 周期的 deprecation window。
-  - [ ] AC-006: MCP `render_markdown` 冷启动 P95 < 800ms（万字稿件）。
+  - [ ] AC-006: 满足 PRD §3.1 性能表「MCP `render_markdown` 冷启动」指标。
 - **优先级**: P1
 - **备注**:
   - 典型自动化调用方场景：模型先用 `list_themes` 选定主题，按 `describe_block` 拿到 schema 生成合法 Markdown，渲染并通过 `simulate_paste` 校验后经中继上传到素材库；Skill 层把这串调用包成单一语义任务，写作者侧无需关心 tool 颗粒。
@@ -307,6 +313,6 @@ required_sections:
   - [ ] AC-003: 修订前显示 diff 预览与逐 rule 计数，用户确认后再写回编辑器。
   - [ ] AC-004: 支持撤销（修订操作纳入编辑器 undo 栈）。
   - [ ] AC-005: 通过 `apply_zh_typo` 工具对外暴露，供程序化调用方使用（详见 F-013）。
-  - [ ] AC-006: 功能入口：编辑器命令面板（Ctrl+K 搜索）与"..."次级菜单"一键修复中文排版"，显式触发，非自动应用。
+  - [ ] AC-006: 功能入口：编辑器命令面板（Ctrl+K 搜索，属于命令面板内容组）与"..."次级菜单"一键修复中文排版"，双入口显式触发，非自动应用。
 - **优先级**: P1
 - **备注**: 自动应用设计为"非自动"——避免误处理代码/URL/字面量场景，写作者需显式确认。

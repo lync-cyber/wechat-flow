@@ -1,10 +1,10 @@
 ---
 id: "dev-plan-wechat-flow"
-version: "0.2.0"
+version: "0.4.0"
 doc_type: dev-plan
 split_policy: no-further-split
 author: tech-lead
-status: draft
+status: approved
 deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "arch-wechat-flow-api", "arch-wechat-flow-data", "ui-spec-wechat-flow", "ui-spec-wechat-flow-c001-c014", "ui-spec-wechat-flow-p001-p005"]
 consumers: [developer, qa-engineer]
 volume: main
@@ -19,7 +19,7 @@ required_sections:
 [NAV]
 - §1 迭代规划 → Sprint 0..6 总览表
 - §2 依赖图 → Mermaid DAG + 关键路径
-- §3 任务卡详细 → T-001..T-091 + T-DS-001..T-DS-010 + T-VAL-00..T-VAL-06（见 Sprint 分卷）
+- §3 任务卡详细 → T-001..T-092 + T-DS-001..T-DS-012 + T-VAL-00..T-VAL-06（见 Sprint 分卷；T-091/T-092/T-DS-011/T-DS-012 在 Sprint 4 分卷）
 - §4 Penpot 同步任务专章 → DS-001..DS-010
 - §5 风险与假设
 - §6 集成与E2E测试规划
@@ -36,9 +36,9 @@ required_sections:
 | Sprint 0 | 基础设施 + 设计系统建立 | Monorepo 骨架可跑 CI；Penpot Token 导入 | 无（纯工程） | T-VAL-00 |
 | Sprint 1 | 三栏 UI 骨架 + 渲染管线核心 | 编辑器可输入 Markdown，右栏出现 HTML 预览 | `localhost:5173` 三栏可见 | T-VAL-01 |
 | Sprint 2 | 规则集引擎 + 粘贴过滤 + 兼容性报告 + 双向高亮 | 渲染结果经规则集过滤；DiagnosticsPanel 可展开；源码↔预览双向高亮联动 | 输入含 `position:fixed` 的 Markdown，诊断面板变红；点击预览段落源码光标跳转 | T-VAL-02 |
-| Sprint 3 | 主题系统 + 组件注册中心 + Palette 派生 | 五套主题热切换；P0 必含 25 种内置 Block 可插入 | 左侧面板切换主题，预览区即时变色 | T-VAL-03 |
-| Sprint 4 | 输出能力 + MCP server (22 Tool) + 图片处理 | 一键复制可粘贴到公众号；MCP `render_markdown` 与发现类 Tool 可调 | 复制 HTML 粘贴到公众号编辑器视觉一致 | T-VAL-04 |
-| Sprint 5 | CLI + 插件系统 + 中文排版 + 长图/封面 + 素材库 + 模板市场 + Tool 包装 | CLI `validate` 可跑；`apply_zh_typo` 可用；长图异步导出可用；素材库上传链路打通；模板市场卡片可用 | `wechat-flow validate ./my-pack` 产出报告 | T-VAL-05 |
+| Sprint 3 | 主题系统 + 组件注册中心 + Palette 派生 | 五套主题热切换；P0 必含 25 种内置 Block 可插入（PRD §1.3 终态 ≥40 见 Sprint 6 T-075） | 左侧面板切换主题，预览区即时变色 | T-VAL-03 |
+| Sprint 4 | 输出能力 + MCP server (22 Tool) + 图片处理 + 主题 template | 一键复制可粘贴到公众号；MCP `render_markdown` 与发现类 Tool 可调（Block 量化指标终态见 Sprint 6 T-075）；Editor → Relay session 鉴权链路打通（T-091）；5 主题 × ≥ 1 预设 template + 9 维 CI 守护（T-092） | 复制 HTML 粘贴到公众号编辑器视觉一致 | T-VAL-04 |
+| Sprint 5 | CLI + 插件系统 + 中文排版 + 长图/封面 + 素材库 + 模板市场 + Tool 包装 | CLI `validate` 可跑；`apply_zh_typo` 可用；长图异步导出可用；素材库上传链路打通；模板市场卡片可用（Block 终态 ≥40 见 Sprint 6 T-075） | `wechat-flow validate ./my-pack` 产出报告 | T-VAL-05 |
 | Sprint 6 | 质量门禁 + 视觉回归 + Skill bundle + 性能 benchmark + 装饰渲染 + 收尾 | 规则集 ≥ 42 条 fixture 全绿；Playwright 核心矩阵 + 抽样矩阵双绿；P95 键入 < 50ms / 主题切换 < 200ms benchmark 通过；Skill bundle 可被 Agent 加载 | CI 全绿；万字稿件键入 / 主题切换流畅；Skill bundle 端到端调用 | T-VAL-06 |
 
 ---
@@ -76,7 +76,7 @@ required_sections:
 | 任务 ID | 任务名 | task_kind | 优先级 | 复杂度 | 依赖 |
 |---------|--------|-----------|--------|--------|------|
 | T-DS-005 | [DESIGN] Penpot — C-013 DiagnosticsPanel + C-013.1 Diff 视图视觉稿 | design | P0 | medium | T-DS-001 |
-| T-013 | packages/wechat-spec 规则集骨架 + 注册中心（M-003） | feature | P0 | medium | T-004 |
+| T-013 | packages/ruleset 规则集骨架 + 注册中心（M-003） | feature | P0 | medium | T-004 |
 | T-014 | 规则集 strip 类 ≥ 10 条 + fixture（style/script/id/position 等） | feature | P0 | large | T-013 |
 | T-015 | 规则集 clamp/transform/patch/lint 类 ≥ 15 条 + fixture | feature | P0 | large | T-013 |
 | T-016 | M-002 sanitize 阶段（rehype-sanitize + wechatFlowSanitizeSchema） | feature | P0 | medium | T-006,T-013 |
@@ -109,10 +109,10 @@ required_sections:
 | 任务 ID | 任务名 | task_kind | 优先级 | 复杂度 | 依赖 |
 |---------|--------|-----------|--------|--------|------|
 | T-DS-008 | [DESIGN] Penpot — C-014 JobProgressBar + P-003 主题市场 + P-004 设置页视觉稿 | design | P1 | medium | T-DS-001 |
-| T-030 | M-008 composeCopy（dual-MIME clipboard payload） | feature | P0 | small | T-011 |
+| T-030 | M-008 composeCopy（dual-MIME clipboard payload） | feature | P0 | small | T-011, T-017 |
 | T-031 | M-008 composeExportHtml（standalone HTML 导出） | feature | P0 | small | T-011 |
 | T-032 | apps/relay Hono 服务器骨架 + 健康检查端点 | chore | P1 | small | T-004 |
-| T-033 | M-010 图片上传 proxy（6 类图床适配器）+ sharp 预处理 | feature | P0 | large | T-032 |
+| T-033 | M-010 图片上传 proxy（6 类图床适配器）+ sharp 预处理 | feature | P0 | large | T-032, T-091 |
 | T-034 | M-010 BullMQ job 队列 + Redis 接线 + SSE 进度推送（API-020） | feature | P1 | large | T-032 |
 | T-035 | M-010 Playwright headless 渲染池（长图 + 封面） | feature | P1 | large | T-034 |
 | T-036 | M-009 MCP server stdio transport + 鉴权骨架（API key scope=user） | feature | P1 | medium | T-004 |
@@ -122,7 +122,11 @@ required_sections:
 | T-040 | M-001 C-014 JobProgressBar + Toast（C-011）接线 SSE 进度 | feature | P1 | medium | T-034,T-DS-008 |
 | T-041 | P-003 主题市场页面（/themes 路由） | feature | P1 | medium | T-022,T-005,T-DS-008 |
 | T-042 | P-004 设置页（/settings 路由）— 图床配置 + API 密钥分组 | feature | P0 | medium | T-005,T-033,T-DS-008 |
-| T-VAL-04 | [VALIDATION] Sprint 4 验证：复制 HTML + 长图导出 + MCP render_markdown | validation | P0 | small | T-030,T-031,T-035,T-037,T-042 |
+| T-091 | M-010 Editor Session JWT 颁发与续期端点（API-032） | feature | P0 | medium | T-032 |
+| T-092 | 主题预设 template 内容产出 + 9 维守护实现 | feature | P0 | large | T-022, T-024 |
+| T-DS-011 | [DESIGN] P-003 主题模板市场 Penpot 设计（含 ≥ 5 张 (主题, template) 组合卡片缩略图） | design | P1 | medium | T-DS-001 |
+| T-DS-012 | [DESIGN] 6 个新组件 Penpot 设计（C-017 ~ C-022） | design | P1 | medium | T-DS-001 |
+| T-VAL-04 | [VALIDATION] Sprint 4 验证：复制 HTML + 长图导出 + MCP render_markdown + template 市场缩略图 | validation | P0 | small | T-030,T-031,T-035,T-037,T-042,T-091,T-092 |
 
 ### Sprint 5 任务表（CLI + 插件系统 + 中文排版 + 素材库 + 模板市场 + MCP Tool 包装）
 
@@ -141,7 +145,7 @@ required_sections:
 | T-055 | P-005 移动端只读预览（/preview/:docId + 底部固定栏 + Clipboard 降级） | feature | P2 | medium | T-005,T-010,T-DS-009 |
 | T-073 | 模板市场骨架 + 五主题 × ≥ 2 模板 seed（F-008 P1） | feature | P1 | medium | T-041,T-022,T-005 |
 | T-074 | packages/blocks Block 补全 Phase 2（P1 必含 5 种：作者卡/刊物骨架/KPI 数据卡/问答/脚注） | feature | P1 | medium | T-024 |
-| T-077 | M-010 wechat-asset uploader.ts + BullMQ kind `wechat-asset-upload` | feature | P1 | medium | T-033,T-042 |
+| T-077 | M-010 wechat-asset uploader.ts + BullMQ kind `wechat-asset-upload` | feature | P1 | medium | T-033,T-042,T-091 |
 | T-078 | M-008 composeUploadWechatAsset use case | feature | P1 | small | T-031,T-077 |
 | T-079 | M-009 upload_to_wechat_asset Tool（thin wrapper → T-078） | feature | P1 | small | T-077,T-036 |
 | T-080 | M-009 list_tokens / describe_token Tool（thin wrapper → M-005） | feature | P1 | small | T-020,T-036 |
@@ -199,6 +203,7 @@ graph LR
     T-008 --> T-010
     T-010 --> T-011
     T-011 --> T-030
+    T-017 --> T-030
     T-011 --> T-031
     T-005 --> T-012
     T-004 --> T-012
@@ -225,6 +230,9 @@ graph LR
     T-004 --> T-032
     T-032 --> T-033
     T-032 --> T-034
+    T-032 --> T-091
+    T-091 --> T-033
+    T-091 --> T-077
     T-034 --> T-035
     T-004 --> T-036
     T-036 --> T-037
@@ -236,6 +244,9 @@ graph LR
     T-035 --> T-039
     T-034 --> T-040
     T-022 --> T-041
+    T-022 --> T-092
+    T-024 --> T-092
+    T-092 --> T-041
     T-005 --> T-041
     T-005 --> T-042
     T-033 --> T-042
@@ -339,9 +350,15 @@ graph LR
 
 `T-020 → T-021 → T-022 → T-058 → T-062`（主题系统 + 视觉回归链路）
 
+`T-013 → T-017 → T-030`（粘贴模拟必经复制链路；XDOC-017）
+
+`T-022 → T-092 → T-041`（主题 template 市场依赖链路：template 内容 + 守护先于市场页面可用）
+
 ---
 
 ## 3. 任务卡详细
+
+本 dev-plan 共 **94 任务卡**（75 code + 12 design + 7 validation；较上版新增 T-092 / T-DS-011 / T-DS-012 共 3 项）。
 
 任务卡体量超过 `DOC_SPLIT_THRESHOLD_LINES`，按 Sprint 拆分为独立分卷存放：
 
@@ -351,7 +368,7 @@ graph LR
 | `dev-plan-wechat-flow-s1.md` | Sprint 1: T-005..T-012, T-DS-002..T-DS-004, T-VAL-01 |
 | `dev-plan-wechat-flow-s2.md` | Sprint 2: T-013..T-019, T-019b, T-DS-005, T-VAL-02 |
 | `dev-plan-wechat-flow-s3.md` | Sprint 3: T-020..T-029, T-DS-006..T-DS-007, T-VAL-03 |
-| `dev-plan-wechat-flow-s4.md` | Sprint 4: T-030..T-042, T-DS-008, T-VAL-04 |
+| `dev-plan-wechat-flow-s4.md` | Sprint 4: T-030..T-042, T-091, T-092, T-DS-008, T-DS-011, T-DS-012, T-VAL-04 |
 | `dev-plan-wechat-flow-s5.md` | Sprint 5: T-043..T-051, T-055, T-073, T-074, T-077..T-084, T-DS-009, T-VAL-05 |
 | `dev-plan-wechat-flow-s6.md` | Sprint 6: T-056..T-064, T-066..T-072, T-075, T-085..T-090, T-DS-010, T-VAL-06 |
 
@@ -370,9 +387,11 @@ graph LR
 | T-DS-005 | — | P0 | C-013 DiagnosticsPanel + C-013.1 CompatibilityDiffView 视觉稿（含 3 色级别展示）| Sprint 2 |
 | T-DS-006 | PS-005 | P1 | C-009 CommandPalette（6 状态原型）+ C-015 InsertDrawer + C-016 ContextMenu 视觉稿 | Sprint 3 |
 | T-DS-007 | — | P1 | Sprint 3 设计稿签字 | Sprint 3 |
-| T-DS-008 | — | P1 | C-014 JobProgressBar + P-003 主题市场 + P-004 设置页视觉稿 | Sprint 4 |
+| T-DS-008 | — | P1 | C-014 JobProgressBar + P-003 主题市场初版网格布局 + P-004 设置页视觉稿（P-003 完整三档由 T-DS-011 交付） | Sprint 4 |
 | T-DS-009 | PS-009 | P2 | P-005 移动端只读预览视觉稿 + 拇指热区可达性验证 | Sprint 5 |
 | T-DS-010 | PS-007 + PS-008 | P2 | C-013 诊断密度视觉测试 + 暗色主题 Token 映射草稿 | Sprint 6 |
+| T-DS-011 | — | P1 | P-003 主题模板市场三档响应式视觉稿 + ≥ 5 张 (主题, template) 组合卡片缩略图 | Sprint 4 |
+| T-DS-012 | — | P1 | C-017 ~ C-022 共 6 个新组件视觉规格（含状态变体 + Token 接线） | Sprint 4 |
 
 ### design 任务通用验收标准
 
@@ -398,6 +417,8 @@ graph LR
 | R-005 | `@zod/mini` 在浏览器 bundle 与 Node 端 Zod 4.x 完整版并存可能导致类型版本不一致 | Sprint 0 | MEDIUM | T-004 阶段统一 contracts 包仅导出 Zod 4.x 完整版 schema；`@zod/mini` 仅在构建时按目标包按需切换，不在 contracts 包内混用 |
 | R-006 | Penpot MCP 工具在 Windows 开发环境下的可用性未经验证 | Sprint 0 | LOW | T-DS-001 开始前运行 Penpot MCP `high_level_overview` 验证工具链；如不可用改用 Penpot SaaS Web UI 手动操作 |
 | R-007 | MCP Tool thin wrapper 与 use case 业务逻辑可能在 implementer 阶段产生 duplicate 实现（参 XDOC-010）| Sprint 5 | MEDIUM | T-079/T-080..T-084 任务卡显式标注「Tool 层 thin wrapper，禁止持有业务逻辑」；code-review duplication 维度命中即 REFACTOR |
+| R-008 | F-012 整族（云端同步 / 版本历史 / 多人协作）AC 全部 `[ARCH 预留 / v1 不验收]`，API-026/027 接口存在但 dev-plan 无 `listSnapshots` / `restoreVersion` UI 与 CLI 任务 | （N/A，v1 不交付）| LOW | F-012 全族 deferred 到 v2；激活时由 tech-lead 在 Sprint 7+ 新增「F-012 协作能力」子计划（含历史面板 UI、Tool 包装、CLI rollback 命令），与 API-026/027 接口对齐 |
+| R-009 | 主题预设 template 内容产出工作量风险：5 主题 × ≥ 1 template，每份须覆盖 9 基础元素 + ≥ 6 核心 Block 容器，内容产出依赖主题作者协助；若延期阻塞 Sprint 4 主题市场落地 | Sprint 4 | MEDIUM | T-092 与 T-022 / T-024 解耦推进；先用占位 template 跑通守护链路（AC-004/AC-005），正式内容由主题作者后补；`validateThemeTemplates` 缺失元素报告可精准定位缺口 |
 
 ### 5.2 ui-spec 残留假设处理策略
 

@@ -1,9 +1,9 @@
 ---
 id: "arch-wechat-flow-modules"
-version: "0.4.0"
+version: "0.6.0"
 doc_type: arch
 author: architect
-status: draft
+status: approved
 deps: ["prd-wechat-flow", "prd-wechat-flow-f001-f014"]
 consumers: [tech-lead, ui-designer, developer, devops, qa-engineer]
 volume: modules
@@ -31,8 +31,10 @@ required_sections:
   - `SourcePane`（基于 CodeMirror 6）— directive 语法高亮、补全
   - `PreviewPane` — iframe 沙箱（`sandbox=""` 空属性 + CSP `default-src 'none'`，零 JS）挂载与视口切换（375 / 768 / desktop）；目录跳转、源码↔预览高亮联动、复制按钮覆盖层等 UI 钩子全部在主线程通过 `iframe.contentDocument` 与 overlay 实现，不向 iframe 内注入脚本
   - `CommandPalette`、`InsertDrawer`、`ContextMenu` — 共享同一 command registry
-  - `DiagnosticsPanel` — 兼容性报告分级展示（red / yellow / green）
+  - `DiagnosticsPanel` — 兼容性报告分级展示（red / yellow / green）；inbound 数据契约为 M-003 输出的 `DiagnosticReport`（含 `diagnostics: Diagnostic[]`、`nodeChangeRecords: NodeChangeRecord[]`、`nightRiskIssues: NightRiskEntry[]` 三大字段）；面板渲染 `nodeChangeRecords` → 子组件 `CompatibilityDiffView`（C-013.1）双栏对比；`nightRiskIssues` 非空时面板进入 `night-risk-alert` 视觉态（ui-spec C-013）
+  - `CompatibilityDiffView` — DiagnosticsPanel 子组件；订阅 `DiagnosticReport.nodeChangeRecords[]` 中匹配 `nodeId` 的 `NodeChangeRecord`，按 `before` / `after` outerHTML 与 `attrDiff` 渲染双栏对比；不主动调用渲染管线，所有数据由 M-003 在过滤执行时一次性记录
   - `ThemeSelector`、`PaintDrawer`、`PaletteDerivationDrawer` — 主题选择与单文档配色派生
+  - `ThemeMarketGallery` — 主题模板市场（F-008）的 (主题, template) 卡片画廊；订阅 M-005 `listThemes()` × `listThemeTemplates(themeId)` 笛卡尔积，按缩略元数据渲染卡片，选中后调用 M-005 `describeTemplate(themeId, templateId)` 取预填 Markdown 创建新文档
 - **context_load**: [prd#§2.F-001, prd#§2.F-002, prd#§2.F-008, prd#§2.F-014, arch#§2.M-008, arch#§2.M-005]
 
 ### M-002: 渲染管线核心
@@ -41,12 +43,23 @@ required_sections:
 - **映射功能**: F-002 / F-003 (AC-002 热切换) / F-004 (AC-003 内联化 / AC-004 模拟前置) / F-007 / F-013 (AC-001 跨运行时一致)
 - **对外接口**: 包级 API（非 HTTP）：`renderMarkdown(input, options) → RenderResult`、`renderHast(hast, options) → string`；被 M-008 / M-009 / M-011 调用
 - **依赖模块**: M-003 (规则集引擎) / M-004 (粘贴过滤模拟器) / M-005 (主题与组件注册中心) / M-007 (plugin-api 类型) / M-012 (schema 契约层)
+- **管线 stage 序列（唯一权威）**:
+  | 序号 | stage | 输入 → 输出 | 实现位置 | 备注 |
+  |------|-------|-----------|---------|------|
+  | 1 | parse | Markdown → mdast | `pipeline/parse.ts` | remark + remark-directive |
+  | 2 | transform | mdast → hast | `pipeline/transform.ts` | rehype 适配 + directive 展开 |
+  | 3 | sanitize | hast → hast | `pipeline/sanitize.ts` | rehype-sanitize + wechatFlowSanitizeSchema |
+  | 4 | ruleset (M-003) | hast → hast | `applyRuleset()` | strip/clamp/transform/patch/lint 五类作用域 |
+  | 5 | inline-style + serialize | hast → string | `pipeline/inline-style.ts` + `pipeline/serialize.ts` | juice 内联化 + canonical 序列化 |
+
+  `composeRender` 输出 = stage 5 结束的 inline-styled HTML（`postPaste: false`）。**不在 renderMarkdown 主路径执行 M-004 simulatePaste**。
+- **postPaste 字段语义**: `RenderResult` 含 `postPaste: boolean`；renderMarkdown / Preview / MCP `render_markdown` 路径 `postPaste === false`；composeCopy / `export_clipboard_payload` 路径在 stage 5 之后显式调用 M-004，置 `postPaste === true`。三路径产物可通过此字段对账，禁止双跑 simulatePaste。
 - **内部关键组件**:
   - `pipeline/parse.ts` — Markdown → mdast (remark + remark-directive)
   - `pipeline/transform.ts` — mdast → hast (rehype 适配 + directive 组件展开)
   - `pipeline/inline-style.ts` — token + 主题样式展开为元素 inline style
   - `pipeline/sanitize.ts` — 调用 `rehype-sanitize` 6.x，使用 `wechatFlowSanitizeSchema`（导出自 `sanitize/schema.ts`，基于 `hast-util-sanitize` 5.x 的 `defaultSchema` deepmerge）；位置：mdast→hast (`transform.ts`) **之后**、过滤规则集（M-003）**之前**；是 hast 进入 stage 链下游的**单一守门点**
-  - `pipeline/css-attr-filter.ts` — sanitizer 之后的 CSS 属性二级白名单（解析 `style` 值为 declaration 列表，按 `packages/wechat-spec` 的 CSS 子集声明放行；拒绝 `expression(` / `javascript:` / `behavior:` / `@import`）
+  - `pipeline/css-attr-filter.ts` — sanitizer 之后的 CSS 属性二级白名单（解析 `style` 值为 declaration 列表，按 `packages/ruleset` 的 CSS 子集声明放行；拒绝 `expression(` / `javascript:` / `behavior:` / `@import`）
   - `pipeline/serialize.ts` — 稳定排序的 HTML 字符串化；统一调 `utils/canonical-json.ts` + `utils/deterministic.ts` 的辅助函数，禁用任何隐式迭代顺序
   - `sanitize/schema.ts` — 导出 `wechatFlowSanitizeSchema: Schema`（`Schema` 类型来自 `hast-util-sanitize`）；Block 注册中心 M-005 在运行时通过 `extendSanitizeSchema(tagSet, attrMap)` 把自定义 Block 标签合入白名单
   - `utils/deterministic.ts` — 确定性容器迭代辅助：`sortedKeys` / `sortedEntries` / `sortedSet` / `canonicalStringify`（详见主卷 §5.2 确定性容器迭代规范）
@@ -55,31 +68,69 @@ required_sections:
 
 ### M-003: 过滤规则集引擎
 
-- **职责**: 微信平台过滤规则的版本化运行时——规则注册、按作用域（strip / clamp / transform / patch / lint）分类执行、规则集版本号管理、规则补丁热加载（F-011 AC-005）
-- **映射功能**: F-007 (AC-001..AC-004) / F-011 (AC-001 规则级 fixture / AC-005 补丁库)
-- **对外接口**: 包级 API：`applyRuleset(hast, ruleset) → {hast, diagnostics, hits}`、`getRulesetVersion() → string`；被 M-002 调用
-- **依赖模块**: M-012 (schema 契约层 — Rule schema)
+- **职责**: 微信平台过滤规则的版本化运行时——规则注册、按作用域（strip / clamp / transform / patch / lint）分类执行、规则集版本号管理、规则补丁热加载（F-011 AC-005）；过滤执行时为受影响节点产 `NodeChangeRecord[]`、为低对比度节点产 `NightRiskEntry[]`，统一入 `DiagnosticReport` 供 M-001 消费
+- **映射功能**: F-007 (AC-001..AC-004) / F-011 (AC-001 规则级 fixture / AC-005 补丁库 / AC-006 可读性 / AC-007 关键词)
+- **对外接口**:
+  - 包级 API：`applyRuleset(hast, ruleset) → {hast, report}`，其中 `report: DiagnosticReport`；`getRulesetVersion() → string`；被 M-002 调用
+  - **outbound 数据契约**：`DiagnosticReport.nodeChangeRecords[] → M-001 C-013.1 CompatibilityDiffView 消费`；`DiagnosticReport.nightRiskIssues[] → M-001 DiagnosticsPanel `night-risk-alert` 状态消费`
+- **依赖模块**: M-012 (schema 契约层 — Rule schema、DiagnosticReport schema)
 - **内部关键组件**:
   - `rules/registry.ts` — 规则注册中心
   - `rules/scope/strip.ts`、`clamp.ts`、`transform.ts`、`patch.ts`、`lint.ts` — 五类作用域执行器
   - `rules/builtin/` — ≥ 42 条内置规则；每条规则一个 TS 文件 `rules/builtin/{rule-id}.ts` 导出 `RuleDefinition`（含 id / scope / priority / matcher / transform / fixture 引用）
   - `version/manifest.ts` — 规则集 manifest 与版本号
   - `patch-loader.ts` — 已知 Bug 补丁库热加载（按微信客户端版本号匹配）
-- **规则文件存放**: 规则定义在 `packages/wechat-spec/src/rules/{rule-id}.ts`；fixture 在 `packages/wechat-spec/src/rules/{rule-id}/`，目录结构：
+  - `shared/paste-strip.ts` — 导出 `pasteStripRuleIds: readonly RuleId[]`，定义 M-004 粘贴模拟所共享的 strip 规则子集（详 §8.2 Q3.13）
+  - `lint/readability.ts` — F-011 AC-006 可读性运行时检查（颜色对比度 / 字号下限 / 段长上限），输出 `Diagnostic[]` 汇入渲染管线诊断流；遍历过程中对 `contrastRatio < 4.5`（WCAG AA 文本基准）的节点产 `NightRiskEntry`，按 `nodeSelector` 去重后追加到 `DiagnosticReport.nightRiskIssues`
+  - `lint/keywords.ts` — F-011 AC-007 违规关键词检测，词库 `packages/ruleset/src/data/keyword-list.json`，bump 时 rulesetVersion 升 minor
+  - `report/node-change-recorder.ts` — 每条 `strip` / `clamp` / `transform` / `patch` 作用域规则触发节点变更前后由执行器调 `recordChange(node, ruleId)`，记录 `before = outerHTML(node)` 与 `after = outerHTML(node')`，对属性集合做 add / remove / modify / keep 四类对账后追加 `AttrDiffEntry[]`；记录写入 `DiagnosticReport.nodeChangeRecords`，按 `nodeSelector` 唯一
+  - **DiagnosticReport 数据类型**（schema 单源在 M-012 `diagnostic/structure.ts`）：
+    ```ts
+    interface DiagnosticReport {
+      diagnostics: Diagnostic[];                   // severity / ruleId / nodeRef / message
+      nodeChangeRecords: NodeChangeRecord[];       // 粘贴前后逐节点变更（C-013.1 数据源）
+      nightRiskIssues: NightRiskEntry[];           // 夜间风险条目（C-013 night-risk-alert 数据源）
+      versionTriple: VersionTriple;
+    }
+
+    interface NodeChangeRecord {
+      nodeSelector: string;        // 例：`body > div.section > p:nth-child(3)`
+      before: string;              // 触发前的 outerHTML
+      after: string;               // 触发后的 outerHTML
+      attrDiff: AttrDiffEntry[];   // 属性级 diff
+      triggerRuleId: string;       // 触发本次变更的 RuleId
+    }
+
+    interface AttrDiffEntry {
+      attrName: string;
+      op: 'add' | 'remove' | 'modify' | 'keep';
+      oldValue?: string;
+      newValue?: string;
+    }
+
+    interface NightRiskEntry {
+      nodeSelector: string;
+      contrastRatio: number;       // 实测前景 / 背景对比度
+      foreground: string;          // 前景颜色（hex / rgb / lch 序列化）
+      background: string;          // 背景颜色（同上）
+      suggestion: string;          // 修复建议文本（例：「将前景调至 #1A1A1A 以满足 AA 4.5:1」）
+    }
+    ```
+- **规则文件存放**: 规则定义在 `packages/ruleset/src/rules/{rule-id}.ts`；fixture 在 `packages/ruleset/src/rules/{rule-id}/`，目录结构：
   - `input.html` — 进入规则前的 hast 序列化
   - `expected.html` — 规则应用后的 hast 序列化
   - `metadata.json` — `{ ruleId, scope, priority, description, wechatVersion: { minSupported, knownBuggy[] } }`
   - 多 case 时按 `case-001/`、`case-002/` 子目录组织，每个子目录含同样三件套
-- **规则集版本化策略**: `packages/wechat-spec/package.json` `version` 字段即 `rulesetVersion`；任何规则变更（新增 / 修改 transform / 优先级调整）须 bump version；ruleset version 与 core / theme 一同进入版本三元组
-- **PRD 19 条 vs ARCH ≥42 条差距**: PRD F-007 §2 表列 19 条代表性规则作为示例基线。架构目标 ≥42 条由 implementer 在 `packages/wechat-spec` 包内补充并以 fixture 形式版本化；剩余 23+ 条来自微信客户端平台实测（公众号编辑器粘贴行为对照、客户端渲染兼容性验证）。`[ASSUMPTION]` 截至 dev-plan 阶段规则总数以 42 条为实现门槛；超 42 条视为规则集质量提升，由后续 patch 版本承载。
+- **规则集版本化策略**: `packages/ruleset/package.json` `version` 字段即 `rulesetVersion`；任何规则变更（新增 / 修改 transform / 优先级调整）须 bump version；ruleset version 与 core / theme 一同进入版本三元组
+- **PRD 19 条 vs ARCH ≥42 条差距**: PRD F-007 §2 表列 19 条代表性规则作为示例基线。架构目标 ≥42 条由 implementer 在 `packages/ruleset` 包内补充并以 fixture 形式版本化；剩余 23+ 条来自微信客户端平台实测（公众号编辑器粘贴行为对照、客户端渲染兼容性验证）。`[ASSUMPTION]` 截至 dev-plan 阶段规则总数以 42 条为实现门槛；超 42 条视为规则集质量提升，由后续 patch 版本承载。
 - **context_load**: [prd#§2.F-007, prd#§2.F-011]
 
 ### M-004: 粘贴过滤模拟器
 
 - **职责**: 复现微信公众号编辑器对粘贴 HTML 的过滤行为，作为渲染管线最后一道关卡；输出粘贴前后逐节点的精确变更对照
 - **映射功能**: F-002 (AC-005 / AC-006 兼容性报告) / F-004 (AC-004 / AC-005 视觉一致性) / F-011 (AC-002)
-- **对外接口**: 包级 API：`simulatePaste(hast) → {hast, diffNodes, droppedAttrs}`；被 M-002 在最后 stage 调用、被 M-009 `simulate_paste` Tool 直接调用
-- **依赖模块**: M-003 (规则集引擎 — 共享 strip 规则)
+- **对外接口**: 包级 API：`simulatePaste(hast) → {hast, diffNodes, droppedAttrs}`；**由 M-008 `composeCopy` 在 inline-style HTML stage 之后显式调用**；同时被 M-009 `simulate_paste` Tool 直接调用。**不在 M-002 renderMarkdown 主路径自动执行**。
+- **依赖模块**: M-003 (规则集引擎 — 通过 `packages/ruleset/src/shared/paste-strip.ts` 共享 `pasteStripRuleIds` 子集；详 §8.2 Q3.13)
 - **内部关键组件**:
   - `simulator/strip-tags.ts` — 标签级剥除（style / script / 等）
   - `simulator/strip-attrs.ts` — 属性级剥除（id / class / style 选择性等）
@@ -89,30 +140,71 @@ required_sections:
 
 ### M-005: 主题与组件注册中心
 
-- **职责**: 内置主题、Block / Mark / Variant / Token、主题装饰资产的注册与查询；主题守护 8 维静态校验；主题热切换；模板（F-008）登记；扩展点支持第三方模板 pack 注册
-- **映射功能**: F-003 (AC-001..AC-011) / F-008 (AC-003 模板登记, AC-004 预编排模型) / F-009 (AC-001 继承 + AC-002 品牌包) / F-011 (AC-003 主题守护)
-- **对外接口**: 包级 API：`registerTheme(definition)`、`listThemes()`、`describeTheme(id)`、`listBlocks()`、`describeBlock(id)`、`listBlockVariants(blockId)`、`derivePalette(seed)`、`validateThemeGuard(theme) → GuardResult`、`registerTemplate(definition)`、`listTemplates(themeId?)`、`describeTemplate(id)`；被 M-002 / M-008 / M-009 调用
-- **依赖模块**: M-006 (调色板派生) / M-007 (plugin-api 类型) / M-012 (schema 契约层)
+- **职责**: 内置主题、Block / Mark / Variant / Token、主题装饰资产的注册与查询；主题守护 9 维静态校验（含「内置 template 完整性」维度，F-011 AC-009）；主题热切换；template 作为主题命名空间下的预设变体登记（F-008）；扩展点支持第三方主题与 template pack 注册
+- **映射功能**: F-003 (AC-001..AC-012) / F-008 (AC-001 注册, AC-002 白名单覆盖, AC-003 frontmatter 语义, AC-004 describe_theme/describe_template) / F-009 (AC-001 继承 + AC-002 品牌包) / F-011 (AC-003 主题守护 9 维 / AC-009 template 完整性)
+- **对外接口**: 包级 API：
+  - 主题层：`registerTheme(definition)`、`listThemes()`、`describeTheme(id)`、`listBlocks()`、`describeBlock(id)`、`listBlockVariants(blockId)`、`derivePalette(seed)`、`validateThemeGuard(theme) → GuardResult`
+  - **template 层（主题命名空间隔离）**：
+    - `defineTemplate({ themeId, templateId, render }) → void` — 独立注册 API；与 `defineTheme.templates` 字段语义等价
+    - `listThemeTemplates(themeId: string): TemplateMeta[]` — 返回该主题已注册的全部 template 元数据（轻量，不含 Markdown 正文）
+    - `describeTemplate(themeId: string, templateId: string): TemplateDef` — 返回 template 完整定义（含预填 Markdown 与 metadata）；themeId / templateId 任一不存在抛 `E_NOT_FOUND`
+    - `validateTemplateCoverage(themeId: string, templateId: string): CoverageReport` — 静态校验 template 是否覆盖 F-003 AC-012 白名单（9 基础元素 + ≥ 6 核心 Block 容器），返回逐项缺失清单
+  - 被 M-002 / M-008 / M-009 调用
+- **依赖模块**: M-006 (调色板派生) / M-007 (plugin-api 类型) / M-012 (schema 契约层 — TemplateDef / CoverageReport schema)
 - **内部关键组件**:
   - `registry/theme.ts`、`block.ts`、`mark.ts`、`variant.ts`、`token.ts` — 五类注册表
-  - `guard/eight-dimensions.ts` — 主题守护 8 维校验
-  - `inheritance/delta-merge.ts` — 主题继承 + delta 合并（F-009）
+  - `registry/template.ts` — template 注册中心；存储结构 `Map<themeId, Map<templateId, TemplateDef>>`；支持 `defineTheme.templates: Record<TemplateId, TemplateDef>` 嵌套与 `defineTemplate({ themeId, templateId, render })` 独立 API 两路注册；同名 templateId 在不同 themeId 下互相隔离
+  - `guard/nine-dimensions.ts` — 主题守护 9 维校验；维度清单：基线选择器密度、核心 block 覆盖率、token 覆盖率、跨主题身份 token 防碰撞、元数据完整性、theme.css 属性合规、WCAG 对比度自动校验、装饰资产完整性、内置 template 完整性
+  - `guard/validate-theme-templates.ts` — 9 维新维度执行器：`validateThemeTemplates(themeId: string): ThemeTemplateValidationResult`；调用 `listThemeTemplates(themeId)` 取该主题全部 template，对每个 template 调 `validateTemplateCoverage(themeId, templateId)`，任一未覆盖即记 `pass: false` 与缺失项；单元测试位于 `packages/core/src/theme-guard/template-coverage.test.ts`
+  - `inheritance/delta-merge.ts` — 主题继承 + delta 合并（F-009）；继承时 templates 字典亦按 delta 合并
   - `brand-pack/lock.ts` — 品牌包字体 / 配色 / 组件子集锁定
-  - `template/registry.ts` — 模板登记（F-008 AC-003）；扩展点：`pack.manifest.templates[]` 注册路径与 `frontmatter.template` 解析链路
-- **内置模板清单**: M-005 `template/registry.ts` 内置 5 主题 × 各 ≥ 2 模板 seed，覆盖 PRD F-008 备注的 8 类内容场景：
+- **数据类型定义**（schema 单源在 M-012 `theme/manifest-schema.ts` 与 `theme/template-schema.ts`）：
+  ```ts
+  interface TemplateDef {
+    id: string;                  // templateId（主题命名空间内唯一）
+    themeId: string;             // 归属主题 ID
+    markdown: string;            // 预填 Markdown 源码（含 frontmatter）
+    metadata: {
+      title: string;             // 显示名（如「科技评测」）
+      description: string;       // 一句话场景说明
+      thumbnailUrl?: string;     // 缩略图 URL，可选；缺省时由 ThemeMarketGallery 现场渲染缩略
+    };
+  }
 
-  | templateId | scenario | 适配主题 |
-  |------------|----------|----------|
-  | `tech-review` | 科技评测 | tech / default |
-  | `poetry-essay` | 诗歌赏析 | literary |
-  | `industry-report` | 行业分析报告 | business |
-  | `life-vlog` | 生活记录 | magazine |
-  | `tutorial` | 教程 / How-to | tech / default |
-  | `book-review` | 书评 / 影评 | literary / default |
-  | `kpi-summary` | 数据 / KPI 总结 | business |
-  | `lifestyle-guide` | 生活方式指南 | magazine |
+  // 轻量元数据（listThemeTemplates 返回值，不含 markdown 正文以减少 payload）
+  type TemplateMeta = Pick<TemplateDef, 'id' | 'themeId' | 'metadata'>;
 
-  每个 templateId 在内置主题的 `templates/` 目录下提供 Markdown 文件实现，模板 manifest 含 `id` / `name` / `scenario` / `targetThemes` / `content` 字段。
+  interface CoverageReport {
+    pass: boolean;
+    coveredElements: string[];   // 命中的基础元素白名单子集（H1..H6 / paragraph / list / blockquote / link / code-block / hr / image / table）
+    missingElements: string[];   // 未命中的基础元素
+    coveredBlocks: BlockId[];    // 命中的核心 Block 容器（callout / card / steps / quote / pull-quote / compare 等）
+    missingBlocks: BlockId[];    // 未命中的核心 Block 容器
+  }
+
+  interface ThemeTemplateValidationResult {
+    pass: boolean;
+    themeId: string;
+    templates: { templateId: string; coverage: CoverageReport }[];
+    failingTemplates: string[];  // pass=false 的 templateId 集合
+  }
+  ```
+- **template 命名空间隔离语义**: 主题是 template 的命名空间；同名 templateId（如 `tech-review`）可在 `tech` 与 `default` 主题下独立定义且渲染产物不同；frontmatter `theme: tech` + `template: tech-review` 解析为 (themeId=tech, templateId=tech-review) 复合键，运行时仅作为审计标记不参与渲染（PRD F-008 AC-003）
+- **内置 template 完整性下限**: 每内置主题（default / magazine / literary / business / tech）须 ≥ 1 预设 template；每 template 须 mdast 覆盖 F-003 AC-012 白名单 9 基础元素 + ≥ 6 核心 Block 容器；不达标由 `guard/nine-dimensions.ts` 在 CI 阻断发布（F-011 AC-009）
+- **内置 template 清单**: 每内置主题 `templates/` 目录下提供 ≥ 1 份 Markdown，文件名即 templateId。基线清单（templateId 可跨主题复用，由各主题独立实现）：
+
+  | scenario | 候选 templateId | 推荐适配主题 |
+  |----------|----------------|--------------|
+  | 科技评测 | `tech-review` | tech / default |
+  | 诗歌赏析 | `poetry-essay` | literary |
+  | 行业分析报告 | `industry-report` | business |
+  | 生活记录 | `life-vlog` | magazine |
+  | 教程 / How-to | `tutorial` | tech / default |
+  | 书评 / 影评 | `book-review` | literary / default |
+  | 数据 / KPI 总结 | `kpi-summary` | business |
+  | 生活方式指南 | `lifestyle-guide` | magazine |
+
+  各主题在其 `templates/{templateId}.md` 提供具体实现；同 scenario 在不同主题下视觉差异由主题 token 与 Block variant 驱动，Markdown 源码亦可独立编写（不强制跨主题复用 Markdown）。
 - **context_load**: [prd#§2.F-003, prd#§2.F-008, prd#§2.F-009, prd#§2.F-011, arch#§2.M-006]
 
 ### M-006: 调色板派生
@@ -174,18 +266,18 @@ required_sections:
 
 ### M-009: MCP server
 
-- **职责**: 对 LLM Agent 暴露 22 个 Tool（16 同步 + 6 异步长任务，含 `get_job` 与 `get_ruleset_version`）；stdio + HTTP/SSE 双 transport；API key + per-key 配额；Idempotency-Key 去重；版本三元组透传到响应；**鉴权基线**两级（`scope=user` Tool 调用 vs `scope=admin` 管理端点；admin key 只走 M-010 admin 路由，不能调 Tool）
-- **映射功能**: F-013 (AC-001..AC-006)
-- **对外接口**: MCP Tool（22 个，16 同步 + 6 异步）— 详见 [`arch-wechat-flow-api.md`](./arch-wechat-flow-api.md) API-001..API-016
+- **职责**: 对 LLM Agent 暴露 23 个 Tool（17 同步 + 6 异步长任务，含 `get_job` 与 `get_ruleset_version`；含 `describe_template` 提供 F-008 主题预设变体查询）；stdio + HTTP/SSE 双 transport；API key + per-key 配额；Idempotency-Key 去重；版本三元组透传到响应；**鉴权基线**两级（`scope=user` Tool 调用 vs `scope=admin` 管理端点；admin key 只走 M-010 admin 路由，不能调 Tool）
+- **映射功能**: F-013 (AC-001..AC-006) / F-008 (AC-004 describe_template Tool)
+- **对外接口**: MCP Tool（23 个，17 同步 + 6 异步）— 详见 [`arch-wechat-flow-api.md`](./arch-wechat-flow-api.md) API-001..API-016 + API-033
 - **依赖模块**: M-008 (应用层 use case) / M-002 / M-005 / M-006 / M-010 / M-012
 - **内部关键组件**:
   - `transport/stdio.ts`、`transport/http-sse.ts` — 双 transport entry
   - `auth/api-key.ts` — API key 鉴权 + per-key 配额；校验 `scope` 字段；user / admin 两级 key 哈希存储于 E-010 ApiKey 表；明文仅在创建时由 admin API 返回一次
   - `auth/scope-guard.ts` — Tool 路由前置守卫：仅 `scope=user` 可达 Tool 路由表；admin scope 直接 403 `E_PERMISSION_DENIED`
   - `idempotency/dedup.ts` — `sha256(input + toolsetVersion)` 去重缓存
-  - `tools/router.ts` — 22 个 Tool 的 dispatcher，映射到 M-008 composer；Tool 层为 thin wrapper，禁止持有业务逻辑（业务逻辑统一在 M-008 / M-006 / M-004）
+  - `tools/router.ts` — 23 个 Tool 的 dispatcher，映射到 M-008 composer 或 M-005 查询（`describe_template` 直达 M-005 `describeTemplate(themeId, templateId)`）；Tool 层为 thin wrapper，禁止持有业务逻辑（业务逻辑统一在 M-008 / M-006 / M-005 / M-004）
   - `version/triple-injection.ts` — 响应注入版本三元组
-- **Skill bundle 协同**: `skill/SKILL.md` 引用本模块 22 个 Tool 的调用顺序约定（典型链：`list_themes` → `describe_block` → `render_markdown` → `simulate_paste` → `upload_to_wechat_asset`），由 LLM Agent 解析为语义任务；Skill bundle 与 MCP server 共版本号发布
+- **Skill bundle 协同**: `skill/SKILL.md` 引用本模块 23 个 Tool 的调用顺序约定（典型链：`list_themes` → `describe_theme` → `describe_template` → `render_markdown` → `simulate_paste` → `upload_to_wechat_asset`），由 LLM Agent 解析为语义任务；Skill bundle 与 MCP server 共版本号发布
 - **context_load**: [prd#§2.F-013, prd#§3.2, arch#§3]
 
 ### M-010: 中继服务
@@ -207,6 +299,8 @@ required_sections:
   - `yjs/y-websocket-server.ts` — y-websocket 服务端 integration（Hono `/yjs/:docId` 端点 + WebSocket upgrade）；维护 Y.Doc 内存副本；订阅 Redis `yjs:awareness:{docId}` channel；周期性 snapshot 节流（每 60s 或 100 ops）写 E-009 YDocSnapshot
   - `admin/api-keys.ts` — admin API key 管理路由（POST 创建 / GET 列出 / PATCH 轮换 / DELETE 吊销）；前置 `auth/admin-guard.ts` 校验 `scope=admin`；创建端点用 `crypto.randomUUID` + `crypto.subtle.digest('SHA-256')` 生成 key 与哈希；明文 key 仅在响应中出现一次
   - `auth/admin-guard.ts` — admin API 鉴权基线：(1) 校验 Bearer key 哈希命中 E-010.scope='admin' 行；(2) 强制 `X-Admin-Request: 1` 自定义 header（防止 CSRF）；(3) 来源 IP 白名单（环境变量 `ADMIN_IP_ALLOWLIST` 配置；缺省时仅允许 loopback）；(4) admin 操作全部写审计日志（actor=apiKeyId, action, target, ts）到 §5.5 审计追溯通道
+  - `auth/editor-session.ts` — Editor SPA 短期 JWT 颁发与续期；HS256 签名（`EDITOR_JWT_SECRET` 环境变量），载荷遵循 API-032 schema；sessionId 写入审计日志 §5.5
+  - `auth/token-resolver.ts` — 统一 Bearer token 解析：根据 JWT `iss='editor'` vs API key（非 JWT 串）分流到 session 校验或 E-010 哈希校验
 - **context_load**: [prd#§2.F-005, prd#§2.F-006, prd#§2.F-012, prd#§2.F-013, prd#§3.2, arch#§5.3, arch#§6.3]
 
 ### M-011: CLI
@@ -218,7 +312,7 @@ required_sections:
 - **内部关键组件**:
   - `commands/init.ts` — `--template plugin|theme` 两种骨架
   - `commands/dev.ts` — Vite middleware + HMR + pack live-reload
-  - `commands/validate.ts` — manifest + schema + 主题守护 8 维 + variant 申报一致性
+  - `commands/validate.ts` — manifest + schema + 主题守护 9 维（含内置 template 完整性） + variant 申报一致性
   - `commands/publish.ts` — pack 打包 + 发布到 registry
   - `commands/render.ts`、`copy.ts`、`export.ts` — Tool 契约的 CLI 壳
 - **context_load**: [prd#§2.F-010, prd#§2.F-013]
@@ -234,11 +328,12 @@ required_sections:
   - 运行时校验：`schema.parse(input)` / `schema.safeParse(input)`
 - **依赖模块**: 无（最底层 contracts 包）；外部依赖 `zod@4.x` + 可选 `@zod/mini`（浏览器 bundle 体积敏感场景）
 - **内部关键组件**:
-  - `mcp/tool-contracts.ts` — 22 个 Tool 的 request / response Zod schema；如 `renderMarkdownRequestSchema = z.object({ markdown: z.string(), themeId: z.string().optional(), rulesetVersion: z.string().optional(), paint: z.record(z.string()).optional(), baseColor: z.string().optional() })`；长任务 Tool 的 `jobId` 字段统一 `z.string().uuid()`
+  - `mcp/tool-contracts.ts` — 23 个 Tool 的 request / response Zod schema；如 `renderMarkdownRequestSchema = z.object({ markdown: z.string(), themeId: z.string().optional(), rulesetVersion: z.string().optional(), paint: z.record(z.string()).optional(), baseColor: z.string().optional() })`；长任务 Tool 的 `jobId` 字段统一 `z.string().uuid()`；新增 `describeTemplateRequestSchema` / `describeTemplateResponseSchema`（详 API-033）
   - `relay/route-contracts.ts` — Hono RPC 路由契约（与 Hono 4.x `zValidator` middleware 集成）
   - `component/attrs-schema.ts` — Block / Mark 的 `attrsSchema` 类型工厂；`describe_block` 调用 `toJSON(block.attrsSchema)` 输出 JSON Schema
-  - `theme/manifest-schema.ts`、`pack/manifest-schema.ts`、`ruleset/rule-schema.ts`
-  - `diagnostic/structure.ts`、`job/structure.ts`、`version/triple-structure.ts`
+  - `theme/manifest-schema.ts`、`theme/template-schema.ts`（导出 `TemplateDefSchema` / `TemplateMetaSchema` / `CoverageReportSchema`，详 E-011）、`pack/manifest-schema.ts`、`ruleset/rule-schema.ts`
+  - `diagnostic/structure.ts` — 含 `DiagnosticSchema` / `DiagnosticReportSchema` / `NodeChangeRecordSchema` / `AttrDiffEntrySchema` / `NightRiskEntrySchema`（详 M-003 数据类型定义、E-008 字段集）
+  - `job/structure.ts`、`version/triple-structure.ts`
   - `yjs/sync-message-schema.ts` — Yjs 同步消息（snapshot / awareness payload）schema，与 y-websocket 协议对齐
   - `versioning/deprecation-window.ts` — semver major + minor deprecation window 工具
 - **context_load**: [prd#§2.F-010, prd#§2.F-013]

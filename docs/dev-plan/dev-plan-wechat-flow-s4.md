@@ -1,10 +1,10 @@
 ---
 id: "dev-plan-wechat-flow-s4"
-version: "0.2.0"
+version: "0.4.0"
 doc_type: dev-plan
 author: tech-lead
-status: draft
-deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "arch-wechat-flow-api", "ui-spec-wechat-flow", "ui-spec-wechat-flow-c001-c014", "ui-spec-wechat-flow-p001-p005"]
+status: approved
+deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "arch-wechat-flow-api", "arch-wechat-flow-data", "ui-spec-wechat-flow", "ui-spec-wechat-flow-c001-c014", "ui-spec-wechat-flow-p001-p005"]
 consumers: [developer, qa-engineer]
 volume: sprint
 volume_type: sprint
@@ -16,7 +16,7 @@ required_sections:
 # Dev Plan 分卷 — Sprint 4: 输出能力 + MCP server + 图片处理
 
 [NAV]
-- Sprint 4 任务卡 → T-030..T-042, T-DS-008, T-VAL-04
+- Sprint 4 任务卡 → T-030..T-042, T-091, T-092, T-DS-008, T-DS-011, T-DS-012, T-VAL-04
 [/NAV]
 
 **Sprint 目标**: 一键复制 inline HTML 可粘贴到公众号编辑器；MCP server `render_markdown` 可通过 stdio transport 调用；图床配置和上传可用。
@@ -38,7 +38,7 @@ required_sections:
 - **dependencies**: [T-DS-001]
 - **acceptance_criteria**:
   - [ ] AC-001: C-014 JobProgressBar 视觉稿覆盖 `queued`/`running`/`completed`/`failed` 4 个状态，含进度轨道 + 进度填充 + 文字描述行
-  - [ ] AC-002: P-003 主题市场视觉稿含桌面档 4 列卡片网格布局 + 筛选栏
+  - [ ] AC-002: P-003 主题市场初版视觉稿含桌面档 4 列卡片网格布局 + 筛选栏（含 (主题, template) 组合卡片布局占位，完整三档视觉稿由 T-DS-011 交付）
   - [ ] AC-003: P-004 设置页视觉稿含左侧导航栏 + 右侧内容区，图床配置折叠卡片展开态可见
   - [ ] AC-004: 通过 Penpot MCP `find_shape` 可检索到 `C-014`、`P-003`、`P-004`
 - **deliverables**:
@@ -312,8 +312,9 @@ required_sections:
   - [ ] AC-002: Given 调用 `describe_block({ blockId: 'callout' })`，When 执行，Then 返回对象含 `attrsSchema` 字段，该字段符合 JSON Schema Draft-7 格式（`type: 'object'`，`properties` 非空）[F-013 AC-002 + ARCH#§2.M-012]
   - [ ] AC-003: Given 调用 `list_marks`，When 执行，Then 返回数组长度 ≥ 11，含 `badge`、`highlight` 等 [F-013 AC-002]
   - [ ] AC-004: Given 调用 `list_blocks`，When 执行，Then 返回数组长度 ≥ 25（与 T-024 一致）
-  - [ ] AC-005: Given 调用 `describe_theme({ id: 'default' })`，When 执行，Then 返回对象含 `paintable` 和 `templates` 字段
+  - [ ] AC-005: Given 调用 `describe_theme({ id: 'default' })`，When 执行，Then 返回对象含 `paintable` 和 `templates` 字段；`templates` 为数组，每项含 `templateId`、`description` 字段 [ARCH#§2.M-005]
   - [ ] AC-006: Given 调用 `describe_mark({ markId: 'badge' })`，When 执行，Then 返回对象含 `attrsSchema` JSON Schema
+  - [ ] AC-007: Given 调用 `list_theme_templates({ themeId: 'default' })`，When 执行，Then 返回 `default` 主题的所有 template 数组，每项含 `templateId`、`description` 字段 [ARCH#§3.API-033 + ARCH#§2.M-005]
 - **deliverables**:
   - [ ] `apps/mcp-server/src/tools/list-themes.ts`
   - [ ] `apps/mcp-server/src/tools/describe-theme.ts`
@@ -402,12 +403,13 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-022, T-005, T-DS-008]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given 访问 `/themes`，When 页面加载，Then 显示 ≥ 5 张 ThemeCard（扩展版，缩略图高 120px），含「使用此主题」按钮 [F-003 AC-003 + ui-spec-wechat-flow-p001-p005#§3.P-003]
+  - [ ] AC-001: Given 访问 `/themes`，When 页面加载，Then 显示 ≥ 5 张 C-022 TemplateThemeCard（含主题缩略图 + template 选择器），以 `(themeId, templateId)` 为组合展示，使用 `listThemeTemplates(themeId)` 动态获取可用 template 列表 [F-003 AC-003 + ui-spec-wechat-flow-p001-p005#§3.P-003]
   - [ ] AC-002: Given 当前已应用的主题，When 在 P-003 页面，Then 对应卡片显示「正在使用」徽章（`--color-brand-subtle` 背景）
   - [ ] AC-003: Given 点击某主题「使用此主题」按钮，When 点击，Then 主题切换，Toast（success）提示「已切换到 XX 主题」，TopBar 主题指示器更新
+  - [ ] AC-004: Given 某主题 T-092 预填 template 已就绪，When 用户在卡片上选择 template，Then 编辑器内容替换为该 template 的 Markdown 内容（调用 `describeTemplate(themeId, templateId).markdown`）[ARCH#§2.M-005]
 - **deliverables**:
-  - [ ] 更新 `apps/editor/src/pages/ThemesPage.vue` — P-003 完整实现（含网格布局 + 筛选 + 社区占位卡片）
-  - [ ] `apps/editor/src/components/themes/ThemeCardExtended.vue` — 扩展版主题卡片（缩略图更大）
+  - [ ] 更新 `apps/editor/src/pages/ThemesPage.vue` — P-003 完整实现（含网格布局 + 筛选 + 社区占位卡片 + template 选择器）
+  - [ ] `apps/editor/src/components/themes/TemplateThemeCard.vue` — C-022 实现（(主题, template) 组合卡，含缩略图 + template 下拉选择）
 - **relates_to**: [F-003, F-008, P-003]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-005
@@ -445,6 +447,40 @@ required_sections:
 
 ---
 
+### T-091: M-010 Editor Session JWT 颁发与续期端点（API-032）
+
+- **目标**: 实现 `POST /api/v1/editor/session` 与 `POST /api/v1/editor/session/refresh` 两个端点：Editor SPA 不持长期 API key，通过 OAuth 或匿名 bootstrap 交换 ≤15min JWT；JWT 在后续 API-017..020 调用中作为 Bearer token 鉴权。
+- **模块**: M-010 (中继服务)
+- **task_kind**: feature
+- **priority**: P0
+- **complexity**: medium
+- **sprint**: 4
+- **tdd_mode**: standard
+- **tdd_refactor**: auto
+- **tdd_acceptance**: [AC-001, AC-002, AC-003, AC-004, AC-005]
+- **security_sensitive**: true
+- **dependencies**: [T-032]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given OAuth bootstrap 入参（`{ bootstrap: 'oauth', provider, oauthToken }`），When 调用 `POST /api/v1/editor/session`，Then 返回 `{ sessionJwt, expiresAt, refreshUntil, scope, sessionId }`，`expiresAt - now() <= 15 * 60 * 1000`，scope 不含 `admin` 与 `wechat-asset` [ARCH#§3.6 API-032]
+  - [ ] AC-002: Given 匿名 bootstrap（`{ bootstrap: 'anonymous', deviceFingerprint }`），When 同 IP 1 分钟内重复调用 ≥ 10 次，Then 第 11 次返回 429 `E_QUOTA_EXCEEDED` [ARCH#§3.6]
+  - [ ] AC-003: Given 持有效 JWT 调用 `POST /api/v1/editor/session/refresh`（exp 前 1min 内），When 服务端校验 sessionId 未吊销，Then 返回新 JWT，旧 JWT 在 grace 期内仍可用 [ARCH#§3.6]
+  - [ ] AC-004: Given Editor 拿到 sessionJwt 调用 `POST /api/v1/images/upload`，When 中间件 `auth/token-resolver.ts` 解析 Bearer，Then 按 `iss='editor'` 走 session 校验路径并放行；同样的 token 调用 admin 端点 `POST /api/v1/admin/api-keys` 返回 403
+  - [ ] AC-005: Given JWT 签名密钥 `EDITOR_JWT_SECRET` 未配置，When 服务启动，Then 进程退出码 1 并输出明确错误（防止生产环境裸跑无密钥）；CSP 允许 sessionJwt 出现在 `Authorization` header 但禁止出现在 URL query
+- **deliverables**:
+  - [ ] `apps/relay/src/auth/editor-session.ts` — JWT 颁发与续期实现（jose 或 jsonwebtoken）
+  - [ ] `apps/relay/src/auth/token-resolver.ts` — Bearer 统一解析（区分 API key vs editor session JWT）
+  - [ ] `apps/relay/src/routes/editor-session.ts` — `POST /api/v1/editor/session` + `/refresh` 路由
+  - [ ] `apps/relay/src/middleware/auth.ts` — 更新中间件接入 token-resolver
+  - [ ] `apps/editor/src/composables/use-editor-session.ts` — 客户端 session 获取与续期 composable
+  - [ ] `tests/relay/editor-session.test.ts` — AC-001..AC-005 单元测试
+- **relates_to**: [F-006, PRD §3.2, ARCH#§3.6 API-032, M-010]
+- **context_load**:
+  - arch-wechat-flow-api#§3.6
+  - arch-wechat-flow-modules#§2.M-010
+  - prd-wechat-flow#§3.2
+
+---
+
 ### T-VAL-04: [VALIDATION] Sprint 4 验证：复制 HTML + 长图导出 + MCP render_markdown
 
 - **目标**: 用户手动验证一键复制 HTML 可粘贴到公众号编辑器、长图异步导出、MCP stdio 调用
@@ -455,11 +491,116 @@ required_sections:
 - **priority**: P0
 - **sprint**: 4
 - **user_facing_critical_path**: true
-- **dependencies**: [T-030, T-031, T-035, T-037, T-042]
+- **dependencies**: [T-030, T-031, T-035, T-037, T-042, T-091, T-092]
 - **acceptance_criteria**:
-  - [ ] 在编辑器中写入一段含标题/段落/粗体的 Markdown，点击「...」→「复制 HTML」（或 Ctrl+Shift+C），粘贴到微信公众号编辑器草稿页，视觉效果与本地预览差异 ≤ 5%（目视判断，无明显格式错乱）
+  - [ ] 在编辑器中写入一段含标题/段落/粗体的 Markdown，点击「...」→「复制 HTML」（或 Ctrl+Shift+C），剪贴板中含 `text/html` + `text/plain` 两个 MIME；将 HTML 传入 `simulatePaste()` 后与本地预览 inline-styled HTML 跑 pixelmatch（同 T-058 5 主题 × heading/paragraph/code 子集口径），ratio ≤ 0.05 通过（真实公众号粘贴回归由 T-090 周期任务验证）
   - [ ] 点击「...」→「下载 HTML」，浏览器弹出下载，保存为 `.html` 文件后在浏览器双击打开，内容正常渲染
   - [ ] 在设置页「图床配置」中配置 local 图床，在编辑器中拖拽一张图片到编辑区，图片上传成功，编辑区和预览区均显示上传后的 URL 图片
   - [ ] 通过 MCP stdio transport（`node dist/stdio.js`），发送 `render_markdown({ markdown: '# Hello' })` 消息，返回包含 `html`、`rulesetVersion`、`themeVersion` 字段的响应
   - [ ] 通过 MCP 调用 `export_long_image({ markdown: '...' })`，返回 `{ jobId: '...' }`，随后 `get_job({ jobId: '...' })` 轮询，最终 `status: 'succeeded'`，`result.url` 可访问
+  - [ ] Editor session 链路：浏览器打开 Editor，DevTools Network 观察 `POST /api/v1/editor/session` 返回 200 + sessionJwt；后续 `POST /api/v1/images/upload` 携带该 JWT，DevTools 中检查 Authorization header 非空且非长期 API key
+  - [ ] 主题模板市场卡片缩略图视觉回归：对 5 内置主题各默认 template，使用 T-092 预填 Markdown 渲染缩略图，与 T-DS-011 Penpot 视觉稿对比，pixelmatch ratio ≤ 0.05
 - **relates_to**: [F-004, F-005, F-006, F-013, M-009, M-010]
+
+---
+
+### T-092: 主题预设 template 内容产出 + 9 维守护实现
+
+- **目标**: 为 5 内置主题各产出 ≥ 1 份预填 Markdown template（覆盖 9 基础元素 + ≥ 6 核心 Block 容器）；在 M-005 实现 template 注册与查询接口；在 M-006 追加第 9 维守护 `validateThemeTemplates`；接通 API-033 `describe_template` Tool
+- **模块**: M-005 (主题注册中心), M-006 (调色板派生/守护), M-009 (MCP server)
+- **task_kind**: feature
+- **priority**: P0
+- **complexity**: large
+- **sprint**: 4
+- **tdd_mode**: standard
+- **tdd_refactor**: auto
+- **tdd_acceptance**: [AC-001, AC-002, AC-003, AC-004, AC-005, AC-006]
+- **security_sensitive**: false
+- **expected_tool_budget**: ~110
+- **dependencies**: [T-022, T-024]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given 调用 `defineTemplate({ themeId: 'default', templateId: 'starter', markdown: '...', metadata: { description: '...' } })`（M-005 接口），When 执行，Then `listThemeTemplates('default')` 返回数组含 `{ templateId: 'starter', description: '...' }`；`describeTemplate('default', 'starter')` 返回对象含 `markdown`、`metadata` 字段 [ARCH#§2.M-005]
+  - [ ] AC-002: Given `packages/themes/<themeId>/templates/<templateId>.md` 文件存在（5 主题 × 1 template），When 主题包加载，Then `listThemeTemplates(themeId)` 对每个 `themeId` 返回 ≥ 1 个 template 条目
+  - [ ] AC-003: Given 任意一份 template 的 Markdown 内容，When 渲染并检查，Then 覆盖白名单中全部 9 基础元素（H1-H6、段落、列表、引用、链接、代码块、分隔线、图片、表格）且包含 ≥ 6 核心 Block 容器（callout、card、steps、quote、pull-quote、compare 中至少 6 类） [F-011 AC-009 + ARCH#§2.M-006]
+  - [ ] AC-004: Given M-006 已实现第 9 维守护，When 调用 `validateThemeTemplates(themeId): ThemeTemplateValidationResult`，Then 对覆盖完整的主题返回 `{ valid: true, themeId, templateCount: N, missingElements: [] }`；对缺失元素的 template 返回 `{ valid: false, missingElements: ['table', 'callout'] }` 等具体缺失列表 [ARCH#§2.M-006]
+  - [ ] AC-005: Given `packages/core/src/theme-guard/template-coverage.test.ts`，When 运行，Then 每个内置主题至少 1 个 template 通过守护校验，测试文件使用 `packages/themes/*/templates/*.md` fixture 读取真实内容
+  - [ ] AC-006: Given 通过 MCP stdio transport 调用 `describe_template({ themeId: 'default', templateId: 'starter' })`（API-033 Tool），When 执行，Then 返回 `{ themeId: 'default', templateId: 'starter', markdown: '...', metadata: { description: '...' } }`，Tool schema 定义在 `apps/mcp-server/src/tools/mcp/tool-contracts.ts` [ARCH#§3.API-033]
+- **deliverables**:
+  - [ ] `packages/themes/default/templates/starter.md` — default 主题预填 Markdown
+  - [ ] `packages/themes/magazine/templates/starter.md` — magazine 主题预填 Markdown
+  - [ ] `packages/themes/literary/templates/starter.md` — literary 主题预填 Markdown
+  - [ ] `packages/themes/business/templates/starter.md` — business 主题预填 Markdown
+  - [ ] `packages/themes/tech/templates/starter.md` — tech 主题预填 Markdown
+  - [ ] `packages/core/src/theme/template-registry.ts` — `defineTemplate` / `listThemeTemplates` / `describeTemplate` 实现（M-005 接口扩展）
+  - [ ] `packages/core/src/theme-guard/template-coverage.ts` — `validateThemeTemplates` 第 9 维守护实现（M-006 扩展）
+  - [ ] `packages/core/src/theme-guard/template-coverage.test.ts` — 单元测试（AC-005）
+  - [ ] `apps/mcp-server/src/tools/describe-template.ts` — API-033 `describe_template` Tool 实现
+  - [ ] `apps/mcp-server/src/tools/mcp/tool-contracts.ts` — 更新，追加 `describe_template` Tool schema
+  - [ ] 更新 `apps/mcp-server/src/tools/router.ts` — 注册 `describe_template` Tool
+  - [ ] `tests/mcp-server/tools/describe-template.test.ts` — AC-006 集成测试
+- **relates_to**: [F-003, F-008, F-011, M-005, M-006, M-009]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-005
+  - arch-wechat-flow-modules#§2.M-006
+  - arch-wechat-flow-api#§3.API-033
+  - arch-wechat-flow-data#§4.E-011
+  - prd-wechat-flow-f001-f014#§2.F-011
+
+---
+
+### T-DS-011: [DESIGN] P-003 主题模板市场 Penpot 设计（含 (主题, template) 组合卡片缩略图）
+
+- **目标**: 产出 P-003 主题模板市场页的完整视觉稿（三档响应式）+ ≥ 5 张 (主题, template) 组合卡片缩略图，作为 T-041 与 T-VAL-04 视觉回归的参照
+- **task_kind**: design
+- **tdd_acceptance**: skip
+- **priority**: P1
+- **complexity**: medium
+- **sprint**: 4
+- **tdd_mode**: skip
+- **tdd_skip_reason**: "Penpot 设计稿，由用户视觉验证 sign-off"
+- **dependencies**: [T-DS-001]
+- **acceptance_criteria**:
+  - [ ] AC-001: Penpot 中绘制 P-003 主题模板市场页面视觉稿（桌面/平板/移动三档），网格布局使用 C-022 TemplateThemeCard 组件，与 `ui-spec-wechat-flow-p001-p005#§3.P-003` 对齐
+  - [ ] AC-002: 绘制 ≥ 5 张 (主题, template) 组合卡片缩略图，各对应 5 内置主题（default / magazine / literary / business / tech）的默认 template，缩略图尺寸与 C-022 规格一致
+  - [ ] AC-003: 同步到 Penpot Design System 库，提供组件 ID 引用清单，通过 Penpot MCP `find_shape` 可检索到 `P-003`、`C-022`
+  - [ ] AC-004: 签字记录写入 `docs/EVENT-LOG.jsonl`（`phase=development, event=design_signoff`）
+- **deliverables**:
+  - [ ] Penpot 项目：P-003 主题模板市场页面视觉稿（三档） + ≥ 5 张 (主题, template) 组合卡片缩略图
+- **relates_to**: [F-003, F-008, P-003, C-022]
+- **context_load**:
+  - ui-spec-wechat-flow-p001-p005#§3.P-003
+
+---
+
+### T-DS-012: [DESIGN] 6 个新组件 Penpot 设计（C-017 ~ C-022）
+
+- **目标**: 产出 C-017 ~ C-022 共 6 个新组件的 Penpot 视觉规格，涵盖状态变体与 Design Token 接线
+- **task_kind**: design
+- **tdd_acceptance**: skip
+- **priority**: P1
+- **complexity**: medium
+- **sprint**: 4
+- **tdd_mode**: skip
+- **tdd_skip_reason**: "Penpot 设计稿，由用户视觉验证 sign-off"
+- **dependencies**: [T-DS-001]
+- **acceptance_criteria**:
+  - [ ] AC-001: 在 Penpot 中绘制 6 个新组件视觉规格，每个组件含 default / hover / active（或 disabled）至少 2 个状态变体：
+    - C-017 ZhTypoReviseDialog — 双栏 diff Modal，左栏原文 / 右栏改后 + rule 计数 + undo 按钮
+    - C-018 ImageUploadOverlay — 编辑器内浮层，含 drop zone / 上传进度条 / 重试按钮 / 占位符
+    - C-019 PaintDrawer — 右侧抽屉（宽 280px），含 color picker + frontmatter 绑定字段
+    - C-020 BaseColorDeriveModal — 居中 Modal + 色块矩阵（派生色预览）
+    - C-021 DirectiveAutocompletePopover — 光标下浮层 + 二级 Block/Mark variant 选择列表
+    - C-022 TemplateThemeCard — (主题, template) 组合卡片，含缩略图 + template 下拉选择器
+  - [ ] AC-002: 每个组件 Penpot 命名遵循 `C-{NNN}` 模式，与 `ui-spec-wechat-flow-c001-c014` 对应章节对齐
+  - [ ] AC-003: 组件挂接到 Penpot Design System Token，通过 Penpot MCP `find_shape` 可检索到 C-017 ~ C-022
+  - [ ] AC-004: 签字记录写入 `docs/EVENT-LOG.jsonl`（`phase=development, event=design_signoff`）
+- **deliverables**:
+  - [ ] Penpot 项目：C-017 ~ C-022 共 6 个组件视觉规格页面
+- **relates_to**: [C-017, C-018, C-019, C-020, C-021, C-022]
+- **context_load**:
+  - ui-spec-wechat-flow-c001-c014#§2.C-017
+  - ui-spec-wechat-flow-c001-c014#§2.C-018
+  - ui-spec-wechat-flow-c001-c014#§2.C-019
+  - ui-spec-wechat-flow-c001-c014#§2.C-020
+  - ui-spec-wechat-flow-c001-c014#§2.C-021
+  - ui-spec-wechat-flow-c001-c014#§2.C-022

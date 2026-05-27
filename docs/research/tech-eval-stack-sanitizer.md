@@ -101,7 +101,7 @@ web-search（2026-05 新鲜度验证）+ 三方案矩阵对比 + 生态契合度
 inline-styled HTML 必须放行 `style` 属性，但 `style` 内部仍可能注入 `expression()` / `url(javascript:...)` 等 vector。M-002 在 sanitizer 后追加 `pipeline/css-attr-filter.ts`：
 
 - 解析每个 `style` 值为 CSS declaration 列表
-- 仅放行符合微信公众号渲染兼容子集的 CSS 属性（白名单见 `packages/wechat-spec` 的 CSS 子集声明）
+- 仅放行符合微信公众号渲染兼容子集的 CSS 属性（白名单见 `packages/ruleset` 的 CSS 子集声明）
 - 拒绝任何含 `expression(` / `javascript:` / `behavior:` / `@import` 的值
 
 ### 何时应重新评估

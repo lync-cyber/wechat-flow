@@ -1,9 +1,9 @@
 ---
 id: "dev-plan-wechat-flow-s0"
-version: "0.2.0"
+version: "0.3.0"
 doc_type: dev-plan
 author: tech-lead
-status: draft
+status: approved
 deps: ["arch-wechat-flow", "ui-spec-wechat-flow"]
 consumers: [developer, qa-engineer]
 volume: sprint
@@ -53,7 +53,7 @@ required_sections:
   - [ ] `packages/core/package.json`
   - [ ] `packages/contracts/package.json`
   - [ ] `packages/plugin-api/package.json`
-  - [ ] `packages/ruleset/package.json`（对应 wechat-spec）
+  - [ ] `packages/ruleset/package.json`
   - [ ] `packages/themes/package.json`
   - [ ] `packages/blocks/package.json`
   - [ ] `packages/marks/package.json`

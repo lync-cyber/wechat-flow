@@ -26,8 +26,8 @@
 
 ## 项目状态 (orchestrator专属写入区，其他Agent禁止修改)
 - 当前阶段: dev_planning
-- 上次完成: tech-lead — dev-plan 主卷 + 7 Sprint 分卷落地（90 任务卡：73 code + 10 Penpot design + 7 validation），r2 审查 approved_with_notes (orchestrator 接管 tech-lead 截断 + inline-fix 闭环全部 r1 HIGH/MEDIUM/LOW + r2 LOW)，文档 status approved，version 0.1.2
-- 下一步行动: 进入 pre_dev 人工审查检查点 (项目配置 `[pre_dev]`)，用户确认后激活 tdd-engine 编排 Sprint 0 第一批任务（T-001 Monorepo 骨架 + T-002 工具链 + T-003 Turborepo + T-DS-001 Penpot Token 导入）
+- 上次完成: orchestrator 编排 product-manager + ui-designer + architect + tech-lead 四路 subagent + inline 闭合 REVIEW-xdoc-prd-ui-spec-r1 — 23 项专审问题（6 HIGH / 12 MEDIUM / 5 LOW）处置：17 项实际修复 + 3 项 r2 已闭合（UXDOC-001/020/021）+ 3 项遗留 ASSUMPTION 等待下游冻结（UXDOC-022 ARCH 字段已补、UXDOC-023 BlockRegistry 待 T-024、T-073 Sprint 5 模板 seed 与 T-092 协调待二轮检查）；落地用户 5 项产品决策 D1~D4 + D2.2 派生：D1 命令面板扩展到 6 组 ~25-30 命令 / D2.1 template 升级为主题预设变体（主题为命名空间）/ D2.2 主题模板市场（不保留空白卡 + 每主题 ≥ 1 预设 template + 覆盖白名单 9 基础元素 + ≥ 6 核心 Block 容器）/ D3 剪贴板降级桌面 execCommand 移动全选 / D4 v1 仅 F-006 编辑器内上传 C-018；PRD → 0.5.0（F-008 整卷重写 + F-003 新 AC-012 + F-011 新 AC-009 9 维守护 + F-013 新增 describe_template Tool 22→23）/ ui-spec → 0.2.0（新增 C-017 ~ C-022 共 6 组件 + P-003 主题模板市场重写 + C-001 加 primary 复制到公众号 CTA + F-012 协作 UI 全面标 v1 不交付 stub）/ ARCH → 0.6.0（M-005 template 接口 + M-003 nodeChangeRecords+nightRiskIssues + M-006 9 维守护 + API-033 describe_template + E-011 TemplateDefinition + Q3.14）/ dev-plan → 0.4.0（新增 T-092 + T-DS-011 + T-DS-012，任务数 91→94：75 code + 12 design + 7 validation）；14 份业务文档全量 status: approved；docs index 39 docs / 185 xref；doctor 全绿
+- 下一步行动: 进入 pre_dev 人工审查检查点 (项目配置 `[pre_dev]`)，用户确认后激活 tdd-engine 编排 Sprint 0 第一批任务（T-001 Monorepo 骨架 + T-002 工具链 + T-003 Turborepo + T-DS-001 Penpot Token 导入）；遗留 tech-lead 二轮检查项：T-020 / T-013 / T-018 / T-004 / T-073 / T-009 / T-014 是否需要补充 ARCH 0.6.0 新字段相关 AC（nodeChangeRecords / nightRiskIssues / TemplateDefinition / DirectiveAutocompletePopover）
 - 已完成阶段: [requirements, architecture, ui_design, dev_planning]
 - 当前Sprint: Sprint 0 (待用户确认 pre_dev checkpoint 后启动)
 - 文档状态:

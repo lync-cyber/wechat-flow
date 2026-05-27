@@ -1,9 +1,9 @@
 ---
 id: "dev-plan-wechat-flow-s2"
-version: "0.2.0"
+version: "0.3.0"
 doc_type: dev-plan
 author: tech-lead
-status: draft
+status: approved
 deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "ui-spec-wechat-flow", "ui-spec-wechat-flow-c001-c014"]
 consumers: [developer, qa-engineer]
 volume: sprint
@@ -48,7 +48,7 @@ required_sections:
 
 ---
 
-### T-013: packages/wechat-spec 规则集骨架 + 注册中心（M-003）
+### T-013: packages/ruleset 规则集骨架 + 注册中心（M-003）
 
 - **目标**: 建立 `@wechat-flow/ruleset` 包，实现规则注册中心、`RuleDefinition` 类型、五类 scope 执行器骨架、规则集版本管理
 - **模块**: M-003 (过滤规则集引擎)

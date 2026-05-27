@@ -1,6 +1,6 @@
 ---
 id: "ui-spec-wechat-flow-c001-c014"
-version: "0.1.2"
+version: "0.2.0"
 doc_type: ui-spec
 author: ui-designer
 status: approved
@@ -16,7 +16,7 @@ required_sections:
 # UI Specification 分卷 — 组件清单: wechat-flow
 
 [NAV]
-- §2 组件清单 → C-001..C-016
+- §2 组件清单 → C-001..C-022
 [/NAV]
 
 ## 2. 组件清单
@@ -33,11 +33,12 @@ required_sections:
 
 从左至右区域：
 1. **Logo 区**（宽 `200px`，与左侧面板等宽）：Logo 图形（赤陶 `--color-accent` 点缀）+ 产品名文字（`--font-sans`, 14px, semibold）
-2. **文档名区**（auto）：当前文档名，可点击进入文档重命名（inline edit），overflow 时 `...` 省略
-3. **当前主题指示器**（只读，不可点击）：16×16px 色块 + 主题名文字，反映 Q3 决策（顶栏显示当前主题名但不触发切换）
+2. **文档名区**（auto）：当前文档名，可点击进入文档重命名（inline edit），overflow 时 `...` 省略；文档名右侧紧邻「撤销 / 重做」按钮组（C-003 ghost variant），两按钮分别对应撤销/重做，含 `disabled` 状态（无可撤销/重做时 opacity 0.5，不响应点击）
+3. **当前主题指示器**（只读，不可点击）：16×16px 色块 + 主题名文字（Q3 决策）；当文档 frontmatter 含 `template:` 时，额外显示「· template 名」（如「magazine · 美食评测」），指示当前 (主题, template) 双重状态
 4. **工具栏按钮组**（右对齐，从左到右顺序）：
    - 「+」插入按钮（C-003 ghost variant，触发 C-015 InsertDrawer）
    - 视口切换器（C-003 ghost variant，切换预览宽度）
+   - 「**复制到公众号**」（C-003 **primary** variant，映射 F-004 主入口）：文字「复制」，紧凑尺寸 80×32px（图标+文字）或 32×32px（图标，宽屏时优先图标+文字）
    - 「...」次级菜单按钮（C-003 ghost variant，触发 C-016 ContextMenu）
 5. **用户菜单**（最右侧）：头像或默认图标，下拉展开 C-010
 
@@ -47,14 +48,14 @@ required_sections:
 |------|---------|
 | `default` | 背景 `--color-surface-elevated`，文字 `--color-text-primary` |
 | `document-unsaved` | 文档名后追加 `·`（中点符），颜色 `--color-text-muted` |
-| `syncing` | 文档名区左侧显示旋转中的同步图标（`--color-brand-muted`，16px） |
-| `offline` | 顶栏底部边框变为 `--color-warning`（2px），并在文档名旁显示「离线」小 Tag |
-| `conflict` | 顶栏底部边框变为 `--color-error`（2px），文档名右侧显示「冲突」Tag（`--color-error-subtle` 背景，`--color-error` 文字，`--font-size-xs`，`--radius-full`），点击 Tag 跳至 P-002 进入冲突合并流程 |
+| `syncing` | 文档名区左侧显示旋转中的同步图标（`--color-brand-muted`，16px）`[v1 ARCH 预留 / UI stub 不接通]` |
+| `offline` | 顶栏底部边框变为 `--color-warning`（2px），并在文档名旁显示「离线」小 Tag `[v1 ARCH 预留 / UI stub 不接通]` |
+| `conflict` | 顶栏底部边框变为 `--color-error`（2px），文档名右侧显示「冲突」Tag（`--color-error-subtle` 背景，`--color-error` 文字，`--font-size-xs`，`--radius-full`），点击 Tag 跳至 P-002 进入冲突合并流程 `[v1 ARCH 预留 / UI stub 不接通]` |
 | `focus-mode` | 工具栏按钮组全部隐藏，仅保留 Logo + 文档名；底边分隔线消失 |
 
 **变体 (variant)**: 单一形态组件，无 variant 区分
 
-**Props**: `docTitle: string`, `themeName: string`, `themeAccentColor: string`, `syncState: 'idle' | 'connecting' | 'syncing' | 'synced' | 'offline' | 'error' | 'conflict'`, `isFocusMode: boolean`, `hasUnsavedChanges: boolean`
+**Props**: `docTitle: string`, `themeName: string`, `templateName?: string`, `themeAccentColor: string`, `syncState: 'idle' | 'connecting' | 'syncing' | 'synced' | 'offline' | 'error' | 'conflict'`, `isFocusMode: boolean`, `hasUnsavedChanges: boolean`, `canUndo: boolean`, `canRedo: boolean`, `onUndo: () => void`, `onRedo: () => void`, `onCopy: () => void`
 
 ---
 
@@ -104,6 +105,12 @@ required_sections:
 - `primary`：背景 `--color-brand`，图标颜色 `--color-text-inverse`；hover 时背景 `--color-brand-hover`
 - `destructive`：hover 时图标颜色变 `--color-error`，背景变 `--color-error-subtle`
 
+**视口切换器子变体** — 在视口切换器按钮组右侧追加 `night-toggle` 子按钮（C-003 ghost）：
+- 图标：月亮/太阳双态图标
+- `toggled` 态（夜间预览开启）：背景 `--color-brand-subtle`，图标 `--color-brand`
+- 点击行为：切换 C-005 PreviewPane 的 `nightMode` Prop（`'off'` ↔ `'risk-preview'`），映射 F-002 AC-003/004（夜间风险预览）
+- Tooltip：「夜间模式风险预览」
+
 **Props**: `icon: string`, `label: string`, `variant?: 'ghost' | 'primary' | 'destructive'`, `disabled?: boolean`, `loading?: boolean`, `toggled?: boolean`, `onClick: () => void`
 
 ---
@@ -116,6 +123,7 @@ required_sections:
 
 **内部区域**：
 - 左侧行号（宽 `48px`，背景 `--color-surface-elevated`，颜色 `--color-text-muted`）
+- **diagnostic gutter**（行号右侧 `8px` 宽，每行根据 schema 校验结果显示红/黄圆点：红色 `--color-error` = schema 错误，黄色 `--color-warning` = 潜在风险；无问题时透明）
 - 正文输入区（padding `var(--space-6) var(--space-8)`）
 - 右侧可选折叠指示器
 
@@ -131,10 +139,15 @@ required_sections:
 | `blur`（焦点离开编辑器）| 光标隐藏；当前行高亮取消；行号区颜色加深一档（从 `--color-text-muted` 到 `--color-text-secondary`），暗示焦点已离开但保持位置感 |
 | `readonly` | 正文区背景变 `--color-surface-elevated`，光标变为 `default`，顶部出现只读提示 Banner（橙黄色，12px 文字，高 `28px`） |
 | `error` | 编辑器底部出现 `--color-error` 色条（`4px` 高），Toast 提示具体错误 |
+| `preview-cursor-highlight` | 来自预览块点击的反向高亮：对应编辑器行背景变为 `--color-brand-subtle`，左边框 `3px solid --color-brand`，持续到光标移动或 3s 超时 |
+| `autocomplete-active` | 编辑器中输入 `:::` 或 `:` 后弹出 C-021 DirectiveAutocompletePopover；Popover 展开时其他行背景轻微暗化（`rgba(28,25,23,0.04)`），暗示焦点集中 |
+| `find-replace-overlay` | CodeMirror 6 内置查找面板浮层，位于编辑区右上角；背景 `--color-surface-elevated`，边框 `1px solid --color-border`，阴影 `--shadow-sm`；快捷键 Ctrl+F 打开查找，Ctrl+H 打开查找替换 |
 
 **变体 (variant)**: 单一形态组件，无 variant 区分
 
 **Props**: `docId: string`, `initialValue: string`, `readonly?: boolean`, `onValueChange: (value: string) => void`, `onCursorChange: (pos: Position) => void`, `onFocus?: () => void`, `onBlur?: () => void`
+
+**约束**：支持图片拖拽（drop）与粘贴（paste），触发 C-018 ImageUploadOverlay；上传中编辑器插入 `<img data-uploading="true">` 占位节点（以 directive 形式嵌入 Markdown AST），上传完成后替换为图床 URL。
 
 #### C-004.1 CodeMirror 语法高亮 Token
 
@@ -179,16 +192,18 @@ required_sections:
 | `loading` | iframe 区域展示居中旋转 spinner（直径 `32px`，颜色 `--color-brand-muted`），背景 `--color-surface-preview` |
 | `populated` | iframe 正常显示渲染内容，无额外遮罩 |
 | `error` | iframe 区域替换为错误状态视图：居中 `!` 图标（`--color-error`，`48px`）+ 简短错误说明（`--font-sans`, 14px）+ 「重试」按钮（C-003 primary variant） |
+| `night-risk-warning` | `nightMode='risk-preview'` 时激活：预览区背景变深底（`#1C1917`，模拟深色微信 UI 环境）；对比度低于阈值的节点添加 `--color-error` `2px dashed` outline 高亮；C-013 DiagnosticsPanel 对应行高亮；顶部视口工具栏显示「夜间风险预览」标签（warning 色） |
+| `source-cursor-overlay` | 编辑器光标对应的预览节点添加 outline `--color-brand-highlight-outline`（`2px dashed #2D5A4E`）；scroll-into-view 中心对齐；节流 150ms debounce 防止高频重绘 |
 
 **变体 (variant)**: 单一形态组件，无 variant 区分
 
-**Props**: `htmlContent: string`, `viewport: '375' | '768' | 'auto'`, `isLoading: boolean`, `error?: string`, `syncState: 'idle' | 'connecting' | 'syncing' | 'synced' | 'offline' | 'error' | 'conflict'`, `onViewportChange: (v: string) => void`
+**Props**: `htmlContent: string`, `viewport: '375' | '768' | 'auto'`, `nightMode: 'off' | 'risk-preview'`, `isLoading: boolean`, `error?: string`, `syncState: 'idle' | 'connecting' | 'syncing' | 'synced' | 'offline' | 'error' | 'conflict'`, `onViewportChange: (v: string) => void`
 
-**约束**：iframe 属性 `sandbox=""`（空值，最严格）+ CSP `default-src 'none'; style-src 'unsafe-inline'; img-src https: data:; font-src https: data:;`，零 JS 注入。目录跳转、高亮联动、复制按钮均通过主线程 `iframe.contentDocument` + overlay 实现，符合 ARCH M-001 描述。
+**约束**：iframe 属性 `sandbox=""`（空值，最严格）+ CSP `default-src 'none'; style-src 'unsafe-inline'; img-src https: data:; font-src https: data:;`，零 JS 注入。目录跳转、高亮联动、复制按钮均通过主线程 `iframe.contentDocument` + overlay 实现，符合 ARCH M-001 描述。双向高亮 scroll-into-view 使用 `scrollIntoView({ behavior: 'smooth', block: 'center' })`，150ms debounce 节流。
 
-#### C-005.1 同步状态指示器（SyncStateIndicator）
+#### C-005.1 同步状态指示器（SyncStateIndicator）`[v1 ARCH 预留 / UI stub 不接通 / 视觉规格为 v2 准备]`
 
-内嵌于 C-005 右下角，形态为直径 `8px` 色点，不可点击，仅为视觉反馈。状态来源：ARCH M-013 `getSyncState` 接口返回的 `status` 字段，完整枚举 `idle | connecting | syncing | synced | offline | error | conflict`。
+内嵌于 C-005 右下角，形态为直径 `8px` 色点，不可点击，仅为视觉反馈。v1 运行时该组件渲染为静态 `idle` 态（灰色点），不接通 WebSocket 同步状态流。状态来源：ARCH M-013 `getSyncState` 接口返回的 `status` 字段，完整枚举 `idle | connecting | syncing | synced | offline | error | conflict`。
 
 **状态映射表**：
 
@@ -220,6 +235,10 @@ required_sections:
 **布局**：Tab 标题行（高 `40px`），下方内容区（剩余高度）。背景整体 `--color-surface-elevated`。
 
 **Tab 序列**（Q3 决策，固定顺序）：主题 / 组件 / 文档
+
+**Tab1「主题」内容区附加操作**: ThemeCard 列表下方，固定展示两个文字链接（各占一行，`--font-size-sm`，`--color-brand`，hover 时 underline）：
+- 「自定义配色」— 点击触发 C-019 PaintDrawer（右侧抽屉，双向绑定当前主题 paintable Token）
+- 「调色板派生」— 点击触发 C-020 BaseColorDeriveModal（居中 Modal，输入主色后实时派生 token 字典）
 
 **Tab 标题状态**：
 
@@ -271,16 +290,17 @@ required_sections:
 | `hover` | 背景 `--color-surface-overlay`，文字 `--color-text-primary`，图标颜色变 `--color-brand` |
 | `dragging`（拖拽中）| 被拖拽项背景 `--color-brand-subtle`，半透明（opacity `0.8`），跟随鼠标的 ghost 元素复制一份；鼠标下方编辑器光标变 `copy` |
 | `disabled` | 背景透明，全文字 `--color-text-muted`，opacity `0.5`，不可点击（如当前主题未实现该 Block） |
+| `expanded` | 点选右侧数量角标后展开：行高伸展，下方显示该 Block 已注册的 variant 项列表（每项含二级图标 + variant 名，高 `32px`/项，背景 `--color-surface-elevated`，左侧 `2px` 缩进）；角标变为折叠箭头；再次点击收起 |
 
 **变体 (variant)**: 单一形态组件，无 variant 区分
 
-**Props**: `block: BlockDefinition`, `disabled?: boolean`, `onInsert: (block: BlockDefinition) => void`, `onDragStart?: () => void`
+**Props**: `block: BlockDefinition`, `variants?: VariantDef[]`, `isExpanded?: boolean`, `disabled?: boolean`, `onInsert: (block: BlockDefinition) => void`, `onExpandToggle?: () => void`, `onDragStart?: () => void`
 
 ---
 
 ### C-009: 命令面板（CommandPalette）
 
-**映射功能**: F-001 (AC-008 命令超集)；Q6 决策：仅 UI 动作（~15-20 个），不含内容编辑和 LLM 动作
+**映射功能**: F-001 (AC-008 命令超集), F-014 (AC-006 中文排版修订入口)；Q6 决策（D1 扩展）：UI + 关键内容动作，~25-30 命令，6 组
 
 **布局**：居中 Modal 层叠，宽 `560px`，最大高 `400px`（内部列表超出时滚动）。背景 `--color-surface`，边框 `1px solid --color-border`，阴影 `--shadow-md`，圆角 `--radius-lg`，z-index `--z-command`。
 
@@ -289,14 +309,15 @@ required_sections:
 - 可滚动动作列表（分组，组标题 `--color-text-muted`，10px uppercase）
 - 底部快捷键提示行（`↑↓ 导航 | ↵ 执行 | Esc 关闭`）
 
-**动作分组**（Q6 细化）：
-1. **视图** — 专注模式切换、折叠左栏、折叠右栏、切换视口
-2. **主题** — 切换至各内置主题（动态生成）
-3. **文档** — 跳转到指定文档（输入关键词搜索文档列表，按 IndexedDB 中的标题模糊匹配）、新建文档、删除当前文档
-4. **导出** — 复制 inline HTML、下载 HTML 文件、导出长图、导出封面（横版）、导出封面（方版）
-5. **帮助** — 快捷键手册、新功能说明
+**动作分组**（D1 扩展后 6 组，~25-30 命令）：
+1. **视图** — 专注模式切换、折叠左栏、折叠右栏、切换视口、撤销（`Ctrl+Z`）、重做（`Ctrl+Y`）、查找（`Ctrl+F`）、查找替换（`Ctrl+H`）
+2. **主题** — 切换至各内置主题（动态生成）、自定义配色（触发 C-019）、调色板派生（触发 C-020）
+3. **文档** — 跳转到指定文档（输入关键词模糊匹配）、新建文档（跳转 P-003）、删除当前文档
+4. **内容** — 插入组件（触发 C-015 InsertDrawer 或 C-021 内联补全）、中文排版修订（触发 C-017 ZhTypoReviseDialog）
+5. **导出** — 复制 inline HTML、下载 HTML 文件、导出长图、导出封面（横版）、导出封面（方版）
+6. **帮助** — 快捷键手册、新功能说明
 
-> 注：F-014 中文排版修订不进入命令面板（已在 C-016 ContextMenu 的「中文排版修订」菜单项中作为一级入口暴露），避免双入口。Q6 决策范围明确"仅 UI 动作"，"文档"分组属 UI 导航动作，不违反 Q6 边界。
+F-014 中文排版修订与 directive 插入均可从命令面板/「...」菜单/InsertDrawer 触发，最终落到同一 command registry，避免重复实现。
 
 **状态**：
 
@@ -362,6 +383,10 @@ required_sections:
 
 **变体 (variant)**：`info` / `success` / `warning` / `error`，对应上表各状态的色系，详见状态表视觉差异描述。
 
+**文案规范**（warning 类型剪贴板降级场景，对应 D3 决策）：
+- 桌面端降级（execCommand 触发后）：「请使用 Ctrl/Cmd+C 完成复制」（引用 A-005a / F-004 AC-007a）
+- 移动端降级（全选高亮后）：「请长按选中全文后手动复制」（引用 A-005b / F-004 AC-007b）
+
 **Props**: `type: 'info' | 'success' | 'warning' | 'error'`, `message: string`, `duration?: number`, `onClose: () => void`
 
 ---
@@ -415,10 +440,13 @@ required_sections:
 | `running`（分析中）| 标题行显示「正在分析…」+ 旋转 spinner（`--color-brand-muted`），列表区域 skeleton 占位 |
 | `collapsed` | 高度 `32px`，仅显示标题行，展开按钮向上箭头 |
 | `expanded` | 高度 `auto`（最大 `200px` 可滚动），展开按钮向下箭头 |
+| `night-risk-alert` | 仅当 `diagnostics.nightRiskIssues` 非空时：面板顶边 `2px solid --color-error` 高亮，标题行追加「夜间风险 N 项」红色计数；列表中夜间风险条目前缀月亮图标（`--color-error`） |
 
 **变体 (variant)**: 单一形态组件，无 variant 区分
 
 **Props**: `diagnostics: DiagnosticReport`, `isRunning: boolean`, `isExpanded: boolean`, `onToggle: () => void`, `onItemClick: (nodeId: string) => void`, `onShowDiff: (nodeId: string) => void`
+
+`DiagnosticReport` 类型新增字段：`nightRiskIssues?: NightRiskEntry[]`（对比度低于阈值的节点列表，由 F-002 AC-003/004 提供）。
 
 #### C-013.1 兼容性 Diff 视图（CompatibilityDiffView）
 
@@ -470,7 +498,7 @@ required_sections:
 
 **Props**: `isOpen: boolean`, `nodeId: string`, `before: string` (HTML 片段), `after: string` (HTML 片段), `attrDiff: AttrDiffEntry[]`, `triggerRule: { id: string; label: string; ref: string }`, `onClose: () => void`
 
-`[ASSUMPTION]` before/after HTML 片段的获取由 M-003 过滤规则集引擎在执行过滤时记录（before = 原始 DOM 节点 outerHTML，after = 过滤后 outerHTML），通过 DiagnosticReport 中的 `nodeChangeRecords` 字段携带；当前 ARCH §3 未明确该字段，待 dev-plan 阶段对齐。
+`[ASSUMPTION]` before/after HTML 片段的获取由 M-003 过滤规则集引擎在执行过滤时记录（before = 原始 DOM 节点 outerHTML，after = 过滤后 outerHTML），通过 DiagnosticReport 中的 `nodeChangeRecords` 字段携带；已提请 architect 在下一轮 ARCH §3 添加 `nodeChangeRecords` 字段，未补齐前 C-013.1 保持 ASSUMPTION 状态。
 
 ---
 
@@ -502,13 +530,13 @@ required_sections:
 
 **映射功能**: F-001 (AC-002 directive 插入), F-001 (AC-001 UI 骨架「+」入口)；对应 ARCH M-001 InsertDrawer
 
-**触发方式**：点击顶栏工具栏右侧「+」按钮（C-001 工具栏第一个图标按钮）展开；再次点击或 Esc 关闭。
+**触发方式**：点击顶栏工具栏右侧「+」按钮（C-001 工具栏第一个图标按钮）展开；再次点击或 Esc 关闭；或在编辑器中输入 `:::` 触发内联补全 C-021 后选定 Block 时跳转到 InsertDrawer 配置详细参数（用户在长参数场景使用）。
 
 **布局**：从右侧滑入的抽屉，宽 `320px`，高度撑满视口（顶栏以下），背景 `--color-surface`，左边框 `1px solid --color-border`，阴影 `--shadow-md`，z-index `--z-dropdown`。
 
 **内部结构**：
 - 标题行（高 `48px`）：「插入组件」标题（16px, semibold）+ 右侧关闭按钮（C-003 ghost）
-- 分类 Tab 行（高 `40px`）：`[ASSUMPTION]` 按 directive 类型分四组「行内」/「块级」/「标注」/「封面」 — 分组依据为 directive 在编辑器内的渲染位置（inline / block / mark / cover），与 ARCH M-001 BlockRegistry 实际类型枚举可能存在偏差，dev-plan 阶段需对齐 BlockRegistry 的真实分类轴并修订本字段；不对齐 BlockRegistry 时开发者不应硬编码这 4 个分类名
+- 分类 Tab 行（高 `40px`）：`[ASSUMPTION]` 按 directive 类型分四组「行内」/「块级」/「标注」/「封面」 — 分组依据为 directive 在编辑器内的渲染位置（inline / block / mark / cover），与 ARCH M-001 BlockRegistry 实际类型枚举可能存在偏差，dev-plan T-024 BlockRegistry 冻结后修订本字段；当前 4 分类为临时占位，不应硬编码到代码
 - 组件列表（剩余高度，可滚动）：每项为 C-008 BlockLibItem 规格，含图标 + 名称 + 简述
 - 底部参数表单区（高度 auto，当选中某组件后展开）：显示该 directive 的可配置参数（key-value 表单行，C-003 风格的输入控件）+ 实时预览（小型 iframe 沙箱，宽度适配抽屉，高 `120px`，展示该组件当前参数下的渲染效果）
 
@@ -530,7 +558,7 @@ required_sections:
 
 ### C-016: ContextMenu（「...」次级菜单）
 
-**映射功能**: F-001 (AC-001 UI 骨架「...」次级菜单), F-006 (导出), F-014 (中文排版修订入口), F-001 (载入示例)；对应 ARCH M-001 ContextMenu
+**映射功能**: F-001 (AC-001 UI 骨架「...」次级菜单, AC-003 载入示例), F-004 (一键复制与 HTML 导出), F-014 (中文排版修订入口)；对应 ARCH M-001 ContextMenu
 
 **触发方式**：点击顶栏工具栏「...」图标按钮（C-001 工具栏最右侧，紧邻用户菜单）展开；点击菜单外部或 Esc 关闭。与 C-010 DropdownMenu 共享样式规范，本条目定义其内容结构与菜单项语义。
 
@@ -570,3 +598,195 @@ required_sections:
 - **「更多...」跳命令面板** — Ctrl+K 已是命令面板标准入口（A-003 全局快捷键），ContextMenu 内重复跳转入口冗余
 
 后续若 PRD/ARCH 升级 AC 包含上述功能，再在本菜单结构中追加。
+
+---
+
+### C-017: 中文排版修订对话框（ZhTypoReviseDialog）
+
+**映射功能**: F-014 (AC-003 diff 预览, AC-004 确认写回并纳入 undo)
+
+**触发方式**：命令面板「内容」分组「中文排版修订」动作 / C-016 ContextMenu「中文排版修订」菜单项 / 顶栏「...」菜单（均落到同一 command registry）
+
+**布局**：复用 C-012 Modal `lg` 尺寸（宽 `720px`），`form-variant`，居中；背景遮罩 `rgba(28,25,23,0.5)`。
+
+**内部结构**：
+- 标题行：「中文排版修订预览」（20px, semibold）
+- 主体双栏 diff（各占 ~50%）：
+  - 左栏「原文」（背景 `--color-surface`）
+  - 右栏「修订后」（背景 `--color-success-subtle`）
+  - 行级高亮：修改行左侧 `3px solid --color-warning`（黄，表示变更），新增行 `3px solid --color-success`（绿）
+- 右侧固定宽度规则计数列表（宽 `160px`，竖向排列 4 类规则及命中数量）：
+  - 中英文空格 N 处
+  - 全半角标点 N 处
+  - 智能引号 N 处
+  - 省略号/破折号 N 处
+- 底部按钮行（右对齐）：「取消」（ghost）+ 「应用修订」（primary）
+
+**状态**：
+
+| 状态 | 视觉表现 |
+|------|---------|
+| `loading-analyze` | 主体区域居中 spinner（`--color-brand-muted`，32px）+ 文字「正在分析…」 |
+| `populated` | 双栏 diff 正常显示，规则计数列表展示各类数量，「应用修订」按钮可用 |
+| `empty-no-changes` | 主体区域居中图标（对勾，`--color-success`）+ 文字「文档排版规范，无需修订」；「应用修订」按钮 disabled |
+| `applying` | 「应用修订」按钮变为 loading 态（spinner），内容区 opacity 0.5 |
+| `applied` | Modal 自动关闭，Toast（success）「排版修订已应用，可按 Ctrl+Z 撤销」 |
+
+**变体 (variant)**: 单一形态组件，无 variant 区分
+
+**Props**: `isOpen: boolean`, `original: string`, `revised: string`, `perRule: Record<RuleId, number>`, `onApply: () => void`, `onCancel: () => void`
+
+**约束**：应用后修订通过编辑器 transaction 纳入 CodeMirror 6 undo 栈，支持 Ctrl+Z 完整撤销。
+
+---
+
+### C-018: 图片上传浮层（ImageUploadOverlay）
+
+**映射功能**: F-006 (AC-004 占位图节点, AC-001 多图床上传, 拖拽/粘贴/进度/重试)
+
+**触发方式**：编辑器内 drop 图片文件 / paste 图片 / 点击「+」InsertDrawer 中「插入图片」directive
+
+**布局**：编辑器内浮层，跟随光标位置或拖拽释放位置；宽 `320px`，高 auto；圆角 `--radius-md`，阴影 `--shadow-md`，背景 `--color-surface`，边框 `1px solid --color-border`；z-index `--z-dropdown`。
+
+**状态**：
+
+| 状态 | 视觉表现 |
+|------|---------|
+| `idle` | 虚线边框（`2px dashed --color-border`）+ 居中提示文字「拖入图片或粘贴」（14px, muted）+ 图片图标（`--color-text-muted`，32px） |
+| `dragging` | 边框变为实线 `2px solid --color-brand`，背景变 `--color-brand-subtle`；提示文字变「松开以上传」（`--color-brand`） |
+| `uploading` | 上方缩略图占位（灰色矩形，高 `80px`，pulse 动画）+ 下方 C-014 JobProgressBar（`running` 态，高度 `8px`）+ 进度百分比文字 |
+| `success` | 居中对勾图标（`--color-success`，32px）+ 文字「上传成功」，2s 后浮层自动关闭 |
+| `error` | 居中错误图标（`--color-error`，32px）+ 错误说明文字（12px, `--color-error`）+ 「重试」按钮（C-003 destructive）+ 「取消」文字链接 |
+
+**变体 (variant)**: 单一形态组件，无 variant 区分
+
+**Props**: `state: 'idle' | 'dragging' | 'uploading' | 'success' | 'error'`, `progress?: number`, `errorMsg?: string`, `previewUrl?: string`, `onRetry: () => void`, `onCancel: () => void`
+
+**约束**：上传中编辑器插入 `<img data-uploading="true" data-placeholder="true">` 占位节点；上传完成后原子替换为图床 URL；上传失败时占位节点保留，用户点「重试」重新上传或点「取消」删除占位节点。
+
+---
+
+### C-019: 自定义配色抽屉（PaintDrawer）
+
+**映射功能**: F-003 AC-010 (paint 双向绑定，覆写当前主题 paintable Token)
+
+**触发方式**：C-006 LeftPanelTabs Tab1「主题」内容区「自定义配色」文字链接 / C-009 命令面板「主题」分组「自定义配色」动作
+
+**布局**：右侧抽屉，宽 `320px`，高度撑满视口（顶栏以下）；背景 `--color-surface`，左边框 `1px solid --color-border`，阴影 `--shadow-md`，z-index `--z-dropdown`；从右侧滑入（`--duration-base`，`--ease-decelerate`）。
+
+**内部结构**：
+- 标题行（高 `48px`）：「自定义配色」（16px, semibold）+ 关闭按钮（C-003 ghost）
+- Token 列表（可滚动，剩余高度）：每项一行（高 `48px`）：
+  - Token 名（12px, mono, `--color-text-secondary`）
+  - color picker 色圆（点击展开原生/自定义 color picker）
+  - 当前值 hex 文字（12px, `--color-text-primary`）
+  - 超出 paintable 范围的覆盖项行末显示黄色感叹图标（`--color-warning`，tooltip「此 Token 不在主题 paintable 范围内」）
+- 底部操作行（高 `56px`，sticky bottom）：「重置默认值」按钮（ghost，左对齐）+ 「应用」按钮（primary，右对齐）
+
+**状态**：
+
+| 状态 | 视觉表现 |
+|------|---------|
+| `closed` | 不存在于 DOM |
+| `open` | 抽屉正常显示，Token 列表展示当前主题所有 paintable Token 及其当前值 |
+| `editing` | 鼠标 hover 某 Token 行时背景 `--color-surface-overlay`；color picker 展开时该行保持高亮 |
+
+**变体 (variant)**: 单一形态组件，无 variant 区分
+
+**Props**: `isOpen: boolean`, `paintable: TokenPath[]`, `currentValues: Record<TokenPath, string>`, `onChange: (token: TokenPath, value: string) => void`, `onReset: () => void`, `onClose: () => void`
+
+---
+
+### C-020: 调色板派生 Modal（BaseColorDeriveModal）
+
+**映射功能**: F-003 AC-011 (base-color 派生，输入主色 → 实时预览派生 token 字典)
+
+**触发方式**：C-006 LeftPanelTabs Tab1「主题」内容区「调色板派生」文字链接 / C-009 命令面板「主题」分组「调色板派生」动作
+
+**布局**：居中 Modal，宽 `560px`，复用 C-012 `form-variant`；背景遮罩 `rgba(28,25,23,0.5)`。
+
+**内部结构**：
+- 标题行：「调色板派生」（20px, semibold）
+- 主色输入区（高 `64px`）：color picker 色圆（40×40px）+ hex 输入框（`--font-mono`）+ 采色说明文字（12px, muted）
+- 实时派生 token 字典预览（色块矩阵）：按类别分组（表面色/边框色/文字色/品牌色/功能色），每组横向排列色块（`24×24px` 圆角 `--radius-sm`）+ 对应 Token 名（10px, mono, muted）；派生结果随主色输入实时更新（debounce 300ms）
+- 底部操作行：「取消」（ghost）+ 「应用到当前主题」（primary）
+
+**状态**：
+
+| 状态 | 视觉表现 |
+|------|---------|
+| `closed` | 不存在于 DOM |
+| `open-empty` | 主色输入区为空，色块矩阵展示占位灰块，「应用」按钮 disabled |
+| `editing` | 主色输入有值，色块矩阵实时更新展示派生结果，「应用」按钮可用 |
+| `applying` | 「应用」按钮变 loading 态，内容区 opacity 0.6 |
+
+**变体 (variant)**: 单一形态组件，无 variant 区分
+
+**Props**: `isOpen: boolean`, `currentBaseColor?: string`, `onApply: (baseColor: string, derivedTokens: Record<TokenPath, string>) => void`, `onCancel: () => void`
+
+**约束**：派生算法在 LCH 色彩空间运行，保证色彩感知均匀性；派生结果写入 C-019 PaintDrawer Token 列表（即先派生后可在 C-019 中微调）。
+
+---
+
+### C-021: Directive 内联补全 Popover（DirectiveAutocompletePopover）
+
+**映射功能**: F-001 (AC-002 directive 补全), F-001 (DRAFT 编辑器内直接输入 directive 语法)
+
+**触发方式**：编辑器中输入 `:::` 后触发（块级 directive）；输入 `:` 后触发（行内 directive，需至少再输入 1 字符过滤）；Esc 关闭 / 选中后自动关闭
+
+**布局**：浮层，定位于光标下方（边界检测后可上移）；宽 `280px`，高 auto（最大 `320px` 可滚动）；背景 `--color-surface`，边框 `1px solid --color-border`，阴影 `--shadow-base`，圆角 `--radius-md`，z-index `--z-dropdown`。
+
+**内部结构**：
+- 顶部搜索框（高 `36px`，与编辑器当前输入同步过滤，`--font-mono`）
+- 分类标签行（高 `32px`，水平滚动）：`[ASSUMPTION]` 行内 / 块级 / 标注 / 封面 — 依 BlockRegistry 冻结后修订
+- 组件列表（可滚动）：每项（高 `36px`）= Block 类型图标（16px）+ Block 名称（14px）+ variant 数量角标
+- 选中某 Block 后展开二级 variant 选择（替换列表区）：variant 名列表 + 实时参数表单（key-value 输入，最多 3 项；超过 3 项自动附加「在 InsertDrawer 中配置」链接）
+
+**状态**：
+
+| 状态 | 视觉表现 |
+|------|---------|
+| `hidden` | 不存在于 DOM |
+| `open-empty` | 显示全量 Block 列表，搜索框聚焦，第一项默认高亮 |
+| `typing` | 搜索框有输入，列表实时过滤，匹配字符高亮（`--color-brand` 加粗）|
+| `block-selected` | 列表区替换为二级 variant 选择面板；顶部面包屑「← Block 名」可回退 |
+| `variant-selected` | 二级面板底部显示参数表单；参数填写后「插入」按钮可用 |
+
+**变体 (variant)**: 单一形态组件，无 variant 区分
+
+**Props**: `isOpen: boolean`, `triggerType: 'block' | 'inline'`, `blocks: BlockDefinition[]`, `currentInput: string`, `onSelect: (directive: { type: string; blockId: string; variantId?: string; params?: Record<string, unknown> }) => void`, `onClose: () => void`
+
+**约束**：与 C-015 InsertDrawer 共享 directive registry（同一 command registry，不维护两份列表）；选中 Block 后用户可跳转到 InsertDrawer 配置详细参数。
+
+---
+
+### C-022: 主题模板卡片（TemplateThemeCard）
+
+**映射功能**: F-003 AC-012 (主题预设变体), F-008 (主题模板市场卡片展示)
+
+**位置**: P-003 主题模板市场
+
+**布局**：卡片宽 `280px`，高 auto；圆角 `--radius-base`，边框 `1px solid --color-border-subtle`，背景 `--color-surface`。
+
+**内部结构**：
+- 缩略图（高 `160px`，圆角 `--radius-sm`，覆满上部）：该 (主题, template) 组合的实际渲染截图或 iframe 缩略，不是空模板占位图
+- 内容区（padding `--space-4`）：
+  - 主题名（16px, semibold，`--color-text-primary`）
+  - template 名（14px, `--color-text-secondary`）
+  - 简短描述（12px, `--color-text-muted`，最多 2 行，超出省略）
+  - 「使用此模板」按钮（C-003 primary，全宽，高 `36px`）
+
+**状态**：
+
+| 状态 | 视觉表现 |
+|------|---------|
+| `default` | 边框 `1px solid --color-border-subtle`，无阴影 |
+| `hover` | 边框 `1px solid --color-border`，阴影 `--shadow-sm`，缩略图轻微 zoom（scale 1.02，overflow hidden），鼠标 `pointer` |
+| `loading` | 「使用此模板」按钮变为 loading 态（spinner），卡片其余部分 opacity 0.7 |
+| `selected`（当前已应用主题对应卡片）| 左上角徽章「正在使用」（`--color-brand-subtle` 背景，`--color-brand` 文字，`--font-size-xs`，`--radius-full`）；边框 `2px solid --color-brand` |
+
+**变体 (variant)**: 单一形态组件，无 variant 区分
+
+**Props**: `theme: ThemeDefinition`, `template: TemplateDefinition`, `isCurrentTheme: boolean`, `onUseTemplate: (themeId: string, templateId: string) => void`
+
+**约束**：缩略图须为该 (主题, template) 实际渲染结果（截图或 iframe 缩略），不允许使用通用空模板预览图，以确保卡片的"主题能力活样本"职责。

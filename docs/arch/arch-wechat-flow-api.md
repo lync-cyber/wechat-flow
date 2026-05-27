@@ -1,9 +1,9 @@
 ---
 id: "arch-wechat-flow-api"
-version: "0.4.0"
+version: "0.6.0"
 doc_type: arch
 author: architect
-status: draft
+status: approved
 deps: ["prd-wechat-flow", "prd-wechat-flow-f001-f014"]
 consumers: [tech-lead, ui-designer, developer, devops, qa-engineer]
 volume: api
@@ -15,12 +15,13 @@ required_sections:
 # Architecture 分卷 — 接口契约: wechat-flow
 
 [NAV]
-- §3 接口契约 → API-001..API-015, API-016（合并条目，含 6 个 Tool）, API-017..API-031
-  - §3.1 MCP Tool 契约 (API-001..API-015, API-016 合并条目)
+- §3 接口契约 → API-001..API-015, API-016（合并条目，含 6 个 Tool）, API-017..API-033
+  - §3.1 MCP Tool 契约 (API-001..API-015, API-016 合并条目, API-033 describe_template)
   - §3.2 Relay REST/SSE 接口 (API-017..API-021)
   - §3.3 CLI 命令契约 (API-022..API-025)
   - §3.4 Yjs 同步接口 (API-026..API-027)
   - §3.5 Admin API key 管理 (API-028..API-031)
+  - §3.6 Editor Session 鉴权 (API-032)
 [/NAV]
 
 ## 3. 接口契约
@@ -54,8 +55,20 @@ required_sections:
 > - `2xx`: 200 同步成功 / 202 长任务已入队
 > - `4xx 客户端错误`: 400 入参 schema 校验失败（`E_SCHEMA`）/ 401 API key 无效（`E_AUTH`）/ 403 沙箱权限拒绝（`E_PERMISSION_DENIED`）/ 404 资源不存在（`E_NOT_FOUND`）/ 409 idempotency 冲突（`E_IDEMPOTENCY_CONFLICT`）/ 429 配额超限（`E_QUOTA_EXCEEDED`）
 > - `5xx 服务端错误`: 500 内部错误（`E_INTERNAL`）/ 502 上游错误（`E_UPSTREAM`，如微信素材库 / 图床）/ 503 服务过载（`E_OVERLOAD`，Job 队列堆积超阈值）/ 504 上游超时（`E_TIMEOUT`）
+>
+> **共享 QuotaConfigSchema**（在 `@wechat-flow/contracts` 内定义；API-028 与 E-010 单源引用）：
+> ```ts
+> export const QuotaConfigSchema = z.object({
+>   requestsPerMinute: z.number().int().min(1).max(10000).default(60),
+>   burstSize: z.number().int().min(1).max(1000).default(120),
+>   requestsPerDay: z.number().int().min(1).max(1000000).default(10000),
+>   monthlyJobCap: z.number().int().min(1).max(1000000).default(50000),
+>   maxConcurrentJobs: z.number().int().min(1).max(100).default(5),
+> });
+> ```
+> M-009 / M-010 rate-limit 中间件按此字段执行；任何字段命名漂移视为 contracts 违规。
 
-### 3.1 MCP Tool 契约 (API-001..API-016)
+### 3.1 MCP Tool 契约 (API-001..API-016, API-033)
 
 #### API-001: render_markdown
 
@@ -114,7 +127,7 @@ response:
 ```yaml
 tool: describe_theme
 module: M-009
-maps_to: F-013 AC-002
+maps_to: F-013 AC-002 / F-008 AC-004
 request:
   body:
     themeId: { type: string, required: true }
@@ -126,7 +139,9 @@ response:
     tokens: { type: "TokenDefinition[]" }
     paintable: { type: "string[] | 'all-colors'", desc: "可被 frontmatter.paint 覆盖的 token 路径白名单" }
     assets: { type: "Record<string, AssetRef>", desc: "主题装饰资产清单" }
-    templates: { type: "TemplateSummary[]", desc: "该主题随发的内置内容模板 (F-008 AC-002)" }
+    templates: { type: "TemplateMeta[]", desc: "该主题已注册的 template 预设变体清单（templateId + 缩略元数据），不含 Markdown 正文；调用方需取正文时调用 API-033 describe_template (F-008 AC-004)" }
+  errors:
+    ThemeNotFound: { code: "E_THEME_NOT_FOUND" }
 ```
 
 #### API-005: list_blocks
@@ -403,7 +418,59 @@ response:
     })
 ```
 
-> 说明：API-016 是 6 个相关 Tool 的合并条目（4 个长任务 + `get_job` + `get_ruleset_version`）；与 §3.1 API-001..API-015 合并后 Tool 总数为 22（16 同步 + 6 异步）。编号在物料化时可按需展开为 API-016a..API-016f。所有长任务 Tool 与 `get_job` 的 `jobId` 字段统一 `z.string().uuid()`，与 Relay REST API-017/018/019 及 E-008 主键约束对齐。
+> 说明：API-016 是 6 个相关 Tool 的合并条目（4 个长任务 + `get_job` + `get_ruleset_version`）；与 §3.1 API-001..API-015 + API-033 合并后 Tool 总数为 **23**（17 同步 + 6 异步）。编号在物料化时可按需展开为 API-016a..API-016f。所有长任务 Tool 与 `get_job` 的 `jobId` 字段统一 `z.string().uuid()`，与 Relay REST API-017/018/019 及 E-008 主键约束对齐。
+
+#### API-033: describe_template
+
+```yaml
+tool: describe_template
+module: M-009
+maps_to: F-013 AC-002 / F-008 AC-004
+desc: "返回 (themeId, templateId) 复合键对应的 template 预填 Markdown、白名单覆盖统计与 mdast 结构摘要；供 LLM Agent 在主题模板市场场景下取得预填起点。"
+request:
+  body:
+    themeId: { type: string, required: true, desc: "主题 ID，须命中 list_themes 返回值" }
+    templateId: { type: string, required: true, desc: "主题命名空间下的 templateId，须命中 describe_theme.templates 返回值" }
+response:
+  schema:
+    markdown: { type: string, desc: "template 预填 Markdown 源码（含 frontmatter，已绑定 themeId）" }
+    coveredElements:
+      baseElements: { type: "string[]", desc: "命中的基础元素白名单子集（H1..H6 / paragraph / list / blockquote / link / code-block / hr / image / table 共 9 项）" }
+      coreBlocks: { type: "string[]", desc: "命中的核心 Block 容器（callout / card / steps / quote / pull-quote / compare 等 ≥ 6 种）" }
+    mdastSummary:
+      nodeCount: { type: number, desc: "mdast 节点总数" }
+      blockCount: { type: number, desc: "块级节点数（heading / paragraph / list / blockquote / code / etc.）" }
+      markCount: { type: number, desc: "行内 mark 节点数（strong / emphasis / link / inlineCode / directive 等）" }
+    dependencies:
+      tokens: { type: "TokenPath[]", desc: "该 template 渲染时消费的 token 路径（来自模板中 Block / Mark 的 tokenDependencies 汇总）" }
+      blocks: { type: "BlockId[]", desc: "该 template 引用的 Block ID 列表" }
+  errors:
+    ThemeNotFound: { code: "E_THEME_NOT_FOUND", http: 404, desc: "themeId 不存在于主题注册中心" }
+    TemplateNotFound: { code: "E_TEMPLATE_NOT_FOUND", http: 404, desc: "templateId 在该 themeId 命名空间下不存在" }
+zod_schema: |
+  // request
+  const DescribeTemplateRequestSchema = z.object({
+    themeId: z.string(),
+    templateId: z.string(),
+  });
+  // response
+  const DescribeTemplateResponseSchema = z.object({
+    markdown: z.string(),
+    coveredElements: z.object({
+      baseElements: z.array(z.string()),
+      coreBlocks: z.array(z.string()),
+    }),
+    mdastSummary: z.object({
+      nodeCount: z.number().int().nonnegative(),
+      blockCount: z.number().int().nonnegative(),
+      markCount: z.number().int().nonnegative(),
+    }),
+    dependencies: z.object({
+      tokens: z.array(z.string()),
+      blocks: z.array(z.string()),
+    }),
+  });
+```
 
 ### 3.2 Relay REST/SSE 接口 (API-017..API-021)
 
@@ -632,10 +699,10 @@ module: M-011
 maps_to: F-010 AC-002 / AC-005 / AC-006 / F-011 AC-003
 flags:
   --pack: { type: string, required: false, desc: "缺省 cwd" }
-  --strict-theme: { type: boolean, required: false, desc: "对主题强制 8 维守护" }
+  --strict-theme: { type: boolean, required: false, desc: "对主题强制 9 维守护（含内置 template 完整性）" }
 exits:
   0: "全部校验通过"
-  1: "至少一项校验失败（manifest / schema / variant 申报 / 主题守护 8 维）"
+  1: "至少一项校验失败（manifest / schema / variant 申报 / 主题守护 9 维）"
 stdout: "结构化 JSON 诊断 + 人类可读 summary"
 ```
 
@@ -772,7 +839,7 @@ behavior:
 > - 必须携带 `X-Admin-Request: 1` 自定义 header（防 CSRF / 误触发）
 > - 来源 IP 须命中环境变量 `ADMIN_IP_ALLOWLIST` 白名单；缺省仅允许 loopback (`127.0.0.1` / `::1`)
 > - 所有 admin 调用写审计日志（actor=apiKeyId, action, target, ts），日志通过 §5.5 审计追溯通道持久化
-> - admin key 与 user key 在 E-010 表用 `scope` 字段区分；admin scope 不可调 22 个 Tool（M-009 `auth/scope-guard.ts` 拦截）
+> - admin key 与 user key 在 E-010 表用 `scope` 字段区分；admin scope 不可调 23 个 Tool（M-009 `auth/scope-guard.ts` 拦截）
 
 #### API-028: POST /api/v1/admin/api-keys
 
@@ -791,11 +858,7 @@ request:
       z.object({
         name: z.string().min(1).max(100),                        // 人类可读名称
         scope: ScopeSchema,                                      // 'admin' | 'user' | 'user,render,...' 细粒度
-        quotaConfig: z.object({
-          requestsPerMinute: z.number().int().min(1).max(10000).default(60),
-          requestsPerDay: z.number().int().min(1).max(1000000).default(10000),
-          maxConcurrentJobs: z.number().int().min(1).max(100).default(5),
-        }).optional(),
+        quotaConfig: QuotaConfigSchema.optional(),               // 字段定义见 §3 公共约定
         expiresAt: z.string().datetime().optional(),             // 缺省永不过期
         description: z.string().max(500).optional(),
       })
@@ -807,7 +870,7 @@ response:
         key: z.string(),                  // 明文 key，仅本次响应返回，之后只能哈希查询
         name: z.string(),
         scope: ScopeSchema,
-        quotaConfig: z.object({ /* 同 request */ }),
+        quotaConfig: QuotaConfigSchema,
         createdAt: z.string().datetime(),
         expiresAt: z.string().datetime().nullable(),
       })
@@ -842,7 +905,7 @@ response:
           name: z.string(),
           scope: ScopeSchema,
           status: z.enum(['active', 'revoked', 'expired']),
-          quotaConfig: z.object({ /* 同 API-028 */ }),
+          quotaConfig: QuotaConfigSchema,
           createdAt: z.string().datetime(),
           lastUsedAt: z.string().datetime().nullable(),
           expiresAt: z.string().datetime().nullable(),
@@ -914,3 +977,56 @@ response:
   404: { schema: ErrorResponse, desc: "E_NOT_FOUND — keyId 不存在" }
   409: { schema: ErrorResponse, desc: "E_CONFLICT — 该 key 已被 revoke" }
 ```
+
+### 3.6 Editor Session 鉴权 (API-032)
+
+> Editor SPA 部署于 CDN，**不持有任何长期 API key**；调用 Relay 受保护端点（API-017/018/019/020 等）须先经此端点交换短期 JWT。JWT 生命周期 ≤15min，过期前 1min 客户端主动续期；JWT 在 `Authorization: Bearer` header 传递，与 API key 共用同一鉴权中间件（中间件按 `iss` 字段区分）。
+
+#### API-032: POST /api/v1/editor/session
+
+```yaml
+path: /api/v1/editor/session
+method: POST
+module: M-010 (中继服务)
+maps_to: PRD §3.2 凭据隔离 / F-006 / F-005 P0 写作者路径
+desc: "Editor SPA 交换短期 JWT 的唯一入口；支持两种 bootstrap：用户已登录账户的 OAuth token 兑换，或匿名 session（按 IP + device fingerprint 限流，调用 Tool 不可达 admin scope）"
+auth: 见 request.body.bootstrap
+request:
+  headers:
+    X-Editor-Origin: { type: string, required: true, desc: "Editor SPA origin（与 CORS 白名单比对）" }
+  body:
+    schema: |
+      z.discriminatedUnion('bootstrap', [
+        z.object({
+          bootstrap: z.literal('oauth'),
+          provider: z.enum(['github', 'wechat-mp', 'custom']),
+          oauthToken: z.string(),               // 上游 OAuth 颁发的 access token
+        }),
+        z.object({
+          bootstrap: z.literal('anonymous'),
+          deviceFingerprint: z.string().min(16).max(128),  // 客户端生成的稳定 fingerprint
+          captchaToken: z.string().optional(),  // 反滥用，可选 hCaptcha / Turnstile token
+        }),
+      ])
+response:
+  200:
+    schema: |
+      z.object({
+        sessionJwt: z.string(),                  // 短期 JWT，HS256 签名，载荷含 iss='editor', sub=ownerRef, scope, exp, iat
+        expiresAt: z.string().datetime(),        // ISO datetime，≤ now + 15min
+        refreshUntil: z.string().datetime(),     // 允许续期窗口（exp 前 1min 起）
+        scope: ScopeSchema,                      // 通常为 'user,render,upload'（不含 wechat-asset、不含 admin）
+        sessionId: z.string().uuid(),            // 服务端 audit 追溯
+      })
+  400: { schema: ErrorResponse, desc: "E_SCHEMA — bootstrap 入参不合法" }
+  401: { schema: ErrorResponse, desc: "E_AUTH — oauth token 验证失败" }
+  403: { schema: ErrorResponse, desc: "E_PERMISSION_DENIED — origin 不在白名单 / IP 触发反滥用" }
+  429: { schema: ErrorResponse, desc: "E_QUOTA_EXCEEDED — 匿名 session 限流" }
+behavior:
+  - "JWT 载荷 `{ iss:'editor', sub:ownerRef, scope, exp, iat, sessionId }`；HS256 签名，密钥从 Relay 环境变量 EDITOR_JWT_SECRET 读取"
+  - "续期路径：客户端在 exp 前 1min 调用 POST /api/v1/editor/session/refresh（Authorization: Bearer 旧 JWT）；服务端校验 sessionId 未吊销后颁发新 JWT"
+  - "M-009 / M-010 鉴权中间件统一按 Bearer token 解析；JWT `iss='editor'` 时走 session 校验路径，API key（长期）走原 E-010 哈希校验路径"
+  - "AppID/AppSecret / 图床 token 在所有 session 路径下均不下发到浏览器；wechat-asset scope 仅 user/admin key 可携带，editor session 不可达 API-018"
+```
+
+> **API-017..020 鉴权语义补充**: `Authorization: Bearer <token>` 中 token 可为 (a) long-lived API key（CLI / MCP / 后端调用方）或 (b) Editor session JWT（仅 Editor SPA）。两类 token 通过 JWT header `iss` 字段或非 JWT 长度区分；M-009 / M-010 中间件统一接入 `auth/token-resolver.ts`。

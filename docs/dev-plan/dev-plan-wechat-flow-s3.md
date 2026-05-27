@@ -1,9 +1,9 @@
 ---
 id: "dev-plan-wechat-flow-s3"
-version: "0.2.0"
+version: "0.3.0"
 doc_type: dev-plan
 author: tech-lead
-status: draft
+status: approved
 deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "ui-spec-wechat-flow", "ui-spec-wechat-flow-c001-c014"]
 consumers: [developer, qa-engineer]
 volume: sprint
@@ -128,7 +128,7 @@ required_sections:
 - **dependencies**: [T-021]
 - **acceptance_criteria**:
   - [ ] AC-001: Given 四套主题各自调用 `validateThemeGuard`，When 执行，Then 全部 `passed === true`，无 CRITICAL failures [F-003 AC-001]
-  - [ ] AC-002: Given `tech` 主题，When 应用到含代码块的 Markdown，Then 产出 HTML 中代码块背景色与 default 主题明显不同（`tech` 主题应为暗底/等宽风格）[F-003 AC-001 描述]
+  - [ ] AC-002: Given `tech` 主题应用到含代码块的 Markdown，When 解析产出 HTML 中代码块 `style` 属性，Then `background-color` 与 default 主题代码块解析得到的 luminance 差值 ≥ 0.4（tech 主题暗底）；`font-family` 属性含等宽字体族（匹配 `/mono|consolas|menlo|sf mono|courier/i`）[F-003 AC-001 描述]
   - [ ] AC-003: Given 五套主题注册到注册中心，When `listThemes()`，Then 返回数组长度 ≥ 5，含 `default`、`magazine`、`literary`、`business`、`tech` [F-003 AC-001]
   - [ ] AC-004: Given 每套主题的 token 字典，When 检查跨主题身份 token，Then 五套主题的 `--color-brand` 值各不相同（防碰撞守护维度之一）[F-011 AC-003]
 - **deliverables**:
@@ -404,6 +404,7 @@ required_sections:
 - **dependencies**: [T-021, T-022, T-026, T-027, T-028, T-029]
 - **acceptance_criteria**:
   - [ ] 打开编辑器，左侧面板「主题」Tab 显示 5 张 ThemeCard（default/magazine/literary/business/tech），点击任意一张，PreviewPane 内样式立即变化（约 250ms 渐变），TopBar 主题指示器更新
+  - [ ] 内置 Block 数 `listBlocks().length >= 25`（Sprint 3 阶段验收口径；PRD §1.3 终态 ≥40 由 Sprint 6 T-075 验收）
   - [ ] 在 Markdown 中写入 `---\ntheme: tech\n---\n# 技术文章`，PreviewPane 自动采用 tech 主题样式
   - [ ] 按 Ctrl+K 打开 CommandPalette，输入「magazine」，列表出现「切换至 magazine 主题」命令，按 Enter 执行，主题切换成功
   - [ ] 点击 TopBar「+」按钮，InsertDrawer 从右侧滑入，列表含 ≥ 10 个 Block；点击 callout，底部参数区展开，点击「插入」后编辑器内出现 `:::callout\n` 语法片段

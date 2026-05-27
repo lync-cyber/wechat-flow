@@ -1,9 +1,9 @@
 ---
 id: "dev-plan-wechat-flow-s5"
-version: "0.2.0"
+version: "0.3.0"
 doc_type: dev-plan
 author: tech-lead
-status: draft
+status: approved
 deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "ui-spec-wechat-flow", "ui-spec-wechat-flow-p001-p005"]
 consumers: [developer, qa-engineer]
 volume: sprint
