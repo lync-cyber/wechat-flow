@@ -1,0 +1,446 @@
+---
+id: "dev-plan-wechat-flow-s5"
+version: "0.1.2"
+doc_type: dev-plan
+author: tech-lead
+status: approved
+deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "ui-spec-wechat-flow", "ui-spec-wechat-flow-p001-p005"]
+consumers: [developer, qa-engineer]
+volume: sprint
+volume_type: sprint
+split_from: "dev-plan-wechat-flow"
+split_policy: no-further-split
+required_sections:
+  - "## 3. 任务卡详细"
+---
+# Dev Plan 分卷 — Sprint 5: CLI + 插件系统 + 中文排版 + 收尾功能
+
+[NAV]
+- Sprint 5 任务卡 → T-043..T-055, T-DS-009, T-VAL-05
+[/NAV]
+
+**Sprint 目标**: CLI `validate` 可跑；`apply_zh_typo` MCP Tool 可用；插件沙箱骨架建立；MCP HTTP/SSE transport 就绪。
+
+---
+
+## 3. 任务卡详细
+
+### T-DS-009: [DESIGN] Penpot — P-005 移动端只读预览视觉稿（PS-009）
+
+- **目标**: 产出 P-005 移动端只读预览页面视觉稿，重点验证底部固定栏拇指热区可达性（320px 宽度）
+- **task_kind**: design
+- **tdd_acceptance**: skip
+- **tdd_mode**: skip
+- **tdd_skip_reason**: "Penpot 设计稿，由用户视觉验证 sign-off"
+- **priority**: P2
+- **complexity**: small
+- **sprint**: 5
+- **dependencies**: [T-DS-001]
+- **acceptance_criteria**:
+  - [ ] AC-001: P-005 视觉稿含 375px 和 320px 两个设备宽度 Frame，底部固定栏高 56px，「文档切换」和「一键复制」按钮可见
+  - [ ] AC-002: 在 320px Frame 中验证「一键复制」按钮单手可达（拇指热区覆盖按钮中心区域，按钮最小触控区 ≥ 44×44px）[PS-009]
+  - [ ] AC-003: 通过 Penpot MCP `find_shape` 可检索到 `P-005`
+- **deliverables**:
+  - [ ] Penpot 项目：P-005 移动端只读预览视觉稿（含两个宽度 Frame）
+- **relates_to**: [ui-spec-wechat-flow-p001-p005#§3.P-005, PS-009]
+- **context_load**:
+  - ui-spec-wechat-flow-p001-p005#§3.P-005
+
+---
+
+### T-043: packages/zh-typo 中文排版 4 类规则
+
+- **目标**: 实现 `@wechat-flow/zh-typo` 包，4 类排版修订规则：中英空格、全半角标点、智能引号、省略号/破折号；仅对 mdast `text` 节点应用，跳过代码/链接 URL/HTML 块
+- **模块**: M-002 (渲染管线核心) 附属
+- **task_kind**: feature
+- **priority**: P1
+- **complexity**: medium
+- **sprint**: 5
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **tdd_refactor**: auto
+- **security_sensitive**: false
+- **dependencies**: [T-006]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given `applyZhTypo({ markdown: '这是GitHub的项目' })`，When 调用，Then 返回 `{ fixed: '这是 GitHub 的项目', perRule: { 'zh-en-space': 2 }, totalChanges: 2 }` [F-014 AC-001 + ARCH#§2.M-008]
+  - [ ] AC-002: Given Markdown 含代码块 ```` ```\ncall GitHub()\n``` ````，When `applyZhTypo`，Then 代码块内容不被修改（跳过代码区域）[F-014 AC-002]
+  - [ ] AC-003: Given `'这是"引用"内容'`，When `applyZhTypo`，Then 返回 `'这是“引用”内容'`（直引号 → 弯引号）[F-014 AC-001]
+  - [ ] AC-004: Given `'结尾...'`，When `applyZhTypo`，Then 返回 `'结尾……'`（3 点省略号 → 6 点中文省略号）[F-014 AC-001]
+- **deliverables**:
+  - [ ] `packages/zh-typo/src/rules/zh-en-space.ts`
+  - [ ] `packages/zh-typo/src/rules/fullwidth-punctuation.ts`
+  - [ ] `packages/zh-typo/src/rules/smart-quotes.ts`
+  - [ ] `packages/zh-typo/src/rules/ellipsis-dash.ts`
+  - [ ] `packages/zh-typo/src/apply.ts` — `applyZhTypo(input) → ZhTypoResult`（mdast 解析 → text 节点变换 → stringify）
+  - [ ] `packages/zh-typo/src/index.ts`
+  - [ ] `tests/zh-typo/apply.test.ts` — AC-001..AC-004 单元测试
+- **relates_to**: [F-014, M-008]
+- **context_load**:
+  - prd-wechat-flow-f001-f014#§2.F-014
+  - arch-wechat-flow-modules#§2.M-008
+
+---
+
+### T-044: M-008 composeApplyZhTypo use case + diff 预览
+
+- **目标**: 实现 `composeApplyZhTypo` use case，产出 diff 预览（修订前后对比）和逐 rule 计数，供 UI 展示
+- **模块**: M-008 (应用层 use case)
+- **task_kind**: feature
+- **priority**: P1
+- **complexity**: medium
+- **sprint**: 5
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **tdd_refactor**: auto
+- **security_sensitive**: false
+- **dependencies**: [T-043]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given `composeApplyZhTypo({ markdown: '...' })` 调用，When 执行，Then 返回 `{ fixed: '...', perRule: Record<string, number>, totalChanges: number, diff: DiffEntry[] }` [ARCH#§2.M-008]
+  - [ ] AC-002: Given `diff` 字段，When 检查，Then 每个 `DiffEntry` 含 `original`（修订前文本片段）、`revised`（修订后文本片段）、`ruleId` 字段，可用于 UI 高亮展示
+  - [ ] AC-003: Given `totalChanges === 0`（无需修订的文档），When `composeApplyZhTypo`，Then 返回 `{ fixed: 原始markdown, totalChanges: 0, diff: [] }`（不做不必要处理）
+- **deliverables**:
+  - [ ] `packages/core/src/composers/apply-zh-typo.ts` — `composeApplyZhTypo(input: { markdown: string }) → ZhTypoComposerResult` [ARCH#§2.M-008]
+  - [ ] `tests/app-layer/compose-apply-zh-typo.test.ts` — AC-001..AC-003 单元测试
+- **relates_to**: [F-014, M-008]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-008
+  - prd-wechat-flow-f001-f014#§2.F-014
+
+---
+
+### T-045: M-009 apply_zh_typo Tool 实现
+
+- **目标**: 实现 MCP server 的 `apply_zh_typo` Tool，连接 `composeApplyZhTypo` use case
+- **模块**: M-009 (MCP server)
+- **task_kind**: feature
+- **priority**: P1
+- **complexity**: small
+- **sprint**: 5
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **tdd_refactor**: skip
+- **security_sensitive**: false
+- **dependencies**: [T-036, T-044]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given 调用 `apply_zh_typo({ markdown: '这是GitHub的项目' })`，When 执行，Then 返回 `{ fixed: '这是 GitHub 的项目', perRule: {...}, totalChanges: N }` [F-013 AC-002 + F-014 AC-005]
+- **deliverables**:
+  - [ ] `apps/mcp-server/src/tools/apply-zh-typo.ts` — `apply_zh_typo` Tool 实现
+  - [ ] 更新 `apps/mcp-server/src/tools/router.ts` — 注册 `apply_zh_typo`
+  - [ ] `tests/mcp-server/tools/apply-zh-typo.test.ts` — AC-001 单元测试
+- **relates_to**: [F-013, F-014, M-009]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-009
+  - prd-wechat-flow-f001-f014#§2.F-014
+
+---
+
+### T-046: M-001 中文排版修订 UI（diff 预览 Modal + ContextMenu 接线）
+
+- **目标**: 实现编辑器中文排版修订的 UI 流程：用户触发 → diff 预览 Modal 展示 → 确认后写回编辑器，并纳入 undo 栈
+- **模块**: M-001 (编辑器 UI)
+- **task_kind**: feature
+- **priority**: P1
+- **complexity**: medium
+- **sprint**: 5
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **tdd_refactor**: auto
+- **security_sensitive**: false
+- **dependencies**: [T-044, T-027]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given 点击 ContextMenu「中文排版修订」，When 触发，Then diff 预览 Modal（C-012 form-variant）弹出，展示修订前/后对比和逐 rule 计数 [F-014 AC-003 + F-001 AC-008]
+  - [ ] AC-002: Given diff 预览 Modal，When 用户点击「确认修订」，Then 编辑器内容替换为 `fixed` 字符串，PreviewPane 刷新，Toast 提示「已修订 N 处」
+  - [ ] AC-003: Given 用户确认修订后，When 按 Ctrl+Z 撤销，Then 编辑器内容回到修订前的状态（修订操作纳入 CodeMirror undo 栈）[F-014 AC-004]
+  - [ ] AC-004: Given 编辑器内容为空或无排版问题，When 触发「中文排版修订」，Then ContextMenu 该菜单项处于 `item-disabled` 状态（灰色不可点击）[ui-spec-wechat-flow-c001-c014#§2.C-016]
+- **deliverables**:
+  - [ ] `apps/editor/src/components/zh-typo/ZhTypoPreviewModal.vue` — diff 预览 Modal（包装 C-012）
+  - [ ] 更新 `apps/editor/src/components/panel/ContextMenu.vue` — 接线「中文排版修订」菜单项
+  - [ ] `apps/editor/src/composables/use-zh-typo.ts` — 触发 → 预览 → 确认 → 写回 composable
+- **relates_to**: [F-014, M-001, C-012, C-016]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-001
+  - prd-wechat-flow-f001-f014#§2.F-014
+  - ui-spec-wechat-flow-c001-c014#§2.C-016
+
+---
+
+### T-047: M-007 插件沙箱 Worker 骨架（Comlink RPC + 网络门禁）
+
+- **目标**: 实现 Web Worker 沙箱骨架（M-007）：启动时删除全局网络对象，通过 Comlink RPC 桥接 plugin-api，实现网络门禁（network-gate + audit-log）
+- **模块**: M-007 (插件沙箱与 plugin-api)
+- **task_kind**: feature
+- **priority**: P1
+- **complexity**: large
+- **sprint**: 5
+- **tdd_mode**: standard
+- **tdd_acceptance**: all
+- **tdd_refactor**: auto
+- **security_sensitive**: true
+- **dependencies**: [T-004]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given Worker 运行时，When 检查 `globalThis.fetch` 是否存在，Then 应为 `undefined`（启动时已 `delete globalThis.fetch / XMLHttpRequest / WebSocket / EventSource`）[ARCH#§2.M-007]
+  - [ ] AC-002: Given 插件代码调用 `requestResource('https://example.com/data')`，When manifest `permissions.network` 未包含该 URL pattern，Then `requestResource` 抛出 `E_PERMISSION_DENIED` 错误 [ARCH#§2.M-007]
+  - [ ] AC-003: Given 插件代码调用 `requestResource` 被 allow，When 执行，Then `audit-log` 记录一条 `{ allow: true, url, pluginId, ts }` 条目 [ARCH#§2.M-007]
+  - [ ] AC-004: Given Worker 运行超时（超过 5s），When 检测，Then Worker 被终止，降级为 `placeholder` 组件，返回 `{ type: 'fallback', reason: 'timeout' }`
+- **deliverables**:
+  - [ ] `packages/plugin-api/src/worker/runtime.ts` — Worker 入口 + Comlink RPC 桥 [ARCH#§2.M-007]
+  - [ ] `packages/plugin-api/src/acl/network-gate.ts` — URL pattern 白名单检查
+  - [ ] `packages/plugin-api/src/acl/audit-log.ts` — 审计日志
+  - [ ] `packages/plugin-api/src/validation/manifest-check.ts` — manifest 三层校验骨架
+  - [ ] `packages/plugin-api/src/runtime/violation-detector.ts` — 超时/内存检测
+  - [ ] `packages/plugin-api/src/fallback/placeholder.ts` — 降级占位符
+  - [ ] `tests/plugin-api/sandbox.test.ts` — AC-001..AC-004 单元测试
+- **relates_to**: [F-010, M-007]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-007
+  - prd-wechat-flow-f001-f014#§2.F-010
+
+---
+
+### T-048: M-007 plugin-api surface（defineBlock/defineVariant/defineRule/defineTheme）
+
+- **目标**: 实现 plugin-api surface（沙箱内白名单 API）：`defineBlock`、`defineVariant`、`defineRule`、`defineTheme`、`registerAsset`
+- **模块**: M-007 (插件沙箱与 plugin-api)
+- **task_kind**: feature
+- **priority**: P1
+- **complexity**: medium
+- **sprint**: 5
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **tdd_refactor**: auto
+- **security_sensitive**: false
+- **dependencies**: [T-047, T-020]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given 插件沙箱内调用 `defineBlock({ id: 'my-block', attrsSchema: z.object({...}), render: () => '...' })`，When 执行（通过 Comlink RPC），Then 主线程 M-005 Block 注册中心可通过 `describeBlock('my-block')` 查到该 Block
+  - [ ] AC-002: Given `defineVariant({ blockId: 'callout', id: 'my-variant', render: () => '...' })`，When 执行，Then `listBlockVariants('callout')` 返回含 `my-variant` [F-010 AC-006]
+  - [ ] AC-003: Given manifest 声明 variant 注册意图但实际未调用 `defineVariant`，When plugin 加载完成，When `manifest-check` 验证，Then 产生 `E_MANIFEST_VARIANT_MISMATCH` warning
+- **deliverables**:
+  - [ ] `packages/plugin-api/src/surface/plugin-api.ts` — `defineBlock` / `defineVariant` / `defineRule` / `defineTheme` / `registerAsset` / `requestResource` API [ARCH#§2.M-007]
+  - [ ] 更新 `packages/plugin-api/src/validation/manifest-check.ts` — AC-003 校验逻辑
+  - [ ] `tests/plugin-api/surface.test.ts` — AC-001..AC-003 单元测试
+- **relates_to**: [F-010, M-007]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-007
+  - prd-wechat-flow-f001-f014#§2.F-010
+
+---
+
+### T-049: M-005 品牌包锁定（delta-merge + brand-pack lock）
+
+- **目标**: 实现主题继承（父主题 + delta 合并）和品牌包锁定（字体/配色/组件子集锁定），连接 P-004 设置页「主题与品牌」分组
+- **模块**: M-005 (主题与组件注册中心)
+- **task_kind**: feature
+- **priority**: P2
+- **complexity**: medium
+- **sprint**: 5
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **tdd_refactor**: auto
+- **security_sensitive**: false
+- **dependencies**: [T-020]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given `registerTheme({ id: 'org-theme', extends: 'default', delta: { tokens: { '--color-brand': '#003366' } } })`，When 应用 `org-theme`，Then 产出 HTML 中主题色为 `#003366`（delta 覆盖），其他 token 继承 default 主题 [F-009 AC-001]
+  - [ ] AC-002: Given 品牌包锁定了 `--color-brand` 和 `--color-accent`，When 写作者尝试通过 `paint` 覆盖 `--color-brand`，Then 该覆盖被忽略（品牌包优先），diagnostics 含 warn [F-009 AC-002]
+- **deliverables**:
+  - [ ] `packages/core/src/inheritance/delta-merge.ts` — 主题继承 delta 合并 [ARCH#§2.M-005]
+  - [ ] `packages/core/src/brand-pack/lock.ts` — 品牌包锁定逻辑
+  - [ ] `tests/core/theme-inheritance.test.ts` — AC-001..AC-002 单元测试
+- **relates_to**: [F-009, M-005]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-005
+  - prd-wechat-flow-f001-f014#§2.F-009
+
+---
+
+### T-050: apps/cli init/dev/validate/publish 命令（M-011）
+
+- **目标**: 实现 `apps/cli` 的 4 个子命令：`init`（两种骨架）、`dev`（Vite middleware + HMR）、`validate`（manifest + schema + 主题守护）、`publish`（pack 打包）
+- **模块**: M-011 (CLI)
+- **task_kind**: feature
+- **priority**: P1
+- **complexity**: large
+- **sprint**: 5
+- **tdd_mode**: standard
+- **tdd_acceptance**: all
+- **tdd_refactor**: auto
+- **security_sensitive**: false
+- **dependencies**: [T-047, T-048]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given `wechat-flow init my-pack --template plugin`，When 执行，Then 创建 `my-pack/` 目录，含 `manifest.json`、`src/index.ts`、`package.json` 骨架文件（plugin 模板） [F-010 AC-003]
+  - [ ] AC-002: Given `wechat-flow validate ./my-pack`（合规 pack），When 执行，Then 退出码 0，输出「通过：manifest ✓ schema ✓ 主题守护 ✓」[F-010 AC-005]
+  - [ ] AC-003: Given `wechat-flow validate ./broken-pack`（manifest 缺少 `name` 字段），When 执行，Then 退出码非 0，stderr 含 `E_MANIFEST_INVALID: missing required field 'name'`
+  - [ ] AC-004: Given `wechat-flow dev ./my-pack`，When 执行，Then 启动 Vite dev 进程，输出「Watching for changes...」，修改 pack 文件后输出 HMR 刷新提示（不报错即通过）
+- **deliverables**:
+  - [ ] `apps/cli/src/commands/init.ts` — `--template plugin|theme` 两种骨架
+  - [ ] `apps/cli/src/commands/dev.ts` — Vite middleware + HMR + pack live-reload [ARCH#§2.M-011]
+  - [ ] `apps/cli/src/commands/validate.ts` — manifest + schema + 主题守护 + variant 申报一致性
+  - [ ] `apps/cli/src/commands/publish.ts` — pack 打包骨架
+  - [ ] `apps/cli/src/index.ts` — CLI 入口（使用 `commander` 或 `citty`）
+  - [ ] `tests/cli/validate.test.ts` — AC-002..AC-003 单元测试
+- **relates_to**: [F-010, M-011]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-011
+  - prd-wechat-flow-f001-f014#§2.F-010
+
+---
+
+### T-051: M-009 HTTP/SSE transport + admin API key 管理端点
+
+- **目标**: 实现 MCP server HTTP/SSE transport 和 admin API key 管理端点（API-028..API-031），含 admin-guard 鉴权（IP 白名单 + X-Admin-Request header + 审计日志）
+- **模块**: M-009 (MCP server), M-010 (中继服务)
+- **task_kind**: feature
+- **priority**: P1
+- **complexity**: medium
+- **sprint**: 5
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **tdd_refactor**: auto
+- **security_sensitive**: true
+- **dependencies**: [T-036]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given MCP server HTTP transport 启动（`node dist/http.js`），When 向 `POST /mcp/tools/render_markdown` 发送合法 JSON，Then 返回渲染结果，HTTP 200
+  - [ ] AC-002: Given 向 `POST /admin/api-keys` 发送请求，When 不携带 `X-Admin-Request: 1` header，Then 返回 403 `E_FORBIDDEN` [ARCH#§2.M-010]
+  - [ ] AC-003: Given admin 操作（创建 API key），When 执行，Then 审计日志（`audit-log.ts`）记录 `{ actor, action: 'create-api-key', target, ts }` [ARCH#§2.M-010]
+  - [ ] AC-004: Given `POST /admin/api-keys` 成功创建，When 返回，Then 响应体含 `{ apiKey: 'wf_xxx' }`（明文，仅此一次）；随后同一 admin 端点的 `GET /admin/api-keys` 返回的列表中对应条目 `apiKey` 字段不含明文（哈希存储）[ARCH#§2.M-009]
+- **deliverables**:
+  - [ ] `apps/mcp-server/src/transport/http-sse.ts` — HTTP/SSE transport
+  - [ ] `apps/relay/src/admin/api-keys.ts` — admin API key CRUD（API-028..API-031）[ARCH#§2.M-010]
+  - [ ] `apps/relay/src/auth/admin-guard.ts` — IP 白名单 + X-Admin-Request header 校验
+  - [ ] `tests/relay/admin-api-keys.test.ts` — AC-002..AC-004 单元测试
+- **relates_to**: [F-013, M-009, M-010]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-009
+  - arch-wechat-flow-modules#§2.M-010
+
+---
+
+### T-052: M-010 Yjs y-websocket server 集成（协作中继）
+
+- **目标**: 在 relay 中集成 y-websocket server（Hono WebSocket upgrade `/yjs/:docId`），维护 Y.Doc 内存副本，接入 Redis pub/sub awareness 中继，周期性快照写入 E-009
+- **模块**: M-010 (中继服务)
+- **task_kind**: feature
+- **priority**: P2
+- **complexity**: large
+- **sprint**: 5
+- **tdd_mode**: standard
+- **tdd_acceptance**: all
+- **tdd_refactor**: auto
+- **security_sensitive**: false
+- **dependencies**: [T-034]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given 两个 WebSocket 客户端连接同一 `docId`，When 一个客户端写入 Y.Doc 操作，Then 另一个客户端在 ≤ 200ms 内收到 update 推送（via y-websocket protocol）[F-012 AC-004]
+  - [ ] AC-002: Given 60s 无操作（或 100 ops），When 快照策略触发，Then `Y.encodeStateAsUpdate(doc)` 被调用并写入 E-009 YDocSnapshot 表 [ARCH#§2.M-010]
+  - [ ] AC-003: Given 客户端断线 30s，When 服务端检测，Then 该客户端的 awareness 条目被清除，其他客户端收到 awareness 变更通知 [ARCH#§2.M-010]
+- **deliverables**:
+  - [ ] `apps/relay/src/yjs/y-websocket-server.ts` — y-websocket server integration [ARCH#§2.M-010]
+  - [ ] `apps/relay/src/routes/yjs.ts` — `GET /yjs/:docId` WebSocket upgrade 路由
+  - [ ] `tests/relay/yjs-server.test.ts` — AC-001..AC-003（使用 `ws` 客户端模拟 + testcontainers Redis）
+- **relates_to**: [F-012, M-010, M-013]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-010
+  - prd-wechat-flow-f001-f014#§2.F-012
+
+---
+
+### T-053: M-013 Yjs sync 客户端（y-codemirror.next + y-indexeddb + WebsocketProvider）
+
+- **目标**: 实现 M-013 的 Yjs sync 部分：`enableSync`/`disableSync`/`getSyncState` API，`YDocBinding`，y-codemirror.next 绑定 CodeMirror 6 SourcePane，awareness 状态管理
+- **模块**: M-013 (浏览器端持久化与同步)
+- **task_kind**: feature
+- **priority**: P2
+- **complexity**: large
+- **sprint**: 5
+- **tdd_mode**: standard
+- **tdd_acceptance**: all
+- **tdd_refactor**: auto
+- **security_sensitive**: false
+- **dependencies**: [T-012, T-052]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given `enableSync('doc-1', { wsUrl: 'wss://relay/yjs/doc-1', authToken: 'xxx' })` 调用，When 执行，Then 返回 `YDocBinding`，`binding.sync.status === 'connecting'`；连接建立后变为 `'synced'` [ARCH#§2.M-013]
+  - [ ] AC-002: Given `YDocBinding` 建立后，When SourcePane 编辑器有文字输入，Then Y.XmlFragment `"markdown"` 同步更新（通过 `y-codemirror.next` 绑定）
+  - [ ] AC-003: Given 网络断开（模拟 ws close），When `YDocBinding` 检测到，Then `sync.status` 变为 `'error'`，`on('sync-status')` 事件触发，SyncStateIndicator 变红 [ARCH#§2.M-013]
+  - [ ] AC-004: Given `disableSync('doc-1')` 调用，When 执行，Then WebSocket 连接关闭，Y.Doc 仍在 IndexedDB 中（离线优先保证）[ARCH#§2.M-013]
+- **deliverables**:
+  - [ ] `packages/core/src/sync/y-doc-factory.ts` — Y.Doc 结构创建（XmlFragment + Map） [ARCH#§2.M-013]
+  - [ ] `packages/core/src/sync/y-websocket-client.ts` — WebsocketProvider 包装（自动重连）
+  - [ ] `packages/core/src/sync/awareness-codec.ts` — awareness payload 序列化
+  - [ ] `packages/core/src/editor/y-codemirror-binding.ts` — `y-codemirror.next` 绑定
+  - [ ] `packages/core/src/sync/enable-sync.ts` — `enableSync` / `disableSync` / `getSyncState` API
+  - [ ] `tests/core/sync.test.ts` — AC-001..AC-004（使用 `fake-indexeddb` + ws mock）
+- **relates_to**: [F-012, M-013]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-013
+  - prd-wechat-flow-f001-f014#§2.F-012
+
+---
+
+### T-054: P-004 设置页 — 同步与协作分组（F-012 开关 + WebSocket URL）
+
+- **目标**: 完善 P-004 设置页的「同步与协作」分组：协作开关（默认关）、WebSocket 服务地址输入、当前同步状态显示
+- **模块**: M-001 (编辑器 UI)
+- **task_kind**: feature
+- **priority**: P2
+- **complexity**: small
+- **sprint**: 5
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **tdd_refactor**: skip
+- **security_sensitive**: false
+- **dependencies**: [T-042, T-053]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given P-004「同步与协作」分组，When 协作开关默认状态，Then 开关为关闭（disabled），WebSocket 服务地址输入框为灰色不可编辑状态
+  - [ ] AC-002: Given 开启协作开关并填写 WebSocket URL，When 点击「保存」，Then `enableSync` 被调用，SyncStateIndicator 变化反映连接状态
+- **deliverables**:
+  - [ ] `apps/editor/src/components/settings/SyncConfig.vue` — 同步与协作分组 UI
+  - [ ] 更新 `apps/editor/src/pages/SettingsPage.vue` — 注册 SyncConfig 分组
+- **relates_to**: [F-012, M-001, P-004]
+- **context_load**:
+  - ui-spec-wechat-flow-p001-p005#§3.P-004
+
+---
+
+### T-055: P-005 移动端只读预览（/preview/:docId + 底部固定栏）
+
+- **目标**: 实现 P-005 移动端只读预览页面（`/preview/:docId`）：单栏内容预览区 + 底部固定栏（文档切换 + 一键复制）
+- **模块**: M-001 (编辑器 UI)
+- **task_kind**: feature
+- **priority**: P2
+- **complexity**: medium
+- **sprint**: 5
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **tdd_refactor**: auto
+- **security_sensitive**: false
+- **dependencies**: [T-005, T-010, T-DS-009]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given 访问 `/preview/:docId`，When vw < 768px，Then 仅显示内容预览 iframe（375px 视口宽度）+ 底部固定栏（高 56px），无编辑区、左侧面板、右栏 [ui-spec-wechat-flow-p001-p005#§3.P-005]
+  - [ ] AC-002: Given 底部固定栏「一键复制」按钮，When 点击（Clipboard API 支持），Then `composeCopy` 被调用，Toast 提示「已复制」；若 Clipboard API 不支持，Then 选中全文并 Toast 提示「请手动长按复制」[A-005 假设]
+  - [ ] AC-003: Given 底部「文档切换」按钮，When 点击，Then P-002 文档列表底部抽屉（Bottom Sheet）从底部滑入（`--duration-base`，高度最大 60vh）
+- **deliverables**:
+  - [ ] 更新 `apps/editor/src/pages/PreviewPage.vue` — P-005 完整实现
+  - [ ] `apps/editor/src/components/mobile/MobileBottomBar.vue` — 底部固定栏（高 56px，z-index `--z-mobile-bar`）
+  - [ ] `apps/editor/src/components/mobile/DocumentListSheet.vue` — P-002 移动端底部抽屉实现
+- **relates_to**: [F-001, F-004, M-001, P-005]
+- **context_load**:
+  - ui-spec-wechat-flow-p001-p005#§3.P-005
+  - prd-wechat-flow-f001-f014#§2.F-001
+
+---
+
+### T-VAL-05: [VALIDATION] Sprint 5 验证：CLI validate + apply_zh_typo + 插件沙箱
+
+- **目标**: 用户/开发者手动验证 CLI 工具链、中文排版修订 UI 流程、插件沙箱基本功能
+- **task_kind**: validation
+- **tdd_acceptance**: skip
+- **tdd_mode**: skip
+- **tdd_skip_reason**: "由 orchestrator 触发用户手动验证，不进 TDD 流程"
+- **priority**: P1
+- **sprint**: 5
+- **user_facing_critical_path**: true
+- **dependencies**: [T-044, T-046, T-050, T-051]
+- **acceptance_criteria**:
+  - [ ] 运行 `wechat-flow init my-test-pack --template plugin`，生成骨架目录；进入目录运行 `wechat-flow validate .`，输出退出码 0 + 通过信息
+  - [ ] 在编辑器中写入含中英文混排的 Markdown（如「这是GitHub的项目，包含react组件」），点击「...」→「中文排版修订」，diff 预览 Modal 弹出并展示变更（中英间加空格），点击「确认修订」，编辑器内容更新，按 Ctrl+Z 可撤销
+  - [ ] 通过 MCP HTTP transport（`POST /mcp/tools/apply_zh_typo`），发送含中英混排的 Markdown，返回 `{ fixed: '...', totalChanges: N }` 响应
+  - [ ] 在 P-004 设置页「同步与协作」分组开启协作开关，填写 `ws://localhost:3000/yjs/test`，保存后预览面板右下角同步指示器变为「connecting」状态
+- **relates_to**: [F-010, F-012, F-014, M-007, M-009, M-011]

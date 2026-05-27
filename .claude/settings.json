@@ -1,4 +1,14 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(cataforge event log *)",
+      "Bash(pnpm verify *)",
+      "Bash(cataforge docs load *)",
+      "Bash(cataforge docs index *)",
+      "Bash(pnpm lint *)",
+      "Bash(cataforge doctor *)"
+    ]
+  },
   "hooks": {
     "PreToolUse": [
       {

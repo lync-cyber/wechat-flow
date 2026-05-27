@@ -25,16 +25,16 @@
  cataforge setup --emit-env-block}
 
 ## 项目状态 (orchestrator专属写入区，其他Agent禁止修改)
-- 当前阶段: ui_design
-- 上次完成: architect — ARCH 主卷 + 3 分卷 + 4 份 research-note 落地，r3 审查 approved (orchestrator inline-fix 收尾 R-NEW-001 sandbox 决策 + R-NEW-002 ScopeSchema 一致性)
-- 下一步行动: 激活 ui-designer 子代理，基于 PRD F-001 UI 骨架 + ARCH §1.4 (Vue 3.5 / CodeMirror 6) + M-001 PreviewPane 主线程钩子设计，产出 docs/ui-spec/ui-spec-wechat-flow.md
-- 已完成阶段: [requirements, architecture]
-- 当前Sprint: — (DEV阶段由orchestrator在Sprint推进时更新)
+- 当前阶段: dev_planning
+- 上次完成: tech-lead — dev-plan 主卷 + 7 Sprint 分卷落地（90 任务卡：73 code + 10 Penpot design + 7 validation），r2 审查 approved_with_notes (orchestrator 接管 tech-lead 截断 + inline-fix 闭环全部 r1 HIGH/MEDIUM/LOW + r2 LOW)，文档 status approved，version 0.1.2
+- 下一步行动: 进入 pre_dev 人工审查检查点 (项目配置 `[pre_dev]`)，用户确认后激活 tdd-engine 编排 Sprint 0 第一批任务（T-001 Monorepo 骨架 + T-002 工具链 + T-003 Turborepo + T-DS-001 Penpot Token 导入）
+- 已完成阶段: [requirements, architecture, ui_design, dev_planning]
+- 当前Sprint: Sprint 0 (待用户确认 pre_dev checkpoint 后启动)
 - 文档状态:
   - prd: approved
   - arch: approved
-  - ui-spec: 未开始
-  - dev-plan: 未开始
+  - ui-spec: approved
+  - dev-plan: approved
   - test-report: 未开始
   - deploy-spec: 未开始
   <!-- changelog 由 devops 产出但不纳入门禁追踪 -->
@@ -54,7 +54,7 @@
 - 命名: TypeScript 社区默认 — camelCase 变量与函数 / PascalCase 类与类型 / SCREAMING_SNAKE 常量 / kebab-case 文件名（`my-module.ts`）
 - Commit: Conventional Commits（`feat:` / `fix:` / `docs:` / `refactor:` / `test:` / `chore:` / `build:` 前缀，可选 scope，例：`feat(theme): add literary theme`）
 - 分支: GitHub Flow — `main` 永远可发布；功能分支命名 `feature/<short-name>`，bugfix 分支 `fix/<short-name>`；通过 PR 合入 main
-- 设计工具: none
+- 设计工具: penpot
   <!-- 可选值: none | penpot。设为 penpot 时启用 Penpot MCP 集成 -->
 - 人工审查检查点: [pre_dev]
   <!-- 详见 COMMON-RULES §MANUAL_REVIEW_CHECKPOINTS。standard 模式默认 [pre_dev, post_sprint, pre_deploy]；本项目精简至 pre_dev 以保持轻量推进 -->
