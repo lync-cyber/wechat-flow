@@ -1,9 +1,9 @@
 ---
 id: "arch-wechat-flow-api"
-version: "0.3.0"
+version: "0.4.0"
 doc_type: arch
 author: architect
-status: approved
+status: draft
 deps: ["prd-wechat-flow", "prd-wechat-flow-f001-f014"]
 consumers: [tech-lead, ui-designer, developer, devops, qa-engineer]
 volume: api
@@ -331,7 +331,7 @@ request:
     customConfig: { type: "Record<string, unknown>", required: false }
 response:
   schema:
-    jobId: { type: string }
+    jobId: { type: "string (uuid)" }
 
 # upload_to_wechat_asset
 tool: upload_to_wechat_asset
@@ -343,7 +343,7 @@ request:
     type: { type: "'image'|'voice'|'video'|'thumb'", required: true }
 response:
   schema:
-    jobId: { type: string }
+    jobId: { type: "string (uuid)" }
 
 # export_long_image
 tool: export_long_image
@@ -355,7 +355,7 @@ request:
     viewportWidth: { type: number, required: false, desc: "缺省 375" }
 response:
   schema:
-    jobId: { type: string }
+    jobId: { type: "string (uuid)" }
 
 # export_cover
 tool: export_cover
@@ -367,7 +367,7 @@ request:
     format: { type: "'landscape-900x383'|'square-900x900'", required: true }
 response:
   schema:
-    jobId: { type: string }
+    jobId: { type: "string (uuid)" }
 
 # get_job
 tool: get_job
@@ -375,10 +375,10 @@ module: M-009
 maps_to: F-013 AC-004
 request:
   body:
-    jobId: { type: string, required: true }
+    jobId: { type: "string (uuid)", required: true }
 response:
   schema:
-    jobId: { type: string }
+    jobId: { type: "string (uuid)" }
     state: { type: "'pending'|'running'|'succeeded'|'failed'" }
     progress: { type: number, desc: "0..1" }
     result: { type: "unknown | null", desc: "succeeded 时为对应任务结果（URL / mediaId / 二进制引用）" }
@@ -399,11 +399,11 @@ response:
       }),
       ruleCount: z.number().int().min(42),   // 当前规则集生效规则数（≥42）
       schemaVersion: z.string(),             // Public Tool Schema 版本（semver）
-      builtAt: z.string().datetime(),        // 规则集 manifest 构建时间（ISO 8601）
+      builtAt: z.string().datetime(),        // 规则集 manifest 构建时间（ISO 8601）；不参与 F-013 AC-001 字节级一致断言，快照回归测试需 redact
     })
 ```
 
-> 说明：API-016 是 6 个相关 Tool 的合并条目（4 个长任务 + `get_job` + `get_ruleset_version`），保持 16 Tool 计数一致；编号在物料化时可按需展开为 API-016a..API-016f。
+> 说明：API-016 是 6 个相关 Tool 的合并条目（4 个长任务 + `get_job` + `get_ruleset_version`）；与 §3.1 API-001..API-015 合并后 Tool 总数为 22（16 同步 + 6 异步）。编号在物料化时可按需展开为 API-016a..API-016f。所有长任务 Tool 与 `get_job` 的 `jobId` 字段统一 `z.string().uuid()`，与 Relay REST API-017/018/019 及 E-008 主键约束对齐。
 
 ### 3.2 Relay REST/SSE 接口 (API-017..API-021)
 
@@ -772,7 +772,7 @@ behavior:
 > - 必须携带 `X-Admin-Request: 1` 自定义 header（防 CSRF / 误触发）
 > - 来源 IP 须命中环境变量 `ADMIN_IP_ALLOWLIST` 白名单；缺省仅允许 loopback (`127.0.0.1` / `::1`)
 > - 所有 admin 调用写审计日志（actor=apiKeyId, action, target, ts），日志通过 §5.5 审计追溯通道持久化
-> - admin key 与 user key 在 E-010 表用 `scope` 字段区分；admin scope 不可调 16 个 Tool（M-009 `auth/scope-guard.ts` 拦截）
+> - admin key 与 user key 在 E-010 表用 `scope` 字段区分；admin scope 不可调 22 个 Tool（M-009 `auth/scope-guard.ts` 拦截）
 
 #### API-028: POST /api/v1/admin/api-keys
 

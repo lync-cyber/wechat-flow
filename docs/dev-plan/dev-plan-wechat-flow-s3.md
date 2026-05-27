@@ -1,9 +1,9 @@
 ---
 id: "dev-plan-wechat-flow-s3"
-version: "0.1.2"
+version: "0.2.0"
 doc_type: dev-plan
 author: tech-lead
-status: approved
+status: draft
 deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "ui-spec-wechat-flow", "ui-spec-wechat-flow-c001-c014"]
 consumers: [developer, qa-engineer]
 volume: sprint
@@ -174,10 +174,10 @@ required_sections:
 
 ---
 
-### T-024: packages/blocks 内置 Block ≥ 20 个（含 variant 注册）
+### T-024: packages/blocks 内置 Block ≥ 25 个（P0 必含全集 + variant 注册）
 
-- **目标**: 实现 `@wechat-flow/blocks` 包，包含 ≥ 20 个内置 Block 组件定义（含 `attrsSchema`、`render` 函数、variant 注册），与 M-002 渲染管线集成
-- **moduli**: M-005 (主题与组件注册中心)
+- **目标**: 实现 `@wechat-flow/blocks` 包，包含 PRD F-003 AC-006 P0 必含 25 种 Block：heading/paragraph/list/table/code-block/quote/card/callout/divider/image/image-caption/gallery/steps/compare/pull-quote/highlight-block/announcement/dialog/timeline/qrcode/video/audio/miniprogram-card/footer-cta/recommendation；每 Block 注册 ≥ 3 variant，与 M-005 注册中心集成
+- **模块**: M-005 (主题与组件注册中心)
 - **task_kind**: feature
 - **priority**: P0
 - **complexity**: large
@@ -188,11 +188,35 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-020]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given `listBlocks()` 调用，When 执行，Then 返回数组长度 ≥ 20，含 `heading`、`paragraph`、`quote`、`callout`、`code-block`、`image`、`divider`、`card`、`steps`、`table`、`pull-quote`、`kpi-card`、`author-card` 等 [F-003 AC-006]
+  - [ ] AC-001: Given `listBlocks()` 调用，When 执行，Then 返回数组长度 ≥ 25 且包含 25 个 P0 具名 Block 全部 ID [F-003 AC-006 P0 全集]
   - [ ] AC-002: Given `describeBlock('callout')`，When 调用，Then 返回对象含 `attrsSchema`（可通过 `toJSON(attrsSchema)` 转为 JSON Schema），`variants` 数组长度 ≥ 3 [F-003 AC-007]
-  - [ ] AC-003: Given `:::callout{variant=warning}\ncontent\n:::`，When 经过 renderMarkdown，Then 产出 HTML 中含对应样式的容器（非空 `style` 属性），不含 `class` 属性
+  - [ ] AC-003: Given 每个 P0 必含 Block 的 `attrsSchema`，When 调用 Zod parse + toJSONSchema 转换，Then 无异常
 - **deliverables**:
-  - [ ] `packages/blocks/src/blocks/` — ≥ 20 个 Block 定义文件（`heading.ts`、`paragraph.ts`、`quote.ts`、`callout.ts`、`code-block.ts`、`image.ts`、`divider.ts`、`card.ts`、`steps.ts`、`table.ts`、`pull-quote.ts`、`highlight.ts`、`compare.ts`、`kpi-card.ts`、`author-card.ts`、`gallery.ts`、`announcement.ts`、`qa.ts`、`timeline.ts`、`qrcode.ts` 等）
+  - [ ] `packages/blocks/src/blocks/heading.ts`
+  - [ ] `packages/blocks/src/blocks/paragraph.ts`
+  - [ ] `packages/blocks/src/blocks/list.ts`
+  - [ ] `packages/blocks/src/blocks/table.ts`
+  - [ ] `packages/blocks/src/blocks/code-block.ts`
+  - [ ] `packages/blocks/src/blocks/quote.ts`
+  - [ ] `packages/blocks/src/blocks/card.ts`
+  - [ ] `packages/blocks/src/blocks/callout.ts`
+  - [ ] `packages/blocks/src/blocks/divider.ts`
+  - [ ] `packages/blocks/src/blocks/image.ts`
+  - [ ] `packages/blocks/src/blocks/image-caption.ts`
+  - [ ] `packages/blocks/src/blocks/gallery.ts`
+  - [ ] `packages/blocks/src/blocks/steps.ts`
+  - [ ] `packages/blocks/src/blocks/compare.ts`
+  - [ ] `packages/blocks/src/blocks/pull-quote.ts`
+  - [ ] `packages/blocks/src/blocks/highlight-block.ts`
+  - [ ] `packages/blocks/src/blocks/announcement.ts`
+  - [ ] `packages/blocks/src/blocks/dialog.ts`
+  - [ ] `packages/blocks/src/blocks/timeline.ts`
+  - [ ] `packages/blocks/src/blocks/qrcode.ts`
+  - [ ] `packages/blocks/src/blocks/video.ts`
+  - [ ] `packages/blocks/src/blocks/audio.ts`
+  - [ ] `packages/blocks/src/blocks/miniprogram-card.ts`
+  - [ ] `packages/blocks/src/blocks/footer-cta.ts`
+  - [ ] `packages/blocks/src/blocks/recommendation.ts`
   - [ ] `packages/blocks/src/index.ts` — 注册所有内置 Block 到 M-005
   - [ ] `tests/blocks/render.test.ts` — AC-001..AC-003 单元测试
 - **relates_to**: [F-003, M-005]

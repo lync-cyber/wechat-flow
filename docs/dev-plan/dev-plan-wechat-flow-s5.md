@@ -1,9 +1,9 @@
 ---
 id: "dev-plan-wechat-flow-s5"
-version: "0.1.2"
+version: "0.2.0"
 doc_type: dev-plan
 author: tech-lead
-status: approved
+status: draft
 deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "ui-spec-wechat-flow", "ui-spec-wechat-flow-p001-p005"]
 consumers: [developer, qa-engineer]
 volume: sprint
@@ -16,10 +16,10 @@ required_sections:
 # Dev Plan 分卷 — Sprint 5: CLI + 插件系统 + 中文排版 + 收尾功能
 
 [NAV]
-- Sprint 5 任务卡 → T-043..T-055, T-DS-009, T-VAL-05
+- Sprint 5 任务卡 → T-043..T-051, T-055, T-073, T-074, T-077..T-084, T-DS-009, T-VAL-05
 [/NAV]
 
-**Sprint 目标**: CLI `validate` 可跑；`apply_zh_typo` MCP Tool 可用；插件沙箱骨架建立；MCP HTTP/SSE transport 就绪。
+**Sprint 目标**: CLI `validate` 可跑；`apply_zh_typo` MCP Tool 可用；插件沙箱骨架建立；MCP HTTP/SSE transport 就绪；素材库上传链路（T-077/T-078/T-079）就绪；模板市场骨架（T-073）落地五主题各 ≥ 2 模板 seed；Block 补全 Phase 2（T-074，P1 必含 5 种）；MCP Tool 补全包装（T-080..T-084）。
 
 ---
 
@@ -48,10 +48,10 @@ required_sections:
 
 ---
 
-### T-043: packages/zh-typo 中文排版 4 类规则
+### T-043: packages/zh-typo 中文排版 4 类规则（M-008 依赖包）
 
 - **目标**: 实现 `@wechat-flow/zh-typo` 包，4 类排版修订规则：中英空格、全半角标点、智能引号、省略号/破折号；仅对 mdast `text` 节点应用，跳过代码/链接 URL/HTML 块
-- **模块**: M-002 (渲染管线核心) 附属
+- **模块**: M-008 (应用层 use case)
 - **task_kind**: feature
 - **priority**: P1
 - **complexity**: medium
@@ -182,6 +182,7 @@ required_sections:
   - [ ] AC-002: Given 插件代码调用 `requestResource('https://example.com/data')`，When manifest `permissions.network` 未包含该 URL pattern，Then `requestResource` 抛出 `E_PERMISSION_DENIED` 错误 [ARCH#§2.M-007]
   - [ ] AC-003: Given 插件代码调用 `requestResource` 被 allow，When 执行，Then `audit-log` 记录一条 `{ allow: true, url, pluginId, ts }` 条目 [ARCH#§2.M-007]
   - [ ] AC-004: Given Worker 运行超时（超过 5s），When 检测，Then Worker 被终止，降级为 `placeholder` 组件，返回 `{ type: 'fallback', reason: 'timeout' }`
+  - [ ] AC-005: Given Worker 启动后，When 检查，Then `typeof globalThis.fetch === 'undefined' && typeof globalThis.XMLHttpRequest === 'undefined'`，否则 assertNetIsolation 抛 E_WORKER_NETWORK_LEAK 并 self.close()
 - **deliverables**:
   - [ ] `packages/plugin-api/src/worker/runtime.ts` — Worker 入口 + Comlink RPC 桥 [ARCH#§2.M-007]
   - [ ] `packages/plugin-api/src/acl/network-gate.ts` — URL pattern 白名单检查
@@ -189,7 +190,8 @@ required_sections:
   - [ ] `packages/plugin-api/src/validation/manifest-check.ts` — manifest 三层校验骨架
   - [ ] `packages/plugin-api/src/runtime/violation-detector.ts` — 超时/内存检测
   - [ ] `packages/plugin-api/src/fallback/placeholder.ts` — 降级占位符
-  - [ ] `tests/plugin-api/sandbox.test.ts` — AC-001..AC-004 单元测试
+  - [ ] `packages/plugin-api/src/worker/assert-net-isolation.ts` — 网络隔离断言
+  - [ ] `tests/plugin-api/sandbox.test.ts` — AC-001..AC-005 单元测试
 - **relates_to**: [F-010, M-007]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-007
@@ -314,91 +316,6 @@ required_sections:
 
 ---
 
-### T-052: M-010 Yjs y-websocket server 集成（协作中继）
-
-- **目标**: 在 relay 中集成 y-websocket server（Hono WebSocket upgrade `/yjs/:docId`），维护 Y.Doc 内存副本，接入 Redis pub/sub awareness 中继，周期性快照写入 E-009
-- **模块**: M-010 (中继服务)
-- **task_kind**: feature
-- **priority**: P2
-- **complexity**: large
-- **sprint**: 5
-- **tdd_mode**: standard
-- **tdd_acceptance**: all
-- **tdd_refactor**: auto
-- **security_sensitive**: false
-- **dependencies**: [T-034]
-- **acceptance_criteria**:
-  - [ ] AC-001: Given 两个 WebSocket 客户端连接同一 `docId`，When 一个客户端写入 Y.Doc 操作，Then 另一个客户端在 ≤ 200ms 内收到 update 推送（via y-websocket protocol）[F-012 AC-004]
-  - [ ] AC-002: Given 60s 无操作（或 100 ops），When 快照策略触发，Then `Y.encodeStateAsUpdate(doc)` 被调用并写入 E-009 YDocSnapshot 表 [ARCH#§2.M-010]
-  - [ ] AC-003: Given 客户端断线 30s，When 服务端检测，Then 该客户端的 awareness 条目被清除，其他客户端收到 awareness 变更通知 [ARCH#§2.M-010]
-- **deliverables**:
-  - [ ] `apps/relay/src/yjs/y-websocket-server.ts` — y-websocket server integration [ARCH#§2.M-010]
-  - [ ] `apps/relay/src/routes/yjs.ts` — `GET /yjs/:docId` WebSocket upgrade 路由
-  - [ ] `tests/relay/yjs-server.test.ts` — AC-001..AC-003（使用 `ws` 客户端模拟 + testcontainers Redis）
-- **relates_to**: [F-012, M-010, M-013]
-- **context_load**:
-  - arch-wechat-flow-modules#§2.M-010
-  - prd-wechat-flow-f001-f014#§2.F-012
-
----
-
-### T-053: M-013 Yjs sync 客户端（y-codemirror.next + y-indexeddb + WebsocketProvider）
-
-- **目标**: 实现 M-013 的 Yjs sync 部分：`enableSync`/`disableSync`/`getSyncState` API，`YDocBinding`，y-codemirror.next 绑定 CodeMirror 6 SourcePane，awareness 状态管理
-- **模块**: M-013 (浏览器端持久化与同步)
-- **task_kind**: feature
-- **priority**: P2
-- **complexity**: large
-- **sprint**: 5
-- **tdd_mode**: standard
-- **tdd_acceptance**: all
-- **tdd_refactor**: auto
-- **security_sensitive**: false
-- **dependencies**: [T-012, T-052]
-- **acceptance_criteria**:
-  - [ ] AC-001: Given `enableSync('doc-1', { wsUrl: 'wss://relay/yjs/doc-1', authToken: 'xxx' })` 调用，When 执行，Then 返回 `YDocBinding`，`binding.sync.status === 'connecting'`；连接建立后变为 `'synced'` [ARCH#§2.M-013]
-  - [ ] AC-002: Given `YDocBinding` 建立后，When SourcePane 编辑器有文字输入，Then Y.XmlFragment `"markdown"` 同步更新（通过 `y-codemirror.next` 绑定）
-  - [ ] AC-003: Given 网络断开（模拟 ws close），When `YDocBinding` 检测到，Then `sync.status` 变为 `'error'`，`on('sync-status')` 事件触发，SyncStateIndicator 变红 [ARCH#§2.M-013]
-  - [ ] AC-004: Given `disableSync('doc-1')` 调用，When 执行，Then WebSocket 连接关闭，Y.Doc 仍在 IndexedDB 中（离线优先保证）[ARCH#§2.M-013]
-- **deliverables**:
-  - [ ] `packages/core/src/sync/y-doc-factory.ts` — Y.Doc 结构创建（XmlFragment + Map） [ARCH#§2.M-013]
-  - [ ] `packages/core/src/sync/y-websocket-client.ts` — WebsocketProvider 包装（自动重连）
-  - [ ] `packages/core/src/sync/awareness-codec.ts` — awareness payload 序列化
-  - [ ] `packages/core/src/editor/y-codemirror-binding.ts` — `y-codemirror.next` 绑定
-  - [ ] `packages/core/src/sync/enable-sync.ts` — `enableSync` / `disableSync` / `getSyncState` API
-  - [ ] `tests/core/sync.test.ts` — AC-001..AC-004（使用 `fake-indexeddb` + ws mock）
-- **relates_to**: [F-012, M-013]
-- **context_load**:
-  - arch-wechat-flow-modules#§2.M-013
-  - prd-wechat-flow-f001-f014#§2.F-012
-
----
-
-### T-054: P-004 设置页 — 同步与协作分组（F-012 开关 + WebSocket URL）
-
-- **目标**: 完善 P-004 设置页的「同步与协作」分组：协作开关（默认关）、WebSocket 服务地址输入、当前同步状态显示
-- **模块**: M-001 (编辑器 UI)
-- **task_kind**: feature
-- **priority**: P2
-- **complexity**: small
-- **sprint**: 5
-- **tdd_mode**: light
-- **tdd_acceptance**: all
-- **tdd_refactor**: skip
-- **security_sensitive**: false
-- **dependencies**: [T-042, T-053]
-- **acceptance_criteria**:
-  - [ ] AC-001: Given P-004「同步与协作」分组，When 协作开关默认状态，Then 开关为关闭（disabled），WebSocket 服务地址输入框为灰色不可编辑状态
-  - [ ] AC-002: Given 开启协作开关并填写 WebSocket URL，When 点击「保存」，Then `enableSync` 被调用，SyncStateIndicator 变化反映连接状态
-- **deliverables**:
-  - [ ] `apps/editor/src/components/settings/SyncConfig.vue` — 同步与协作分组 UI
-  - [ ] 更新 `apps/editor/src/pages/SettingsPage.vue` — 注册 SyncConfig 分组
-- **relates_to**: [F-012, M-001, P-004]
-- **context_load**:
-  - ui-spec-wechat-flow-p001-p005#§3.P-004
-
----
-
 ### T-055: P-005 移动端只读预览（/preview/:docId + 底部固定栏）
 
 - **目标**: 实现 P-005 移动端只读预览页面（`/preview/:docId`）：单栏内容预览区 + 底部固定栏（文档切换 + 一键复制）
@@ -416,6 +333,7 @@ required_sections:
   - [ ] AC-001: Given 访问 `/preview/:docId`，When vw < 768px，Then 仅显示内容预览 iframe（375px 视口宽度）+ 底部固定栏（高 56px），无编辑区、左侧面板、右栏 [ui-spec-wechat-flow-p001-p005#§3.P-005]
   - [ ] AC-002: Given 底部固定栏「一键复制」按钮，When 点击（Clipboard API 支持），Then `composeCopy` 被调用，Toast 提示「已复制」；若 Clipboard API 不支持，Then 选中全文并 Toast 提示「请手动长按复制」[A-005 假设]
   - [ ] AC-003: Given 底部「文档切换」按钮，When 点击，Then P-002 文档列表底部抽屉（Bottom Sheet）从底部滑入（`--duration-base`，高度最大 60vh）
+  - [ ] AC-004: 不支持 Clipboard API 时降级到 textarea + document.execCommand('copy') 并触发 Toast [F-004 AC-007]
 - **deliverables**:
   - [ ] 更新 `apps/editor/src/pages/PreviewPage.vue` — P-005 完整实现
   - [ ] `apps/editor/src/components/mobile/MobileBottomBar.vue` — 底部固定栏（高 56px，z-index `--z-mobile-bar`）
@@ -424,6 +342,293 @@ required_sections:
 - **context_load**:
   - ui-spec-wechat-flow-p001-p005#§3.P-005
   - prd-wechat-flow-f001-f014#§2.F-001
+
+---
+
+### T-073: 模板市场骨架 + 五主题 × ≥ 2 模板 seed（F-008 P1）
+
+- **目标**: 实现 P-003 模板市场页 `/templates` 路由（占位卡片 + 本地模板 CRUD）；落地 ARCH M-005 内嵌的 8 类场景模板，五个内置主题各 ≥ 2 模板 seed
+- **模块**: M-001 / M-005
+- **task_kind**: feature
+- **priority**: P1
+- **complexity**: medium
+- **sprint**: 5
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **tdd_refactor**: skip
+- **security_sensitive**: false
+- **dependencies**: [T-041, T-022, T-005]
+- **acceptance_criteria**:
+  - [ ] AC-001: `/templates` 页面展示 3 列网格，含 ≥ 8 个模板卡片（覆盖 ARCH M-005 8 个 templateId：tech-review / poetry-essay / industry-report / life-vlog / tutorial / book-review / kpi-summary / lifestyle-guide）
+  - [ ] AC-002: 五个内置主题（default/magazine/literary/business/tech）目录下各 ≥ 2 模板 seed（packages/themes/{themeId}/templates/*.md）
+  - [ ] AC-003: 本地模板 CRUD：`createTemplate(name, content)` / `listTemplates()` / `deleteTemplate(id)` [ARCH#§3.API-025]
+  - [ ] AC-004: 点击模板卡片 → 创建新文档并应用该模板内容
+  - [ ] AC-005: routes 数组含 `{ path: '/templates', component: TemplateMarketPage }` 字面量
+  - [ ] AC-006: 模板 store 持久化到 IndexedDB
+- **deliverables**:
+  - [ ] `apps/editor/src/pages/TemplateMarketPage.vue`
+  - [ ] `apps/editor/src/components/TemplateCard.vue`
+  - [ ] `apps/editor/src/stores/template-store.ts`
+  - [ ] `packages/themes/default/templates/*.md`（≥ 2 个）
+  - [ ] `packages/themes/magazine/templates/*.md`（≥ 2 个）
+  - [ ] `packages/themes/literary/templates/*.md`（≥ 2 个）
+  - [ ] `packages/themes/business/templates/*.md`（≥ 2 个）
+  - [ ] `packages/themes/tech/templates/*.md`（≥ 2 个）
+- **relates_to**: [F-008, M-001, M-005]
+- **context_load**:
+  - prd-wechat-flow-f001-f014#§2.F-008
+  - arch-wechat-flow-modules#§2.M-005
+  - ui-spec-wechat-flow-p001-p005#§3.P-003
+
+---
+
+### T-074: packages/blocks Block 补全 Phase 2（P1 必含 5 种）
+
+- **目标**: 在 T-024 P0 必含 25 种 Block 基础上新增 5 种 P1 必含 Block：author-card / publication-skeleton / kpi-card / qa / footnote；累计 ≥ 30 种，含 variant 注册
+- **模块**: M-005
+- **task_kind**: feature
+- **priority**: P1
+- **complexity**: medium
+- **sprint**: 5
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **tdd_refactor**: skip
+- **security_sensitive**: false
+- **dependencies**: [T-024]
+- **acceptance_criteria**:
+  - [ ] AC-001: listBlocks() 长度 ≥ 30，新增 5 个 ID（author-card/publication-skeleton/kpi-card/qa/footnote）
+  - [ ] AC-002: 每新增 Block 注册 ≥ 2 variant，attrsSchema 通过 Zod parse 无异常
+  - [ ] AC-003: 5 套主题 default/magazine/literary/business/tech 对新增 Block 提供基础 CSS
+- **deliverables**:
+  - [ ] `packages/blocks/src/blocks/author-card.ts`
+  - [ ] `packages/blocks/src/blocks/publication-skeleton.ts`
+  - [ ] `packages/blocks/src/blocks/kpi-card.ts`
+  - [ ] `packages/blocks/src/blocks/qa.ts`
+  - [ ] `packages/blocks/src/blocks/footnote.ts`
+  - [ ] `tests/blocks/p1-essentials.test.ts`
+- **relates_to**: [F-003, M-005]
+- **context_load**:
+  - prd-wechat-flow-f001-f014#§2.F-003
+  - arch-wechat-flow-modules#§2.M-005
+
+---
+
+### T-077: M-010 wechat-asset uploader.ts + BullMQ kind `wechat-asset-upload`
+
+- **目标**: 实现 M-010 微信公众号素材库上传 proxy：调用微信开放平台 `/cgi-bin/material/add_material` API（持有 AppID/AppSecret），通过 BullMQ kind `wechat-asset-upload` 入队
+- **模块**: M-010
+- **task_kind**: feature
+- **priority**: P1
+- **complexity**: medium
+- **sprint**: 5
+- **tdd_mode**: standard
+- **tdd_acceptance**: all
+- **tdd_refactor**: auto
+- **security_sensitive**: true
+- **dependencies**: [T-033, T-042]
+- **acceptance_criteria**:
+  - [ ] AC-001: POST /api/v1/wechat-assets/upload 入参含 imageUrl + type ('image'|'voice'|'video'|'thumb')，返回 `{ jobId: uuid }` [ARCH#§3.API-018]
+  - [ ] AC-002: BullMQ kind 'wechat-asset-upload' 在 worker 中调用 `wechat-asset/uploader.ts`，使用服务端持有的 AppID/AppSecret（不进浏览器）
+  - [ ] AC-003: 上传成功后 Job.result 含 `{ mediaId, url, type }`；失败时 error.code 反映微信开放平台 errcode
+  - [ ] AC-004: 单元测试 mock 微信开放平台返回 `{ media_id: "xxx" }`，断言路径完整
+- **deliverables**:
+  - [ ] `apps/relay/src/wechat-asset/uploader.ts`
+  - [ ] `apps/relay/src/wechat-asset/credential-loader.ts` — 从 credentials store 取 AppID/AppSecret
+  - [ ] `apps/relay/src/routes/wechat-assets.ts` — POST /api/v1/wechat-assets/upload
+  - [ ] `apps/job-worker/src/handlers/wechat-asset-upload.ts`
+  - [ ] `tests/relay/wechat-asset-uploader.test.ts`
+- **relates_to**: [F-005, M-010]
+- **context_load**:
+  - prd-wechat-flow-f001-f014#§2.F-005
+  - arch-wechat-flow-modules#§2.M-010
+  - arch-wechat-flow-api#§3.API-018
+
+---
+
+### T-078: M-008 composeUploadWechatAsset use case
+
+- **目标**: 实现 M-008 应用层 use case：编辑器/CLI/MCP server 共享的素材库上传调用入口；提交到 T-077 relay endpoint 并返回 JobHandle
+- **模块**: M-008
+- **task_kind**: feature
+- **priority**: P1
+- **complexity**: small
+- **sprint**: 5
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **tdd_refactor**: skip
+- **security_sensitive**: false
+- **dependencies**: [T-031, T-077]
+- **acceptance_criteria**:
+  - [ ] AC-001: composeUploadWechatAsset({ imageUrl, type }) 调用 POST /api/v1/wechat-assets/upload，返回 `JobHandle { jobId }`
+  - [ ] AC-002: 入参 imageUrl 校验为 https URL，type 在 4 个枚举值之内，否则抛 ValidationError
+  - [ ] AC-003: 提供 SSE 监听帮手 `subscribeJob(jobId, onProgress, onComplete, onError)`
+- **deliverables**:
+  - [ ] `packages/core/src/composers/upload-wechat-asset.ts`
+  - [ ] `tests/app-layer/compose-upload-wechat-asset.test.ts`
+- **relates_to**: [F-005, M-008]
+- **context_load**:
+  - prd-wechat-flow-f001-f014#§2.F-005
+  - arch-wechat-flow-modules#§2.M-008
+
+---
+
+### T-079: M-009 upload_to_wechat_asset Tool（thin wrapper → T-078）
+
+- **目标**: MCP Tool 层 thin wrapper，调用 T-078 composer，禁止持有业务逻辑
+- **模块**: M-009
+- **task_kind**: feature
+- **priority**: P1
+- **complexity**: small
+- **sprint**: 5
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **tdd_refactor**: skip
+- **security_sensitive**: false
+- **dependencies**: [T-077, T-036]
+- **acceptance_criteria**:
+  - [ ] AC-001: MCP Tool `upload_to_wechat_asset({ imageUrl, type })` 立即返回 `{ jobId: uuid }` [F-013 AC-002 + F-005 AC-003]
+  - [ ] AC-002: Tool 实现仅调用 composeUploadWechatAsset，不含业务逻辑（grep 该文件无 fetch / DB / 加密相关代码）
+  - [ ] AC-003: jobId 格式为 z.string().uuid()
+- **deliverables**:
+  - [ ] `apps/mcp-server/src/tools/upload-to-wechat-asset.ts` — thin wrapper
+  - [ ] `tests/mcp-server/tools/upload-to-wechat-asset.test.ts`
+- **relates_to**: [F-005, F-013, M-009]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-009
+  - arch-wechat-flow-api#§3.1.API-016
+
+---
+
+### T-080: M-009 list_tokens / describe_token Tool（thin wrapper → M-005）
+
+- **目标**: MCP Tool 暴露 token 注册表（list_tokens / describe_token）；thin wrapper 调用 M-005
+- **模块**: M-009
+- **task_kind**: feature
+- **priority**: P1
+- **complexity**: small
+- **sprint**: 5
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **tdd_refactor**: skip
+- **security_sensitive**: false
+- **dependencies**: [T-020, T-036]
+- **acceptance_criteria**:
+  - [ ] AC-001: list_tokens() 返回数组长度 ≥ 60（F-003 AC-004），每项含 id/category（color/spacing/font/decoration/alignment 之一）
+  - [ ] AC-002: describe_token('color.brand') 返回 `{ id, category, value, themeOverrides? }`
+  - [ ] AC-003: Tool 实现仅调用 M-005 注册中心 API，不含业务逻辑
+- **deliverables**:
+  - [ ] `apps/mcp-server/src/tools/list-tokens.ts`
+  - [ ] `apps/mcp-server/src/tools/describe-token.ts`
+  - [ ] `tests/mcp-server/tools/list-tokens.test.ts`
+- **relates_to**: [F-013, M-009, M-005]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-005
+  - arch-wechat-flow-modules#§2.M-009
+
+---
+
+### T-081: M-009 list_block_variants / describe_variant Tool（thin wrapper → M-005）
+
+- **目标**: MCP Tool 暴露 variant 注册表查询；thin wrapper 调用 M-005
+- **模块**: M-009
+- **task_kind**: feature
+- **priority**: P1
+- **complexity**: small
+- **sprint**: 5
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **tdd_refactor**: skip
+- **security_sensitive**: false
+- **dependencies**: [T-024, T-036]
+- **acceptance_criteria**:
+  - [ ] AC-001: list_block_variants('callout') 返回数组长度 ≥ 3，每项含 id/blockId/render? 元数据
+  - [ ] AC-002: describe_variant('callout', 'feature') 返回对象含 attrsSchema + token/asset 依赖列表
+  - [ ] AC-003: Tool 实现仅调用 M-005 注册中心 API，不含业务逻辑
+- **deliverables**:
+  - [ ] `apps/mcp-server/src/tools/list-block-variants.ts`
+  - [ ] `apps/mcp-server/src/tools/describe-variant.ts`
+  - [ ] `tests/mcp-server/tools/list-block-variants.test.ts`
+- **relates_to**: [F-013, M-009, M-005]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-005
+
+---
+
+### T-082: M-009 derive_palette Tool（thin wrapper → M-006）
+
+- **目标**: MCP Tool 暴露调色板派生；thin wrapper 调用 M-006
+- **模块**: M-009
+- **task_kind**: feature
+- **priority**: P1
+- **complexity**: small
+- **sprint**: 5
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **tdd_refactor**: skip
+- **security_sensitive**: false
+- **dependencies**: [T-023, T-036]
+- **acceptance_criteria**:
+  - [ ] AC-001: derive_palette({ primary: '#a8322a' }) 返回 token 字典对象，含 background / accent / status / decoration 至少 4 类 token
+  - [ ] AC-002: 派生后 token 通过 M-006 WCAG 对比度校验
+  - [ ] AC-003: Tool 实现仅调用 M-006 derivePalette，不含业务逻辑
+- **deliverables**:
+  - [ ] `apps/mcp-server/src/tools/derive-palette.ts`
+  - [ ] `tests/mcp-server/tools/derive-palette.test.ts`
+- **relates_to**: [F-013, M-009, M-006]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-006
+
+---
+
+### T-083: M-009 simulate_paste Tool（thin wrapper → M-004）
+
+- **目标**: MCP Tool 暴露粘贴过滤模拟；thin wrapper 调用 M-004
+- **模块**: M-009
+- **task_kind**: feature
+- **priority**: P1
+- **complexity**: small
+- **sprint**: 5
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **tdd_refactor**: skip
+- **security_sensitive**: false
+- **dependencies**: [T-017, T-036]
+- **acceptance_criteria**:
+  - [ ] AC-001: simulate_paste({ html }) 返回 `{ filteredHtml, diffNodes, droppedAttrs }`
+  - [ ] AC-002: 包含 `<style>` 标签的输入经 simulate_paste 后 droppedAttrs 含 'style-tag'
+  - [ ] AC-003: Tool 实现仅调用 M-004 simulatePaste，不含业务逻辑
+- **deliverables**:
+  - [ ] `apps/mcp-server/src/tools/simulate-paste.ts`
+  - [ ] `tests/mcp-server/tools/simulate-paste.test.ts`
+- **relates_to**: [F-013, M-009, M-004]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-004
+
+---
+
+### T-084: M-009 export_clipboard_payload Tool（thin wrapper → M-008 composeCopy）
+
+- **目标**: MCP Tool 暴露 clipboard payload 构造；thin wrapper 调用 M-008 composeCopy 内部函数
+- **模块**: M-009
+- **task_kind**: feature
+- **priority**: P1
+- **complexity**: small
+- **sprint**: 5
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **tdd_refactor**: skip
+- **security_sensitive**: false
+- **dependencies**: [T-030, T-036]
+- **acceptance_criteria**:
+  - [ ] AC-001: export_clipboard_payload({ markdown, themeId }) 返回 `{ html, text }`，html 为已 inline-styled 且经 simulatePaste 处理的 HTML（与 composeCopy pipeline 一致）
+  - [ ] AC-002: 返回的 html 不含 `<style>` 标签
+  - [ ] AC-003: Tool 实现仅调用 M-008 composeRender + simulatePaste，不直接复制 composeCopy 业务逻辑
+- **deliverables**:
+  - [ ] `apps/mcp-server/src/tools/export-clipboard-payload.ts`
+  - [ ] `tests/mcp-server/tools/export-clipboard-payload.test.ts`
+- **relates_to**: [F-013, M-009, M-008]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-008
 
 ---
 
@@ -437,10 +642,12 @@ required_sections:
 - **priority**: P1
 - **sprint**: 5
 - **user_facing_critical_path**: true
-- **dependencies**: [T-044, T-046, T-050, T-051]
+- **dependencies**: [T-044, T-046, T-050, T-051, T-073, T-074, T-077, T-079, T-080, T-081, T-082, T-083, T-084]
 - **acceptance_criteria**:
   - [ ] 运行 `wechat-flow init my-test-pack --template plugin`，生成骨架目录；进入目录运行 `wechat-flow validate .`，输出退出码 0 + 通过信息
   - [ ] 在编辑器中写入含中英文混排的 Markdown（如「这是GitHub的项目，包含react组件」），点击「...」→「中文排版修订」，diff 预览 Modal 弹出并展示变更（中英间加空格），点击「确认修订」，编辑器内容更新，按 Ctrl+Z 可撤销
   - [ ] 通过 MCP HTTP transport（`POST /mcp/tools/apply_zh_typo`），发送含中英混排的 Markdown，返回 `{ fixed: '...', totalChanges: N }` 响应
-  - [ ] 在 P-004 设置页「同步与协作」分组开启协作开关，填写 `ws://localhost:3000/yjs/test`，保存后预览面板右下角同步指示器变为「connecting」状态
-- **relates_to**: [F-010, F-012, F-014, M-007, M-009, M-011]
+  - [ ] 点击模板卡片应用模板成功（T-073 模板市场验证）
+  - [ ] 素材库上传 smoke test：mock 微信 API 返回 mediaId，接口返回 `{ jobId: uuid }`（T-077 验证）
+  - [ ] Tool 全集 grep 验证：22 个 Tool 文件在 `apps/mcp-server/src/tools/` 下存在
+- **relates_to**: [F-010, F-014, M-007, M-009, M-011]

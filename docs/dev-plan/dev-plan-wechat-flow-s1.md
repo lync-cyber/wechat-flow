@@ -1,9 +1,9 @@
 ---
 id: "dev-plan-wechat-flow-s1"
-version: "0.1.2"
+version: "0.2.0"
 doc_type: dev-plan
 author: tech-lead
-status: approved
+status: draft
 deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "ui-spec-wechat-flow", "ui-spec-wechat-flow-c001-c014", "ui-spec-wechat-flow-p001-p005"]
 consumers: [developer, qa-engineer]
 volume: sprint
@@ -162,7 +162,7 @@ required_sections:
 - **acceptance_criteria**:
   - [ ] AC-001: Given 含 `# 标题` 的 Markdown，When 经过 inline-style 阶段（使用默认 token），Then 产出 HTML 中 `h1` 元素含 `style="..."` 属性，且该属性包含字体、颜色等至少 2 个 CSS 声明，`h1` 不含 `class` 属性 [ARCH#§2.M-002]
   - [ ] AC-002: Given 产出的 inline-styled HTML，When 检查所有元素，Then 无 `<style>` 标签，无 CSS 变量（`var(--`），无 `class` 属性（确保过滤安全）
-  - [ ] AC-003: Given `juice` 或 `css-inline` 库（implementer 选型），When 对测试 HTML + CSS 字符串执行内联化，Then 生成的 inline style 字符串可通过 CSS 解析器解析（无语法错误）
+  - [ ] AC-003: Given 使用 `juice 11.x`（options 包含 `removeStyleTags: true` 等确定性配置），When 对测试 HTML + CSS 字符串执行内联化，Then 生成的 inline style 字符串可通过 CSS 解析器解析（无语法错误）
 - **deliverables**:
   - [ ] `packages/core/src/pipeline/inline-style.ts` — `inlineStyle(hast: HastRoot, themeTokens: TokenDictionary): HastRoot`
   - [ ] `packages/core/src/pipeline/css-attr-filter.ts` — CSS 属性二级白名单过滤（拒绝 `expression(` / `javascript:` / `behavior:` / `@import`）

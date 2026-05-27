@@ -1,9 +1,9 @@
 ---
 id: "prd-wechat-flow-f001-f014"
-version: "0.2.0"
+version: "0.3.0"
 doc_type: prd
 author: product-manager
-status: approved
+status: draft
 deps: ["prd-wechat-flow"]
 consumers: [architect, ui-designer, tech-lead]
 volume: features
@@ -32,6 +32,7 @@ required_sections:
   - [ ] AC-006: 支持撤销/重做、查找/替换、字数统计。
   - [ ] AC-007: 支持输入辅助：中英文自动加空格、智能引号转换、破折号转换。
   - [ ] AC-008: 中文排版一键修订功能（4 类规则）集成在编辑器命令面板与"..."次级菜单，写作者显式触发，自动跳过代码块/inlineCode/链接 URL 等敏感区域。详见 F-014。
+  - [ ] AC-009: 万字文档键入 P95 延迟 < 50ms；万字文档主题切换到预览更新完成 P95 < 200ms。
 - **优先级**: P0
 - **备注**:
   - 典型写作流程（写作者场景）：写完点击主题切换可瞬间换风格 → 兼容性面板显示微信兼容状态 → 点击"复制到公众号"按钮完成 CSS 内联化与粘贴过滤模拟 → 在公众号编辑器粘贴所见即所得。
@@ -88,7 +89,10 @@ required_sections:
   - [ ] AC-003: 主题面板含「社区扩展占位」卡片，引导写作者期待第三方主题（占位可点跳到 `/themes` stub 路由，真实接通由架构阶段规划）。
   - [ ] AC-004: Token 层注册 ≥ 60 个 token，覆盖五大类别：color / spacing / font / decoration / alignment。
   - [ ] AC-005: Mark 层（行内组件）内置数 ≥ 11，覆盖：粗体、斜体、链接、行内代码、徽章、强调着重号、高亮、下划线、波浪线、插入标记、上下标、引用链接、行内公式。
-  - [ ] AC-006: Block 层（块级组件）内置数 ≥ 40，覆盖：标题、段落、列表、表格、代码块、引用、卡片、提示框、分隔线、图片、图说、画廊、步骤、对比、金句、强调段、公告、对话、时序、二维码、视频、音频、小程序卡片、文末互动、推荐、作者卡、刊物骨架、KPI 数据卡、问答、脚注等。
+  - [ ] AC-006: Block 层（块级组件）内置数 ≥ 40，按产品优先级分两档：
+    - **P0 必含 25 种**：标题、段落、列表、表格、代码块、引用、卡片、提示框、分隔线、图片、图说、画廊、步骤、对比、金句、强调段、公告、对话、时序、二维码、视频、音频、小程序卡片、文末互动、推荐。
+    - **P1 必含 15 种**：作者卡、刊物骨架、KPI 数据卡、问答、脚注、tip-grid、warning、disclaimer、reading-time、citation、definition-list、advert-card、related-cards、social-cta、subscribe-cta。
+    - 注册表满足 `listBlocks().length ≥ 40` 且 P0 25 种与 P1 15 种全部注册。
   - [ ] AC-007: Variant 皮肤系统：每个 Block/Mark 可注册多个 variant 皮肤（同一 directive 输入，不同视觉皮肤），写作者在 directive 属性中切换（如 `:::quote{variant=magazine-dropcap}`）；主题作者与插件作者均可向已有 Block 注册新 variant，无需修改 Block 源码。内置 variant 数 ≥ 120，集中在 callout / quote / steps / pull-quote / table-grid / divider / card / highlight / compare 等核心 Block 上。
   - [ ] AC-008: 主题装饰资产：主题可声明 `assets` 字典注入内联 SVG 装饰（分隔花纹、标题前缀、章节序号、KPI 箭头、印章符等），支持 `{{tokenId}}` 占位符在渲染时由 token 值填充，装饰随主题切换跟随更新。
   - [ ] AC-009: 上下文敏感渲染：同一 H2 标签在卡片内/外呈现不同样式；主题可声明 heading 装饰策略（序号编码、章节标记、前缀装饰），覆盖默认六级标题视觉。
@@ -109,10 +113,11 @@ required_sections:
   - [ ] AC-002: 复制操作通过 HTTPS + 用户手势触发（满足 Clipboard API 安全前提）。
   - [ ] AC-003: 复制前自动完成 CSS 内联化（所有样式写进每个元素的 `style` 属性）。
   - [ ] AC-004: 复制后产物必须先经过一次"粘贴过滤模拟"（预演微信编辑器对粘贴 HTML 的过滤行为），确保最终展示与本地预览一致。
-  - [ ] AC-005: 粘贴到公众号编辑器后，渲染与本地预览的视觉差异 ≤ 5%（指定 5 篇典型样本，5 套内置主题各覆盖一篇）。
+  - [ ] AC-005: 粘贴到公众号编辑器后，渲染与本地预览的视觉差异 ≤ 5%；验收口径 `mismatched_pixels / total_pixels ≤ 0.05`，算法 `pixelmatch` (threshold 0.2, `includeAA: false`)，样本固定在 `tests/visual/samples/{theme}/{1..5}.md`（5 主题 × 1 篇）。
   - [ ] AC-006: 支持 HTML 文件导出（独立可分享的 standalone 文件）。
+  - [ ] AC-007: 不支持 Clipboard API 的浏览器降级到 `textarea + document.execCommand('copy')`，并触发 Toast 提示用户使用系统快捷键完成复制。
 - **优先级**: P0
-- **备注**: 不做 PDF 导出——公众号写作者的最终交付物是 inline-styled HTML，PDF 既不是发布通道也不是高频导出场景。
+- **备注**: 不做 PDF 导出（详见主卷 §4）。
 
 ---
 
@@ -234,7 +239,8 @@ required_sections:
   - [ ] AC-001（P0）: 过滤规则集回归测试——两层 fixture，CI 必跑两套：规则级（每条规则一对 `input.html` / `expected.html`，hast→hast）+ 端到端（典型 Markdown 输入 → 最终 HTML，覆盖典型组合，验证管线整体）。
   - [ ] AC-002（P0）: 粘贴过滤模拟——在工具内复现公众号编辑器对粘贴 HTML 的过滤行为（剥标签、剥属性、改写结构），作为渲染管线最后一道关卡；输出粘贴前后逐节点的精确变更对照，作为兼容性详情面板的核心可视化数据。
   - [ ] AC-003（P0）: 主题覆盖率守护——每套用户可见主题须通过 8 维静态校验：基线选择器密度、核心 block 覆盖率、token 覆盖率、跨主题身份 token 防碰撞、元数据完整性、theme.css 属性合规、WCAG 对比度自动校验、装饰资产完整性。校验集合在版本化策略中维护（收紧走 minor，放松走 major），确保新主题不能通过"复制改色+删配置"捷径过 CI。
-  - [ ] AC-004（P0）: 视觉回归基线——Playwright 截图 diff，覆盖 5 套内置主题 × 所有 Block/Mark/variant 的 story 矩阵，以及 ≥ 8 综合场景（all-blocks 单页、GFM baseline、夜间模式预览、典型嵌套 list 等）。
+  - [ ] AC-004a（P0）: 视觉回归核心矩阵——Playwright 截图 diff，覆盖 5 套内置主题 × P0 核心 Block/Mark 8 类基础场景（heading / paragraph / blockquote / code-block / image / callout / highlight-mark / badge-mark）+ ≥ 8 综合场景（all-blocks 单页、GFM baseline、夜间模式预览、典型嵌套 list 等）；pixelmatch ratio ≤ 0.05；每个 PR 必跑。
+  - [ ] AC-004b（P1）: 视觉回归全量 variant 覆盖——按 `listBlocks()` × `describeBlock(b).variants` × 5 主题动态枚举 story；PR 抽样比例由 ruleset 配置（默认 20%），夜间 scheduled job 跑全量；阈值同 AC-004a。
   - [ ] AC-005（P1）: 已知 Bug 补丁库——按微信客户端版本号管理，可热加载。
   - [ ] AC-006（P1）: 可读性检查——颜色对比度（WCAG AA）、字号下限、段长上限；对比度检查在主题层为静态自动校验，在文档层为运行时风险提示。
   - [ ] AC-007（P1）: 违规关键词检测——词库可热更新，CI 周期性爬取/众包更新。
@@ -253,7 +259,9 @@ required_sections:
   - [ ] AC-003: 版本历史、回滚、差异对比。
   - [ ] AC-004: 支持基于 CRDT 的多人协作（具体协作框架由 architect 决策）。
 - **优先级**: P2
-- **备注**: 云端能力架构（自部署 vs 托管后端）由 architect 阶段规划；CRDT 框架为架构候选，不写入功能需求主体。
+- **备注**:
+  - 当前发布范围不交付本族任何 AC；架构以可选拓扑保留 y-websocket 与 Yjs Doc 路径（ARCH §6.2），不部署。
+  - 云端能力架构（自部署 vs 托管后端）由 architect 阶段规划。
 
 ---
 

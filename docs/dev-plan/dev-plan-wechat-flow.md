@@ -1,10 +1,10 @@
 ---
 id: "dev-plan-wechat-flow"
-version: "0.1.2"
+version: "0.2.0"
 doc_type: dev-plan
 split_policy: no-further-split
 author: tech-lead
-status: approved
+status: draft
 deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "arch-wechat-flow-api", "arch-wechat-flow-data", "ui-spec-wechat-flow", "ui-spec-wechat-flow-c001-c014", "ui-spec-wechat-flow-p001-p005"]
 consumers: [developer, qa-engineer]
 volume: main
@@ -19,7 +19,7 @@ required_sections:
 [NAV]
 - §1 迭代规划 → Sprint 0..6 总览表
 - §2 依赖图 → Mermaid DAG + 关键路径
-- §3 任务卡详细 → T-001..T-094（见 Sprint 分卷）
+- §3 任务卡详细 → T-001..T-091 + T-DS-001..T-DS-010 + T-VAL-00..T-VAL-06（见 Sprint 分卷）
 - §4 Penpot 同步任务专章 → DS-001..DS-010
 - §5 风险与假设
 - §6 集成与E2E测试规划
@@ -35,11 +35,11 @@ required_sections:
 |--------|------|------------|---------|----------------|
 | Sprint 0 | 基础设施 + 设计系统建立 | Monorepo 骨架可跑 CI；Penpot Token 导入 | 无（纯工程） | T-VAL-00 |
 | Sprint 1 | 三栏 UI 骨架 + 渲染管线核心 | 编辑器可输入 Markdown，右栏出现 HTML 预览 | `localhost:5173` 三栏可见 | T-VAL-01 |
-| Sprint 2 | 规则集引擎 + 粘贴过滤 + 兼容性报告 | 渲染结果经规则集过滤；DiagnosticsPanel 可展开 | 输入含 `position:fixed` 的 Markdown，诊断面板变红 | T-VAL-02 |
-| Sprint 3 | 主题系统 + 组件注册中心 + Palette 派生 | 五套主题热切换；内置 Block ≥ 10 个可插入 | 左侧面板切换主题，预览区即时变色 | T-VAL-03 |
-| Sprint 4 | 输出能力 + MCP server + 图片处理 | 一键复制可粘贴到公众号；MCP `render_markdown` 可调 | 复制 HTML 粘贴到公众号编辑器视觉一致 | T-VAL-04 |
-| Sprint 5 | CLI + 插件系统 + 中文排版 + 长图/封面 | CLI `validate` 可跑；`apply_zh_typo` 可用；长图异步导出可用 | `wechat-flow validate ./my-pack` 产出报告 | T-VAL-05 |
-| Sprint 6 | 质量门禁 + 视觉回归 + 协作同步 + 收尾 | 规则集 ≥ 42 条 fixture 全绿；Playwright 视觉基线建立；Yjs 同步可选开启 | CI 全绿；`/settings` 开启同步后两标签页协作 | T-VAL-06 |
+| Sprint 2 | 规则集引擎 + 粘贴过滤 + 兼容性报告 + 双向高亮 | 渲染结果经规则集过滤；DiagnosticsPanel 可展开；源码↔预览双向高亮联动 | 输入含 `position:fixed` 的 Markdown，诊断面板变红；点击预览段落源码光标跳转 | T-VAL-02 |
+| Sprint 3 | 主题系统 + 组件注册中心 + Palette 派生 | 五套主题热切换；P0 必含 25 种内置 Block 可插入 | 左侧面板切换主题，预览区即时变色 | T-VAL-03 |
+| Sprint 4 | 输出能力 + MCP server (22 Tool) + 图片处理 | 一键复制可粘贴到公众号；MCP `render_markdown` 与发现类 Tool 可调 | 复制 HTML 粘贴到公众号编辑器视觉一致 | T-VAL-04 |
+| Sprint 5 | CLI + 插件系统 + 中文排版 + 长图/封面 + 素材库 + 模板市场 + Tool 包装 | CLI `validate` 可跑；`apply_zh_typo` 可用；长图异步导出可用；素材库上传链路打通；模板市场卡片可用 | `wechat-flow validate ./my-pack` 产出报告 | T-VAL-05 |
+| Sprint 6 | 质量门禁 + 视觉回归 + Skill bundle + 性能 benchmark + 装饰渲染 + 收尾 | 规则集 ≥ 42 条 fixture 全绿；Playwright 核心矩阵 + 抽样矩阵双绿；P95 键入 < 50ms / 主题切换 < 200ms benchmark 通过；Skill bundle 可被 Agent 加载 | CI 全绿；万字稿件键入 / 主题切换流畅；Skill bundle 端到端调用 | T-VAL-06 |
 
 ---
 
@@ -83,7 +83,8 @@ required_sections:
 | T-017 | M-004 粘贴过滤模拟器（simulatePaste + per-node diff） | feature | P0 | medium | T-013 |
 | T-018 | M-001 DiagnosticsPanel（C-013）+ CompatibilityDiffView（C-013.1） | feature | P0 | medium | T-017,T-DS-005 |
 | T-019 | 底部状态栏兼容性摘要接线（M-001 → M-003 诊断流） | feature | P0 | small | T-018 |
-| T-VAL-02 | [VALIDATION] Sprint 2 验证：规则集过滤 + 诊断面板 | validation | P0 | small | T-014,T-015,T-017,T-018,T-019 |
+| T-019b | 源码 ↔ 预览双向高亮联动（F-001 AC-004） | feature | P0 | medium | T-009,T-010 |
+| T-VAL-02 | [VALIDATION] Sprint 2 验证：规则集过滤 + 诊断面板 + 双向高亮 | validation | P0 | small | T-014,T-015,T-017,T-018,T-019,T-019b |
 
 ### Sprint 3 任务表（主题系统 + 组件注册 + Palette）
 
@@ -94,7 +95,7 @@ required_sections:
 | T-021 | packages/themes default 主题（token + Block CSS） | feature | P0 | medium | T-020 |
 | T-022 | packages/themes magazine/literary/business/tech 四套主题 | feature | P0 | large | T-021 |
 | T-023 | M-006 调色板派生（LCH + WCAG 对比度校验） | feature | P0 | medium | T-004 |
-| T-024 | packages/blocks 内置 Block ≥ 20 个（含 variant 注册） | feature | P0 | large | T-020 |
+| T-024 | packages/blocks 内置 Block ≥ 25 个（P0 必含全集，含 variant 注册） | feature | P0 | large | T-020 |
 | T-025 | packages/marks 内置 Mark ≥ 11 个 | feature | P0 | medium | T-020 |
 | T-026 | M-001 LeftPanelTabs（C-006）+ ThemeCard（C-007）+ BlockLibItem（C-008） | feature | P0 | medium | T-020,T-021 |
 | T-027 | M-001 CommandPalette（C-009）接线 command registry | feature | P1 | medium | T-026,T-DS-006 |
@@ -123,41 +124,47 @@ required_sections:
 | T-042 | P-004 设置页（/settings 路由）— 图床配置 + API 密钥分组 | feature | P0 | medium | T-005,T-033,T-DS-008 |
 | T-VAL-04 | [VALIDATION] Sprint 4 验证：复制 HTML + 长图导出 + MCP render_markdown | validation | P0 | small | T-030,T-031,T-035,T-037,T-042 |
 
-### Sprint 5 任务表（CLI + 插件系统 + 中文排版 + 收尾功能）
+### Sprint 5 任务表（CLI + 插件系统 + 中文排版 + 素材库 + 模板市场 + MCP Tool 包装）
 
 | 任务 ID | 任务名 | task_kind | 优先级 | 复杂度 | 依赖 |
 |---------|--------|-----------|--------|--------|------|
 | T-DS-009 | [DESIGN] Penpot — P-005 移动端只读预览视觉稿（PS-009） | design | P2 | small | T-DS-001 |
-| T-043 | packages/zh-typo 中文排版 4 类规则（M-014 附属模块） | feature | P1 | medium | T-006 |
+| T-043 | packages/zh-typo 中文排版 4 类规则（M-008 依赖包） | feature | P1 | medium | T-006 |
 | T-044 | M-008 composeApplyZhTypo use case + diff 预览 | feature | P1 | medium | T-043 |
 | T-045 | M-009 apply_zh_typo Tool 实现 | feature | P1 | small | T-036,T-044 |
 | T-046 | M-001 中文排版修订 UI（diff 预览 Modal + ContextMenu 接线） | feature | P1 | medium | T-044,T-027 |
-| T-047 | M-007 插件沙箱 Worker 骨架（Comlink RPC + 网络门禁） | feature | P1 | large | T-004 |
+| T-047 | M-007 插件沙箱 Worker 骨架（Comlink RPC + 网络门禁 + `assertNetIsolation`） | feature | P1 | large | T-004 |
 | T-048 | M-007 plugin-api surface（defineBlock/defineVariant/defineRule/defineTheme） | feature | P1 | medium | T-047,T-020 |
 | T-049 | M-005 品牌包锁定（delta-merge + brand-pack lock） | feature | P2 | medium | T-020 |
 | T-050 | apps/cli init/dev/validate/publish 命令（M-011） | feature | P1 | large | T-047,T-048 |
 | T-051 | M-009 HTTP/SSE transport + admin API key 管理端点（API-028..API-031） | feature | P1 | medium | T-036 |
-| T-052 | M-010 Yjs y-websocket server 集成（协作中继） | feature | P2 | large | T-034 |
-| T-053 | M-013 Yjs sync 客户端（y-codemirror.next + y-indexeddb + WebsocketProvider） | feature | P2 | large | T-012,T-052 |
-| T-054 | P-004 设置页 — 同步与协作分组（F-012 开关 + WebSocket URL） | feature | P2 | small | T-042,T-053 |
-| T-055 | P-005 移动端只读预览（/preview/:docId + 底部固定栏） | feature | P2 | medium | T-005,T-010,T-DS-009 |
-| T-VAL-05 | [VALIDATION] Sprint 5 验证：CLI validate + apply_zh_typo + 插件沙箱 | validation | P1 | small | T-044,T-046,T-050,T-051 |
+| T-055 | P-005 移动端只读预览（/preview/:docId + 底部固定栏 + Clipboard 降级） | feature | P2 | medium | T-005,T-010,T-DS-009 |
+| T-073 | 模板市场骨架 + 五主题 × ≥ 2 模板 seed（F-008 P1） | feature | P1 | medium | T-041,T-022,T-005 |
+| T-074 | packages/blocks Block 补全 Phase 2（P1 必含 5 种：作者卡/刊物骨架/KPI 数据卡/问答/脚注） | feature | P1 | medium | T-024 |
+| T-077 | M-010 wechat-asset uploader.ts + BullMQ kind `wechat-asset-upload` | feature | P1 | medium | T-033,T-042 |
+| T-078 | M-008 composeUploadWechatAsset use case | feature | P1 | small | T-031,T-077 |
+| T-079 | M-009 upload_to_wechat_asset Tool（thin wrapper → T-078） | feature | P1 | small | T-077,T-036 |
+| T-080 | M-009 list_tokens / describe_token Tool（thin wrapper → M-005） | feature | P1 | small | T-020,T-036 |
+| T-081 | M-009 list_block_variants / describe_variant Tool（thin wrapper → M-005） | feature | P1 | small | T-024,T-036 |
+| T-082 | M-009 derive_palette Tool（thin wrapper → M-006） | feature | P1 | small | T-023,T-036 |
+| T-083 | M-009 simulate_paste Tool（thin wrapper → M-004） | feature | P1 | small | T-017,T-036 |
+| T-084 | M-009 export_clipboard_payload Tool（thin wrapper → M-008 composeCopy） | feature | P1 | small | T-030,T-036 |
+| T-VAL-05 | [VALIDATION] Sprint 5 验证：CLI validate + apply_zh_typo + 插件沙箱 + 素材库上传 + 模板市场 + Tool 全集 | validation | P1 | small | T-044,T-046,T-050,T-051,T-073,T-074,T-077,T-079,T-080,T-081,T-082,T-083,T-084 |
 
-### Sprint 6 任务表（质量门禁 + 视觉回归 + 收尾）
+### Sprint 6 任务表（质量门禁 + 视觉回归 + Skill bundle + 性能 benchmark + 装饰渲染 + 收尾）
 
 | 任务 ID | 任务名 | task_kind | 优先级 | 复杂度 | 依赖 |
 |---------|--------|-----------|--------|--------|------|
 | T-DS-010 | [DESIGN] Penpot — C-013 诊断密度测试（PS-007） + 移动端拇指热区（PS-009） | design | P2 | small | T-DS-001 |
 | T-056 | 规则集补全至 ≥ 42 条（补 strip+clamp+transform 分类空缺） | feature | P0 | large | T-015 |
 | T-057 | E2E fixture：典型 Markdown → 最终 HTML 端到端验证（F-011 AC-001） | feature | P0 | medium | T-056 |
-| T-058 | Playwright 视觉回归基线建立（5 主题 × Block/Mark/variant 矩阵） | feature | P0 | large | T-022,T-024,T-025 |
+| T-058 | Playwright 视觉回归核心矩阵 + 全量 variant 抽样（动态枚举 + pixelmatch ≤ 0.05） | feature | P0 | large | T-022,T-024,T-025,T-074,T-075 |
 | T-059 | WCAG 对比度自动校验 + 主题守护 8 维完整实现（F-011 AC-003） | feature | P0 | medium | T-020 |
 | T-060 | 已知 Bug 补丁库热加载（F-011 AC-005，patch-loader） | feature | P1 | medium | T-013 |
 | T-061 | 可读性检查（颜色对比度 + 字号下限 + 段长，F-011 AC-006） | feature | P1 | medium | T-018 |
 | T-062 | CI 任务图完整配置（lint → typecheck → unit-test → ruleset-fixture → cross-runtime → theme-guard → visual-regression） | chore | P0 | medium | T-057,T-058,T-059 |
-| T-063 | cross-runtime 一致性测试（Node/Worker/Edge SHA-256 字节级一致） | feature | P0 | medium | T-006,T-007 |
+| T-063 | cross-runtime 一致性测试（Node/Worker/Edge/Browser-main SHA-256 字节级一致 — 四 target） | feature | P0 | medium | T-006,T-007,T-058 |
 | T-064 | 多文档管理 + 自动备份完善（C-006 Tab 3 + P-002 文档列表） | feature | P0 | medium | T-012,T-026 |
-| T-065 | 源码 ↔ 预览双向高亮联动（F-001 AC-004） | feature | P0 | medium | T-009,T-010 |
 | T-066 | 撤销/重做 + 查找/替换 + 字数统计（F-001 AC-006） | feature | P0 | medium | T-009 |
 | T-067 | 输入辅助：中英文自动加空格 + 智能引号（F-001 AC-007） | feature | P1 | small | T-009 |
 | T-068 | 夜间模式风险预警（F-002 AC-003/AC-004） | feature | P1 | medium | T-018 |
@@ -165,8 +172,14 @@ required_sections:
 | T-070 | 版本三元组透传 + 确定性渲染验证（F-013 AC-001） | feature | P0 | small | T-007,T-037 |
 | T-071 | MCP server 冷启动性能优化（P95 < 800ms，F-013 AC-006） | feature | P1 | medium | T-037 |
 | T-072 | Public Tool Schema deprecation window 工具（F-013 AC-005） | feature | P1 | small | T-004 |
-| T-073 | 模板市场骨架（F-008，M-005 template/registry.ts 接线 UI） | feature | P1 | medium | T-041,T-020 |
-| T-VAL-06 | [VALIDATION] Sprint 6 验证：CI 全绿 + 视觉回归基线通过 | validation | P0 | small | T-056,T-057,T-058,T-059,T-062,T-063 |
+| T-075 | packages/blocks Block 补全 Phase 3（P1 增量 10 种：tip-grid/warning/disclaimer/reading-time/citation/definition-list/advert-card/related-cards/social-cta/subscribe-cta） | feature | P1 | medium | T-074 |
+| T-085 | `skill/` Skill bundle（SKILL.md + prompts + resources，编排 22 个 Tool 调用顺序） | feature | P1 | medium | T-079,T-080,T-081,T-082,T-083,T-084 |
+| T-086 | 编辑器性能 benchmark（万字键入 P95 < 50ms / 主题切换 P95 < 200ms） | feature | P0 | medium | T-009,T-026,T-029 |
+| T-087 | 主题装饰资产 + `{{tokenId}}` SVG 注入 + 上下文敏感渲染（F-003 AC-008/AC-009） | feature | P1 | medium | T-021,T-022 |
+| T-088 | 编辑器 paint drawer + color picker 双向绑定 frontmatter（F-003 AC-010） | feature | P1 | medium | T-029,T-042 |
+| T-089 | packages/ruleset 关键词 lint 规则 + 可热更新词库（F-011 AC-007） | feature | P1 | medium | T-013 |
+| T-090 | 实地验证辅助脚本 + EVENT-LOG 回写（F-011 AC-008） | feature | P1 | small | T-057 |
+| T-VAL-06 | [VALIDATION] Sprint 6 验证：CI 全绿 + 视觉回归矩阵 + 性能基线 + Skill bundle 端到端 | validation | P0 | small | T-056,T-057,T-058,T-059,T-062,T-063,T-075,T-085,T-086,T-087,T-088 |
 
 ---
 
@@ -239,18 +252,38 @@ graph LR
     T-047 --> T-050
     T-048 --> T-050
     T-036 --> T-051
-    T-034 --> T-052
-    T-012 --> T-053
-    T-052 --> T-053
-    T-042 --> T-054
-    T-053 --> T-054
     T-005 --> T-055
     T-010 --> T-055
     T-015 --> T-056
     T-056 --> T-057
+    T-009 --> T-019b
+    T-010 --> T-019b
+    T-024 --> T-074
+    T-074 --> T-075
+    T-033 --> T-077
+    T-042 --> T-077
+    T-031 --> T-078
+    T-077 --> T-078
+    T-077 --> T-079
+    T-036 --> T-079
+    T-020 --> T-080
+    T-036 --> T-080
+    T-024 --> T-081
+    T-036 --> T-081
+    T-023 --> T-082
+    T-036 --> T-082
+    T-017 --> T-083
+    T-036 --> T-083
+    T-030 --> T-084
+    T-036 --> T-084
+    T-041 --> T-073
+    T-022 --> T-073
+    T-005 --> T-073
     T-022 --> T-058
     T-024 --> T-058
     T-025 --> T-058
+    T-074 --> T-058
+    T-075 --> T-058
     T-020 --> T-059
     T-013 --> T-060
     T-018 --> T-061
@@ -259,10 +292,9 @@ graph LR
     T-059 --> T-062
     T-006 --> T-063
     T-007 --> T-063
+    T-058 --> T-063
     T-012 --> T-064
     T-026 --> T-064
-    T-009 --> T-065
-    T-010 --> T-065
     T-009 --> T-066
     T-009 --> T-067
     T-018 --> T-068
@@ -271,8 +303,21 @@ graph LR
     T-037 --> T-070
     T-037 --> T-071
     T-004 --> T-072
-    T-041 --> T-073
-    T-020 --> T-073
+    T-079 --> T-085
+    T-080 --> T-085
+    T-081 --> T-085
+    T-082 --> T-085
+    T-083 --> T-085
+    T-084 --> T-085
+    T-009 --> T-086
+    T-026 --> T-086
+    T-029 --> T-086
+    T-021 --> T-087
+    T-022 --> T-087
+    T-029 --> T-088
+    T-042 --> T-088
+    T-013 --> T-089
+    T-057 --> T-090
 
     style T-001 fill:#f96,stroke:#333,stroke-width:2px
     style T-004 fill:#f96,stroke:#333,stroke-width:2px
@@ -304,11 +349,11 @@ graph LR
 |---------|---------|
 | `dev-plan-wechat-flow-s0.md` | Sprint 0: T-001..T-004, T-DS-001, T-VAL-00 |
 | `dev-plan-wechat-flow-s1.md` | Sprint 1: T-005..T-012, T-DS-002..T-DS-004, T-VAL-01 |
-| `dev-plan-wechat-flow-s2.md` | Sprint 2: T-013..T-019, T-DS-005, T-VAL-02 |
+| `dev-plan-wechat-flow-s2.md` | Sprint 2: T-013..T-019, T-019b, T-DS-005, T-VAL-02 |
 | `dev-plan-wechat-flow-s3.md` | Sprint 3: T-020..T-029, T-DS-006..T-DS-007, T-VAL-03 |
 | `dev-plan-wechat-flow-s4.md` | Sprint 4: T-030..T-042, T-DS-008, T-VAL-04 |
-| `dev-plan-wechat-flow-s5.md` | Sprint 5: T-043..T-055, T-DS-009, T-VAL-05 |
-| `dev-plan-wechat-flow-s6.md` | Sprint 6: T-056..T-073, T-DS-010, T-VAL-06 |
+| `dev-plan-wechat-flow-s5.md` | Sprint 5: T-043..T-051, T-055, T-073, T-074, T-077..T-084, T-DS-009, T-VAL-05 |
+| `dev-plan-wechat-flow-s6.md` | Sprint 6: T-056..T-064, T-066..T-072, T-075, T-085..T-090, T-DS-010, T-VAL-06 |
 
 ---
 
@@ -347,12 +392,12 @@ graph LR
 | 风险编号 | 风险描述 | 影响 Sprint | 影响等级 | 缓解措施 |
 |---------|---------|------------|---------|---------|
 | R-001 | Vue 3.5 Vapor Mode 与 CodeMirror 6 集成兼容性未经实测 | Sprint 1 | HIGH | T-009 前用 PoC 验证 `@codemirror/view` 与 Vapor 模式的 DOM 操作兼容性；若不兼容退回标准 Vue 渲染模式，Vapor 为可选优化 |
-| R-002 | 微信公众号编辑器粘贴过滤行为具有客户端版本差异，fixture 难以穷举 | Sprint 2 + Sprint 6 | HIGH | 优先建立 42 条基线；F-011 AC-008 提供实地验证脚本辅助扩充 fixture |
-| R-003 | BullMQ + Redis 在自托管场景下增加运维复杂度 | Sprint 4 | MEDIUM | deploy-spec 阶段提供 Docker Compose 单键启动方案；v1 长图导出为可选 P1 功能 |
-| R-004 | Playwright headless 渲染在 CI 环境内存消耗较大（视觉回归矩阵 5 主题 × N Block/variant）| Sprint 6 | MEDIUM | Turborepo 远程缓存跳过未变更包的截图；首次基线允许人工 approve，后续 CI diff 门禁 |
-| R-005 | Yjs CRDT 协作（F-012 P2）依赖 y-websocket 服务端，v1 未做服务端鉴权完整实现 | Sprint 5 | LOW | F-012 定位 P2；协作开关默认关；y-websocket 鉴权在 T-052 中以 Bearer token 校验为最小实现，完整 ACL 延后 |
-| R-006 | `@zod/mini` 在浏览器 bundle 与 Node 端 Zod 4.x 完整版并存可能导致类型版本不一致 | Sprint 0 | MEDIUM | T-004 阶段统一 contracts 包仅导出 Zod 4.x 完整版 schema；`@zod/mini` 仅在构建时按目标包按需切换，不在 contracts 包内混用 |
-| R-007 | Penpot MCP 工具在 Windows 开发环境下的可用性未经验证 | Sprint 0 | LOW | T-DS-001 开始前运行 Penpot MCP `high_level_overview` 验证工具链；如不可用改用 Penpot SaaS Web UI 手动操作 |
+| R-002 | 微信公众号编辑器粘贴过滤行为具有客户端版本差异，fixture 难以穷举 | Sprint 2 + Sprint 6 | HIGH | 优先建立 42 条基线；T-090 实地验证辅助脚本周期性扩充 fixture，结果回写 EVENT-LOG |
+| R-003 | BullMQ + Redis 在自托管场景下增加运维复杂度 | Sprint 4 | MEDIUM | deploy-spec 阶段提供 Docker Compose 单键启动方案；长图导出与素材库上传共用同一队列 |
+| R-004 | Playwright 视觉回归矩阵在 CI 环境的执行成本（5 主题 × 40 Block × 平均 variant）| Sprint 6 | MEDIUM | 核心矩阵每 PR 必跑（pixelmatch ≤ 0.05）；variant 全量矩阵在 PR 抽样、夜间 scheduled job 跑全量；Turborepo 远程缓存跳过未变更包的截图 |
+| R-005 | `@zod/mini` 在浏览器 bundle 与 Node 端 Zod 4.x 完整版并存可能导致类型版本不一致 | Sprint 0 | MEDIUM | T-004 阶段统一 contracts 包仅导出 Zod 4.x 完整版 schema；`@zod/mini` 仅在构建时按目标包按需切换，不在 contracts 包内混用 |
+| R-006 | Penpot MCP 工具在 Windows 开发环境下的可用性未经验证 | Sprint 0 | LOW | T-DS-001 开始前运行 Penpot MCP `high_level_overview` 验证工具链；如不可用改用 Penpot SaaS Web UI 手动操作 |
+| R-007 | MCP Tool thin wrapper 与 use case 业务逻辑可能在 implementer 阶段产生 duplicate 实现（参 XDOC-010）| Sprint 5 | MEDIUM | T-079/T-080..T-084 任务卡显式标注「Tool 层 thin wrapper，禁止持有业务逻辑」；code-review duplication 维度命中即 REFACTOR |
 
 ### 5.2 ui-spec 残留假设处理策略
 
@@ -360,7 +405,7 @@ graph LR
 
 | 假设编号 | 假设内容摘要 | dev-plan 处理 |
 |---------|------------|--------------|
-| A-001 | v1 无用户登录，API 密钥本地加密存储 | 纳入 T-042（P-004 设置页 API 密钥分组）实现范围；本地加密存储由 M-013 IndexedDB 实现 |
+| A-001 | 无用户登录账号体系，API 密钥本地加密存储 | 纳入 T-042（P-004 设置页 API 密钥分组）实现范围；本地加密存储由 M-013 IndexedDB 实现 |
 | A-002 | 左侧面板宽度持久化到 IndexedDB | 纳入 T-012（IndexedDB 持久化）AC 中明确 Splitter 宽度持久化 |
 | A-003 | macOS 下 Cmd+K，Windows/Linux 下 Ctrl+K | T-027 CommandPalette 实现时通过 `navigator.platform` 检测，不需要额外任务 |
 | A-004 | 平板抽屉打开时半透明 Overlay | 纳入 T-008 EditorShell 布局实现范围，按 `rgba(28,25,23,0.3)` 实现 |
@@ -379,7 +424,7 @@ graph LR
 |------|------|--------------|
 | 规则集总数最终以 42 条为门槛（可超过） | arch-wechat-flow-modules#§2.M-003 | T-014 + T-015 + T-056 分三 Sprint 实现 |
 | SQLite 作为服务端首选，Postgres 为横扩备选 | arch-wechat-flow#§1.4 | deploy-spec 阶段终定；T-032 relay 骨架用 libsql，接口保持 adapter 形式 |
-| juice / css-inline 内联化库最终选择 | arch-wechat-flow#§1.4 | T-007 inline-style 阶段由 implementer 选型验证（PoC 比较两库 wechat 场景表现） |
+| 浏览器主线程纳入跨运行时矩阵 | arch-wechat-flow#§5.2 / §7.3 | T-063 增第四 target（Vitest browser mode 或 Playwright `page.evaluate`）跑与 node/worker/edge 同 fixture 的 SHA-256 一致性 |
 
 ---
 
@@ -394,6 +439,9 @@ graph LR
 | Sprint 4 | Integration | M-008 composeCopy → Clipboard API → dual-MIME payload | T-030 | 模拟用户手势，调用 composeCopy，断言 clipboard 含 `text/html` + `text/plain` |
 | Sprint 4 | Integration | M-009 MCP render_markdown → M-008 → M-002 → 版本三元组 | T-037, T-070 | stdio transport 发送 render_markdown，断言响应含 `html` + `rulesetVersion` + `themeVersion` |
 | Sprint 5 | Integration | CLI validate → M-007 manifest 校验 → M-005 主题守护 | T-050 | 对合规 pack 跑 validate，退出码 0；对缺 manifest 的 pack，退出码非 0 + 错误描述 |
-| Sprint 6 | E2E | 写作者完整流程：新建文档 → 输入 Markdown → 主题切换 → 复制 HTML | T-030, T-064, T-065 | Playwright 脚本模拟用户操作，断言复制后 clipboard HTML 可粘贴到模拟公众号编辑器并视觉一致 |
-| Sprint 6 | Visual Regression | 5 套内置主题 × 所有 Block/Mark/variant story 矩阵 | T-058 | Playwright 截图 diff ≤ 5% 像素差异（相对基线） |
-| Sprint 6 | Cross-Runtime | Node / Worker / Edge runtime 同输入 SHA-256 一致 | T-063 | `tests/cross-runtime/` 在三 target 各运行渲染 pipeline，比对 `sha256(html)` 相同 |
+| Sprint 6 | E2E | 写作者完整流程：新建文档 → 输入 Markdown → 主题切换 → 复制 HTML | T-030, T-064, T-019b | Playwright 脚本模拟用户操作，断言复制后 clipboard HTML 经 simulatePaste 后视觉与本地预览 pixelmatch 比对 ≤ 0.05 |
+| Sprint 6 | Visual Regression — 核心矩阵 | 5 套内置主题 × 8 类 P0 场景 + ≥ 8 综合场景 | T-058 | 每个 PR 必跑；pixelmatch ratio ≤ 0.05 |
+| Sprint 6 | Visual Regression — 全量 variant | 5 主题 × `listBlocks()` × `describeBlock(b).variants` 动态枚举 | T-058 | PR 抽样比例由 ruleset 配置；夜间 scheduled job 跑全量 |
+| Sprint 6 | Cross-Runtime | 浏览器主线程 / Node / Worker / Edge 四 target 同输入 SHA-256 一致 | T-063 | `tests/cross-runtime/` 在四 target 各运行渲染 pipeline，比对 `sha256(html)` 相同 |
+| Sprint 6 | Performance Benchmark | 万字键入 P95 < 50ms / 主题切换 P95 < 200ms / MCP 冷启动 < 800ms | T-086, T-071 | `tests/perf/` 输入 10000 字 Markdown 跑 benchmark；CI 超阈值 fail |
+| Sprint 6 | Skill Bundle E2E | Agent 加载 SKILL.md 后端到端调用 list_themes → describe_block → render_markdown → simulate_paste → upload_to_wechat_asset | T-085 | mock 微信开放平台 API，断言完整链路无异常并返回 inline HTML |

@@ -1,9 +1,9 @@
 ---
 id: "arch-wechat-flow-modules"
-version: "0.3.0"
+version: "0.4.0"
 doc_type: arch
 author: architect
-status: approved
+status: draft
 deps: ["prd-wechat-flow", "prd-wechat-flow-f001-f014"]
 consumers: [tech-lead, ui-designer, developer, devops, qa-engineer]
 volume: modules
@@ -23,7 +23,7 @@ required_sections:
 ### M-001: 编辑器 UI
 
 - **职责**: 浏览器编辑器的展示层与交互编排——三栏布局、命令面板、抽屉、对话框、源码 ↔ 预览联动、iframe 预览沙箱挂载。不直接持有渲染管线 stage，所有渲染调用经 M-008 应用层 use case
-- **映射功能**: F-001 (AC-001..AC-008) / F-002 (AC-001..AC-006) / F-008 / F-014 (AC-006)
+- **映射功能**: F-001 (AC-001..AC-009) / F-002 (AC-001..AC-006) / F-008 (AC-001 浏览 UI, AC-002 模板卡片，AC-004 模板应用) / F-014 (AC-006)
 - **对外接口**: 无 HTTP 接口；订阅 M-008 提供的 use case 返回值与诊断流
 - **依赖模块**: M-008 (应用层 use case) / M-005 (主题与组件注册中心) / M-012 (schema 契约层) / M-013 (浏览器端持久化)
 - **内部关键组件**:
@@ -89,16 +89,30 @@ required_sections:
 
 ### M-005: 主题与组件注册中心
 
-- **职责**: 内置主题、Block / Mark / Variant / Token、主题装饰资产的注册与查询；主题守护 8 维静态校验；主题热切换；模板（F-008）登记
-- **映射功能**: F-003 (AC-001..AC-011) / F-008 / F-009 (AC-001 继承 + AC-002 品牌包) / F-011 (AC-003 主题守护)
-- **对外接口**: 包级 API：`registerTheme(definition)`、`listThemes()`、`describeTheme(id)`、`listBlocks()`、`describeBlock(id)`、`listBlockVariants(blockId)`、`derivePalette(seed)`、`validateThemeGuard(theme) → GuardResult`；被 M-002 / M-008 / M-009 调用
+- **职责**: 内置主题、Block / Mark / Variant / Token、主题装饰资产的注册与查询；主题守护 8 维静态校验；主题热切换；模板（F-008）登记；扩展点支持第三方模板 pack 注册
+- **映射功能**: F-003 (AC-001..AC-011) / F-008 (AC-003 模板登记, AC-004 预编排模型) / F-009 (AC-001 继承 + AC-002 品牌包) / F-011 (AC-003 主题守护)
+- **对外接口**: 包级 API：`registerTheme(definition)`、`listThemes()`、`describeTheme(id)`、`listBlocks()`、`describeBlock(id)`、`listBlockVariants(blockId)`、`derivePalette(seed)`、`validateThemeGuard(theme) → GuardResult`、`registerTemplate(definition)`、`listTemplates(themeId?)`、`describeTemplate(id)`；被 M-002 / M-008 / M-009 调用
 - **依赖模块**: M-006 (调色板派生) / M-007 (plugin-api 类型) / M-012 (schema 契约层)
 - **内部关键组件**:
   - `registry/theme.ts`、`block.ts`、`mark.ts`、`variant.ts`、`token.ts` — 五类注册表
   - `guard/eight-dimensions.ts` — 主题守护 8 维校验
   - `inheritance/delta-merge.ts` — 主题继承 + delta 合并（F-009）
   - `brand-pack/lock.ts` — 品牌包字体 / 配色 / 组件子集锁定
-  - `template/registry.ts` — 模板登记（F-008 AC-003）
+  - `template/registry.ts` — 模板登记（F-008 AC-003）；扩展点：`pack.manifest.templates[]` 注册路径与 `frontmatter.template` 解析链路
+- **内置模板清单**: M-005 `template/registry.ts` 内置 5 主题 × 各 ≥ 2 模板 seed，覆盖 PRD F-008 备注的 8 类内容场景：
+
+  | templateId | scenario | 适配主题 |
+  |------------|----------|----------|
+  | `tech-review` | 科技评测 | tech / default |
+  | `poetry-essay` | 诗歌赏析 | literary |
+  | `industry-report` | 行业分析报告 | business |
+  | `life-vlog` | 生活记录 | magazine |
+  | `tutorial` | 教程 / How-to | tech / default |
+  | `book-review` | 书评 / 影评 | literary / default |
+  | `kpi-summary` | 数据 / KPI 总结 | business |
+  | `lifestyle-guide` | 生活方式指南 | magazine |
+
+  每个 templateId 在内置主题的 `templates/` 目录下提供 Markdown 文件实现，模板 manifest 含 `id` / `name` / `scenario` / `targetThemes` / `content` 字段。
 - **context_load**: [prd#§2.F-003, prd#§2.F-008, prd#§2.F-009, prd#§2.F-011, arch#§2.M-006]
 
 ### M-006: 调色板派生
@@ -122,7 +136,7 @@ required_sections:
   - 沙箱内 plugin-api surface：`defineBlock`、`defineVariant`、`defineRule`、`defineTheme`、`registerAsset`、`requestResource(url, init?) → Promise<Response>`（唯一网络出口）
 - **依赖模块**: M-005 (主题与组件注册中心) / M-003 (规则集引擎 — 规则补丁注册路径) / M-012 (schema 契约层)
 - **内部关键组件**:
-  - `worker/runtime.ts` — Worker 入口与 Comlink RPC 桥；启动时执行 `delete globalThis.fetch / XMLHttpRequest / WebSocket / EventSource`
+  - `worker/runtime.ts` — Worker 入口与 Comlink RPC 桥；启动时执行 `assertNetIsolation()`：先 `delete globalThis.fetch / XMLHttpRequest / WebSocket / EventSource`，随即断言 `typeof globalThis.fetch === 'undefined' && typeof globalThis.XMLHttpRequest === 'undefined'`，断言失败抛 `E_WORKER_NETWORK_LEAK` 并 `self.close()` 终止 Worker；该断言覆盖 bundler 注入 polyfill / Comlink 版本意外引入 fetch 的回归路径
   - `surface/plugin-api.ts` — 白名单 API 定义；`requestResource` 实现 = `comlink.proxy(mainThreadAcl.requestResource)`
   - `acl/network-gate.ts` — 主线程网络门禁：读取 pack manifest 的 `permissions.network: string[]`（URL pattern 白名单，支持 `https://*.example.com/*` 通配），命中放行调用 `fetch`，未命中抛 `E_PERMISSION_DENIED`
   - `acl/audit-log.ts` — 所有 `requestResource` 调用结果（allow/deny + url + pluginId + ts）写入 §5.5 审计流
@@ -147,29 +161,31 @@ required_sections:
 ### M-008: 应用层 use case
 
 - **职责**: 编辑器、MCP server、CLI 三端共享的"语义级用户意图"封装层——把"渲染 + 复制"、"渲染 + 导出 HTML"、"渲染 + 长图 job"、"中文排版修订"等任务串接为单个调用入口，不持有 UI 状态，不持有 DOM
-- **映射功能**: F-001 / F-004 / F-005 / F-006 / F-013 (AC-001 共享 use case) / F-014
-- **对外接口**: 包级 API：`composeRender(input) → RenderResult`、`composeCopy(input) → ClipboardPayload`、`composeExportHtml(input) → string`、`composeExportLongImage(input) → JobHandle`、`composeApplyZhTypo(markdown) → {fixed, perRule, totalChanges}`
+- **映射功能**: F-001 / F-004 / F-005 (AC-001 长图 / AC-002 封面 / AC-003 素材库上传 / AC-004 异步 job) / F-006 / F-013 (AC-001 共享 use case) / F-014
+- **对外接口**: 包级 API：`composeRender(input) → RenderResult`、`composeCopy(input) → ClipboardPayload`、`composeExportHtml(input) → string`、`composeExportLongImage(input) → JobHandle`、`composeExportCover(input) → JobHandle`、`composeUploadImage(input) → JobHandle`、`composeUploadWechatAsset(input) → JobHandle`、`composeApplyZhTypo(markdown) → {fixed, perRule, totalChanges}`
 - **依赖模块**: M-002 (渲染管线核心) / M-004 (粘贴过滤模拟器) / M-005 (主题与组件注册中心) / M-010 (中继服务客户端) / `@wechat-flow/zh-typo`
 - **内部关键组件**:
   - `composers/render.ts`、`copy.ts`、`export-html.ts`、`export-long-image.ts`、`export-cover.ts`
   - `composers/upload-image.ts`、`upload-wechat-asset.ts`
   - `composers/apply-zh-typo.ts`
   - `clipboard/dual-mime-payload.ts` — F-004 AC-001 html + text 双 MIME 组装
+- **`composeCopy` pipeline 约束**：`composeRender → simulatePaste → buildDualMimePayload → navigator.clipboard.write`；剪贴板写入前必经 M-004 `simulatePaste` 节点，禁止跳过；该顺序由 `composers/copy.ts` 内联注释固定（PRD F-004 AC-004）
 - **context_load**: [prd#§2.F-001, prd#§2.F-004, prd#§2.F-005, prd#§2.F-006, prd#§2.F-013, prd#§2.F-014, arch#§2.M-002, arch#§2.M-010]
 
 ### M-009: MCP server
 
-- **职责**: 对 LLM Agent 暴露 16 个 Tool；stdio + HTTP/SSE 双 transport；API key + per-key 配额；Idempotency-Key 去重；版本三元组透传到响应；**鉴权基线**两级（`scope=user` Tool 调用 vs `scope=admin` 管理端点；admin key 只走 M-010 admin 路由，不能调 Tool）
+- **职责**: 对 LLM Agent 暴露 22 个 Tool（16 同步 + 6 异步长任务，含 `get_job` 与 `get_ruleset_version`）；stdio + HTTP/SSE 双 transport；API key + per-key 配额；Idempotency-Key 去重；版本三元组透传到响应；**鉴权基线**两级（`scope=user` Tool 调用 vs `scope=admin` 管理端点；admin key 只走 M-010 admin 路由，不能调 Tool）
 - **映射功能**: F-013 (AC-001..AC-006)
-- **对外接口**: MCP Tool（16 个）— 详见 [`arch-wechat-flow-api.md`](./arch-wechat-flow-api.md) API-001..API-016
+- **对外接口**: MCP Tool（22 个，16 同步 + 6 异步）— 详见 [`arch-wechat-flow-api.md`](./arch-wechat-flow-api.md) API-001..API-016
 - **依赖模块**: M-008 (应用层 use case) / M-002 / M-005 / M-006 / M-010 / M-012
 - **内部关键组件**:
   - `transport/stdio.ts`、`transport/http-sse.ts` — 双 transport entry
   - `auth/api-key.ts` — API key 鉴权 + per-key 配额；校验 `scope` 字段；user / admin 两级 key 哈希存储于 E-010 ApiKey 表；明文仅在创建时由 admin API 返回一次
   - `auth/scope-guard.ts` — Tool 路由前置守卫：仅 `scope=user` 可达 Tool 路由表；admin scope 直接 403 `E_PERMISSION_DENIED`
   - `idempotency/dedup.ts` — `sha256(input + toolsetVersion)` 去重缓存
-  - `tools/router.ts` — 16 个 Tool 的 dispatcher，映射到 M-008 composer
+  - `tools/router.ts` — 22 个 Tool 的 dispatcher，映射到 M-008 composer；Tool 层为 thin wrapper，禁止持有业务逻辑（业务逻辑统一在 M-008 / M-006 / M-004）
   - `version/triple-injection.ts` — 响应注入版本三元组
+- **Skill bundle 协同**: `skill/SKILL.md` 引用本模块 22 个 Tool 的调用顺序约定（典型链：`list_themes` → `describe_block` → `render_markdown` → `simulate_paste` → `upload_to_wechat_asset`），由 LLM Agent 解析为语义任务；Skill bundle 与 MCP server 共版本号发布
 - **context_load**: [prd#§2.F-013, prd#§3.2, arch#§3]
 
 ### M-010: 中继服务
@@ -218,7 +234,7 @@ required_sections:
   - 运行时校验：`schema.parse(input)` / `schema.safeParse(input)`
 - **依赖模块**: 无（最底层 contracts 包）；外部依赖 `zod@4.x` + 可选 `@zod/mini`（浏览器 bundle 体积敏感场景）
 - **内部关键组件**:
-  - `mcp/tool-contracts.ts` — 16 个 Tool 的 request / response Zod schema；如 `renderMarkdownRequestSchema = z.object({ markdown: z.string(), themeId: z.string().optional(), rulesetVersion: z.string().optional(), paint: z.record(z.string()).optional(), baseColor: z.string().optional() })`
+  - `mcp/tool-contracts.ts` — 22 个 Tool 的 request / response Zod schema；如 `renderMarkdownRequestSchema = z.object({ markdown: z.string(), themeId: z.string().optional(), rulesetVersion: z.string().optional(), paint: z.record(z.string()).optional(), baseColor: z.string().optional() })`；长任务 Tool 的 `jobId` 字段统一 `z.string().uuid()`
   - `relay/route-contracts.ts` — Hono RPC 路由契约（与 Hono 4.x `zValidator` middleware 集成）
   - `component/attrs-schema.ts` — Block / Mark 的 `attrsSchema` 类型工厂；`describe_block` 调用 `toJSON(block.attrsSchema)` 输出 JSON Schema
   - `theme/manifest-schema.ts`、`pack/manifest-schema.ts`、`ruleset/rule-schema.ts`
@@ -229,9 +245,9 @@ required_sections:
 
 ### M-013: 浏览器端持久化与同步
 
-- **职责**: 浏览器端多文档管理、本地草稿持久化与自动备份；基于 Yjs CRDT 的可选云端同步；版本历史与回滚
-- **映射功能**: F-001 (AC-005 多文档 / 持久化 / 自动备份, P0) / F-012 (AC-001..AC-004 同步, P2)
-- **优先级**: 本模块持久化部分 P0（F-001 依赖）；Yjs 同步部分 P2（F-012），**接口与协议设计与 P0 同质量**，实现可按 dev-plan 排期后置
+- **职责**: 浏览器端多文档管理、本地草稿持久化与自动备份；同步与协作能力（基于 Yjs CRDT）作为可选拓扑保留，当前发布不接通服务端
+- **映射功能**: F-001 (AC-005 多文档 / 持久化 / 自动备份, P0) / F-012 (AC-001..AC-004, P2 — 仅保留接口与协议设计，不交付实现)
+- **优先级**: 本模块持久化部分 P0（F-001 依赖）；同步接口与 Y.Doc 结构作为架构候选保留以避免后续激活时返工，**接口与协议设计与 P0 同质量**，当前发布不交付实现
 - **对外接口**: 包级 API：
   - 多文档：`saveDraft(doc)`、`listDocuments()`、`loadDocument(id)`、`deleteDocument(id)`、`createBackup(id)`
   - Yjs 同步：`enableSync(docId, { wsUrl, authToken }) → YDocBinding`、`disableSync(docId)`、`getSyncState(docId) → { connected, awareness: AwarenessState[] }`

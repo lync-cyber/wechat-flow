@@ -1,9 +1,9 @@
 ---
 id: "arch-wechat-flow-data"
-version: "0.3.0"
+version: "0.4.0"
 doc_type: arch
 author: architect
-status: approved
+status: draft
 deps: ["prd-wechat-flow", "prd-wechat-flow-f001-f014"]
 consumers: [tech-lead, ui-designer, developer, devops, qa-engineer]
 volume: data
@@ -308,7 +308,7 @@ CREATE INDEX IF NOT EXISTS idx_upload_job_id ON upload_records(job_id);
 
 ### E-009: YDocSnapshot (服务端持久化)
 
-由 M-010 `y-websocket-server` 节流写入；用于 F-012 协同历史 / 回滚（API-027）。
+可选拓扑实体，保留以支持后续协作能力激活；当前发布 M-010 不部署 `y-websocket-server`，本表无写入路径。结构设计与 F-012 AC-003 / AC-004 接口对齐，启用时由 `y-websocket-server` 节流写入。
 
 | 字段 | 类型 | 约束 | 说明 |
 |------|------|------|------|

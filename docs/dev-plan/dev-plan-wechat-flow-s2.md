@@ -1,21 +1,22 @@
 ---
 id: "dev-plan-wechat-flow-s2"
-version: "0.1.2"
+version: "0.2.0"
 doc_type: dev-plan
 author: tech-lead
-status: approved
+status: draft
 deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "ui-spec-wechat-flow", "ui-spec-wechat-flow-c001-c014"]
 consumers: [developer, qa-engineer]
 volume: sprint
 volume_type: sprint
 split_from: "dev-plan-wechat-flow"
+split_policy: no-further-split
 required_sections:
   - "## 3. 任务卡详细"
 ---
 # Dev Plan 分卷 — Sprint 2: 规则集引擎 + 粘贴过滤 + 兼容性报告
 
 [NAV]
-- Sprint 2 任务卡 → T-013..T-019, T-DS-005, T-VAL-02
+- Sprint 2 任务卡 → T-013..T-019, T-019b, T-DS-005, T-VAL-02
 [/NAV]
 
 **Sprint 目标**: 渲染结果经 ≥25 条规则过滤；DiagnosticsPanel 展示兼容性分级；粘贴模拟可在 UI 中可视化。
@@ -280,6 +281,37 @@ required_sections:
 
 ---
 
+### T-019b: 源码 ↔ 预览双向高亮联动（F-001 AC-004）
+
+- **目标**: 实现 SourcePane ↔ PreviewPane 的双向高亮联动 —— 点击预览中某段落定位源码光标；源码光标移动时高亮预览对应块
+- **模块**: M-001 (编辑器 UI)
+- **task_kind**: feature
+- **priority**: P0
+- **complexity**: medium
+- **sprint**: 2
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **tdd_refactor**: skip
+- **security_sensitive**: false
+- **dependencies**: [T-009, T-010]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given 用户在预览 iframe 中点击某个 `<p data-node-id="...">`，When 触发，Then SourcePane CodeMirror 光标定位到该节点对应的源码行 [F-001 AC-004 + ui-spec-wechat-flow-c001-c014#§2.C-004]
+  - [ ] AC-002: Given 源码光标移动到某行，When CodeMirror selectionChange 事件触发，Then PreviewPane 内对应 `data-node-id` 节点高亮 `.cm-highlighted` 类 200ms 后淡出
+  - [ ] AC-003: Given 节点映射建立，When mdast → hast 阶段，Then 每个块级节点产出 `data-node-id="{sourceLine}:{nodeIndex}"` 属性
+  - [ ] AC-004: 高亮联动通过主线程 `iframe.contentDocument` 通信，不向 iframe 内注入脚本
+- **deliverables**:
+  - [ ] `packages/core/src/pipeline/node-id-injector.ts` — hast 节点注入 `data-node-id` 属性
+  - [ ] `apps/editor/src/composables/use-bidirectional-highlight.ts` — 双向联动 composable
+  - [ ] `apps/editor/src/components/source/source-cursor-tracker.ts` — 光标位置 → preview node-id 映射
+  - [ ] `tests/editor/bidirectional-highlight.test.ts` — AC-001..AC-004
+- **relates_to**: [F-001, M-001, M-002]
+- **context_load**:
+  - prd-wechat-flow-f001-f014#§2.F-001
+  - arch-wechat-flow-modules#§2.M-001
+  - ui-spec-wechat-flow-c001-c014#§2.C-004
+
+---
+
 ### T-VAL-02: [VALIDATION] Sprint 2 验证：规则集过滤 + 诊断面板
 
 - **目标**: 用户手动验证规则集引擎可过滤不兼容 CSS，DiagnosticsPanel 展示分级诊断
@@ -290,11 +322,12 @@ required_sections:
 - **tdd_mode**: skip
 - **tdd_skip_reason**: "由 orchestrator 触发用户手动验证，不进 TDD 流程"
 - **user_facing_critical_path**: true
-- **dependencies**: [T-014, T-015, T-017, T-018, T-019]
+- **dependencies**: [T-014, T-015, T-017, T-018, T-019, T-019b]
 - **acceptance_criteria**:
   - [ ] 在编辑器中输入含 `position:fixed` 样式的 Markdown（如 `:::card{style="position:fixed"}\ncontent\n:::`），右栏 PreviewPane HTML 中对应元素无 `position:fixed`（被规则剥除）
   - [ ] 底部状态栏兼容性摘要显示红色"严重 N 项"（N ≥ 1），点击后 DiagnosticsPanel 在编辑器底部展开
   - [ ] DiagnosticsPanel 展开后，含 error 级诊断条目，条目左侧色块为赤陶红色
   - [ ] 点击诊断条目右侧"查看变更"链接，CompatibilityDiffView Modal 弹出，左侧 before 列含 `position:fixed`，右侧 after 列该属性已不存在
   - [ ] 运行 `pnpm turbo ruleset-fixture`（或等效 CI 命令），输出全绿（所有 fixture 通过）
+  - [ ] 点击预览段落，源码光标跳转到对应行（T-019b 双向高亮联动）
 - **relates_to**: [F-007, F-011, M-003, M-004]

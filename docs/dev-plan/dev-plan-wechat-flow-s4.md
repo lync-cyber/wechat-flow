@@ -1,9 +1,9 @@
 ---
 id: "dev-plan-wechat-flow-s4"
-version: "0.1.2"
+version: "0.2.0"
 doc_type: dev-plan
 author: tech-lead
-status: approved
+status: draft
 deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "arch-wechat-flow-api", "ui-spec-wechat-flow", "ui-spec-wechat-flow-c001-c014", "ui-spec-wechat-flow-p001-p005"]
 consumers: [developer, qa-engineer]
 volume: sprint
@@ -61,18 +61,19 @@ required_sections:
 - **sprint**: 4
 - **tdd_mode**: light
 - **tdd_refactor**: skip
-- **tdd_acceptance**: [AC-001, AC-002, AC-003, AC-004]
+- **tdd_acceptance**: all
 - **security_sensitive**: false
-- **dependencies**: [T-011]
+- **dependencies**: [T-011, T-017]
 - **acceptance_criteria**:
   - [ ] AC-001: Given `composeCopy({ markdown: '# Hello', themeId: 'default' })` 在 HTTPS + 用户手势上下文中调用，When 执行，Then `navigator.clipboard.write` 被调用，payload 含 `text/html` ClipboardItem（值为 inline-styled HTML）和 `text/plain` ClipboardItem [F-004 AC-001]
   - [ ] AC-002: Given 产出的 `text/html` 内容，When 检查，Then 无 `<style>` 标签，无 CSS 变量（`var(--`），所有样式在 `style` 属性内联 [F-004 AC-003]
   - [ ] AC-003: Given composeCopy 成功执行，When 完成，Then 触发 C-011 Toast（`type: 'success'`，消息「已复制到剪贴板」）[F-004 AC-001]
   - [ ] AC-004（production path）: `apps/editor/src/components/layout/TopBar.vue` 或 `ContextMenu.vue` 内含字面 `onCopyHtml()` 处理函数，调用 `composeCopy`，文件路径和函数名可在代码中直接检索到
+  - [ ] AC-005: Given composeCopy 内部 pipeline，When 执行，Then 调用顺序为 composeRender → simulatePaste → buildDualMimePayload；剪贴板写入前必经 simulatePaste 节点 [F-004 AC-004]
 - **deliverables**:
-  - [ ] `packages/core/src/composers/copy.ts` — `composeCopy(input: ComposeCopyInput) → Promise<void>`
+  - [ ] `packages/core/src/composers/copy.ts` — `composeCopy(input: ComposeCopyInput) → Promise<void>` (import simulatePaste from M-004)
   - [ ] `packages/core/src/clipboard/dual-mime-payload.ts` — `buildDualMimePayload(html: string, text: string) → ClipboardItem[]` [ARCH#§2.M-008]
-  - [ ] `tests/app-layer/compose-copy.test.ts` — AC-001..AC-002（使用 happy-dom 或 vitest browser 模拟 Clipboard API）
+  - [ ] `tests/app-layer/compose-copy.test.ts` — AC-001..AC-005（使用 happy-dom 或 vitest browser 模拟 Clipboard API）
 - **relates_to**: [F-004, M-008]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-008
@@ -303,13 +304,16 @@ required_sections:
 - **sprint**: 4
 - **tdd_mode**: light
 - **tdd_refactor**: auto
-- **tdd_acceptance**: [AC-001, AC-002, AC-003]
+- **tdd_acceptance**: all
 - **security_sensitive**: false
 - **dependencies**: [T-036, T-020]
 - **acceptance_criteria**:
   - [ ] AC-001: Given 调用 `list_themes`，When 执行，Then 返回数组长度 ≥ 5，每项含 `id`、`name` 字段 [F-013 AC-002]
   - [ ] AC-002: Given 调用 `describe_block({ blockId: 'callout' })`，When 执行，Then 返回对象含 `attrsSchema` 字段，该字段符合 JSON Schema Draft-7 格式（`type: 'object'`，`properties` 非空）[F-013 AC-002 + ARCH#§2.M-012]
   - [ ] AC-003: Given 调用 `list_marks`，When 执行，Then 返回数组长度 ≥ 11，含 `badge`、`highlight` 等 [F-013 AC-002]
+  - [ ] AC-004: Given 调用 `list_blocks`，When 执行，Then 返回数组长度 ≥ 25（与 T-024 一致）
+  - [ ] AC-005: Given 调用 `describe_theme({ id: 'default' })`，When 执行，Then 返回对象含 `paintable` 和 `templates` 字段
+  - [ ] AC-006: Given 调用 `describe_mark({ markId: 'badge' })`，When 执行，Then 返回对象含 `attrsSchema` JSON Schema
 - **deliverables**:
   - [ ] `apps/mcp-server/src/tools/list-themes.ts`
   - [ ] `apps/mcp-server/src/tools/describe-theme.ts`
@@ -317,7 +321,7 @@ required_sections:
   - [ ] `apps/mcp-server/src/tools/describe-block.ts`
   - [ ] `apps/mcp-server/src/tools/list-marks.ts`
   - [ ] `apps/mcp-server/src/tools/describe-mark.ts`
-  - [ ] `tests/mcp-server/tools/describe-block.test.ts` — AC-001..AC-003 单元测试
+  - [ ] `tests/mcp-server/tools/describe-block.test.ts` — AC-001..AC-006 单元测试
 - **relates_to**: [F-013, M-009]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-009
