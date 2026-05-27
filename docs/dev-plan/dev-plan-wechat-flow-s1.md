@@ -1,6 +1,6 @@
 ---
 id: "dev-plan-wechat-flow-s1"
-version: "0.3.0"
+version: "0.4.0"
 doc_type: dev-plan
 author: tech-lead
 status: approved

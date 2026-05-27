@@ -1,6 +1,6 @@
 ---
 id: "dev-plan-wechat-flow-s2"
-version: "0.3.0"
+version: "0.4.0"
 doc_type: dev-plan
 author: tech-lead
 status: approved
@@ -192,9 +192,9 @@ required_sections:
 
 ---
 
-### T-017: M-004 粘贴过滤模拟器（simulatePaste + per-node diff）
+### T-017: M-004 粘贴过滤模拟器（simulatePaste(html) + per-node diff）
 
-- **目标**: 实现 `simulatePaste(hast) → { hast, diffNodes, droppedAttrs }`，复现微信编辑器对粘贴 HTML 的过滤行为，输出逐节点变更对照
+- **目标**: 实现 `simulatePaste(html: string) → { filteredHtml, nodeDiffs, droppedAttrs }`，复现微信编辑器对粘贴 HTML 的过滤行为，输出逐节点变更对照
 - **模块**: M-004 (粘贴过滤模拟器)
 - **task_kind**: feature
 - **priority**: P0
@@ -206,15 +206,15 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-013]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given 含 `<div id="x" style="position:fixed">text</div>` 的 hast，When 调用 `simulatePaste`，Then 返回的 `hast` 中该元素无 `id` 属性，`style` 中 `position:fixed` 被移除；`diffNodes` 含对应节点的 before/after 记录 [ARCH#§2.M-004]
-  - [ ] AC-002: Given `simulatePaste` 调用，When 输入含 5 个元素的 hast，Then `diffNodes` 数组长度 ≤ 5，每个 `diffNode` 含 `nodeId`、`before` (outerHTML string)、`after` (outerHTML string) 字段
-  - [ ] AC-003: Given 含 `<style>` 标签的 hast（应被完全剥除），When `simulatePaste`，Then 返回的 `droppedAttrs` 或 `diffNodes` 中有对应的剥除记录，且最终 hast 无 `<style>` 标签
+  - [ ] AC-001: Given 含 `<div id="x" style="position:fixed">text</div>` 的 HTML 字符串，When 调用 `simulatePaste`，Then 返回的 `filteredHtml` 中该元素无 `id` 属性，`style` 中 `position:fixed` 被移除；`nodeDiffs` 含对应节点的 before/after 记录 [ARCH#§2.M-004]
+  - [ ] AC-002: Given `simulatePaste` 调用，When 输入含 5 个元素的 HTML，Then `nodeDiffs` 数组长度 ≤ 5，每个条目含 `nodeSelector`、`before` (outerHTML string)、`after` (outerHTML string) 字段
+  - [ ] AC-003: Given 含 `<style>` 标签的 HTML（应被完全剥除），When `simulatePaste`，Then 返回的 `droppedAttrs` 或 `nodeDiffs` 中有对应剥除记录，且最终 `filteredHtml` 无 `<style>` 标签
 - **deliverables**:
   - [ ] `packages/core/src/simulator/strip-tags.ts` — 标签级剥除
   - [ ] `packages/core/src/simulator/strip-attrs.ts` — 属性级剥除
   - [ ] `packages/core/src/simulator/rewrite-structure.ts` — 结构改写（ul/ol → table）
   - [ ] `packages/core/src/diff/per-node-diff.ts` — `diffNodes` 计算
-  - [ ] `packages/core/src/simulate-paste.ts` — `simulatePaste` 顶层 API [ARCH#§2.M-004]
+  - [ ] `packages/core/src/simulate-paste.ts` — `simulatePaste(html: string)` 顶层 API [ARCH#§2.M-004]
   - [ ] `tests/core/simulate-paste.test.ts` — AC-001..AC-003 单元测试
 - **relates_to**: [F-002, F-011, M-004]
 - **context_load**:

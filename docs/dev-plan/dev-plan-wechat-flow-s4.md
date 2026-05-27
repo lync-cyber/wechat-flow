@@ -16,7 +16,7 @@ required_sections:
 # Dev Plan 分卷 — Sprint 4: 输出能力 + MCP server + 图片处理
 
 [NAV]
-- Sprint 4 任务卡 → T-030..T-042, T-091, T-092, T-DS-008, T-DS-011, T-DS-012, T-VAL-04
+- Sprint 4 任务卡 → T-030..T-042, T-091, T-092, T-093, T-DS-008, T-DS-011, T-DS-012, T-VAL-04
 [/NAV]
 
 **Sprint 目标**: 一键复制 inline HTML 可粘贴到公众号编辑器；MCP server `render_markdown` 可通过 stdio transport 调用；图床配置和上传可用。
@@ -253,7 +253,7 @@ required_sections:
   - [ ] `apps/mcp-server/src/transport/stdio.ts` — stdio transport 入口
   - [ ] `apps/mcp-server/src/auth/api-key.ts` — API key 哈希验证 + scope 读取 [ARCH#§2.M-009]
   - [ ] `apps/mcp-server/src/auth/scope-guard.ts` — user/admin scope 前置守卫
-  - [ ] `apps/mcp-server/src/tools/router.ts` — Tool dispatcher 骨架（16 个 Tool 占位）
+  - [ ] `apps/mcp-server/src/tools/router.ts` — Tool dispatcher 骨架（23 个 Tool 占位）
   - [ ] `apps/mcp-server/src/index.ts` — server 入口
   - [ ] `tests/mcp-server/auth.test.ts` — AC-002..AC-003 单元测试
 - **relates_to**: [F-013, M-009]
@@ -314,7 +314,7 @@ required_sections:
   - [ ] AC-004: Given 调用 `list_blocks`，When 执行，Then 返回数组长度 ≥ 25（与 T-024 一致）
   - [ ] AC-005: Given 调用 `describe_theme({ id: 'default' })`，When 执行，Then 返回对象含 `paintable` 和 `templates` 字段；`templates` 为数组，每项含 `templateId`、`description` 字段 [ARCH#§2.M-005]
   - [ ] AC-006: Given 调用 `describe_mark({ markId: 'badge' })`，When 执行，Then 返回对象含 `attrsSchema` JSON Schema
-  - [ ] AC-007: Given 调用 `list_theme_templates({ themeId: 'default' })`，When 执行，Then 返回 `default` 主题的所有 template 数组，每项含 `templateId`、`description` 字段 [ARCH#§3.API-033 + ARCH#§2.M-005]
+  - [ ] AC-007: Given 调用 `describe_theme({ id: 'default' })`，When 执行，Then 返回对象含 `templates` 字段；`templates` 为数组且每项含 `templateId`、`description` 字段（不新增 `list_theme_templates` Tool） [ARCH#§3.API-033 + ARCH#§2.M-005]
 - **deliverables**:
   - [ ] `apps/mcp-server/src/tools/list-themes.ts`
   - [ ] `apps/mcp-server/src/tools/describe-theme.ts`
@@ -401,7 +401,7 @@ required_sections:
 - **tdd_acceptance**: all
 - **tdd_refactor**: auto
 - **security_sensitive**: false
-- **dependencies**: [T-022, T-005, T-DS-008]
+- **dependencies**: [T-022, T-005, T-092, T-DS-008]
 - **acceptance_criteria**:
   - [ ] AC-001: Given 访问 `/themes`，When 页面加载，Then 显示 ≥ 5 张 C-022 TemplateThemeCard（含主题缩略图 + template 选择器），以 `(themeId, templateId)` 为组合展示，使用 `listThemeTemplates(themeId)` 动态获取可用 template 列表 [F-003 AC-003 + ui-spec-wechat-flow-p001-p005#§3.P-003]
   - [ ] AC-002: Given 当前已应用的主题，When 在 P-003 页面，Then 对应卡片显示「正在使用」徽章（`--color-brand-subtle` 背景）
@@ -481,7 +481,38 @@ required_sections:
 
 ---
 
-### T-VAL-04: [VALIDATION] Sprint 4 验证：复制 HTML + 长图导出 + MCP render_markdown
+### T-093: C-018 编辑器内上传 UI 接线（拖拽/粘贴/进度/重试）
+
+- **目标**: 落地 F-006 AC-004 的编辑器内上传 UI：SourcePane 拖拽/粘贴触发上传、占位节点、进度反馈与失败重试，接线 T-033 relay 上传与 T-091 session JWT。
+- **模块**: M-001 (编辑器 UI), M-008 (应用层 use case)
+- **task_kind**: feature
+- **priority**: P0
+- **complexity**: medium
+- **sprint**: 4
+- **tdd_mode**: light
+- **tdd_refactor**: auto
+- **tdd_acceptance**: [AC-001, AC-002, AC-003, AC-004]
+- **security_sensitive**: false
+- **dependencies**: [T-033, T-091, T-DS-012]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given 用户将图片拖拽到 SourcePane，When drop，Then 显示 C-018 `uploading` 状态并插入 `<img data-uploading="true">` 占位节点；上传成功后原子替换为最终 URL [F-006 AC-004]
+  - [ ] AC-002: Given 用户在编辑器粘贴图片（clipboard item 含 image/*），When paste，Then 触发同一上传流程（复用 T-033 API）并显示进度百分比 [F-006 AC-004]
+  - [ ] AC-003: Given 上传失败，When C-018 进入 `error` 状态，Then 点击「重试」可重入上传流程；点击「取消」删除占位节点并关闭浮层 [F-006 AC-004]
+  - [ ] AC-004（production path）: `SourcePane.vue` 中可检索到 `onDropImage` 与 `onPasteImage` 处理函数，且调用 `composeUploadImage` / relay 上传接口并透传 Editor session JWT
+- **deliverables**:
+  - [ ] `apps/editor/src/components/upload/ImageUploadOverlay.vue` — C-018 实现
+  - [ ] 更新 `apps/editor/src/components/editor/SourcePane.vue` — 拖拽/粘贴接线
+  - [ ] `apps/editor/src/composables/use-image-upload.ts` — 上传状态机（idle/dragging/uploading/success/error）
+  - [ ] `tests/editor/image-upload-overlay.test.ts` — AC-001..AC-004 单元测试
+- **relates_to**: [F-006, M-001, M-008, C-018]
+- **context_load**:
+  - prd-wechat-flow-f001-f014#§2.F-006
+  - ui-spec-wechat-flow-c001-c014#§2.C-018
+  - arch-wechat-flow-modules#§2.M-010
+
+---
+
+### T-VAL-04: [VALIDATION] Sprint 4 验证：复制 HTML + 长图导出 + MCP render_markdown + 上传 UI
 
 - **目标**: 用户手动验证一键复制 HTML 可粘贴到公众号编辑器、长图异步导出、MCP stdio 调用
 - **task_kind**: validation
@@ -491,7 +522,7 @@ required_sections:
 - **priority**: P0
 - **sprint**: 4
 - **user_facing_critical_path**: true
-- **dependencies**: [T-030, T-031, T-035, T-037, T-042, T-091, T-092]
+- **dependencies**: [T-030, T-031, T-035, T-037, T-042, T-091, T-092, T-093]
 - **acceptance_criteria**:
   - [ ] 在编辑器中写入一段含标题/段落/粗体的 Markdown，点击「...」→「复制 HTML」（或 Ctrl+Shift+C），剪贴板中含 `text/html` + `text/plain` 两个 MIME；将 HTML 传入 `simulatePaste()` 后与本地预览 inline-styled HTML 跑 pixelmatch（同 T-058 5 主题 × heading/paragraph/code 子集口径），ratio ≤ 0.05 通过（真实公众号粘贴回归由 T-090 周期任务验证）
   - [ ] 点击「...」→「下载 HTML」，浏览器弹出下载，保存为 `.html` 文件后在浏览器双击打开，内容正常渲染

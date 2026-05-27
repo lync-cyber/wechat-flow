@@ -1,6 +1,6 @@
 ---
 id: "dev-plan-wechat-flow-s3"
-version: "0.3.0"
+version: "0.4.0"
 doc_type: dev-plan
 author: tech-lead
 status: approved
@@ -19,7 +19,7 @@ required_sections:
 - Sprint 3 任务卡 → T-020..T-029, T-DS-006..T-DS-007, T-VAL-03
 [/NAV]
 
-**Sprint 目标**: 五套内置主题热切换可见；内置 Block ≥ 20 个可从左侧面板插入；CommandPalette + InsertDrawer + ContextMenu 完成接线。
+**Sprint 目标**: 五套内置主题热切换可见；内置 Block ≥ 25 个可从左侧面板插入；CommandPalette + InsertDrawer + ContextMenu + DirectiveAutocompletePopover 完成接线。
 
 ---
 
@@ -51,9 +51,9 @@ required_sections:
 
 ---
 
-### T-020: M-005 主题注册中心 + 主题守护 8 维校验骨架
+### T-020: M-005 主题注册中心 + 主题守护 8+1 维校验骨架（第 9 维由 T-092 落地）
 
-- **目标**: 实现 `@wechat-flow/theme-registry` 包（或集成在 packages/core 内），提供 `registerTheme`、`listThemes`、`describeTheme` API，以及主题守护 8 维静态校验骨架
+- **目标**: 实现 `@wechat-flow/theme-registry` 包（或集成在 packages/core 内），提供 `registerTheme`、`listThemes`、`describeTheme` API，以及主题守护 8+1 维静态校验骨架（第 9 维由 T-092 落地）
 - **模块**: M-005 (主题与组件注册中心)
 - **task_kind**: feature
 - **priority**: P0
@@ -284,9 +284,9 @@ required_sections:
 
 ---
 
-### T-027: M-001 CommandPalette（C-009）接线 command registry
+### T-027: M-001 CommandPalette（C-009）接线 command registry（6 分组，~25-30 命令）
 
-- **目标**: 实现 CommandPalette（C-009），含 command registry、Ctrl+K 快捷键、4 个动作分组（视图/主题/文档/导出）约 15-20 个命令
+- **目标**: 实现 CommandPalette（C-009），含 command registry、Ctrl+K 快捷键、6 个动作分组（视图/主题/文档/内容/导出/帮助）约 25-30 个命令
 - **模块**: M-001 (编辑器 UI)
 - **task_kind**: feature
 - **priority**: P1
@@ -304,7 +304,7 @@ required_sections:
   - [ ] AC-004: Given CommandPalette 打开，When 按 Esc 键，Then CommandPalette 关闭（`isOpen` 变 `false`）
 - **deliverables**:
   - [ ] `apps/editor/src/components/command/CommandPalette.vue` — C-009 实现（Props 按 ui-spec 定义）
-  - [ ] `apps/editor/src/lib/command-registry.ts` — command registry，含 4 分组 15-20 命令
+  - [ ] `apps/editor/src/lib/command-registry.ts` — command registry，含 6 分组 25-30 命令
 - **relates_to**: [F-001, M-001, C-009]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-001
@@ -312,9 +312,9 @@ required_sections:
 
 ---
 
-### T-028: M-001 InsertDrawer（C-015）+ ContextMenu（C-016）
+### T-028: M-001 InsertDrawer（C-015）+ ContextMenu（C-016）+ DirectiveAutocompletePopover（C-021）
 
-- **目标**: 实现 InsertDrawer（C-015）和 ContextMenu（C-016），接线到 command registry 和 Block 库
+- **目标**: 实现 InsertDrawer（C-015）、ContextMenu（C-016）与 DirectiveAutocompletePopover（C-021），接线到 command registry 和 Block/Mark 库
 - **模块**: M-001 (编辑器 UI)
 - **task_kind**: feature
 - **priority**: P1
@@ -329,9 +329,11 @@ required_sections:
   - [ ] AC-001: Given 点击 TopBar「+」按钮，When 触发，Then InsertDrawer 从右侧以 `--duration-base` 动画滑入（宽 320px），显示分类 Tab + Block 列表 [ui-spec-wechat-flow-c001-c014#§2.C-015]
   - [ ] AC-002: Given InsertDrawer 内选中一个 Block（如 callout），When 选中，Then 底部参数表单区展开，含可配属性输入；点击「插入」后 directive 语法片段插入到 SourcePane 光标处
   - [ ] AC-003: Given 点击 TopBar「...」按钮，When 触发，Then ContextMenu 展开，含「中文排版修订」和「复制 HTML」等菜单项，符合 `ui-spec-wechat-flow-c001-c014#§2.C-016` 菜单结构
+  - [ ] AC-004: Given 在编辑器输入 `:::` 或 `:` 前缀，When 触发补全，Then 弹出 C-021 浮层并可选择 Block/Mark 及 variant，选中后插入对应 directive 片段
 - **deliverables**:
   - [ ] `apps/editor/src/components/panel/InsertDrawer.vue` — C-015 实现
   - [ ] `apps/editor/src/components/panel/ContextMenu.vue` — C-016 实现（包装 C-010 DropdownMenu）
+  - [ ] `apps/editor/src/components/editor/DirectiveAutocompletePopover.vue` — C-021 实现
   - [ ] `apps/editor/src/components/common/DropdownMenu.vue` — C-010 实现（共用菜单样式基础）
 - **relates_to**: [F-001, M-001, C-015, C-016]
 - **context_load**:

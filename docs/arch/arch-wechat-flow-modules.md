@@ -15,7 +15,7 @@ required_sections:
 # Architecture 分卷 — 模块划分: wechat-flow
 
 [NAV]
-- §2 模块划分 → M-001..M-013（含 M-009 admin 路由，承载 API-028..API-031 的 admin key 管理端点）
+- §2 模块划分 → M-001..M-013（含 M-010 admin 路由，承载 API-028..API-031 的 admin key 管理端点）
 [/NAV]
 
 ## 2. 模块划分
@@ -32,14 +32,14 @@ required_sections:
   - `PreviewPane` — iframe 沙箱（`sandbox=""` 空属性 + CSP `default-src 'none'`，零 JS）挂载与视口切换（375 / 768 / desktop）；目录跳转、源码↔预览高亮联动、复制按钮覆盖层等 UI 钩子全部在主线程通过 `iframe.contentDocument` 与 overlay 实现，不向 iframe 内注入脚本
   - `CommandPalette`、`InsertDrawer`、`ContextMenu` — 共享同一 command registry
   - `DiagnosticsPanel` — 兼容性报告分级展示（red / yellow / green）；inbound 数据契约为 M-003 输出的 `DiagnosticReport`（含 `diagnostics: Diagnostic[]`、`nodeChangeRecords: NodeChangeRecord[]`、`nightRiskIssues: NightRiskEntry[]` 三大字段）；面板渲染 `nodeChangeRecords` → 子组件 `CompatibilityDiffView`（C-013.1）双栏对比；`nightRiskIssues` 非空时面板进入 `night-risk-alert` 视觉态（ui-spec C-013）
-  - `CompatibilityDiffView` — DiagnosticsPanel 子组件；订阅 `DiagnosticReport.nodeChangeRecords[]` 中匹配 `nodeId` 的 `NodeChangeRecord`，按 `before` / `after` outerHTML 与 `attrDiff` 渲染双栏对比；不主动调用渲染管线，所有数据由 M-003 在过滤执行时一次性记录
+  - `CompatibilityDiffView` — DiagnosticsPanel 子组件；订阅 `DiagnosticReport.nodeChangeRecords[]` 中匹配 `nodeSelector` 的 `NodeChangeRecord`，按 `before` / `after` outerHTML 与 `attrDiff` 渲染双栏对比；不主动调用渲染管线，所有数据由 M-003 在过滤执行时一次性记录
   - `ThemeSelector`、`PaintDrawer`、`PaletteDerivationDrawer` — 主题选择与单文档配色派生
   - `ThemeMarketGallery` — 主题模板市场（F-008）的 (主题, template) 卡片画廊；订阅 M-005 `listThemes()` × `listThemeTemplates(themeId)` 笛卡尔积，按缩略元数据渲染卡片，选中后调用 M-005 `describeTemplate(themeId, templateId)` 取预填 Markdown 创建新文档
 - **context_load**: [prd#§2.F-001, prd#§2.F-002, prd#§2.F-008, prd#§2.F-014, arch#§2.M-008, arch#§2.M-005]
 
 ### M-002: 渲染管线核心
 
-- **职责**: 五段管线 `mdast → hast → pre-paste-hast → post-paste-hast → inline-styled HTML` 的纯函数 stage 编排；版本三元组透传；确定性渲染保证；framework-agnostic 无 DOM 依赖
+- **职责**: 五段管线 `mdast → hast → sanitize-hast → ruleset-hast → inline-styled HTML` 的纯函数 stage 编排；版本三元组透传；确定性渲染保证；framework-agnostic 无 DOM 依赖
 - **映射功能**: F-002 / F-003 (AC-002 热切换) / F-004 (AC-003 内联化 / AC-004 模拟前置) / F-007 / F-013 (AC-001 跨运行时一致)
 - **对外接口**: 包级 API（非 HTTP）：`renderMarkdown(input, options) → RenderResult`、`renderHast(hast, options) → string`；被 M-008 / M-009 / M-011 调用
 - **依赖模块**: M-003 (规则集引擎) / M-004 (粘贴过滤模拟器) / M-005 (主题与组件注册中心) / M-007 (plugin-api 类型) / M-012 (schema 契约层)
@@ -129,7 +129,7 @@ required_sections:
 
 - **职责**: 复现微信公众号编辑器对粘贴 HTML 的过滤行为，作为渲染管线最后一道关卡；输出粘贴前后逐节点的精确变更对照
 - **映射功能**: F-002 (AC-005 / AC-006 兼容性报告) / F-004 (AC-004 / AC-005 视觉一致性) / F-011 (AC-002)
-- **对外接口**: 包级 API：`simulatePaste(hast) → {hast, diffNodes, droppedAttrs}`；**由 M-008 `composeCopy` 在 inline-style HTML stage 之后显式调用**；同时被 M-009 `simulate_paste` Tool 直接调用。**不在 M-002 renderMarkdown 主路径自动执行**。
+- **对外接口**: 包级 API：`simulatePaste(html: string) → {filteredHtml, nodeDiffs, droppedAttrs}`；**由 M-008 `composeCopy` 在 inline-style HTML stage 之后显式调用**；同时被 M-009 `simulate_paste` Tool 直接调用。**不在 M-002 renderMarkdown 主路径自动执行**。
 - **依赖模块**: M-003 (规则集引擎 — 通过 `packages/ruleset/src/shared/paste-strip.ts` 共享 `pasteStripRuleIds` 子集；详 §8.2 Q3.13)
 - **内部关键组件**:
   - `simulator/strip-tags.ts` — 标签级剥除（style / script / 等）
@@ -266,9 +266,9 @@ required_sections:
 
 ### M-009: MCP server
 
-- **职责**: 对 LLM Agent 暴露 23 个 Tool（17 同步 + 6 异步长任务，含 `get_job` 与 `get_ruleset_version`；含 `describe_template` 提供 F-008 主题预设变体查询）；stdio + HTTP/SSE 双 transport；API key + per-key 配额；Idempotency-Key 去重；版本三元组透传到响应；**鉴权基线**两级（`scope=user` Tool 调用 vs `scope=admin` 管理端点；admin key 只走 M-010 admin 路由，不能调 Tool）
+- **职责**: 对 LLM Agent 暴露 23 个 Tool（19 同步 + 4 异步长任务；含 `get_job` 与 `get_ruleset_version`；含 `describe_template` 提供 F-008 主题预设变体查询）；stdio + HTTP/SSE 双 transport；API key + per-key 配额；Idempotency-Key 去重；版本三元组透传到响应；**鉴权基线**两级（`scope=user` Tool 调用 vs `scope=admin` 管理端点；admin key 只走 M-010 admin 路由，不能调 Tool）
 - **映射功能**: F-013 (AC-001..AC-006) / F-008 (AC-004 describe_template Tool)
-- **对外接口**: MCP Tool（23 个，17 同步 + 6 异步）— 详见 [`arch-wechat-flow-api.md`](./arch-wechat-flow-api.md) API-001..API-016 + API-033
+- **对外接口**: MCP Tool（23 个，19 同步 + 4 异步）— 详见 [`arch-wechat-flow-api.md`](./arch-wechat-flow-api.md) API-001..API-016 + API-033
 - **依赖模块**: M-008 (应用层 use case) / M-002 / M-005 / M-006 / M-010 / M-012
 - **内部关键组件**:
   - `transport/stdio.ts`、`transport/http-sse.ts` — 双 transport entry

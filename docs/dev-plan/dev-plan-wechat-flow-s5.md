@@ -1,6 +1,6 @@
 ---
 id: "dev-plan-wechat-flow-s5"
-version: "0.3.0"
+version: "0.4.0"
 doc_type: dev-plan
 author: tech-lead
 status: approved
@@ -19,7 +19,7 @@ required_sections:
 - Sprint 5 任务卡 → T-043..T-051, T-055, T-073, T-074, T-077..T-084, T-DS-009, T-VAL-05
 [/NAV]
 
-**Sprint 目标**: CLI `validate` 可跑；`apply_zh_typo` MCP Tool 可用；插件沙箱骨架建立；MCP HTTP/SSE transport 就绪；素材库上传链路（T-077/T-078/T-079）就绪；模板市场骨架（T-073）落地五主题各 ≥ 2 模板 seed；Block 补全 Phase 2（T-074，P1 必含 5 种）；MCP Tool 补全包装（T-080..T-084）。
+**Sprint 目标**: CLI `validate` 可跑；`apply_zh_typo` MCP Tool 可用；插件沙箱骨架建立；MCP HTTP/SSE transport 就绪；素材库上传链路（T-077/T-078/T-079）就绪；/themes 模板市场增强（T-073）落地筛选与 seed 扩展；Block 补全 Phase 2（T-074，P1 必含 5 种）；MCP Tool 补全包装（T-080..T-084）。
 
 ---
 
@@ -254,9 +254,9 @@ required_sections:
 
 ---
 
-### T-050: apps/cli init/dev/validate/publish 命令（M-011）
+### T-050: apps/cli init/dev/validate/publish/render/copy/export 命令（M-011）
 
-- **目标**: 实现 `apps/cli` 的 4 个子命令：`init`（两种骨架）、`dev`（Vite middleware + HMR）、`validate`（manifest + schema + 主题守护）、`publish`（pack 打包）
+- **目标**: 实现 `apps/cli` 的 7 个子命令：`init`（两种骨架）、`dev`（Vite middleware + HMR）、`validate`（manifest + schema + 主题守护）、`publish`（pack 打包）、`render`、`copy`、`export`
 - **模块**: M-011 (CLI)
 - **task_kind**: feature
 - **priority**: P1
@@ -272,11 +272,17 @@ required_sections:
   - [ ] AC-002: Given `wechat-flow validate ./my-pack`（合规 pack），When 执行，Then 退出码 0，输出「通过：manifest ✓ schema ✓ 主题守护 ✓」[F-010 AC-005]
   - [ ] AC-003: Given `wechat-flow validate ./broken-pack`（manifest 缺少 `name` 字段），When 执行，Then 退出码非 0，stderr 含 `E_MANIFEST_INVALID: missing required field 'name'`
   - [ ] AC-004: Given `wechat-flow dev ./my-pack`，When 执行，Then 启动 Vite dev 进程，输出「Watching for changes...」，修改 pack 文件后输出 HMR 刷新提示（不报错即通过）
+  - [ ] AC-005: Given `wechat-flow render --input article.md --theme default`，When 执行，Then stdout 输出 inline-styled HTML（不含 `<style>` 标签）
+  - [ ] AC-006: Given `wechat-flow copy --input article.md`，When 执行，Then 输出 dual MIME payload 预览（`text/html` + `text/plain`）或在支持环境下写入剪贴板
+  - [ ] AC-007: Given `wechat-flow export --input article.md --format html`，When 执行，Then 生成 standalone `.html` 文件
 - **deliverables**:
   - [ ] `apps/cli/src/commands/init.ts` — `--template plugin|theme` 两种骨架
   - [ ] `apps/cli/src/commands/dev.ts` — Vite middleware + HMR + pack live-reload [ARCH#§2.M-011]
   - [ ] `apps/cli/src/commands/validate.ts` — manifest + schema + 主题守护 + variant 申报一致性
   - [ ] `apps/cli/src/commands/publish.ts` — pack 打包骨架
+  - [ ] `apps/cli/src/commands/render.ts` — Tool 契约壳
+  - [ ] `apps/cli/src/commands/copy.ts` — Tool 契约壳
+  - [ ] `apps/cli/src/commands/export.ts` — Tool 契约壳
   - [ ] `apps/cli/src/index.ts` — CLI 入口（使用 `commander` 或 `citty`）
   - [ ] `tests/cli/validate.test.ts` — AC-002..AC-003 单元测试
 - **relates_to**: [F-010, M-011]
@@ -345,9 +351,9 @@ required_sections:
 
 ---
 
-### T-073: 模板市场骨架 + 五主题 × ≥ 2 模板 seed（F-008 P1）
+### T-073: /themes 模板市场增强（筛选 + seed 扩展，不新增路由）
 
-- **目标**: 实现 P-003 模板市场页 `/templates` 路由（占位卡片 + 本地模板 CRUD）；落地 ARCH M-005 内嵌的 8 类场景模板，五个内置主题各 ≥ 2 模板 seed
+- **目标**: 在既有 P-003 `/themes` 页面基础上增强筛选与卡片信息密度，扩展模板 seed（按主题命名空间），不新增 `/templates` 路由、不引入本地模板 CRUD 双轨模型
 - **模块**: M-001 / M-005
 - **task_kind**: feature
 - **priority**: P1
@@ -357,18 +363,16 @@ required_sections:
 - **tdd_acceptance**: all
 - **tdd_refactor**: skip
 - **security_sensitive**: false
-- **dependencies**: [T-041, T-022, T-005]
+- **dependencies**: [T-041, T-092]
 - **acceptance_criteria**:
-  - [ ] AC-001: `/templates` 页面展示 3 列网格，含 ≥ 8 个模板卡片（覆盖 ARCH M-005 8 个 templateId：tech-review / poetry-essay / industry-report / life-vlog / tutorial / book-review / kpi-summary / lifestyle-guide）
-  - [ ] AC-002: 五个内置主题（default/magazine/literary/business/tech）目录下各 ≥ 2 模板 seed（packages/themes/{themeId}/templates/*.md）
-  - [ ] AC-003: 本地模板 CRUD：`createTemplate(name, content)` / `listTemplates()` / `deleteTemplate(id)` [ARCH#§3.API-025]
-  - [ ] AC-004: 点击模板卡片 → 创建新文档并应用该模板内容
-  - [ ] AC-005: routes 数组含 `{ path: '/templates', component: TemplateMarketPage }` 字面量
-  - [ ] AC-006: 模板 store 持久化到 IndexedDB
+  - [ ] AC-001: `/themes` 页面展示 3 列网格，按 (themeId, templateId) 组合渲染卡片，支持按主题与场景关键词筛选（不新增独立页面）
+  - [ ] AC-002: 在 T-092 每主题 ≥1 的基础上扩展为「每主题目标 ≥2（P1 增强）」，seed 仍存放于 `packages/themes/{themeId}/templates/*.md`
+  - [ ] AC-003: 点击模板卡片 → 创建新文档并应用该模板内容（调用 `describeTemplate(themeId, templateId)`）
+  - [ ] AC-004: 路由保持 `{ path: '/themes', component: ThemesPage }`，不得引入 `/templates` 路由
+  - [ ] AC-005: 模板来源仅为 M-005 注册中心（`listThemeTemplates` / `describeTemplate`），不新增本地模板 CRUD
 - **deliverables**:
-  - [ ] `apps/editor/src/pages/TemplateMarketPage.vue`
-  - [ ] `apps/editor/src/components/TemplateCard.vue`
-  - [ ] `apps/editor/src/stores/template-store.ts`
+  - [ ] 更新 `apps/editor/src/pages/ThemesPage.vue` — 增强筛选/排序/空态
+  - [ ] 更新 `apps/editor/src/components/themes/TemplateThemeCard.vue` — 卡片信息增强与交互完善
   - [ ] `packages/themes/default/templates/*.md`（≥ 2 个）
   - [ ] `packages/themes/magazine/templates/*.md`（≥ 2 个）
   - [ ] `packages/themes/literary/templates/*.md`（≥ 2 个）
@@ -649,5 +653,5 @@ required_sections:
   - [ ] 通过 MCP HTTP transport（`POST /mcp/tools/apply_zh_typo`），发送含中英混排的 Markdown，返回 `{ fixed: '...', totalChanges: N }` 响应
   - [ ] 点击模板卡片应用模板成功（T-073 模板市场验证）
   - [ ] 素材库上传 smoke test：mock 微信 API 返回 mediaId，接口返回 `{ jobId: uuid }`（T-077 验证）
-  - [ ] Tool 全集 grep 验证：22 个 Tool 文件在 `apps/mcp-server/src/tools/` 下存在
+  - [ ] Tool 全集 grep 验证：23 个 Tool 文件在 `apps/mcp-server/src/tools/` 下存在，包含 `describe_template`
 - **relates_to**: [F-010, F-014, M-007, M-009, M-011]
