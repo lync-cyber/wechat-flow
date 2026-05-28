@@ -1,6 +1,6 @@
 {
   "manifest_version": 1,
-  "package_version": "0.4.1",
+  "package_version": "0.5.0",
   "files": {
     "PROJECT-STATE.md": "2546e3ba787668835931525899fb950b471851116af874968e4ffdf51ca8e23f",
     "agents/architect/AGENT.md": "6a0759fb7b6bf5f14d6f50da5e886538f83efc434d72af9cbd2ca3d1ce730668",
@@ -46,6 +46,7 @@
     "skills/code-review/SKILL.md": "1e7a70853a8cc315f62e3988be651020b09657bbb53a8dd98ee0aa63261363cb",
     "skills/debug/SKILL.md": "e5144d0c3bd690184b0da216f2e0743bc89da4e8b90f18f84791dd3e61d3c6ae",
     "skills/deploy-config/SKILL.md": "787e731cbcb033075c41a683b38e64e91ebb06290a9c546298b29adec723cd6a",
+    "skills/doc-consistency/SKILL.md": "d4a0e7088446a25533d23c2959144983ff9d0b37a95018e51ca56df2bcfdbc57",
     "skills/doc-gen/SKILL.md": "d6c75e617668303b532c5c54126245100ac5679da127106a19aad3aad27d99aa",
     "skills/doc-gen/templates/_registry.yaml": "64413578b8242d7e1203e439fa17c6ac1c9df7f9141a7353b7661d998c297270",
     "skills/doc-gen/templates/lite/arch-lite.md": "71c782f697e30b97728730113d927ffdbe3319a8134e60e2493dd4e4ec5b7e73",
