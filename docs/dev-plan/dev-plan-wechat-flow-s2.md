@@ -1,6 +1,6 @@
 ---
 id: "dev-plan-wechat-flow-s2"
-version: "0.4.0"
+version: "0.4.1"
 doc_type: dev-plan
 author: tech-lead
 status: approved
@@ -16,7 +16,7 @@ required_sections:
 # Dev Plan 分卷 — Sprint 2: 规则集引擎 + 粘贴过滤 + 兼容性报告
 
 [NAV]
-- Sprint 2 任务卡 → T-013..T-019, T-019b, T-DS-005, T-VAL-02
+- Sprint 2 任务卡 → T-013..T-019, T-052, T-094, T-DS-005, T-VAL-02
 [/NAV]
 
 **Sprint 目标**: 渲染结果经 ≥25 条规则过滤；DiagnosticsPanel 展示兼容性分级；粘贴模拟可在 UI 中可视化。
@@ -241,9 +241,11 @@ required_sections:
   - [ ] AC-002: Given `isExpanded: false`，When DiagnosticsPanel 渲染，Then 高度为 `32px`，仅显示标题行；`isExpanded: true` 时高度 auto（最大 200px 可滚动）
   - [ ] AC-003: Given 诊断列表项右侧「查看变更」链接，When 点击，Then CompatibilityDiffView Modal 打开，左栏 before HTML 和右栏 after HTML 均非空，命中规则 ID 可见
   - [ ] AC-004: Given `diagnostics` 含 error，When DiagnosticsPanel 处于折叠态（A-010 假设），Then 面板自动展开（`isExpanded` 状态切换为 `true`）
+  - [ ] AC-005: Given `DiagnosticReport.nodeChangeRecords` 数组非空，When CompatibilityDiffView 渲染，Then C-013 CompatibilityDiffView 展示 before/after 双栏对比（每条 nodeChangeRecord 各占一行）；`nodeChangeRecords` 为空时该视图区域隐藏 [ARCH#§2.M-003]
+  - [ ] AC-006: Given `DiagnosticReport.nightRiskIssues` 数组非空，When DiagnosticsPanel 渲染，Then 面板进入 `night-risk-alert` CSS 态（边框色 `--color-diag-error`，面板标题前置风险标记图标）；`nightRiskIssues` 为空时恢复常规态 [ARCH#§2.M-003]
 - **deliverables**:
   - [ ] `apps/editor/src/components/diagnostics/DiagnosticsPanel.vue` — C-013 实现
-  - [ ] `apps/editor/src/components/diagnostics/CompatibilityDiffView.vue` — C-013.1 实现
+  - [ ] `apps/editor/src/components/diagnostics/CompatibilityDiffView.vue` — C-013.1 实现（含 nodeChangeRecords 双栏对比）
   - [ ] `apps/editor/src/components/diagnostics/DiagnosticsItem.vue` — 单条诊断列表项
 - **relates_to**: [F-002, F-011, M-001, C-013]
 - **context_load**:
@@ -281,7 +283,7 @@ required_sections:
 
 ---
 
-### T-019b: 源码 ↔ 预览双向高亮联动（F-001 AC-004）
+### T-094: 源码 ↔ 预览双向高亮联动（F-001 AC-004）
 
 - **目标**: 实现 SourcePane ↔ PreviewPane 的双向高亮联动 —— 点击预览中某段落定位源码光标；源码光标移动时高亮预览对应块
 - **模块**: M-001 (编辑器 UI)
@@ -312,6 +314,33 @@ required_sections:
 
 ---
 
+### T-052: StatusBar 状态机与平板降级（C-023）
+
+- **目标**: 实现 StatusBar 三态状态机（idle / warn / error）+ 平板断点下的图标降级模式，关联 UI-SPEC C-023
+- **模块**: M-001 (编辑器 UI)
+- **task_kind**: feature
+- **priority**: P0
+- **complexity**: small
+- **sprint**: 2
+- **tdd_mode**: light
+- **tdd_refactor**: skip
+- **tdd_acceptance**: [AC-001, AC-002, AC-003]
+- **security_sensitive**: false
+- **dependencies**: [T-019]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given `diagnostics` 为空，When StatusBar 渲染，Then 状态机处于 `idle` 态，兼容性摘要以 `--color-text-muted` 弱化色显示；`diagnostics` 含 warn 时切换为 `warn` 态，`diagnostics` 含 error 时切换为 `error` 态（三态可观测：每态 CSS class 变化可在 DOM 中断言）[UI-SPEC#§2.C-023]
+  - [ ] AC-002: Given 视口宽度 < 768px（平板断点），When StatusBar 渲染，Then 兼容性摘要区改为图标（`i`）+ hover/focus 显示 tooltip，不截断文字；视口 ≥ 768px 时恢复文字摘要模式
+  - [ ] AC-003: Given 移动端违规词（如 `position:fixed`）出现在诊断报告，When StatusBar 渲染，Then `i` 图标旁可见警告色标记，tooltip 文字描述违规内容
+- **deliverables**:
+  - [ ] 更新 `apps/editor/src/components/layout/StatusBar.vue` — 三态状态机实现 + 平板断点图标降级
+  - [ ] `apps/editor/src/components/layout/StatusBar.test.ts` — AC-001..AC-003 单元测试
+- **relates_to**: [F-002, M-001, C-023]
+- **context_load**:
+  - ui-spec-wechat-flow-c001-c014#§2.C-023
+  - arch-wechat-flow-modules#§2.M-001
+
+---
+
 ### T-VAL-02: [VALIDATION] Sprint 2 验证：规则集过滤 + 诊断面板
 
 - **目标**: 用户手动验证规则集引擎可过滤不兼容 CSS，DiagnosticsPanel 展示分级诊断
@@ -322,12 +351,12 @@ required_sections:
 - **tdd_mode**: skip
 - **tdd_skip_reason**: "由 orchestrator 触发用户手动验证，不进 TDD 流程"
 - **user_facing_critical_path**: true
-- **dependencies**: [T-014, T-015, T-017, T-018, T-019, T-019b]
+- **dependencies**: [T-014, T-015, T-017, T-018, T-019, T-052, T-094]
 - **acceptance_criteria**:
   - [ ] 在编辑器中输入含 `position:fixed` 样式的 Markdown（如 `:::card{style="position:fixed"}\ncontent\n:::`），右栏 PreviewPane HTML 中对应元素无 `position:fixed`（被规则剥除）
   - [ ] 底部状态栏兼容性摘要显示红色"严重 N 项"（N ≥ 1），点击后 DiagnosticsPanel 在编辑器底部展开
   - [ ] DiagnosticsPanel 展开后，含 error 级诊断条目，条目左侧色块为赤陶红色
   - [ ] 点击诊断条目右侧"查看变更"链接，CompatibilityDiffView Modal 弹出，左侧 before 列含 `position:fixed`，右侧 after 列该属性已不存在
   - [ ] 运行 `pnpm turbo ruleset-fixture`（或等效 CI 命令），输出全绿（所有 fixture 通过）
-  - [ ] 点击预览段落，源码光标跳转到对应行（T-019b 双向高亮联动）
+  - [ ] 点击预览段落，源码光标跳转到对应行（T-094 双向高亮联动）
 - **relates_to**: [F-007, F-011, M-003, M-004]

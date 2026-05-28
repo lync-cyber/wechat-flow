@@ -1,6 +1,6 @@
 ---
 id: "dev-plan-wechat-flow-s3"
-version: "0.4.0"
+version: "0.4.1"
 doc_type: dev-plan
 author: tech-lead
 status: approved
@@ -16,7 +16,7 @@ required_sections:
 # Dev Plan 分卷 — Sprint 3: 主题系统 + 组件注册中心 + Palette 派生
 
 [NAV]
-- Sprint 3 任务卡 → T-020..T-029, T-DS-006..T-DS-007, T-VAL-03
+- Sprint 3 任务卡 → T-020..T-027, T-028a, T-028b, T-029, T-DS-006..T-DS-007, T-VAL-03
 [/NAV]
 
 **Sprint 目标**: 五套内置主题热切换可见；内置 Block ≥ 25 个可从左侧面板插入；CommandPalette + InsertDrawer + ContextMenu + DirectiveAutocompletePopover 完成接线。
@@ -78,6 +78,8 @@ required_sections:
   - [ ] `packages/core/src/guard/eight-dimensions.ts` — `validateThemeGuard(theme) → GuardResult` 8 维校验（骨架，Sprint 6 T-059 完整实现）
   - [ ] `tests/core/theme-registry.test.ts` — AC-001..AC-004 单元测试
 - **relates_to**: [F-003, F-011, M-005]
+- **related_tasks**: [T-092]
+- **notes**: TemplateDefinition 类型由 T-004 在 @wechat-flow/contracts 包导出，T-020 / T-092 仅 import 不重复定义
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-005
   - prd-wechat-flow-f001-f014#§2.F-003
@@ -312,9 +314,9 @@ required_sections:
 
 ---
 
-### T-028: M-001 InsertDrawer（C-015）+ ContextMenu（C-016）+ DirectiveAutocompletePopover（C-021）
+### T-028a: M-001 InsertDrawer（C-015）+ ContextMenu（C-016）
 
-- **目标**: 实现 InsertDrawer（C-015）、ContextMenu（C-016）与 DirectiveAutocompletePopover（C-021），接线到 command registry 和 Block/Mark 库
+- **目标**: 实现 InsertDrawer（C-015）与 ContextMenu（C-016），接线到 command registry 和 Block/Mark 库
 - **模块**: M-001 (编辑器 UI)
 - **task_kind**: feature
 - **priority**: P1
@@ -329,17 +331,44 @@ required_sections:
   - [ ] AC-001: Given 点击 TopBar「+」按钮，When 触发，Then InsertDrawer 从右侧以 `--duration-base` 动画滑入（宽 320px），显示分类 Tab + Block 列表 [ui-spec-wechat-flow-c001-c014#§2.C-015]
   - [ ] AC-002: Given InsertDrawer 内选中一个 Block（如 callout），When 选中，Then 底部参数表单区展开，含可配属性输入；点击「插入」后 directive 语法片段插入到 SourcePane 光标处
   - [ ] AC-003: Given 点击 TopBar「...」按钮，When 触发，Then ContextMenu 展开，含「中文排版修订」和「复制 HTML」等菜单项，符合 `ui-spec-wechat-flow-c001-c014#§2.C-016` 菜单结构
-  - [ ] AC-004: Given 在编辑器输入 `:::` 或 `:` 前缀，When 触发补全，Then 弹出 C-021 浮层并可选择 Block/Mark 及 variant，选中后插入对应 directive 片段
 - **deliverables**:
   - [ ] `apps/editor/src/components/panel/InsertDrawer.vue` — C-015 实现
   - [ ] `apps/editor/src/components/panel/ContextMenu.vue` — C-016 实现（包装 C-010 DropdownMenu）
-  - [ ] `apps/editor/src/components/editor/DirectiveAutocompletePopover.vue` — C-021 实现
   - [ ] `apps/editor/src/components/common/DropdownMenu.vue` — C-010 实现（共用菜单样式基础）
 - **relates_to**: [F-001, M-001, C-015, C-016]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-001
   - ui-spec-wechat-flow-c001-c014#§2.C-015
   - ui-spec-wechat-flow-c001-c014#§2.C-016
+
+---
+
+### T-028b: M-001 DirectiveAutocompletePopover（C-021，CodeMirror extension 集成）
+
+- **目标**: 实现 DirectiveAutocompletePopover（C-021），在编辑器内接线 CodeMirror 补全 extension，支持 Block/Mark variant 选择并插入 directive 片段
+- **模块**: M-001 (编辑器 UI), M-005 (主题与组件注册中心)
+- **task_kind**: feature
+- **priority**: P1
+- **complexity**: medium
+- **sprint**: 3
+- **tdd_mode**: standard
+- **tdd_refactor**: auto
+- **tdd_acceptance**: [AC-001, AC-002]
+- **security_sensitive**: false
+- **dependencies**: [T-026, T-009, T-DS-006]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given 在编辑器输入 `:::` 或 `:` 前缀，When 触发补全，Then 弹出 C-021 浮层并可选择 Block/Mark 及 variant，选中后插入对应 directive 片段 [ui-spec-wechat-flow-c001-c014#§2.C-021]
+  - [ ] AC-002: Given DirectiveAutocompletePopover 已打开，When 用户按 Escape，Then 浮层关闭，编辑器焦点不丢失
+  - [ ] AC-003（production path）: `apps/editor/src/components/editor/DirectiveAutocompletePopover.vue` 作为 CodeMirror extension 在 `SourcePane.vue` 中注册，可在代码中检索到 `registerDirectiveCompletion(view)` 调用点
+- **deliverables**:
+  - [ ] `apps/editor/src/components/editor/DirectiveAutocompletePopover.vue` — C-021 实现
+  - [ ] `apps/editor/src/editor/extensions/directive-completion.ts` — CodeMirror 补全 extension（接线 M-005 Block/Mark 注册中心）
+  - [ ] `tests/editor/directive-autocomplete.test.ts` — AC-001..AC-002 单元测试
+- **relates_to**: [F-001, M-001, M-005, C-021]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-001
+  - arch-wechat-flow-modules#§2.M-005
+  - ui-spec-wechat-flow-c001-c014#§2.C-021
 
 ---
 
@@ -403,7 +432,7 @@ required_sections:
 - **tdd_mode**: skip
 - **tdd_skip_reason**: "由 orchestrator 触发用户手动验证，不进 TDD 流程"
 - **user_facing_critical_path**: true
-- **dependencies**: [T-021, T-022, T-026, T-027, T-028, T-029]
+- **dependencies**: [T-021, T-022, T-026, T-027, T-028a, T-028b, T-029]
 - **acceptance_criteria**:
   - [ ] 打开编辑器，左侧面板「主题」Tab 显示 5 张 ThemeCard（default/magazine/literary/business/tech），点击任意一张，PreviewPane 内样式立即变化（约 250ms 渐变），TopBar 主题指示器更新
   - [ ] 内置 Block 数 `listBlocks().length >= 25`（Sprint 3 阶段验收口径；PRD §1.3 终态 ≥40 由 Sprint 6 T-075 验收）

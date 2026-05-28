@@ -1,6 +1,6 @@
 ---
 id: "dev-plan-wechat-flow-s5"
-version: "0.4.0"
+version: "0.4.1"
 doc_type: dev-plan
 author: tech-lead
 status: approved
@@ -16,7 +16,7 @@ required_sections:
 # Dev Plan 分卷 — Sprint 5: CLI + 插件系统 + 中文排版 + 收尾功能
 
 [NAV]
-- Sprint 5 任务卡 → T-043..T-051, T-055, T-073, T-074, T-077..T-084, T-DS-009, T-VAL-05
+- Sprint 5 任务卡 → T-043..T-049, T-050a, T-050b, T-051, T-055, T-073, T-074, T-075, T-077..T-084, T-DS-009, T-VAL-05
 [/NAV]
 
 **Sprint 目标**: CLI `validate` 可跑；`apply_zh_typo` MCP Tool 可用；插件沙箱骨架建立；MCP HTTP/SSE transport 就绪；素材库上传链路（T-077/T-078/T-079）就绪；/themes 模板市场增强（T-073）落地筛选与 seed 扩展；Block 补全 Phase 2（T-074，P1 必含 5 种）；MCP Tool 补全包装（T-080..T-084）。
@@ -254,37 +254,62 @@ required_sections:
 
 ---
 
-### T-050: apps/cli init/dev/validate/publish/render/copy/export 命令（M-011）
+### T-050a: apps/cli 核心命令 init + validate（M-011）
 
-- **目标**: 实现 `apps/cli` 的 7 个子命令：`init`（两种骨架）、`dev`（Vite middleware + HMR）、`validate`（manifest + schema + 主题守护）、`publish`（pack 打包）、`render`、`copy`、`export`
+- **目标**: 实现 `apps/cli` 的 2 个核心子命令：`init`（两种骨架：plugin / theme）、`validate`（manifest + schema + 主题守护 + variant 申报一致性）；建立 CLI 入口骨架
 - **模块**: M-011 (CLI)
 - **task_kind**: feature
 - **priority**: P1
-- **complexity**: large
+- **complexity**: medium
 - **sprint**: 5
-- **tdd_mode**: standard
-- **tdd_acceptance**: all
+- **tdd_mode**: light
+- **tdd_acceptance**: [AC-001, AC-002, AC-003]
 - **tdd_refactor**: auto
 - **security_sensitive**: false
 - **dependencies**: [T-047, T-048]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given `wechat-flow init my-pack --template plugin`，When 执行，Then 创建 `my-pack/` 目录，含 `manifest.json`、`src/index.ts`、`package.json` 骨架文件（plugin 模板） [F-010 AC-003]
-  - [ ] AC-002: Given `wechat-flow validate ./my-pack`（合规 pack），When 执行，Then 退出码 0，输出「通过：manifest ✓ schema ✓ 主题守护 ✓」[F-010 AC-005]
+  - [ ] AC-001: Given `wechat-flow init my-pack --template plugin`，When 执行，Then 创建 `my-pack/` 目录，含 `manifest.json`、`src/index.ts`、`package.json` 骨架文件（plugin 模板）；`my-pack/` 目录在文件系统中存在可检索 [F-010 AC-003]
+  - [ ] AC-002: Given `wechat-flow validate ./my-pack`（合规 pack），When 执行，Then 退出码 0，stdout 含「通过：manifest ✓ schema ✓ 主题守护 ✓」[F-010 AC-005]
   - [ ] AC-003: Given `wechat-flow validate ./broken-pack`（manifest 缺少 `name` 字段），When 执行，Then 退出码非 0，stderr 含 `E_MANIFEST_INVALID: missing required field 'name'`
-  - [ ] AC-004: Given `wechat-flow dev ./my-pack`，When 执行，Then 启动 Vite dev 进程，输出「Watching for changes...」，修改 pack 文件后输出 HMR 刷新提示（不报错即通过）
-  - [ ] AC-005: Given `wechat-flow render --input article.md --theme default`，When 执行，Then stdout 输出 inline-styled HTML（不含 `<style>` 标签）
-  - [ ] AC-006: Given `wechat-flow copy --input article.md`，When 执行，Then 输出 dual MIME payload 预览（`text/html` + `text/plain`）或在支持环境下写入剪贴板
-  - [ ] AC-007: Given `wechat-flow export --input article.md --format html`，When 执行，Then 生成 standalone `.html` 文件
+  - [ ] AC-004（production path）: `apps/cli/src/index.ts` 中可检索到 `.command('init')` 和 `.command('validate')` 的字面注册调用
 - **deliverables**:
   - [ ] `apps/cli/src/commands/init.ts` — `--template plugin|theme` 两种骨架
-  - [ ] `apps/cli/src/commands/dev.ts` — Vite middleware + HMR + pack live-reload [ARCH#§2.M-011]
   - [ ] `apps/cli/src/commands/validate.ts` — manifest + schema + 主题守护 + variant 申报一致性
+  - [ ] `apps/cli/src/index.ts` — CLI 入口（使用 `commander` 或 `citty`）
+  - [ ] `tests/cli/validate.test.ts` — AC-002..AC-003 单元测试
+- **relates_to**: [F-010, M-011]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-011
+  - prd-wechat-flow-f001-f014#§2.F-010
+
+---
+
+### T-050b: apps/cli 渲染壳命令 dev/publish/render/copy/export（M-011，thin wrapper）
+
+- **目标**: 实现 `apps/cli` 的 5 个渲染壳子命令：`dev`（Vite middleware + HMR）、`publish`（pack 打包骨架）、`render`、`copy`、`export`；各命令为 thin wrapper，业务逻辑委托给 M-008 / M-011 库
+- **模块**: M-011 (CLI)
+- **task_kind**: feature
+- **priority**: P2
+- **complexity**: medium
+- **sprint**: 5
+- **tdd_mode**: light
+- **tdd_acceptance**: [AC-001, AC-002, AC-003, AC-004]
+- **tdd_refactor**: auto
+- **security_sensitive**: false
+- **dependencies**: [T-050a, T-011, T-031, T-030]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given `wechat-flow dev ./my-pack`，When 执行，Then 启动 Vite dev 进程，stdout 含「Watching for changes...」[ARCH#§2.M-011]
+  - [ ] AC-002: Given 修改 pack 文件后，When HMR 触发，Then stdout 输出含 `[wechat-flow:hmr]` 前缀的刷新提示（≤2s 内输出）
+  - [ ] AC-003: Given `wechat-flow render --input article.md --theme default`，When 执行，Then stdout 输出 inline-styled HTML（不含 `<style>` 标签）
+  - [ ] AC-004: Given `wechat-flow publish ./my-pack`，When pack 文件 SHA256 与上次发布不同，Then stdout 输出 'new pack version detected' 提示；退出码 0
+  - [ ] AC-005: Given `wechat-flow export --input article.md --format html`，When 执行，Then 生成 standalone `.html` 文件
+- **deliverables**:
+  - [ ] `apps/cli/src/commands/dev.ts` — Vite middleware + HMR + pack live-reload [ARCH#§2.M-011]
   - [ ] `apps/cli/src/commands/publish.ts` — pack 打包骨架
   - [ ] `apps/cli/src/commands/render.ts` — Tool 契约壳
   - [ ] `apps/cli/src/commands/copy.ts` — Tool 契约壳
   - [ ] `apps/cli/src/commands/export.ts` — Tool 契约壳
-  - [ ] `apps/cli/src/index.ts` — CLI 入口（使用 `commander` 或 `citty`）
-  - [ ] `tests/cli/validate.test.ts` — AC-002..AC-003 单元测试
+  - [ ] 更新 `apps/cli/src/index.ts` — 注册以上 5 个子命令
 - **relates_to**: [F-010, M-011]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-011
@@ -636,6 +661,43 @@ required_sections:
 
 ---
 
+### T-075: packages/blocks Block 补全 Phase 3（P1 增量 10 种）
+
+- **目标**: 在 T-074 (≥ 30 种) 基础上新增 10 种 P1 增量 Block：tip-grid / warning / disclaimer / reading-time / citation / definition-list / advert-card / related-cards / social-cta / subscribe-cta；累计 ≥ 40 种
+- **模块**: M-005
+- **task_kind**: feature
+- **priority**: P1
+- **complexity**: medium
+- **sprint**: 5
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **tdd_refactor**: skip
+- **security_sensitive**: false
+- **dependencies**: [T-074]
+- **acceptance_criteria**:
+  - [ ] AC-001: listBlocks() 长度 ≥ 40（F-003 AC-006 P0 25 + P1 必含 5 + P1 增量 10）
+  - [ ] AC-002: 10 个新增 Block 各注册 ≥ 1 variant，attrsSchema 通过 Zod parse
+  - [ ] AC-003: 5 套主题对新增 Block 提供基础 CSS
+  - [ ] AC-004: `registry.listAllVariants().length >= 120`；按 8 类核心 Block 分配最低 variant 配额：callout/quote/steps ≥ 10，pull-quote/table-grid/divider/card/highlight/compare ≥ 5，其余 Block ≥ 2
+- **deliverables**:
+  - [ ] `packages/blocks/src/blocks/tip-grid.ts`
+  - [ ] `packages/blocks/src/blocks/warning.ts`
+  - [ ] `packages/blocks/src/blocks/disclaimer.ts`
+  - [ ] `packages/blocks/src/blocks/reading-time.ts`
+  - [ ] `packages/blocks/src/blocks/citation.ts`
+  - [ ] `packages/blocks/src/blocks/definition-list.ts`
+  - [ ] `packages/blocks/src/blocks/advert-card.ts`
+  - [ ] `packages/blocks/src/blocks/related-cards.ts`
+  - [ ] `packages/blocks/src/blocks/social-cta.ts`
+  - [ ] `packages/blocks/src/blocks/subscribe-cta.ts`
+  - [ ] `tests/blocks/p1-incremental.test.ts`
+- **relates_to**: [F-003, M-005]
+- **context_load**:
+  - prd-wechat-flow-f001-f014#§2.F-003
+  - arch-wechat-flow-modules#§2.M-005
+
+---
+
 ### T-VAL-05: [VALIDATION] Sprint 5 验证：CLI validate + apply_zh_typo + 插件沙箱
 
 - **目标**: 用户/开发者手动验证 CLI 工具链、中文排版修订 UI 流程、插件沙箱基本功能
@@ -646,7 +708,7 @@ required_sections:
 - **priority**: P1
 - **sprint**: 5
 - **user_facing_critical_path**: true
-- **dependencies**: [T-044, T-046, T-050, T-051, T-073, T-074, T-077, T-079, T-080, T-081, T-082, T-083, T-084]
+- **dependencies**: [T-044, T-046, T-050a, T-050b, T-051, T-073, T-074, T-075, T-077, T-079, T-080, T-081, T-082, T-083, T-084]
 - **acceptance_criteria**:
   - [ ] 运行 `wechat-flow init my-test-pack --template plugin`，生成骨架目录；进入目录运行 `wechat-flow validate .`，输出退出码 0 + 通过信息
   - [ ] 在编辑器中写入含中英文混排的 Markdown（如「这是GitHub的项目，包含react组件」），点击「...」→「中文排版修订」，diff 预览 Modal 弹出并展示变更（中英间加空格），点击「确认修订」，编辑器内容更新，按 Ctrl+Z 可撤销

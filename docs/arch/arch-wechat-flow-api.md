@@ -1,6 +1,6 @@
 ---
 id: "arch-wechat-flow-api"
-version: "0.6.0"
+version: "0.6.1"
 doc_type: arch
 author: architect
 status: approved
@@ -418,7 +418,7 @@ response:
     })
 ```
 
-> 说明：API-016 是 6 个相关 Tool 的合并条目（4 个长任务 + `get_job` + `get_ruleset_version`）；与 §3.1 API-001..API-015 + API-033 合并后 Tool 总数为 **23**（17 同步 + 6 异步）。编号在物料化时可按需展开为 API-016a..API-016f。所有长任务 Tool 与 `get_job` 的 `jobId` 字段统一 `z.string().uuid()`，与 Relay REST API-017/018/019 及 E-008 主键约束对齐。
+> 说明：API-016 是 6 个相关 Tool 的合并条目（4 个长任务 + `get_job` + `get_ruleset_version`）；与 §3.1 API-001..API-015 + API-033 合并后 Tool 总数为 **23**（**19 同步 + 4 异步**）。同步 19 = API-001..API-015（含 API-009 拆 `list_tokens` + `describe_token` 共 16 同步）+ `get_job` + `get_ruleset_version`（2 同步轮询入口）+ `describe_template`（API-033，1 同步）；异步 4 = `upload_image` + `upload_to_wechat_asset` + `export_long_image` + `export_cover`。编号在物料化时可按需展开为 API-016a..API-016f。所有长任务 Tool 与 `get_job` 的 `jobId` 字段统一 `z.string().uuid()`，与 Relay REST API-017/018/019 及 E-008 主键约束对齐。
 
 #### API-033: describe_template
 

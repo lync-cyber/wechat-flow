@@ -1,6 +1,6 @@
 ---
 id: "dev-plan-wechat-flow-s4"
-version: "0.4.0"
+version: "0.4.1"
 doc_type: dev-plan
 author: tech-lead
 status: approved
@@ -335,7 +335,7 @@ required_sections:
 - **目标**: 实现 MCP server 异步长任务工具：`export_long_image`、`export_cover`、`get_job`、`upload_image`，统一异步 job 模型
 - **模块**: M-009 (MCP server)
 - **task_kind**: feature
-- **priority**: P1
+- **priority**: P0
 - **complexity**: medium
 - **sprint**: 4
 - **tdd_mode**: light
@@ -365,7 +365,7 @@ required_sections:
 - **目标**: 实现 JobProgressBar（C-014）和 Toast（C-011），接线 SSE 事件流展示长任务进度
 - **模块**: M-001 (编辑器 UI)
 - **task_kind**: feature
-- **priority**: P1
+- **priority**: P0
 - **complexity**: medium
 - **sprint**: 4
 - **tdd_mode**: light
@@ -394,7 +394,7 @@ required_sections:
 - **目标**: 实现 P-003 主题市场页面（`/themes` 路由），含内置主题卡片网格、筛选栏、社区扩展占位卡片、响应式三档布局
 - **模块**: M-001 (编辑器 UI)
 - **task_kind**: feature
-- **priority**: P1
+- **priority**: P0
 - **complexity**: medium
 - **sprint**: 4
 - **tdd_mode**: light
@@ -547,13 +547,13 @@ required_sections:
 - **tdd_refactor**: auto
 - **tdd_acceptance**: [AC-001, AC-002, AC-003, AC-004, AC-005, AC-006]
 - **security_sensitive**: false
-- **expected_tool_budget**: ~110
+- **notes**: expected_tool_budget=~110 (orchestrator 调度参考)
 - **dependencies**: [T-022, T-024]
 - **acceptance_criteria**:
   - [ ] AC-001: Given 调用 `defineTemplate({ themeId: 'default', templateId: 'starter', markdown: '...', metadata: { description: '...' } })`（M-005 接口），When 执行，Then `listThemeTemplates('default')` 返回数组含 `{ templateId: 'starter', description: '...' }`；`describeTemplate('default', 'starter')` 返回对象含 `markdown`、`metadata` 字段 [ARCH#§2.M-005]
   - [ ] AC-002: Given `packages/themes/<themeId>/templates/<templateId>.md` 文件存在（5 主题 × 1 template），When 主题包加载，Then `listThemeTemplates(themeId)` 对每个 `themeId` 返回 ≥ 1 个 template 条目
   - [ ] AC-003: Given 任意一份 template 的 Markdown 内容，When 渲染并检查，Then 覆盖白名单中全部 9 基础元素（H1-H6、段落、列表、引用、链接、代码块、分隔线、图片、表格）且包含 ≥ 6 核心 Block 容器（callout、card、steps、quote、pull-quote、compare 中至少 6 类） [F-011 AC-009 + ARCH#§2.M-006]
-  - [ ] AC-004: Given M-006 已实现第 9 维守护，When 调用 `validateThemeTemplates(themeId): ThemeTemplateValidationResult`，Then 对覆盖完整的主题返回 `{ valid: true, themeId, templateCount: N, missingElements: [] }`；对缺失元素的 template 返回 `{ valid: false, missingElements: ['table', 'callout'] }` 等具体缺失列表 [ARCH#§2.M-006]
+  - [ ] AC-004: Given M-005 已实现第 9 维守护，When 调用 `validateThemeTemplates(themeId): ThemeTemplateValidationResult`，Then 对覆盖完整的主题返回 `{ valid: true, themeId, templateCount: N, missingElements: [] }`；对缺失元素的 template 返回 `{ valid: false, missingElements: ['table', 'callout'] }` 等具体缺失列表 [ARCH#§2.M-005]
   - [ ] AC-005: Given `packages/core/src/theme-guard/template-coverage.test.ts`，When 运行，Then 每个内置主题至少 1 个 template 通过守护校验，测试文件使用 `packages/themes/*/templates/*.md` fixture 读取真实内容
   - [ ] AC-006: Given 通过 MCP stdio transport 调用 `describe_template({ themeId: 'default', templateId: 'starter' })`（API-033 Tool），When 执行，Then 返回 `{ themeId: 'default', templateId: 'starter', markdown: '...', metadata: { description: '...' } }`，Tool schema 定义在 `apps/mcp-server/src/tools/mcp/tool-contracts.ts` [ARCH#§3.API-033]
 - **deliverables**:
@@ -563,7 +563,7 @@ required_sections:
   - [ ] `packages/themes/business/templates/starter.md` — business 主题预填 Markdown
   - [ ] `packages/themes/tech/templates/starter.md` — tech 主题预填 Markdown
   - [ ] `packages/core/src/theme/template-registry.ts` — `defineTemplate` / `listThemeTemplates` / `describeTemplate` 实现（M-005 接口扩展）
-  - [ ] `packages/core/src/theme-guard/template-coverage.ts` — `validateThemeTemplates` 第 9 维守护实现（M-006 扩展）
+  - [ ] `packages/core/src/theme-guard/template-coverage.ts` — `validateThemeTemplates` 第 9 维守护实现（M-005 扩展（`packages/core/src/theme-guard/template-coverage.ts`））
   - [ ] `packages/core/src/theme-guard/template-coverage.test.ts` — 单元测试（AC-005）
   - [ ] `apps/mcp-server/src/tools/describe-template.ts` — API-033 `describe_template` Tool 实现
   - [ ] `apps/mcp-server/src/tools/mcp/tool-contracts.ts` — 更新，追加 `describe_template` Tool schema

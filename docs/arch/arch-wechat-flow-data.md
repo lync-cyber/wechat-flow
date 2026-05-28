@@ -1,6 +1,6 @@
 ---
 id: "arch-wechat-flow-data"
-version: "0.6.0"
+version: "0.6.1"
 doc_type: arch
 author: architect
 status: approved
@@ -428,6 +428,8 @@ export type CoverageReport = z.infer<typeof CoverageReportSchema>;
 ```
 
 **完整性守护**: 内置主题（default / magazine / literary / business / tech）须各 ≥ 1 TemplateDefinition；每条 TemplateDefinition 的 markdown 字段须通过 `validateTemplateCoverage(themeId, templateId)` 返回 `pass: true`；CI 静态校验阻断发布（F-011 AC-009）。
+
+**导出包**: `@wechat-flow/contracts/theme/template-definition`（M-012 contracts 包），与 M-005 `theme-registry` 实现解耦——schema 单源在 contracts 层、消费方按需 import，避免 contracts 反向依赖 theme-registry。
 
 映射：F-003 AC-012 / F-008 AC-001..AC-004 / F-011 AC-009 / F-013 AC-002 (describe_template 数据源)
 
