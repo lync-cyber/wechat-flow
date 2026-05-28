@@ -1,0 +1,15 @@
+{
+  "name": "@wechat-flow/core",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "echo skip",
+    "test": "echo skip",
+    "lint": "echo skip",
+    "typecheck": "echo skip"
+  },
+  "dependencies": {
+    "@wechat-flow/contracts": "workspace:*"
+  }
+}

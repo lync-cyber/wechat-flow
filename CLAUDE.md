@@ -24,16 +24,12 @@
 {执行环境检测结果 — 未填入时 orchestrator 应在 Bootstrap 时调用:
  cataforge setup --emit-env-block}
  
-## 工具使用规范
-- 优先使用 LSP 工具（go_to_definition, find_references, hover）查找符号定义和引用
-- 避免用 grep/ripgrep 搜索代码符号，除非是搜索字符串字面量
-
 ## 项目状态 (orchestrator专属写入区，其他Agent禁止修改)
-- 当前阶段: dev_planning
-- 上次完成: 跨文档联合评审（PRD+ARCH+UI-SPEC+DEV-PLAN）4 路并行 subagent + 1 路跨文档一致性 subagent 产出 36 项问题（5 严重 / 9 较高 / 16 中等 / 6 低）；用户确认 9 项关键决策 D1~D9（template one-time 拷贝 / M-002↔M-005 解耦移至 M-012 contracts / Tool=23 (19 同步+4 异步) / T-075 前移 Sprint 5 / F-005 升 P0 / TemplateDefinition 导出在 T-004 contracts / 审计日志最小方案 / WCAG AA 4.5 统一 / lockstep 共版本号）；4 路修订 subagent 并行/串行执行：PRD → 0.5.1（F-008 template 语义统一 + F-005 升 P0 + F-013 relay 注明 + F-003 AC-006 P0 25 全注册 + §1.2.2 lockstep + §3.1 端到端口径）/ ARCH → 0.6.1（Tool 数量 §3+M-009+API 三处统一 19+4 + M-002↔M-005 经 M-012 解耦 + E-011 contracts 包归属 + §5.5 审计日志最小方案 + WCAG 4.5 统一 + §6.1 skill/ 路径 + Q3.14 两阶段语义）/ ui-spec → 0.2.1（C-023 状态机/hover/平板降级补完 + C-019/C-020 颜色选择器 + C-009 命令面板键盘表 + §0.3 a11y 基线 + C-021 4 方向边界 + P-001 history.replace + C-017 双栏滚动联动 + C-001 断点 + A-014 假设）/ dev-plan → 0.4.1（T-001 加 M-012 AC + T-004 加 TemplateDefinition 导出 + T-018 加 AC-005/006 + T-019b→T-094 + T-052 复用 C-023 StatusBar + T-028 拆 28a/28b + T-050 拆 50a/50b + T-039/040/041 升 P0 + T-075 前移 S5 + T-092 归属 M-005 + LOC_SIGNAL 规范化 + 任务总数 94→96 (77+12+7)）；docs index 35 docs / 189 xref；validate 全绿
-- 下一步行动: 进入 pre_dev 人工审查检查点 (项目配置 `[pre_dev]`)，用户确认后激活 tdd-engine 编排 Sprint 0 第一批任务（T-001 Monorepo 骨架 + T-002 工具链 + T-003 Turborepo + T-004 contracts 骨架 + T-DS-001 Penpot Token 导入）
+- 当前阶段: development
+- 上次完成: pre_dev 人工审查检查点用户确认通过；Phase Transition 双绿（cataforge docs validate 0 stale / claude-md check 8555B 在 30K 限内）；进入 Phase 5 development
+- 下一步行动: tdd-engine 并行调度 Sprint 0 首批 5 个 P0 任务（T-001 Monorepo 骨架 + T-002 工具链 + T-003 Turborepo + T-004 contracts 骨架 + T-DS-001 Penpot Token 导入），按 sprint_group 依赖分组
 - 已完成阶段: [requirements, architecture, ui_design, dev_planning, cross_doc_amendment_r2]
-- 当前Sprint: Sprint 0 (待用户确认 pre_dev checkpoint 后启动)
+- 当前Sprint: Sprint 0 (启动中)
 - 文档状态:
   - prd: approved
   - arch: approved
@@ -87,6 +83,10 @@
   - `upgrade.state` — 本地升级状态。升级时始终保留
   - `features` — 功能注册表。升级时全量覆盖
   - `migration_checks` — 迁移检查声明。升级时全量覆盖
+## 工具使用规范
+- 优先使用 LSP 工具（go_to_definition, find_references, hover）查找符号定义和引用
+- 避免用 grep/ripgrep 搜索代码符号，除非是搜索字符串字面量
+
 ## 执行环境
 <!-- 本节在 Bootstrap 步骤中生成。每次会话都会作为项目指令加载，
      权重高于 hook 注入的 additionalContext。项目生命周期内保持稳定。

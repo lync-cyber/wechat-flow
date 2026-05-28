@@ -2,6 +2,10 @@
   "manifest_version": 1,
   "package_version": "0.5.0",
   "files": {
+    ".deploy-manifest.json": "2ea2e6e9925d79d774e037ad44cc88678d98c26f2bb9e63eb8578d88c29fabb4",
+    ".deploy-state": "456e8fc2c39d491de3fb2c0e1cad450ffa99ac0976acc9313f432b908fc0bb98",
+    ".instruction-hashes.json": "1bed9df7fe62995e39741d72c9dd9de38757cb23dbbc47490e7559d17640141c",
+    ".scaffold-manifest.json": "acb5d6c555eaa4e743caac1b4654810197420ca752c31a41d8b2d1cd5c853785",
     "PROJECT-STATE.md": "2546e3ba787668835931525899fb950b471851116af874968e4ffdf51ca8e23f",
     "agents/architect/AGENT.md": "6a0759fb7b6bf5f14d6f50da5e886538f83efc434d72af9cbd2ca3d1ce730668",
     "agents/debugger/AGENT.md": "0f4a6733be13e542ef49e42b0a856287a1e7f77a99b5103413c9b77501ed1db5",

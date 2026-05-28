@@ -1,0 +1,13 @@
+{
+  "name": "@wechat-flow/cli",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "echo skip",
+    "test": "echo skip",
+    "lint": "echo skip",
+    "typecheck": "echo skip"
+  }
+}

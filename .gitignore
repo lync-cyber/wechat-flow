@@ -24,6 +24,9 @@ Thumbs.db
 !.vscode/settings.json
 !.vscode/extensions.json
 
+# TypeScript build info
+*.tsbuildinfo
+
 # Coverage / test artifacts
 coverage/
 .nyc_output/
