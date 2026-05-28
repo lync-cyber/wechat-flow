@@ -1,6 +1,6 @@
 ---
 id: "dev-plan-wechat-flow-s0"
-version: "0.4.0"
+version: "0.4.1"
 doc_type: dev-plan
 author: tech-lead
 status: approved
@@ -41,6 +41,8 @@ required_sections:
   - [ ] AC-001: Given 空仓库，When 运行 `pnpm install`，Then 所有 workspace 包依赖解析成功，`node_modules/.pnpm` 目录生成，退出码 0
   - [ ] AC-002: Given T-001 完成，When 运行 `pnpm turbo build`，Then Turborepo 任务图解析成功并输出 pipeline 结构（即使所有包为空骨架），不报 `missing script` 错误
   - [ ] AC-003: Given workspace 初始化完成，When 检查目录结构，Then `apps/editor/` `apps/mcp-server/` `apps/relay/` `apps/cli/` `apps/job-worker/` `packages/core/` `packages/contracts/` `packages/plugin-api/` `packages/ruleset/` `packages/themes/` `packages/blocks/` `packages/marks/` `packages/palette/` `packages/zh-typo/` 全部存在，每个包含 `package.json` 和 `src/index.ts` 骨架
+  - [ ] AC-004: Given 目录结构就绪，When 检查 `packages/contracts/` 包，Then `packages/contracts/` 目录存在，`packages/contracts/package.json` 声明包名 `@wechat-flow/contracts`（M-012 contracts 包独立存在，供 M-002 core 与 M-005 theme-registry 共同消费）[ARCH#§2.M-012]
+  - [ ] AC-005: Given `pnpm -r --filter @wechat-flow/core --filter @wechat-flow/themes build` 执行，When 依赖图解析，Then 不报循环依赖错误（M-002 / M-005 包对 M-012 单向依赖验证）
 - **deliverables**:
   - [ ] `pnpm-workspace.yaml` — workspace 配置，声明 apps/* + packages/*
   - [ ] `package.json` — root package，含 turbo + biome devDependencies
@@ -130,7 +132,7 @@ required_sections:
 - **sprint**: 0
 - **tdd_mode**: light
 - **tdd_refactor**: auto
-- **tdd_acceptance**: [AC-001, AC-002, AC-003, AC-004]
+- **tdd_acceptance**: [AC-001, AC-002, AC-003, AC-004, AC-005, AC-006]
 - **security_sensitive**: false
 - **dependencies**: [T-002]
 - **acceptance_criteria**:
@@ -138,12 +140,17 @@ required_sections:
   - [ ] AC-002: Given `renderMarkdownRequestSchema`，When 调用 `toJSON(renderMarkdownRequestSchema)`，Then 返回符合 JSON Schema Draft-7 格式的对象，含 `type: 'object'`、`properties.markdown.type: 'string'`
   - [ ] AC-003: Given `renderMarkdownResponseSchema`，When `schema.safeParse({ html: '<p>test</p>', diagnostics: [], rulesetVersion: '1.0.0', themeVersion: '1.0.0' })`，Then `result.success === true` [ARCH#§2.M-012]
   - [ ] AC-004: Given 传入不合法输入 `schema.safeParse({ html: 123 })`，When 解析，Then `result.success === false`，`result.error.issues[0].path` 包含 `'html'`
+  - [ ] AC-005: Given `import { TemplateDefinition, DiagnosticReport, ClipboardPayload } from '@wechat-flow/contracts'`，When TypeScript 编译，Then 三个核心实体类型均从 `@wechat-flow/contracts` 单一导出，无类型缺失错误 [ARCH#§4.E-011]
+  - [ ] AC-006: Given `packages/contracts/src/mcp/tool-contracts.ts`，When 统计导出的 Tool schema 数量（含 19 同步 + 4 异步 = 23），Then 与 ARCH api 卷 §3.1 + §3.2 注册的 Tool 总数一致；不一致时 CI 阻断（schema 数量对账测试在 `tests/contracts/tool-count.test.ts`）[ARCH#§3]
 - **deliverables**:
-  - [ ] `packages/contracts/src/mcp/tool-contracts.ts` — 16 个 Tool 的 request/response Zod schema 骨架（包含 `renderMarkdownRequestSchema`、`renderMarkdownResponseSchema`，其余 Tool schema 以 `z.object({}).passthrough()` 占位）
+  - [ ] `packages/contracts/src/mcp/tool-contracts.ts` — 23 个 Tool 的 request/response Zod schema 骨架（19 同步 + 4 异步：upload_image / upload_to_wechat_asset / export_long_image / export_cover；包含 `renderMarkdownRequestSchema`、`renderMarkdownResponseSchema`，其余 Tool schema 以 `z.object({}).passthrough()` 占位）
   - [ ] `packages/contracts/src/utils/to-json.ts` — `toJSON(schema) → JSONSchema7` 工具函数（包装 `z.toJSONSchema()`）
   - [ ] `packages/contracts/src/index.ts` — 统一导出
   - [ ] `packages/contracts/src/version/triple-structure.ts` — `versionTripleSchema = z.object({ coreVersion: z.string(), themeVersion: z.string(), rulesetVersion: z.string() })`
-  - [ ] `tests/contracts/tool-contracts.test.ts` — AC-001..AC-004 单元测试
+  - [ ] `packages/contracts/src/theme/template-definition.ts` — 导出 `TemplateDefinition` 类型（对应 ARCH E-011）[ARCH#§4.E-011]
+  - [ ] `packages/contracts/src/sanitize/extend-schema.ts` — 导出 `extendSanitizeSchema(tagSet: string[], attrMap: Record<string, string[]>): void` 共享契约（对应 ARCH M-012 D2 决策，供 M-002 core 与 M-005 theme-registry 消费）[ARCH#§2.M-012]
+  - [ ] `packages/contracts/src/diagnostic/diagnostic-report.ts` — `DiagnosticReport` 含 `diagnostics[]` / `nodeChangeRecords[]` / `nightRiskIssues[]` 三字段 [ARCH#§2.M-003]
+  - [ ] `tests/contracts/tool-contracts.test.ts` — AC-001..AC-005 单元测试
 - **relates_to**: [F-013, M-012]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-012

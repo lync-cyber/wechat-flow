@@ -1,6 +1,6 @@
 ---
 id: "prd-wechat-flow-f001-f014"
-version: "0.5.0"
+version: "0.5.1"
 doc_type: prd
 author: product-manager
 status: approved
@@ -26,7 +26,7 @@ required_sections:
 - **验收标准**:
   - [ ] AC-001: 支持 CommonMark 标准语法及 GFM 扩展（表格、删除线、任务列表、Footnote）。
   - [ ] AC-002: 支持基于容器指令的块级扩展语法（`::: card{variant=feature accent=blue}` … `:::`）与行内指令（`:badge[新]{type=hot}`）。用户文档与 onboarding 必须明示这是非 CommonMark 扩展约定。
-  - [ ] AC-003: 支持 YAML Frontmatter 声明主题、模板、作者、变量、单文档配色派生与覆盖；核心字段：`theme:`（必需，指定所用主题）+ `template:`（可选，主题命名空间下的预设变体名）+ `paint:`（可选，单文档 token 覆盖）+ `base-color:`（可选，单色派生主色）。
+  - [ ] AC-003: 支持 YAML Frontmatter 声明主题、模板、作者、变量、单文档配色派生与覆盖；核心字段：`theme:`（必需，指定所用主题）+ `template:`（可选，声明创建时使用的预设变体（one-time 拷贝起点），保留为元数据/审计标记，渲染管线不消费此字段）+ `paint:`（可选，单文档 token 覆盖）+ `base-color:`（可选，单色派生主色）。
   - [ ] AC-004: 支持源码 ↔ 预览双向高亮联动（点击预览定位源码光标，源码光标高亮对应预览块）。
   - [ ] AC-005: 支持多文档管理、本地草稿持久化、自动备份。
   - [ ] AC-006: 支持撤销/重做、查找/替换、字数统计。
@@ -94,7 +94,7 @@ required_sections:
   - [ ] AC-006: Block 层（块级组件）内置数 ≥ 40，按产品优先级分两档：
     - **P0 必含 25 种**：标题、段落、列表、表格、代码块、引用、卡片、提示框、分隔线、图片、图说、画廊、步骤、对比、金句、强调段、公告、对话、时序、二维码、视频、音频、小程序卡片、文末互动、推荐。
     - **P1 必含 15 种**：作者卡、刊物骨架、KPI 数据卡、问答、脚注、tip-grid、warning、disclaimer、reading-time、citation、definition-list、advert-card、related-cards、social-cta、subscribe-cta。
-    - 注册表满足 `listBlocks().length ≥ 40` 且 P0 25 种与 P1 15 种全部注册。
+    - **P0 25 种 Block 全部注册**（按 §F-003 P0 清单逐 blockId 校验存在）**且** `listBlocks().length ≥ 40`；P0 25 种与 P1 15 种全部注册。
   - [ ] AC-007: Variant 皮肤系统：每个 Block/Mark 可注册多个 variant 皮肤（同一 directive 输入，不同视觉皮肤），写作者在 directive 属性中切换（如 `:::quote{variant=magazine-dropcap}`）；主题作者与插件作者均可向已有 Block 注册新 variant，无需修改 Block 源码。内置 variant 数 ≥ 120，集中在 callout / quote / steps / pull-quote / table-grid / divider / card / highlight / compare 等核心 Block 上。
   - [ ] AC-008: 主题装饰资产：主题可声明 `assets` 字典注入内联 SVG 装饰（分隔花纹、标题前缀、章节序号、KPI 箭头、印章符等），支持 `{{tokenId}}` 占位符在渲染时由 token 值填充，装饰随主题切换跟随更新。
   - [ ] AC-009: 上下文敏感渲染：同一 H2 标签在卡片内/外呈现不同样式；主题可声明 heading 装饰策略（序号编码、章节标记、前缀装饰），覆盖默认六级标题视觉。
@@ -128,12 +128,12 @@ required_sections:
 
 - **用户故事**: 作为写作者，我希望将文章导出为长图或封面图，并上传到公众号素材库，以便满足公众号图文卡片与朋友圈分享场景的需求。
 - **验收标准**:
-  - [ ] AC-001: 支持长图导出（服务端 Headless 渲染，不在浏览器内实现）。
-  - [ ] AC-002: 支持封面导出，规格：横版 900×383 / 方版 900×900；长图导出与封面导出共享同一 Headless 渲染通道。
-  - [ ] AC-003: 支持图片素材上传到公众号素材库（需中继服务，AppID/AppSecret 不进浏览器）。`[v1 API only / UI deferred]`
-  - [ ] AC-004: 长任务采用异步 job 模型，返回 `job_id`，调用方通过 `get_job(job_id)` 轮询获取状态/结果。
-- **优先级**: P1
-- **备注**: 长图/封面导出明确依赖服务端 Headless 渲染；素材库上传明确需要中继服务。具体服务端架构由 architect 决策。v1 P0 范围：仅 AC-001/002（长图与封面 Headless 渲染）+ AC-004（Job 模型）UI 落地；AC-003（素材库上传）v1 仅 API 暴露，UI 入口随后续版本。
+  - [ ] AC-001（P0, v1）: 支持长图导出（服务端 Headless 渲染，不在浏览器内实现）。
+  - [ ] AC-002（P0, v1）: 支持封面导出，规格：横版 900×383 / 方版 900×900；长图导出与封面导出共享同一 Headless 渲染通道。
+  - [ ] AC-003（P1, v2）: 支持图片素材上传到公众号素材库（需中继服务，AppID/AppSecret 不进浏览器；须经凭据中继 relay，无 relay 环境下不可用，详见 §3.2 安全基线）。`[v1 API only / UI deferred]`
+  - [ ] AC-004（P0, v1）: 长任务采用异步 job 模型，返回 `job_id`，调用方通过 `get_job(job_id)` 轮询获取状态/结果。
+- **优先级**: P0
+- **备注**: 长图/封面导出明确依赖服务端 Headless 渲染；素材库上传明确需要中继服务。具体服务端架构由 architect 决策。v1 P0 范围：AC-001/002（长图与封面 Headless 渲染）+ AC-004（Job 模型）UI 落地；AC-003（素材库上传）v1 仅 API 暴露，UI 入口随后续版本。
 
 ---
 
@@ -147,7 +147,7 @@ required_sections:
   - [ ] AC-003: 上传前执行图片元数据剥离（去 EXIF）。
   - [ ] AC-004: 编辑器内上传 UI（v1 P0 必需）：支持占位图、上传失败重试、拖拽上传、粘贴上传、上传进度反馈。
 - **优先级**: P0
-- **备注**: 公众号正文图宽度上限 1080px、单文件硬上限 10MB 为平台行为基线；压缩目标 2.5MB 为流量优化值，[ASSUMPTION] 具体压缩参数（quality / format）以平台实测为准，architect 阶段确认 sharp pipeline 实现策略。
+- **备注**: 图片尺寸三层指标按用途分列：**10MB = 平台硬上限**（公众号素材库限制，超出直接拒绝，对应 AC-002b 上限）/ **5MB = 性能测试基准**（PRD §3.1 上传完成时间 < 10s 的测量样本基准）/ **2.5MB = 推荐压缩目标**（流量优化值，对应 AC-002b 压缩目标）。[ASSUMPTION] 具体压缩参数（quality / format）以平台实测为准，architect 阶段确认 sharp pipeline 实现策略。
 
 ---
 
@@ -196,9 +196,9 @@ required_sections:
 
 - **用户故事**: 作为写作者，我希望从主题模板市场选择已带预填内容的卡片起步，以便基于该主题的活样本快速理解能力并填空写作。
 - **验收标准**:
-  - [ ] AC-001: 每内置主题须注册 ≥ 1 份预设变体（template），通过 `defineTheme.templates` 字段或独立 `defineTemplate({ themeId, templateId, render })` API 注册。
+  - [ ] AC-001: 每内置主题须注册 ≥ 1 份预设变体（template），通过 `defineTheme.templates` 字段或独立 `defineTemplate({ themeId, templateId, render })` API 注册。**创建文档时**从 template 一次性拷贝预填 Markdown 内容到编辑器；frontmatter `template` 字段为元数据/审计标记，渲染管线不消费此字段。
   - [ ] AC-002: template 内容须覆盖 F-003 AC-012 声明的基础元素与核心 Block 容器白名单，CI 守护见 F-011 AC-009。
-  - [ ] AC-003: frontmatter `template` 字段为主题命名空间下的变体名，运行时仅作为审计标记不参与渲染；不同主题下同名 template 可独立定义。
+  - [ ] AC-003: frontmatter `template` 字段为主题命名空间下的变体名，运行时作为元数据/审计标记，不参与渲染；不同主题下同名 template 可独立定义。
   - [ ] AC-004: MCP 工具 `describe_theme` 返回该主题的 template 清单（templateId + 缩略元数据）；新增 `describe_template(themeId, templateId)` 返回 template 预填 Markdown 与 mdast 覆盖统计。
 - **优先级**: P1
 - **备注**: 主题模板市场（P-003）按 (主题, template) 组合呈现卡片，缩略图为该组合的实际渲染预览；写作者新建文档必经市场页选起点；template 兼具写作起点与主题能力活样本双重职责。
@@ -241,9 +241,9 @@ required_sections:
 - **用户故事**: 作为开发者，我希望工具提供系统化的质量门禁，以便确保每次变更不破坏已有的渲染正确性与主题完整性。
 - **验收标准**:
   - [ ] AC-001（P0）: 过滤规则集回归测试——两层 fixture，CI 必跑两套：规则级（每条规则一对 `input.html` / `expected.html`，hast→hast）+ 端到端（典型 Markdown 输入 → 最终 HTML，覆盖典型组合，验证管线整体）。
-  - [ ] AC-002（P0）: 粘贴过滤模拟——在工具内复现公众号编辑器对粘贴 HTML 的过滤行为（剥标签、剥属性、改写结构），作为渲染管线最后一道关卡；输出粘贴前后逐节点的精确变更对照，作为兼容性详情面板的核心可视化数据。
+  - [ ] AC-002（P0）: 粘贴过滤模拟——在工具内复现公众号编辑器对粘贴 HTML 的过滤行为（剥标签、剥属性、改写结构），作为渲染管线最后一道关卡；输出粘贴前后逐节点的精确变更对照，作为兼容性详情面板的核心可视化数据。`simulatePaste` 复用 F-007 规则集中的 hast→hast 子集（strip / clamp / transform / patch 四类作用域，lint 类不参与执行仅产诊断），不另行维护独立规则集，确保发布通道与 CI 模拟使用同一份规则版本；nodeChangeRecords 由 M-003 在规则执行时一次性记录，simulatePaste 直接消费同源输出。
   - [ ] AC-003（P0）: 主题覆盖率守护——每套用户可见主题须通过 9 维静态校验：基线选择器密度、核心 block 覆盖率、token 覆盖率、跨主题身份 token 防碰撞、元数据完整性、theme.css 属性合规、WCAG 对比度自动校验、装饰资产完整性、内置 template 完整性。校验集合在版本化策略中维护（收紧走 minor，放松走 major），确保新主题不能通过"复制改色+删配置"捷径过 CI。
-  - [ ] AC-004a（P0）: 视觉回归核心矩阵——Playwright 截图 diff，覆盖 5 套内置主题 × P0 核心 Block/Mark 8 类基础场景（heading / paragraph / blockquote / code-block / image / callout / highlight-mark / badge-mark）+ ≥ 8 综合场景（all-blocks 单页、GFM baseline、夜间模式预览、典型嵌套 list 等）；pixelmatch ratio ≤ 0.05；每个 PR 必跑。
+  - [ ] AC-004a（P0）: 视觉回归核心矩阵——Playwright 截图 diff，覆盖 5 套内置主题 × P0 核心 Block/Mark 8 类基础场景（heading / paragraph / blockquote / code-block / image / callout / highlight-mark / badge-mark）+ ≥ 8 综合场景（all-blocks 单页、GFM baseline、夜间模式预览、典型嵌套 list 等）；pixelmatch ratio ≤ 0.05；每个 PR 必跑。**规则集扩展决策原则**：F-007 规则集新增影响视觉输出的规则时，须评估是否需要补充 AC-004a 基础场景或 AC-004b 综合场景；不要求一一对应，决策标准是"该规则对至少一类已有场景产生可观察的视觉差异"。
   - [ ] AC-004b（P1）: 视觉回归全量 variant 覆盖——按 `listBlocks()` × `describeBlock(b).variants` × 5 主题动态枚举 story；PR 抽样比例由 ruleset 配置（默认 20%），夜间 scheduled job 跑全量；阈值同 AC-004a。
   - [ ] AC-005（P1）: 已知 Bug 补丁库——按微信客户端版本号管理，可热加载。
   - [ ] AC-006（P1）: 可读性检查——颜色对比度（WCAG AA）、字号下限、段长上限；对比度检查在主题层为静态自动校验，在文档层为运行时风险提示。
@@ -286,7 +286,7 @@ required_sections:
     - `apply_zh_typo`：中文排版 4 类规则批量修订，返回 `{ fixed, perRule, totalChanges }`，跳过代码/inlineCode/链接 URL 等敏感区域
     - `simulate_paste`：跑一遍微信粘贴过滤模拟，返回过滤前后逐节点差异
     - `export_clipboard_payload`：返回 `{ html, text }` 双 MIME 字符串
-    - `upload_image` / `upload_to_wechat_asset` / `export_long_image` / `export_cover`（横版/方版）：经中继的长任务，统一异步 job 模型（返回 `job_id`）
+    - `upload_image` / `upload_to_wechat_asset`（**须经凭据中继 relay，无 relay 环境下不可用**；详见 F-005 AC-003 与 §3.2 安全基线） / `export_long_image` / `export_cover`（横版/方版）：经中继的长任务，统一异步 job 模型（返回 `job_id`）
     - `get_job(job_id)`：异步任务唯一状态/结果获取入口
     - `get_ruleset_version`：返回当前规则集、内置主题、契约 schema 版本三元组
   - [ ] AC-003: 分发形态覆盖：MCP server（stdio + HTTP/SSE 双 transport，供 LLM Agent 原生工具发现与调用）、Skill bundle（含 SKILL.md 与资源目录，负责语义级任务编排）、CLI（同一 Tool 契约的命令行壳，供 CI 调度）。

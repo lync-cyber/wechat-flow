@@ -1,6 +1,6 @@
 ---
 id: "dev-plan-wechat-flow"
-version: "0.4.0"
+version: "0.4.1"
 doc_type: dev-plan
 split_policy: no-further-split
 author: tech-lead
@@ -19,7 +19,7 @@ required_sections:
 [NAV]
 - §1 迭代规划 → Sprint 0..6 总览表
 - §2 依赖图 → Mermaid DAG + 关键路径
-- §3 任务卡详细 → T-001..T-092 + T-DS-001..T-DS-012 + T-VAL-00..T-VAL-06（见 Sprint 分卷；T-091/T-092/T-DS-011/T-DS-012 在 Sprint 4 分卷）
+- §3 任务卡详细 → T-001..T-094 + T-DS-001..T-DS-012 + T-VAL-00..T-VAL-06（见 Sprint 分卷；T-091/T-092/T-093/T-094/T-DS-011/T-DS-012 在 Sprint 2/4 分卷）
 - §4 Penpot 同步任务专章 → DS-001..DS-010
 - §5 风险与假设
 - §6 集成与E2E测试规划
@@ -36,9 +36,9 @@ required_sections:
 | Sprint 0 | 基础设施 + 设计系统建立 | Monorepo 骨架可跑 CI；Penpot Token 导入 | 无（纯工程） | T-VAL-00 |
 | Sprint 1 | 三栏 UI 骨架 + 渲染管线核心 | 编辑器可输入 Markdown，右栏出现 HTML 预览 | `localhost:5173` 三栏可见 | T-VAL-01 |
 | Sprint 2 | 规则集引擎 + 粘贴过滤 + 兼容性报告 + 双向高亮 | 渲染结果经规则集过滤；DiagnosticsPanel 可展开；源码↔预览双向高亮联动 | 输入含 `position:fixed` 的 Markdown，诊断面板变红；点击预览段落源码光标跳转 | T-VAL-02 |
-| Sprint 3 | 主题系统 + 组件注册中心 + Palette 派生 | 五套主题热切换；P0 必含 25 种内置 Block 可插入（PRD §1.3 终态 ≥40 见 Sprint 6 T-075） | 左侧面板切换主题，预览区即时变色 | T-VAL-03 |
-| Sprint 4 | 输出能力 + MCP server (23 Tool) + 图片处理 + 主题 template | 一键复制可粘贴到公众号；MCP `render_markdown` 与发现类 Tool 可调（Block 量化指标终态见 Sprint 6 T-075）；Editor → Relay session 鉴权链路打通（T-091）；5 主题 × ≥ 1 预设 template + 9 维 CI 守护（T-092） | 复制 HTML 粘贴到公众号编辑器视觉一致 | T-VAL-04 |
-| Sprint 5 | CLI + 插件系统 + 中文排版 + 长图/封面 + 素材库 + 模板市场 + Tool 包装 | CLI `validate` 可跑；`apply_zh_typo` 可用；长图异步导出可用；素材库上传链路打通；模板市场卡片可用（Block 终态 ≥40 见 Sprint 6 T-075） | `wechat-flow validate ./my-pack` 产出报告 | T-VAL-05 |
+| Sprint 3 | 主题系统 + 组件注册中心 + Palette 派生 | 五套主题热切换；P0 必含 25 种内置 Block 可插入（PRD §1.3 终态 ≥40 见 Sprint 5 T-075） | 左侧面板切换主题，预览区即时变色 | T-VAL-03 |
+| Sprint 4 | 输出能力 + MCP server (23 Tool) + 图片处理 + 主题 template | 一键复制可粘贴到公众号；MCP `render_markdown` 与发现类 Tool 可调（Block 量化指标终态见 Sprint 5 T-075）；Editor → Relay session 鉴权链路打通（T-091）；5 主题 × ≥ 1 预设 template + 9 维 CI 守护（T-092） | 复制 HTML 粘贴到公众号编辑器视觉一致 | T-VAL-04 |
+| Sprint 5 | CLI + 插件系统 + 中文排版 + 长图/封面 + 素材库 + 模板市场 + Tool 包装 + Block Phase 3 | CLI `validate` 可跑；`apply_zh_typo` 可用；长图异步导出可用；素材库上传链路打通；模板市场卡片可用；Block 累计 ≥ 40 种（T-075） | `wechat-flow validate ./my-pack` 产出报告 | T-VAL-05 |
 | Sprint 6 | 质量门禁 + 视觉回归 + Skill bundle + 性能 benchmark + 装饰渲染 + 收尾 | 规则集 ≥ 42 条 fixture 全绿；Playwright 核心矩阵 + 抽样矩阵双绿；P95 键入 < 50ms / 主题切换 < 200ms benchmark 通过；Skill bundle 可被 Agent 加载 | CI 全绿；万字稿件键入 / 主题切换流畅；Skill bundle 端到端调用 | T-VAL-06 |
 
 ---
@@ -83,8 +83,9 @@ required_sections:
 | T-017 | M-004 粘贴过滤模拟器（simulatePaste + per-node diff） | feature | P0 | medium | T-013 |
 | T-018 | M-001 DiagnosticsPanel（C-013）+ CompatibilityDiffView（C-013.1） | feature | P0 | medium | T-017,T-DS-005 |
 | T-019 | 底部状态栏兼容性摘要接线（M-001 → M-003 诊断流） | feature | P0 | small | T-018 |
-| T-019b | 源码 ↔ 预览双向高亮联动（F-001 AC-004） | feature | P0 | medium | T-009,T-010 |
-| T-VAL-02 | [VALIDATION] Sprint 2 验证：规则集过滤 + 诊断面板 + 双向高亮 | validation | P0 | small | T-014,T-015,T-017,T-018,T-019,T-019b |
+| T-094 | 源码 ↔ 预览双向高亮联动（F-001 AC-004） | feature | P0 | medium | T-009,T-010 |
+| T-052 | StatusBar 状态机与平板降级（C-023） | feature | P0 | small | T-019 |
+| T-VAL-02 | [VALIDATION] Sprint 2 验证：规则集过滤 + 诊断面板 + 双向高亮 | validation | P0 | small | T-014,T-015,T-017,T-018,T-019,T-052,T-094 |
 
 ### Sprint 3 任务表（主题系统 + 组件注册 + Palette）
 
@@ -99,10 +100,11 @@ required_sections:
 | T-025 | packages/marks 内置 Mark ≥ 11 个 | feature | P0 | medium | T-020 |
 | T-026 | M-001 LeftPanelTabs（C-006）+ ThemeCard（C-007）+ BlockLibItem（C-008） | feature | P0 | medium | T-020,T-021 |
 | T-027 | M-001 CommandPalette（C-009）接线 command registry | feature | P1 | medium | T-026,T-DS-006 |
-| T-028 | M-001 InsertDrawer（C-015）+ ContextMenu（C-016）+ DirectiveAutocompletePopover（C-021） | feature | P1 | medium | T-026,T-DS-006 |
+| T-028a | M-001 InsertDrawer（C-015）+ ContextMenu（C-016） | feature | P1 | medium | T-026,T-DS-006 |
+| T-028b | M-001 DirectiveAutocompletePopover（C-021，CodeMirror extension 集成） | feature | P1 | medium | T-026,T-009,T-DS-006 |
 | T-029 | Frontmatter 解析：theme/paint/base-color 接线渲染管线 | feature | P0 | medium | T-022,T-023 |
 | T-DS-007 | [DESIGN] Penpot — Sprint 3 设计稿签字验证 | design | P1 | small | T-DS-006 |
-| T-VAL-03 | [VALIDATION] Sprint 3 验证：主题热切换 + Block 插入 | validation | P0 | small | T-021,T-022,T-026,T-027,T-028,T-029 |
+| T-VAL-03 | [VALIDATION] Sprint 3 验证：主题热切换 + Block 插入 | validation | P0 | small | T-021,T-022,T-026,T-027,T-028a,T-028b,T-029 |
 
 ### Sprint 4 任务表（输出能力 + MCP + 图片处理）
 
@@ -118,9 +120,9 @@ required_sections:
 | T-036 | M-009 MCP server stdio transport + 鉴权骨架（API key scope=user） | feature | P1 | medium | T-004 |
 | T-037 | M-009 render_markdown / lint_markdown / get_ruleset_version Tool 实现 | feature | P1 | medium | T-036,T-011 |
 | T-038 | M-009 list_themes / describe_theme / list_blocks / describe_block Tool | feature | P1 | medium | T-036,T-020 |
-| T-039 | M-009 export_long_image / export_cover / get_job / upload_image Tool | feature | P1 | medium | T-036,T-034,T-035 |
-| T-040 | M-001 C-014 JobProgressBar + Toast（C-011）接线 SSE 进度 | feature | P1 | medium | T-034,T-DS-008 |
-| T-041 | P-003 主题市场页面（/themes 路由） | feature | P1 | medium | T-022,T-005,T-092,T-DS-008 |
+| T-039 | M-009 export_long_image / export_cover / get_job / upload_image Tool | feature | P0 | medium | T-036,T-034,T-035 |
+| T-040 | M-001 C-014 JobProgressBar + Toast（C-011）接线 SSE 进度 | feature | P0 | medium | T-034,T-DS-008 |
+| T-041 | P-003 主题市场页面（/themes 路由） | feature | P0 | medium | T-022,T-005,T-092,T-DS-008 |
 | T-042 | P-004 设置页（/settings 路由）— 图床配置 + API 密钥分组 | feature | P0 | medium | T-005,T-033,T-DS-008 |
 | T-093 | C-018 编辑器内上传 UI 接线（拖拽/粘贴/进度/重试） | feature | P0 | medium | T-033,T-091,T-DS-012 |
 | T-091 | M-010 Editor Session JWT 颁发与续期端点（API-032） | feature | P0 | medium | T-032 |
@@ -141,7 +143,8 @@ required_sections:
 | T-047 | M-007 插件沙箱 Worker 骨架（Comlink RPC + 网络门禁 + `assertNetIsolation`） | feature | P1 | large | T-004 |
 | T-048 | M-007 plugin-api surface（defineBlock/defineVariant/defineRule/defineTheme） | feature | P1 | medium | T-047,T-020 |
 | T-049 | M-005 品牌包锁定（delta-merge + brand-pack lock） | feature | P2 | medium | T-020 |
-| T-050 | apps/cli init/dev/validate/publish/render/copy/export 命令（M-011） | feature | P1 | large | T-047,T-048 |
+| T-050a | apps/cli 核心命令 init + validate（M-011） | feature | P1 | medium | T-047,T-048 |
+| T-050b | apps/cli 渲染壳命令 dev/publish/render/copy/export（M-011，thin wrapper） | feature | P2 | medium | T-050a,T-011,T-031,T-030 |
 | T-051 | M-009 HTTP/SSE transport + admin API key 管理端点（API-028..API-031） | feature | P1 | medium | T-036 |
 | T-055 | P-005 移动端只读预览（/preview/:docId + 底部固定栏 + Clipboard 降级） | feature | P2 | medium | T-005,T-010,T-DS-009 |
 | T-073 | /themes 模板市场增强（卡片筛选 + seed 扩展，不新增路由） | feature | P1 | medium | T-041,T-092 |
@@ -154,7 +157,8 @@ required_sections:
 | T-082 | M-009 derive_palette Tool（thin wrapper → M-006） | feature | P1 | small | T-023,T-036 |
 | T-083 | M-009 simulate_paste Tool（thin wrapper → M-004） | feature | P1 | small | T-017,T-036 |
 | T-084 | M-009 export_clipboard_payload Tool（thin wrapper → M-008 composeCopy） | feature | P1 | small | T-030,T-036 |
-| T-VAL-05 | [VALIDATION] Sprint 5 验证：CLI validate + apply_zh_typo + 插件沙箱 + 素材库上传 + 模板市场 + Tool 全集 | validation | P1 | small | T-044,T-046,T-050,T-051,T-073,T-074,T-077,T-079,T-080,T-081,T-082,T-083,T-084 |
+| T-075 | packages/blocks Block 补全 Phase 3（P1 增量 10 种） | feature | P1 | medium | T-074 |
+| T-VAL-05 | [VALIDATION] Sprint 5 验证：CLI validate + apply_zh_typo + 插件沙箱 + 素材库上传 + 模板市场 + Tool 全集 | validation | P1 | small | T-044,T-046,T-050a,T-050b,T-051,T-073,T-074,T-075,T-077,T-079,T-080,T-081,T-082,T-083,T-084 |
 
 ### Sprint 6 任务表（质量门禁 + 视觉回归 + Skill bundle + 性能 benchmark + 装饰渲染 + 收尾）
 
@@ -177,7 +181,6 @@ required_sections:
 | T-070 | 版本三元组透传 + 确定性渲染验证（F-013 AC-001） | feature | P0 | small | T-007,T-037 |
 | T-071 | MCP server 冷启动性能优化（P95 < 800ms，F-013 AC-006） | feature | P1 | medium | T-037 |
 | T-072 | Public Tool Schema deprecation window 工具（F-013 AC-005） | feature | P1 | small | T-004 |
-| T-075 | packages/blocks Block 补全 Phase 3（P1 增量 10 种：tip-grid/warning/disclaimer/reading-time/citation/definition-list/advert-card/related-cards/social-cta/subscribe-cta） | feature | P1 | medium | T-074 |
 | T-085 | `skill/` Skill bundle（SKILL.md + prompts + resources，编排 23 个 Tool 调用顺序） | feature | P1 | medium | T-079,T-080,T-081,T-082,T-083,T-084,T-092 |
 | T-086 | 编辑器性能 benchmark（万字键入 P95 < 50ms / 主题切换 P95 < 200ms） | feature | P0 | medium | T-009,T-026,T-029 |
 | T-087 | 主题装饰资产 + `{{tokenId}}` SVG 注入 + 上下文敏感渲染（F-003 AC-008/AC-009） | feature | P1 | medium | T-021,T-022 |
@@ -225,7 +228,9 @@ graph LR
     T-020 --> T-026
     T-021 --> T-026
     T-026 --> T-027
-    T-026 --> T-028
+    T-026 --> T-028a
+    T-026 --> T-028b
+    T-009 --> T-028b
     T-022 --> T-029
     T-023 --> T-029
     T-004 --> T-032
@@ -264,15 +269,20 @@ graph LR
     T-047 --> T-048
     T-020 --> T-048
     T-020 --> T-049
-    T-047 --> T-050
-    T-048 --> T-050
+    T-047 --> T-050a
+    T-048 --> T-050a
+    T-050a --> T-050b
+    T-011 --> T-050b
+    T-031 --> T-050b
+    T-030 --> T-050b
     T-036 --> T-051
     T-005 --> T-055
     T-010 --> T-055
     T-015 --> T-056
     T-056 --> T-057
-    T-009 --> T-019b
-    T-010 --> T-019b
+    T-009 --> T-094
+    T-010 --> T-094
+    T-019 --> T-052
     T-024 --> T-074
     T-074 --> T-075
     T-033 --> T-077
@@ -358,11 +368,19 @@ graph LR
 
 `T-022 → T-092 → T-041`（主题 template 市场依赖链路：template 内容 + 守护先于市场页面可用）
 
+**Block 终态分段编排**：内置 Block 库分三段交付，门禁与 P0/P1 分级一致，避免 P1 任务阻塞 P0 出口：
+
+- 第一段 `T-024 (S3, P0)`：≥ 25 个 P0 必含 Block + variant 注册，作为 P0 视觉回归基线（T-058 依赖此段）；S3 出口门禁锁定 P0 全集
+- 第二段 `T-074 (S5, P1)`：P1 必含 5 种 Block 增量，与 P0 链路解耦，不进入 S3 出口门禁
+- 第三段 `T-075 (S5, P1)`：P1 增量 10 种 Block，前移至 S5 与第二段并行，共同纳入 S5 出口门禁
+
+依赖链 `T-024 → T-074 → T-075` 仅声明数据增量顺序（共享同一 Block 注册中心 schema），不构成 P0→P1 的关键路径反向阻塞；T-058 视觉回归矩阵在 S6 才统一覆盖三段全集。
+
 ---
 
 ## 3. 任务卡详细
 
-本 dev-plan 共 **95 任务卡**（76 code + 12 design + 7 validation；较上版新增 T-092 / T-093 / T-DS-011 / T-DS-012 共 4 项）。
+本 dev-plan 共 **96 任务卡**（77 code + 12 design + 7 validation）。任务编号 T-053 / T-054 / T-065 / T-076 为预留编号（当前未占用）。
 
 任务卡体量超过 `DOC_SPLIT_THRESHOLD_LINES`，按 Sprint 拆分为独立分卷存放：
 
@@ -370,11 +388,11 @@ graph LR
 |---------|---------|
 | `dev-plan-wechat-flow-s0.md` | Sprint 0: T-001..T-004, T-DS-001, T-VAL-00 |
 | `dev-plan-wechat-flow-s1.md` | Sprint 1: T-005..T-012, T-DS-002..T-DS-004, T-VAL-01 |
-| `dev-plan-wechat-flow-s2.md` | Sprint 2: T-013..T-019, T-019b, T-DS-005, T-VAL-02 |
-| `dev-plan-wechat-flow-s3.md` | Sprint 3: T-020..T-029, T-DS-006..T-DS-007, T-VAL-03 |
+| `dev-plan-wechat-flow-s2.md` | Sprint 2: T-013..T-019, T-052, T-094, T-DS-005, T-VAL-02 |
+| `dev-plan-wechat-flow-s3.md` | Sprint 3: T-020..T-027, T-028a, T-028b, T-029, T-DS-006..T-DS-007, T-VAL-03 |
 | `dev-plan-wechat-flow-s4.md` | Sprint 4: T-030..T-042, T-091, T-092, T-093, T-DS-008, T-DS-011, T-DS-012, T-VAL-04 |
-| `dev-plan-wechat-flow-s5.md` | Sprint 5: T-043..T-051, T-055, T-073, T-074, T-077..T-084, T-DS-009, T-VAL-05 |
-| `dev-plan-wechat-flow-s6.md` | Sprint 6: T-056..T-064, T-066..T-072, T-075, T-085..T-090, T-DS-010, T-VAL-06 |
+| `dev-plan-wechat-flow-s5.md` | Sprint 5: T-043..T-049, T-050a, T-050b, T-051, T-055, T-073, T-074, T-075, T-077..T-084, T-DS-009, T-VAL-05 |
+| `dev-plan-wechat-flow-s6.md` | Sprint 6: T-056..T-064, T-066..T-072, T-085..T-090, T-DS-010, T-VAL-06 |
 
 ---
 
@@ -463,8 +481,8 @@ graph LR
 | Sprint 3 | Integration | 主题热切换 → M-002 重跑后段管线 → PreviewPane 视觉更新 | T-029 | 切换 default → magazine，断言 PreviewPane 内颜色 token 值变化 |
 | Sprint 4 | Integration | M-008 composeCopy → Clipboard API → dual-MIME payload | T-030 | 模拟用户手势，调用 composeCopy，断言 clipboard 含 `text/html` + `text/plain` |
 | Sprint 4 | Integration | M-009 MCP render_markdown → M-008 → M-002 → 版本三元组 | T-037, T-070 | stdio transport 发送 render_markdown，断言响应含 `html` + `rulesetVersion` + `themeVersion` |
-| Sprint 5 | Integration | CLI validate → M-007 manifest 校验 → M-005 主题守护 | T-050 | 对合规 pack 跑 validate，退出码 0；对缺 manifest 的 pack，退出码非 0 + 错误描述 |
-| Sprint 6 | E2E | 写作者完整流程：新建文档 → 输入 Markdown → 主题切换 → 复制 HTML | T-030, T-064, T-019b | Playwright 脚本模拟用户操作，断言复制后 clipboard HTML 经 simulatePaste 后视觉与本地预览 pixelmatch 比对 ≤ 0.05 |
+| Sprint 5 | Integration | CLI validate → M-007 manifest 校验 → M-005 主题守护 | T-050a | 对合规 pack 跑 validate，退出码 0；对缺 manifest 的 pack，退出码非 0 + 错误描述 |
+| Sprint 6 | E2E | 写作者完整流程：新建文档 → 输入 Markdown → 主题切换 → 复制 HTML | T-030, T-064, T-094 | Playwright 脚本模拟用户操作，断言复制后 clipboard HTML 经 simulatePaste 后视觉与本地预览 pixelmatch 比对 ≤ 0.05 |
 | Sprint 6 | Visual Regression — 核心矩阵 | 5 套内置主题 × 8 类 P0 场景 + ≥ 8 综合场景 | T-058 | 每个 PR 必跑；pixelmatch ratio ≤ 0.05 |
 | Sprint 6 | Visual Regression — 全量 variant | 5 主题 × `listBlocks()` × `describeBlock(b).variants` 动态枚举 | T-058 | PR 抽样比例由 ruleset 配置；夜间 scheduled job 跑全量 |
 | Sprint 6 | Cross-Runtime | 浏览器主线程 / Node / Worker / Edge 四 target 同输入 SHA-256 一致 | T-063 | `tests/cross-runtime/` 在四 target 各运行渲染 pipeline，比对 `sha256(html)` 相同 |
