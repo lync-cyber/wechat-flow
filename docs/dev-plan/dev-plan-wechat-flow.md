@@ -100,11 +100,11 @@ required_sections:
 | T-025 | packages/marks 内置 Mark ≥ 11 个 | feature | P0 | medium | T-020 |
 | T-026 | M-001 LeftPanelTabs（C-006）+ ThemeCard（C-007）+ BlockLibItem（C-008） | feature | P0 | medium | T-020,T-021 |
 | T-027 | M-001 CommandPalette（C-009）接线 command registry | feature | P1 | medium | T-026,T-100 |
-| T-028a | M-001 InsertDrawer（C-015）+ ContextMenu（C-016） | feature | P1 | medium | T-026,T-100 |
-| T-028b | M-001 DirectiveAutocompletePopover（C-021，CodeMirror extension 集成） | feature | P1 | medium | T-026,T-009,T-100 |
+| T-114 | M-001 InsertDrawer（C-015）+ ContextMenu（C-016） | feature | P1 | medium | T-026,T-100 |
+| T-115 | M-001 DirectiveAutocompletePopover（C-021，CodeMirror extension 集成） | feature | P1 | medium | T-026,T-009,T-100 |
 | T-029 | Frontmatter 解析：theme/paint/base-color 接线渲染管线 | feature | P0 | medium | T-022,T-023 |
 | T-101 | [DESIGN] Penpot — Sprint 3 设计稿签字验证 | design | P1 | small | T-100 |
-| T-110 | [VALIDATION] Sprint 3 验证：主题热切换 + Block 插入 | validation | P0 | small | T-021,T-022,T-026,T-027,T-028a,T-028b,T-029 |
+| T-110 | [VALIDATION] Sprint 3 验证：主题热切换 + Block 插入 | validation | P0 | small | T-021,T-022,T-026,T-027,T-114,T-115,T-029 |
 
 ### Sprint 4 任务表（输出能力 + MCP + 图片处理）
 
@@ -143,8 +143,8 @@ required_sections:
 | T-047 | M-007 插件沙箱 Worker 骨架（Comlink RPC + 网络门禁 + `assertNetIsolation`） | feature | P1 | large | T-004 |
 | T-048 | M-007 plugin-api surface（defineBlock/defineVariant/defineRule/defineTheme） | feature | P1 | medium | T-047,T-020 |
 | T-049 | M-005 品牌包锁定（delta-merge + brand-pack lock） | feature | P2 | medium | T-020 |
-| T-050a | apps/cli 核心命令 init + validate（M-011） | feature | P1 | medium | T-047,T-048 |
-| T-050b | apps/cli 渲染壳命令 dev/publish/render/copy/export（M-011，thin wrapper） | feature | P2 | medium | T-050a,T-011,T-031,T-030 |
+| T-116 | apps/cli 核心命令 init + validate（M-011） | feature | P1 | medium | T-047,T-048 |
+| T-117 | apps/cli 渲染壳命令 dev/publish/render/copy/export（M-011，thin wrapper） | feature | P2 | medium | T-116,T-011,T-031,T-030 |
 | T-051 | M-009 HTTP/SSE transport + admin API key 管理端点（API-028..API-031） | feature | P1 | medium | T-036 |
 | T-055 | P-005 移动端只读预览（/preview/:docId + 底部固定栏 + Clipboard 降级） | feature | P2 | medium | T-005,T-010,T-103 |
 | T-073 | /themes 模板市场增强（卡片筛选 + seed 扩展，不新增路由） | feature | P1 | medium | T-041,T-092 |
@@ -158,7 +158,7 @@ required_sections:
 | T-083 | M-009 simulate_paste Tool（thin wrapper → M-004） | feature | P1 | small | T-017,T-036 |
 | T-084 | M-009 export_clipboard_payload Tool（thin wrapper → M-008 composeCopy） | feature | P1 | small | T-030,T-036 |
 | T-075 | packages/blocks Block 补全 Phase 3（P1 增量 10 种） | feature | P1 | medium | T-074 |
-| T-112 | [VALIDATION] Sprint 5 验证：CLI validate + apply_zh_typo + 插件沙箱 + 素材库上传 + 模板市场 + Tool 全集 | validation | P1 | small | T-044,T-046,T-050a,T-050b,T-051,T-073,T-074,T-075,T-077,T-079,T-080,T-081,T-082,T-083,T-084 |
+| T-112 | [VALIDATION] Sprint 5 验证：CLI validate + apply_zh_typo + 插件沙箱 + 素材库上传 + 模板市场 + Tool 全集 | validation | P1 | small | T-044,T-046,T-116,T-117,T-051,T-073,T-074,T-075,T-077,T-079,T-080,T-081,T-082,T-083,T-084 |
 
 ### Sprint 6 任务表（质量门禁 + 视觉回归 + Skill bundle + 性能 benchmark + 装饰渲染 + 收尾）
 
@@ -228,9 +228,9 @@ graph LR
     T-020 --> T-026
     T-021 --> T-026
     T-026 --> T-027
-    T-026 --> T-028a
-    T-026 --> T-028b
-    T-009 --> T-028b
+    T-026 --> T-114
+    T-026 --> T-115
+    T-009 --> T-115
     T-022 --> T-029
     T-023 --> T-029
     T-004 --> T-032
@@ -269,12 +269,12 @@ graph LR
     T-047 --> T-048
     T-020 --> T-048
     T-020 --> T-049
-    T-047 --> T-050a
-    T-048 --> T-050a
-    T-050a --> T-050b
-    T-011 --> T-050b
-    T-031 --> T-050b
-    T-030 --> T-050b
+    T-047 --> T-116
+    T-048 --> T-116
+    T-116 --> T-117
+    T-011 --> T-117
+    T-031 --> T-117
+    T-030 --> T-117
     T-036 --> T-051
     T-005 --> T-055
     T-010 --> T-055
@@ -389,9 +389,9 @@ graph LR
 | `dev-plan-wechat-flow-s0.md` | Sprint 0: T-001..T-004, T-095, T-107 |
 | `dev-plan-wechat-flow-s1.md` | Sprint 1: T-005..T-012, T-096..T-098, T-108 |
 | `dev-plan-wechat-flow-s2.md` | Sprint 2: T-013..T-019, T-052, T-094, T-099, T-109 |
-| `dev-plan-wechat-flow-s3.md` | Sprint 3: T-020..T-027, T-028a, T-028b, T-029, T-100..T-101, T-110 |
+| `dev-plan-wechat-flow-s3.md` | Sprint 3: T-020..T-027, T-114, T-115, T-029, T-100..T-101, T-110 |
 | `dev-plan-wechat-flow-s4.md` | Sprint 4: T-030..T-042, T-091, T-092, T-093, T-102, T-105, T-106, T-111 |
-| `dev-plan-wechat-flow-s5.md` | Sprint 5: T-043..T-049, T-050a, T-050b, T-051, T-055, T-073, T-074, T-075, T-077..T-084, T-103, T-112 |
+| `dev-plan-wechat-flow-s5.md` | Sprint 5: T-043..T-049, T-116, T-117, T-051, T-055, T-073, T-074, T-075, T-077..T-084, T-103, T-112 |
 | `dev-plan-wechat-flow-s6.md` | Sprint 6: T-056..T-064, T-066..T-072, T-085..T-090, T-104, T-113 |
 
 ---
@@ -481,7 +481,7 @@ graph LR
 | Sprint 3 | Integration | 主题热切换 → M-002 重跑后段管线 → PreviewPane 视觉更新 | T-029 | 切换 default → magazine，断言 PreviewPane 内颜色 token 值变化 |
 | Sprint 4 | Integration | M-008 composeCopy → Clipboard API → dual-MIME payload | T-030 | 模拟用户手势，调用 composeCopy，断言 clipboard 含 `text/html` + `text/plain` |
 | Sprint 4 | Integration | M-009 MCP render_markdown → M-008 → M-002 → 版本三元组 | T-037, T-070 | stdio transport 发送 render_markdown，断言响应含 `html` + `rulesetVersion` + `themeVersion` |
-| Sprint 5 | Integration | CLI validate → M-007 manifest 校验 → M-005 主题守护 | T-050a | 对合规 pack 跑 validate，退出码 0；对缺 manifest 的 pack，退出码非 0 + 错误描述 |
+| Sprint 5 | Integration | CLI validate → M-007 manifest 校验 → M-005 主题守护 | T-116 | 对合规 pack 跑 validate，退出码 0；对缺 manifest 的 pack，退出码非 0 + 错误描述 |
 | Sprint 6 | E2E | 写作者完整流程：新建文档 → 输入 Markdown → 主题切换 → 复制 HTML | T-030, T-064, T-094 | Playwright 脚本模拟用户操作，断言复制后 clipboard HTML 经 simulatePaste 后视觉与本地预览 pixelmatch 比对 ≤ 0.05 |
 | Sprint 6 | Visual Regression — 核心矩阵 | 5 套内置主题 × 8 类 P0 场景 + ≥ 8 综合场景 | T-058 | 每个 PR 必跑；pixelmatch ratio ≤ 0.05 |
 | Sprint 6 | Visual Regression — 全量 variant | 5 主题 × `listBlocks()` × `describeBlock(b).variants` 动态枚举 | T-058 | PR 抽样比例由 ruleset 配置；夜间 scheduled job 跑全量 |

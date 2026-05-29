@@ -16,7 +16,7 @@ required_sections:
 # Dev Plan 分卷 — Sprint 3: 主题系统 + 组件注册中心 + Palette 派生
 
 [NAV]
-- Sprint 3 任务卡 → T-020..T-027, T-028a, T-028b, T-029, T-100..T-101, T-110
+- Sprint 3 任务卡 → T-020..T-027, T-114, T-115, T-029, T-100..T-101, T-110
 [/NAV]
 
 **Sprint 目标**: 五套内置主题热切换可见；内置 Block ≥ 25 个可从左侧面板插入；CommandPalette + InsertDrawer + ContextMenu + DirectiveAutocompletePopover 完成接线。
@@ -314,7 +314,7 @@ required_sections:
 
 ---
 
-### T-028a: M-001 InsertDrawer（C-015）+ ContextMenu（C-016）
+### T-114: M-001 InsertDrawer（C-015）+ ContextMenu（C-016）
 
 - **目标**: 实现 InsertDrawer（C-015）与 ContextMenu（C-016），接线到 command registry 和 Block/Mark 库
 - **模块**: M-001 (编辑器 UI)
@@ -343,7 +343,7 @@ required_sections:
 
 ---
 
-### T-028b: M-001 DirectiveAutocompletePopover（C-021，CodeMirror extension 集成）
+### T-115: M-001 DirectiveAutocompletePopover（C-021，CodeMirror extension 集成）
 
 - **目标**: 实现 DirectiveAutocompletePopover（C-021），在编辑器内接线 CodeMirror 补全 extension，支持 Block/Mark variant 选择并插入 directive 片段
 - **模块**: M-001 (编辑器 UI), M-005 (主题与组件注册中心)
@@ -432,7 +432,7 @@ required_sections:
 - **tdd_mode**: skip
 - **tdd_skip_reason**: "由 orchestrator 触发用户手动验证，不进 TDD 流程"
 - **user_facing_critical_path**: true
-- **dependencies**: [T-021, T-022, T-026, T-027, T-028a, T-028b, T-029]
+- **dependencies**: [T-021, T-022, T-026, T-027, T-114, T-115, T-029]
 - **acceptance_criteria**:
   - [ ] 打开编辑器，左侧面板「主题」Tab 显示 5 张 ThemeCard（default/magazine/literary/business/tech），点击任意一张，PreviewPane 内样式立即变化（约 250ms 渐变），TopBar 主题指示器更新
   - [ ] 内置 Block 数 `listBlocks().length >= 25`（Sprint 3 阶段验收口径；PRD §1.3 终态 ≥40 由 Sprint 6 T-075 验收）

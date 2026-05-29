@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-05-29T03:22:52.638374+00:00",
+  "generated_at": "2026-05-29T03:53:25.896339+00:00",
   "documents": {
     "arch-wechat-flow-api": {
       "file_path": "docs/arch/arch-wechat-flow-api.md",
@@ -1085,15 +1085,15 @@
       "volume": "sprint",
       "status": "approved",
       "total_lines": 443,
-      "est_tokens": 6996,
-      "content_hash": "322755ce",
+      "est_tokens": 6994,
+      "content_hash": "111a0b2b",
       "sections": {
         "3": {
           "heading": "## 3. 任务卡详细",
           "level": 2,
           "line_start": 26,
           "line_end": 443,
-          "est_tokens": 6771,
+          "est_tokens": 6770,
           "deps": [],
           "items": {
             "T-100": {
@@ -1159,11 +1159,18 @@
               "est_tokens": 441,
               "deps": []
             },
-            "T-028": {
-              "heading": "### T-028b: M-001 DirectiveAutocompletePopover（C-021，CodeMirror extension 集成）",
+            "T-114": {
+              "heading": "### T-114: M-001 InsertDrawer（C-015）+ ContextMenu（C-016）",
+              "line_start": 317,
+              "line_end": 345,
+              "est_tokens": 446,
+              "deps": []
+            },
+            "T-115": {
+              "heading": "### T-115: M-001 DirectiveAutocompletePopover（C-021，CodeMirror extension 集成）",
               "line_start": 346,
               "line_end": 374,
-              "est_tokens": 487,
+              "est_tokens": 486,
               "deps": []
             },
             "T-029": {
@@ -1390,15 +1397,15 @@
       "volume": "sprint",
       "status": "approved",
       "total_lines": 719,
-      "est_tokens": 10322,
-      "content_hash": "ad8e9c54",
+      "est_tokens": 10320,
+      "content_hash": "b98ef3b5",
       "sections": {
         "3": {
           "heading": "## 3. 任务卡详细",
           "level": 2,
           "line_start": 26,
           "line_end": 719,
-          "est_tokens": 10056,
+          "est_tokens": 10054,
           "deps": [],
           "items": {
             "T-103": {
@@ -1457,11 +1464,18 @@
               "est_tokens": 385,
               "deps": []
             },
-            "T-050": {
-              "heading": "### T-050b: apps/cli 渲染壳命令 dev/publish/render/copy/export（M-011，thin wrapper）",
+            "T-116": {
+              "heading": "### T-116: apps/cli 核心命令 init + validate（M-011）",
+              "line_start": 257,
+              "line_end": 286,
+              "est_tokens": 509,
+              "deps": []
+            },
+            "T-117": {
+              "heading": "### T-117: apps/cli 渲染壳命令 dev/publish/render/copy/export（M-011，thin wrapper）",
               "line_start": 287,
               "line_end": 319,
-              "est_tokens": 558,
+              "est_tokens": 557,
               "deps": []
             },
             "T-051": {
@@ -1559,7 +1573,7 @@
               "heading": "### T-112: [VALIDATION] Sprint 5 验证：CLI validate + apply_zh_typo + 插件沙箱",
               "line_start": 701,
               "line_end": 719,
-              "est_tokens": 374,
+              "est_tokens": 373,
               "deps": []
             }
           }
@@ -1791,15 +1805,15 @@
       "volume": "main",
       "status": "approved",
       "total_lines": 490,
-      "est_tokens": 8831,
-      "content_hash": "97ef45ef",
+      "est_tokens": 8823,
+      "content_hash": "bdf0198e",
       "sections": {
         "1": {
           "heading": "## 1. 迭代规划",
           "level": 2,
           "line_start": 30,
           "line_end": 193,
-          "est_tokens": 4455,
+          "est_tokens": 4452,
           "deps": [],
           "items": {}
         },
@@ -1808,7 +1822,7 @@
           "level": 2,
           "line_start": 194,
           "line_end": 380,
-          "est_tokens": 1434,
+          "est_tokens": 1431,
           "deps": [],
           "items": {}
         },
@@ -1817,7 +1831,7 @@
           "level": 2,
           "line_start": 381,
           "line_end": 398,
-          "est_tokens": 302,
+          "est_tokens": 300,
           "deps": [],
           "items": {}
         },
@@ -2352,13 +2366,13 @@
         "dev-plan-wechat-flow-s6"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow": "97ef45ef",
+        "dev-plan-wechat-flow": "bdf0198e",
         "dev-plan-wechat-flow-s0": "68b9e39d",
         "dev-plan-wechat-flow-s1": "7c97fedb",
         "dev-plan-wechat-flow-s2": "8a3c4eee",
-        "dev-plan-wechat-flow-s3": "322755ce",
+        "dev-plan-wechat-flow-s3": "111a0b2b",
         "dev-plan-wechat-flow-s4": "6fb402d2",
-        "dev-plan-wechat-flow-s5": "ad8e9c54",
+        "dev-plan-wechat-flow-s5": "b98ef3b5",
         "dev-plan-wechat-flow-s6": "2d4c1ca1"
       }
     },
@@ -2382,13 +2396,13 @@
         "dev-plan-wechat-flow-s6"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow": "97ef45ef",
+        "dev-plan-wechat-flow": "bdf0198e",
         "dev-plan-wechat-flow-s0": "68b9e39d",
         "dev-plan-wechat-flow-s1": "7c97fedb",
         "dev-plan-wechat-flow-s2": "8a3c4eee",
-        "dev-plan-wechat-flow-s3": "322755ce",
+        "dev-plan-wechat-flow-s3": "111a0b2b",
         "dev-plan-wechat-flow-s4": "6fb402d2",
-        "dev-plan-wechat-flow-s5": "ad8e9c54",
+        "dev-plan-wechat-flow-s5": "b98ef3b5",
         "dev-plan-wechat-flow-s6": "2d4c1ca1"
       }
     },
@@ -2414,13 +2428,13 @@
         "arch-wechat-flow"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow": "97ef45ef",
+        "dev-plan-wechat-flow": "bdf0198e",
         "dev-plan-wechat-flow-s0": "68b9e39d",
         "dev-plan-wechat-flow-s1": "7c97fedb",
         "dev-plan-wechat-flow-s2": "8a3c4eee",
-        "dev-plan-wechat-flow-s3": "322755ce",
+        "dev-plan-wechat-flow-s3": "111a0b2b",
         "dev-plan-wechat-flow-s4": "6fb402d2",
-        "dev-plan-wechat-flow-s5": "ad8e9c54",
+        "dev-plan-wechat-flow-s5": "b98ef3b5",
         "dev-plan-wechat-flow-s6": "2d4c1ca1",
         "prd-wechat-flow": "bac304e9",
         "arch-wechat-flow": "5a5d2ccc"
@@ -2449,13 +2463,13 @@
         "ui-spec-wechat-flow"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow": "97ef45ef",
+        "dev-plan-wechat-flow": "bdf0198e",
         "dev-plan-wechat-flow-s0": "68b9e39d",
         "dev-plan-wechat-flow-s1": "7c97fedb",
         "dev-plan-wechat-flow-s2": "8a3c4eee",
-        "dev-plan-wechat-flow-s3": "322755ce",
+        "dev-plan-wechat-flow-s3": "111a0b2b",
         "dev-plan-wechat-flow-s4": "6fb402d2",
-        "dev-plan-wechat-flow-s5": "ad8e9c54",
+        "dev-plan-wechat-flow-s5": "b98ef3b5",
         "dev-plan-wechat-flow-s6": "2d4c1ca1",
         "prd-wechat-flow": "bac304e9",
         "arch-wechat-flow": "5a5d2ccc",
@@ -3743,7 +3757,14 @@
         "file_path": "docs/dev-plan/dev-plan-wechat-flow-s3.md"
       }
     ],
-    "T-028": [
+    "T-114": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s3",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s3.md"
+      }
+    ],
+    "T-115": [
       {
         "doc_id": "dev-plan-wechat-flow-s3",
         "section": "3",
@@ -3967,7 +3988,14 @@
         "file_path": "docs/dev-plan/dev-plan-wechat-flow-s5.md"
       }
     ],
-    "T-050": [
+    "T-116": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s5",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s5.md"
+      }
+    ],
+    "T-117": [
       {
         "doc_id": "dev-plan-wechat-flow-s5",
         "section": "3",
