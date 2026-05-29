@@ -2,8 +2,19 @@
 
 本文件是 CataForge 各 Agent / Skill / Hook 共用的纪律与枚举单一事实来源；其他文件通过 `见 COMMON-RULES §<章节>` 引用，不重述。COMMON-RULES 默认加载到 Agent 上下文，引用时无需附加文件路径。
 
+## 项目指令文件
+
+各平台原生加载的项目指令文件名不同：
+
+| 平台 | 文件名 | 由 profile.yaml 声明 |
+|------|--------|-------------------|
+| claude-code | `CLAUDE.md` | `instruction_file.targets[0].path` |
+| cursor / codex / opencode | `AGENTS.md` | 同上 |
+
+本文档及下游 SKILL / AGENT / PROTOCOLS 引用 **项目指令文件**（中文短语，免加引号）时，按当前平台对应的文件解读 —— 即 claude-code 上读写 `CLAUDE.md`，其他平台读写 `AGENTS.md`。需要精确引用具体平台的文件（如 "Claude Code 用户的 CLAUDE.md 不存在则执行 Bootstrap"）时仍写文件名字面值。
+
 ## 全局约定
-- 遵循 CLAUDE.md 效率原则中的全局约定。
+- 遵循项目指令文件中定义的全局约定（§效率原则）。
 - Agent 间传递 `doc_id#§N[.item]` 引用，不复制全文。
 - 单一事实来源：每条规则只在一个文件中定义完整内容，他处引用不重述。
 - 不确定时通过 research skill 调研，不猜测（详见 `.cataforge/skills/research/SKILL.md`）。
@@ -41,10 +52,10 @@
 | post_sprint | Sprint Review 通过后 | 是否继续下一 Sprint |
 | none | — | 完全自动推进，仅保留失败驱动门禁 |
 
-规则：默认 `[pre_dev, post_sprint, pre_deploy]` 覆盖最高风险节点；用户在 Bootstrap 时或运行中通过 CLAUDE.md §全局约定 覆盖；`none` 与其他值互斥。
+规则：默认 `[pre_dev, post_sprint, pre_deploy]` 覆盖最高风险节点；用户在 Bootstrap 时或运行中通过 项目指令文件 §全局约定 覆盖；`none` 与其他值互斥。
 
 ## 执行模式矩阵
-框架支持三种执行模式，写入 CLAUDE.md §框架元信息.执行模式，未填默认 `standard`。
+框架支持三种执行模式，写入 项目指令文件 §框架元信息.执行模式，未填默认 `standard`。
 
 | 维度 | standard（默认） | agile-lite | agile-prototype |
 |------|-----------------|-----------|-----------------|
@@ -103,6 +114,17 @@ Agent 间统一格式：
 - 各 agent 自己的 Input Contract 段落保留**该角色实际需要的 doc_id 白名单**，但不重复"禁止 Read 全文"这条通用规则。
 - `cataforge docs load` 失败（exit 2 = 至少一个 ref 失败）按 stderr 提示修正；索引漂移时 `cataforge docs validate` 校验、`cataforge docs index` 重建。
 
+## Agent 文档 I/O 契约（KG-active 通用约定）
+适用：所有产文档的 Agent（product-manager / architect / ui-designer / tech-lead / qa-engineer / devops）以及读文档的 sub-agent（test-writer / implementer / reviewer / debugger 等）。
+
+下列约定对所有 Agent 一次性生效，**各 Agent 的 Input/Output Contract 不再重复**：
+
+- **写后无需手动调 KG CLI** — `doc-gen finalize` 已按 `framework.json.kg.kg_active_doc_types` 自动分流：active doc_type 触发 `cataforge kg import` + `cataforge kg reconcile`；非 active 触发 `cataforge docs index`。Agent 完成章节填充后只需 finalize，不应自行调度 `cataforge kg *`
+- **读取无需感知 KG 存在** — `cataforge docs load <ref>` 在 active doc_type 下自动从 KG 解析（实体级引用 `doc_id#§N.ITEM-NNN` 走 `kg.query.entity` + `render_entity`；whole-section 走文件 slice）；非 active doc_type 仍走 `.doc-index.json` + 文件切片。两条路径返回相同 markdown 形式，Agent 调用方式不变
+- **依赖展开同样统一** — `cataforge docs load <ref> --with-deps` 在 active doc_type 全覆盖时通过 `kg.query.depends_on` 走图查询，否则 fall back 到 `.doc-index.json` 的 `deps[]` 字段（见 [`docs/loader._try_kg_resolve_deps`](../../src/cataforge/docs/loader.py)）
+- **drift 检查由 orchestrator 负责** — Phase Transition Step 5.3 自动跑 `cataforge kg reconcile`；Agent 无需在 Output Contract 中声明"reconcile 通过"
+- **Read 工具仍可在 KG 不可达时兜底** — KG store 缺失 / 损坏 / KG-active doc_type 未 ingest 时，`cataforge docs load` 会自动降级到文件路径，Agent 调用契约不变
+
 ## 输出质量原则
 
 ### 对比式约束
@@ -155,9 +177,9 @@ closeout|closes\s*#\d+|fixes\s*#\d+|landed\s+in|本次新增|本轮加入|现已
 ``` 
 
 ## 通用 Anti-Patterns
-- 禁止：猜测项目状态——以 CLAUDE.md 和 `docs/` 目录为唯一事实来源。
+- 禁止：猜测项目状态——以 项目指令文件 和 `docs/` 目录为唯一事实来源。
 - 禁止：遗留未标注的 TODO / TBD / FIXME（必须标注 `[ASSUMPTION]`）。强制由 doc-review Layer 1 检查器实现，参见 `cataforge.skill.builtins.doc_review.checker.check_no_todo`。
-- 禁止：写入 CLAUDE.md 项目状态区（orchestrator 专属）。
+- 禁止：写入 项目指令文件 项目状态区（orchestrator 专属）。
 - 禁止：硬编码 §框架配置常量 中已定义的数值（应直接引用常量名）。
 
 ## 统一问题分类体系

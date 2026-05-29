@@ -3,7 +3,7 @@ description: Run the CataForge orchestrator Bootstrap protocol for this project.
 ---
 
 Invoke the orchestrator agent with instructions to execute the full Bootstrap
-protocol defined in `.cataforge/agents/orchestrator/ORCHESTRATOR-PROTOCOLS.md`.
+protocol defined in `.claude/agents/orchestrator/ORCHESTRATOR-PROTOCOLS.md`.
 
 The orchestrator must:
 
