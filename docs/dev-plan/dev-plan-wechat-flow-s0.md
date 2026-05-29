@@ -15,7 +15,7 @@ required_sections:
 # Dev Plan 分卷 — Sprint 0: 基础设施 + 设计系统
 
 [NAV]
-- Sprint 0 任务卡 → T-001..T-004, T-DS-001, T-VAL-00
+- Sprint 0 任务卡 → T-001..T-004, T-095, T-107
 [/NAV]
 
 **Sprint 目标**: Monorepo 骨架可跑 CI；Penpot Design System Token 导入并验证可读性；所有后续 Sprint 的工程基础就绪。
@@ -158,7 +158,7 @@ required_sections:
 
 ---
 
-### T-DS-001: [DESIGN] Penpot — Token 导入 + 可读性验证（PS-001..PS-004）
+### T-095: [DESIGN] Penpot — Token 导入 + 可读性验证（PS-001..PS-004）
 
 - **目标**: 将 ui-spec §1 全部 CSS Token 导入 Penpot Design System 变量组；在真实屏幕上验证暖白色阶、衬线字体可读性、主题色 WCAG 对比度，作为后续组件绘制的单一设计来源
 - **task_kind**: design
@@ -174,7 +174,7 @@ required_sections:
   - [ ] AC-002: 通过 Penpot MCP `find_shape` 可检索到 `Token-Surface` 组中的 `--color-surface` 变量（验证 link 已就绪）
   - [ ] AC-003: 开发者目视检查：在 1080p 显示器上渲染暖白 `#FAF8F5` 底色 + LXGW WenKai 11px 文字，不存在模糊或对比度不足问题（对应 PS-002）
   - [ ] AC-004: 验证 `--color-brand #2D5A4E` 文字在 `--color-surface #FAF8F5` 背景上对比度 ≥ 4.5:1（WCAG AA），记录验证工具截图（对应 PS-003）
-  - [ ] AC-005: 签字记录写入 `docs/EVENT-LOG.jsonl`（`event=design_signoff, phase=development, ref=T-DS-001`）
+  - [ ] AC-005: 签字记录写入 `docs/EVENT-LOG.jsonl`（`event=design_signoff, phase=development, ref=T-095`）
 - **deliverables**:
   - [ ] Penpot 项目：Design System 页面，包含全部 Token 变量组
   - [ ] `docs/EVENT-LOG.jsonl` — design_signoff 事件记录
@@ -184,7 +184,7 @@ required_sections:
 
 ---
 
-### T-VAL-00: [VALIDATION] Sprint 0 验证：CI 绿 + Penpot Token 可见
+### T-107: [VALIDATION] Sprint 0 验证：CI 绿 + Penpot Token 可见
 
 - **目标**: 用户/开发者手动验证 Sprint 0 所有基础设施产物可用，Penpot Token 导入完成且可从代码侧检索
 - **task_kind**: validation
@@ -194,11 +194,11 @@ required_sections:
 - **tdd_mode**: skip
 - **tdd_skip_reason**: "由 orchestrator 触发用户手动验证，不进 TDD 流程"
 - **user_facing_critical_path**: true
-- **dependencies**: [T-001, T-002, T-003, T-004, T-DS-001]
+- **dependencies**: [T-001, T-002, T-003, T-004, T-095]
 - **acceptance_criteria**:
   - [ ] 运行 `pnpm install && pnpm turbo typecheck`，终端输出无红色错误，退出码 0
   - [ ] 运行 `pnpm biome check .`，输出无 lint 错误
   - [ ] 运行 `pnpm vitest run`，输出"no test files found"（正常，Sprint 0 尚无测试用例）
   - [ ] 打开 Penpot SaaS（design.penpot.app），找到项目下的 Design System 页面，可见 Token 变量组（Surface / Brand / Text 等）
   - [ ] 在开发终端运行 Penpot MCP `find_shape` 检索 `Token-Surface`，返回非空结果（验证 MCP link 就绪）
-- **relates_to**: [T-001, T-002, T-003, T-004, T-DS-001]
+- **relates_to**: [T-001, T-002, T-003, T-004, T-095]

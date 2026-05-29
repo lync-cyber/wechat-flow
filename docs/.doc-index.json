@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-05-28T03:28:11.039733+00:00",
+  "generated_at": "2026-05-29T03:22:52.638374+00:00",
   "documents": {
     "arch-wechat-flow-api": {
       "file_path": "docs/arch/arch-wechat-flow-api.md",
@@ -782,15 +782,15 @@
       "volume": "sprint",
       "status": "approved",
       "total_lines": 204,
-      "est_tokens": 3500,
-      "content_hash": "536ef50e",
+      "est_tokens": 3493,
+      "content_hash": "68b9e39d",
       "sections": {
         "3": {
           "heading": "## 3. 任务卡详细",
           "level": 2,
           "line_start": 25,
           "line_end": 204,
-          "est_tokens": 3333,
+          "est_tokens": 3328,
           "deps": [],
           "items": {
             "T-001": {
@@ -820,6 +820,20 @@
               "line_end": 160,
               "est_tokens": 1069,
               "deps": []
+            },
+            "T-095": {
+              "heading": "### T-095: [DESIGN] Penpot — Token 导入 + 可读性验证（PS-001..PS-004）",
+              "line_start": 161,
+              "line_end": 186,
+              "est_tokens": 450,
+              "deps": []
+            },
+            "T-107": {
+              "heading": "### T-107: [VALIDATION] Sprint 0 验证：CI 绿 + Penpot Token 可见",
+              "line_start": 187,
+              "line_end": 204,
+              "est_tokens": 280,
+              "deps": []
             }
           }
         }
@@ -840,17 +854,31 @@
       "volume": "sprint",
       "status": "approved",
       "total_lines": 367,
-      "est_tokens": 6088,
-      "content_hash": "2714d860",
+      "est_tokens": 6071,
+      "content_hash": "7c97fedb",
       "sections": {
         "3": {
           "heading": "## 3. 任务卡详细",
           "level": 2,
           "line_start": 26,
           "line_end": 367,
-          "est_tokens": 5874,
+          "est_tokens": 5860,
           "deps": [],
           "items": {
+            "T-096": {
+              "heading": "### T-096: [DESIGN] Penpot — P-001 三档响应式线框稿（PS-006）",
+              "line_start": 28,
+              "line_end": 53,
+              "est_tokens": 323,
+              "deps": []
+            },
+            "T-097": {
+              "heading": "### T-097: [DESIGN] Penpot — C-001/C-002/C-004/C-005 核心组件视觉稿",
+              "line_start": 54,
+              "line_end": 80,
+              "est_tokens": 419,
+              "deps": []
+            },
             "T-005": {
               "heading": "### T-005: apps/editor Vue 3.5 项目骨架 + Vue Router + Pinia",
               "line_start": 81,
@@ -876,7 +904,7 @@
               "heading": "### T-008: M-001 EditorShell 三栏布局（C-001 TopBar + C-002 Splitter）",
               "line_start": 178,
               "line_end": 211,
-              "est_tokens": 639,
+              "est_tokens": 638,
               "deps": []
             },
             "T-009": {
@@ -890,7 +918,7 @@
               "heading": "### T-010: M-001 PreviewPane（iframe 沙箱 + 视口切换）",
               "line_start": 243,
               "line_end": 271,
-              "est_tokens": 595,
+              "est_tokens": 594,
               "deps": []
             },
             "T-011": {
@@ -905,6 +933,20 @@
               "line_start": 300,
               "line_end": 329,
               "est_tokens": 545,
+              "deps": []
+            },
+            "T-098": {
+              "heading": "### T-098: [DESIGN] Penpot — Sprint 1 设计稿签字验证",
+              "line_start": 330,
+              "line_end": 349,
+              "est_tokens": 255,
+              "deps": []
+            },
+            "T-108": {
+              "heading": "### T-108: [VALIDATION] Sprint 1 验证：三栏布局 + 实时预览",
+              "line_start": 350,
+              "line_end": 367,
+              "est_tokens": 278,
               "deps": []
             }
           }
@@ -932,17 +974,24 @@
       "volume": "sprint",
       "status": "approved",
       "total_lines": 362,
-      "est_tokens": 6105,
-      "content_hash": "faf5c8a2",
+      "est_tokens": 6099,
+      "content_hash": "8a3c4eee",
       "sections": {
         "3": {
           "heading": "## 3. 任务卡详细",
           "level": 2,
           "line_start": 26,
           "line_end": 362,
-          "est_tokens": 5906,
+          "est_tokens": 5902,
           "deps": [],
           "items": {
+            "T-099": {
+              "heading": "### T-099: [DESIGN] Penpot — C-013 DiagnosticsPanel + C-013.1 Diff 视图视觉稿",
+              "line_start": 28,
+              "line_end": 50,
+              "est_tokens": 290,
+              "deps": []
+            },
             "T-013": {
               "heading": "### T-013: packages/ruleset 规则集骨架 + 注册中心（M-003）",
               "line_start": 51,
@@ -982,7 +1031,7 @@
               "heading": "### T-018: M-001 DiagnosticsPanel（C-013）+ CompatibilityDiffView（C-013.1）",
               "line_start": 226,
               "line_end": 257,
-              "est_tokens": 669,
+              "est_tokens": 668,
               "deps": []
             },
             "T-019": {
@@ -1004,6 +1053,13 @@
               "line_start": 317,
               "line_end": 343,
               "est_tokens": 405,
+              "deps": []
+            },
+            "T-109": {
+              "heading": "### T-109: [VALIDATION] Sprint 2 验证：规则集过滤 + 诊断面板",
+              "line_start": 344,
+              "line_end": 362,
+              "est_tokens": 314,
               "deps": []
             }
           }
@@ -1029,17 +1085,24 @@
       "volume": "sprint",
       "status": "approved",
       "total_lines": 443,
-      "est_tokens": 7009,
-      "content_hash": "81c3f3db",
+      "est_tokens": 6996,
+      "content_hash": "322755ce",
       "sections": {
         "3": {
           "heading": "## 3. 任务卡详细",
           "level": 2,
           "line_start": 26,
           "line_end": 443,
-          "est_tokens": 6781,
+          "est_tokens": 6771,
           "deps": [],
           "items": {
+            "T-100": {
+              "heading": "### T-100: [DESIGN] Penpot — C-009 CommandPalette + C-015 InsertDrawer + C-016 ContextMenu 视觉稿",
+              "line_start": 28,
+              "line_end": 53,
+              "est_tokens": 386,
+              "deps": []
+            },
             "T-020": {
               "heading": "### T-020: M-005 主题注册中心 + 主题守护 8+1 维校验骨架（第 9 维由 T-092 落地）",
               "line_start": 54,
@@ -1093,14 +1156,14 @@
               "heading": "### T-027: M-001 CommandPalette（C-009）接线 command registry（6 分组，~25-30 命令）",
               "line_start": 289,
               "line_end": 316,
-              "est_tokens": 442,
+              "est_tokens": 441,
               "deps": []
             },
             "T-028": {
               "heading": "### T-028b: M-001 DirectiveAutocompletePopover（C-021，CodeMirror extension 集成）",
               "line_start": 346,
               "line_end": 374,
-              "est_tokens": 488,
+              "est_tokens": 487,
               "deps": []
             },
             "T-029": {
@@ -1108,6 +1171,20 @@
               "line_start": 375,
               "line_end": 404,
               "est_tokens": 545,
+              "deps": []
+            },
+            "T-101": {
+              "heading": "### T-101: [DESIGN] Penpot — Sprint 3 设计稿签字验证",
+              "line_start": 405,
+              "line_end": 424,
+              "est_tokens": 252,
+              "deps": []
+            },
+            "T-110": {
+              "heading": "### T-110: [VALIDATION] Sprint 3 验证：主题热切换 + Block 插入",
+              "line_start": 425,
+              "line_end": 443,
+              "est_tokens": 349,
               "deps": []
             }
           }
@@ -1133,17 +1210,24 @@
       "volume": "sprint",
       "status": "approved",
       "total_lines": 637,
-      "est_tokens": 11021,
-      "content_hash": "3cc3a79c",
+      "est_tokens": 11003,
+      "content_hash": "6fb402d2",
       "sections": {
         "3": {
           "heading": "## 3. 任务卡详细",
           "level": 2,
           "line_start": 26,
           "line_end": 637,
-          "est_tokens": 10772,
+          "est_tokens": 10758,
           "deps": [],
           "items": {
+            "T-102": {
+              "heading": "### T-102: [DESIGN] Penpot — C-014 JobProgressBar + P-003 主题市场 + P-004 设置页视觉稿",
+              "line_start": 28,
+              "line_end": 53,
+              "est_tokens": 341,
+              "deps": []
+            },
             "T-030": {
               "heading": "### T-030: M-008 composeCopy（dual-MIME clipboard payload）",
               "line_start": 54,
@@ -1218,21 +1302,21 @@
               "heading": "### T-040: M-001 C-014 JobProgressBar + Toast（C-011）接线 SSE 进度",
               "line_start": 363,
               "line_end": 391,
-              "est_tokens": 457,
+              "est_tokens": 456,
               "deps": []
             },
             "T-041": {
               "heading": "### T-041: P-003 主题市场页面（/themes 路由）",
               "line_start": 392,
               "line_end": 419,
-              "est_tokens": 467,
+              "est_tokens": 466,
               "deps": []
             },
             "T-042": {
               "heading": "### T-042: P-004 设置页（/settings 路由）— 图床配置 + API 密钥分组",
               "line_start": 420,
               "line_end": 449,
-              "est_tokens": 469,
+              "est_tokens": 468,
               "deps": []
             },
             "T-091": {
@@ -1246,7 +1330,14 @@
               "heading": "### T-093: C-018 编辑器内上传 UI 接线（拖拽/粘贴/进度/重试）",
               "line_start": 484,
               "line_end": 514,
-              "est_tokens": 520,
+              "est_tokens": 519,
+              "deps": []
+            },
+            "T-111": {
+              "heading": "### T-111: [VALIDATION] Sprint 4 验证：复制 HTML + 长图导出 + MCP render_markdown + 上传 UI",
+              "line_start": 515,
+              "line_end": 537,
+              "est_tokens": 515,
               "deps": []
             },
             "T-092": {
@@ -1254,6 +1345,20 @@
               "line_start": 538,
               "line_end": 581,
               "est_tokens": 1197,
+              "deps": []
+            },
+            "T-105": {
+              "heading": "### T-105: [DESIGN] P-003 主题模板市场 Penpot 设计（含 (主题, template) 组合卡片缩略图）",
+              "line_start": 582,
+              "line_end": 605,
+              "est_tokens": 359,
+              "deps": []
+            },
+            "T-106": {
+              "heading": "### T-106: [DESIGN] 6 个新组件 Penpot 设计（C-017 ~ C-022）",
+              "line_start": 606,
+              "line_end": 637,
+              "est_tokens": 523,
               "deps": []
             }
           }
@@ -1285,17 +1390,24 @@
       "volume": "sprint",
       "status": "approved",
       "total_lines": 719,
-      "est_tokens": 10328,
-      "content_hash": "2ba8013c",
+      "est_tokens": 10322,
+      "content_hash": "ad8e9c54",
       "sections": {
         "3": {
           "heading": "## 3. 任务卡详细",
           "level": 2,
           "line_start": 26,
           "line_end": 719,
-          "est_tokens": 10060,
+          "est_tokens": 10056,
           "deps": [],
           "items": {
+            "T-103": {
+              "heading": "### T-103: [DESIGN] Penpot — P-005 移动端只读预览视觉稿（PS-009）",
+              "line_start": 28,
+              "line_end": 50,
+              "est_tokens": 260,
+              "deps": []
+            },
             "T-043": {
               "heading": "### T-043: packages/zh-typo 中文排版 4 类规则（M-008 依赖包）",
               "line_start": 51,
@@ -1363,7 +1475,7 @@
               "heading": "### T-055: P-005 移动端只读预览（/preview/:docId + 底部固定栏）",
               "line_start": 350,
               "line_end": 378,
-              "est_tokens": 457,
+              "est_tokens": 456,
               "deps": []
             },
             "T-073": {
@@ -1442,6 +1554,13 @@
               "line_end": 700,
               "est_tokens": 534,
               "deps": []
+            },
+            "T-112": {
+              "heading": "### T-112: [VALIDATION] Sprint 5 验证：CLI validate + apply_zh_typo + 插件沙箱",
+              "line_start": 701,
+              "line_end": 719,
+              "est_tokens": 374,
+              "deps": []
             }
           }
         }
@@ -1466,17 +1585,24 @@
       "volume": "sprint",
       "status": "approved",
       "total_lines": 790,
-      "est_tokens": 10757,
-      "content_hash": "2b963098",
+      "est_tokens": 10751,
+      "content_hash": "2d4c1ca1",
       "sections": {
         "3": {
           "heading": "## 3. 任务卡详细",
           "level": 2,
           "line_start": 36,
           "line_end": 790,
-          "est_tokens": 10487,
+          "est_tokens": 10483,
           "deps": [],
           "items": {
+            "T-104": {
+              "heading": "### T-104: Penpot C-013 诊断密度测试 + PS-007/PS-008 深色主题 token 草稿",
+              "line_start": 38,
+              "line_end": 61,
+              "est_tokens": 341,
+              "deps": []
+            },
             "T-056": {
               "heading": "### T-056: 规则集补全至 ≥ 42 条",
               "line_start": 62,
@@ -1630,6 +1756,13 @@
               "line_end": 760,
               "est_tokens": 301,
               "deps": []
+            },
+            "T-113": {
+              "heading": "### T-113: [VALIDATION] Sprint 6 验证",
+              "line_start": 761,
+              "line_end": 790,
+              "est_tokens": 643,
+              "deps": []
             }
           }
         }
@@ -1658,15 +1791,15 @@
       "volume": "main",
       "status": "approved",
       "total_lines": 490,
-      "est_tokens": 8921,
-      "content_hash": "b397f191",
+      "est_tokens": 8831,
+      "content_hash": "97ef45ef",
       "sections": {
         "1": {
           "heading": "## 1. 迭代规划",
           "level": 2,
           "line_start": 30,
           "line_end": 193,
-          "est_tokens": 4505,
+          "est_tokens": 4455,
           "deps": [],
           "items": {}
         },
@@ -1675,7 +1808,7 @@
           "level": 2,
           "line_start": 194,
           "line_end": 380,
-          "est_tokens": 1436,
+          "est_tokens": 1434,
           "deps": [],
           "items": {}
         },
@@ -1684,7 +1817,7 @@
           "level": 2,
           "line_start": 381,
           "line_end": 398,
-          "est_tokens": 320,
+          "est_tokens": 302,
           "deps": [],
           "items": {}
         },
@@ -1693,7 +1826,7 @@
           "level": 2,
           "line_start": 399,
           "line_end": 428,
-          "est_tokens": 554,
+          "est_tokens": 541,
           "deps": [],
           "items": {}
         },
@@ -1702,14 +1835,14 @@
           "level": 2,
           "line_start": 429,
           "line_end": 473,
-          "est_tokens": 1137,
+          "est_tokens": 1136,
           "deps": [],
           "items": {
             "5.1": {
               "heading": "### 5.1 技术风险",
               "line_start": 431,
               "line_end": 444,
-              "est_tokens": 602,
+              "est_tokens": 601,
               "deps": []
             },
             "5.2": {
@@ -2219,14 +2352,14 @@
         "dev-plan-wechat-flow-s6"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow": "b397f191",
-        "dev-plan-wechat-flow-s0": "536ef50e",
-        "dev-plan-wechat-flow-s1": "2714d860",
-        "dev-plan-wechat-flow-s2": "faf5c8a2",
-        "dev-plan-wechat-flow-s3": "81c3f3db",
-        "dev-plan-wechat-flow-s4": "3cc3a79c",
-        "dev-plan-wechat-flow-s5": "2ba8013c",
-        "dev-plan-wechat-flow-s6": "2b963098"
+        "dev-plan-wechat-flow": "97ef45ef",
+        "dev-plan-wechat-flow-s0": "68b9e39d",
+        "dev-plan-wechat-flow-s1": "7c97fedb",
+        "dev-plan-wechat-flow-s2": "8a3c4eee",
+        "dev-plan-wechat-flow-s3": "322755ce",
+        "dev-plan-wechat-flow-s4": "6fb402d2",
+        "dev-plan-wechat-flow-s5": "ad8e9c54",
+        "dev-plan-wechat-flow-s6": "2d4c1ca1"
       }
     },
     "review-dev-plan-wechat-flow-r2": {
@@ -2249,14 +2382,14 @@
         "dev-plan-wechat-flow-s6"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow": "b397f191",
-        "dev-plan-wechat-flow-s0": "536ef50e",
-        "dev-plan-wechat-flow-s1": "2714d860",
-        "dev-plan-wechat-flow-s2": "faf5c8a2",
-        "dev-plan-wechat-flow-s3": "81c3f3db",
-        "dev-plan-wechat-flow-s4": "3cc3a79c",
-        "dev-plan-wechat-flow-s5": "2ba8013c",
-        "dev-plan-wechat-flow-s6": "2b963098"
+        "dev-plan-wechat-flow": "97ef45ef",
+        "dev-plan-wechat-flow-s0": "68b9e39d",
+        "dev-plan-wechat-flow-s1": "7c97fedb",
+        "dev-plan-wechat-flow-s2": "8a3c4eee",
+        "dev-plan-wechat-flow-s3": "322755ce",
+        "dev-plan-wechat-flow-s4": "6fb402d2",
+        "dev-plan-wechat-flow-s5": "ad8e9c54",
+        "dev-plan-wechat-flow-s6": "2d4c1ca1"
       }
     },
     "review-dev-plan-wechat-flow-r3": {
@@ -2281,14 +2414,14 @@
         "arch-wechat-flow"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow": "b397f191",
-        "dev-plan-wechat-flow-s0": "536ef50e",
-        "dev-plan-wechat-flow-s1": "2714d860",
-        "dev-plan-wechat-flow-s2": "faf5c8a2",
-        "dev-plan-wechat-flow-s3": "81c3f3db",
-        "dev-plan-wechat-flow-s4": "3cc3a79c",
-        "dev-plan-wechat-flow-s5": "2ba8013c",
-        "dev-plan-wechat-flow-s6": "2b963098",
+        "dev-plan-wechat-flow": "97ef45ef",
+        "dev-plan-wechat-flow-s0": "68b9e39d",
+        "dev-plan-wechat-flow-s1": "7c97fedb",
+        "dev-plan-wechat-flow-s2": "8a3c4eee",
+        "dev-plan-wechat-flow-s3": "322755ce",
+        "dev-plan-wechat-flow-s4": "6fb402d2",
+        "dev-plan-wechat-flow-s5": "ad8e9c54",
+        "dev-plan-wechat-flow-s6": "2d4c1ca1",
         "prd-wechat-flow": "bac304e9",
         "arch-wechat-flow": "5a5d2ccc"
       }
@@ -2316,14 +2449,14 @@
         "ui-spec-wechat-flow"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow": "b397f191",
-        "dev-plan-wechat-flow-s0": "536ef50e",
-        "dev-plan-wechat-flow-s1": "2714d860",
-        "dev-plan-wechat-flow-s2": "faf5c8a2",
-        "dev-plan-wechat-flow-s3": "81c3f3db",
-        "dev-plan-wechat-flow-s4": "3cc3a79c",
-        "dev-plan-wechat-flow-s5": "2ba8013c",
-        "dev-plan-wechat-flow-s6": "2b963098",
+        "dev-plan-wechat-flow": "97ef45ef",
+        "dev-plan-wechat-flow-s0": "68b9e39d",
+        "dev-plan-wechat-flow-s1": "7c97fedb",
+        "dev-plan-wechat-flow-s2": "8a3c4eee",
+        "dev-plan-wechat-flow-s3": "322755ce",
+        "dev-plan-wechat-flow-s4": "6fb402d2",
+        "dev-plan-wechat-flow-s5": "ad8e9c54",
+        "dev-plan-wechat-flow-s6": "2d4c1ca1",
         "prd-wechat-flow": "bac304e9",
         "arch-wechat-flow": "5a5d2ccc",
         "ui-spec-wechat-flow": "08ef49ff"
@@ -3372,6 +3505,34 @@
         "file_path": "docs/dev-plan/dev-plan-wechat-flow-s0.md"
       }
     ],
+    "T-095": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s0",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s0.md"
+      }
+    ],
+    "T-107": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s0",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s0.md"
+      }
+    ],
+    "T-096": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s1",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s1.md"
+      }
+    ],
+    "T-097": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s1",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s1.md"
+      }
+    ],
     "T-005": [
       {
         "doc_id": "dev-plan-wechat-flow-s1",
@@ -3426,6 +3587,27 @@
         "doc_id": "dev-plan-wechat-flow-s1",
         "section": "3",
         "file_path": "docs/dev-plan/dev-plan-wechat-flow-s1.md"
+      }
+    ],
+    "T-098": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s1",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s1.md"
+      }
+    ],
+    "T-108": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s1",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s1.md"
+      }
+    ],
+    "T-099": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s2",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s2.md"
       }
     ],
     "T-013": [
@@ -3489,6 +3671,20 @@
         "doc_id": "dev-plan-wechat-flow-s2",
         "section": "3",
         "file_path": "docs/dev-plan/dev-plan-wechat-flow-s2.md"
+      }
+    ],
+    "T-109": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s2",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s2.md"
+      }
+    ],
+    "T-100": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s3",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s3.md"
       }
     ],
     "T-020": [
@@ -3559,6 +3755,27 @@
         "doc_id": "dev-plan-wechat-flow-s3",
         "section": "3",
         "file_path": "docs/dev-plan/dev-plan-wechat-flow-s3.md"
+      }
+    ],
+    "T-101": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s3",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s3.md"
+      }
+    ],
+    "T-110": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s3",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s3.md"
+      }
+    ],
+    "T-102": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s4",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s4.md"
       }
     ],
     "T-030": [
@@ -3666,11 +3883,39 @@
         "file_path": "docs/dev-plan/dev-plan-wechat-flow-s4.md"
       }
     ],
+    "T-111": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s4",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s4.md"
+      }
+    ],
     "T-092": [
       {
         "doc_id": "dev-plan-wechat-flow-s4",
         "section": "3",
         "file_path": "docs/dev-plan/dev-plan-wechat-flow-s4.md"
+      }
+    ],
+    "T-105": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s4",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s4.md"
+      }
+    ],
+    "T-106": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s4",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s4.md"
+      }
+    ],
+    "T-103": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s5",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s5.md"
       }
     ],
     "T-043": [
@@ -3818,6 +4063,20 @@
         "doc_id": "dev-plan-wechat-flow-s5",
         "section": "3",
         "file_path": "docs/dev-plan/dev-plan-wechat-flow-s5.md"
+      }
+    ],
+    "T-112": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s5",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s5.md"
+      }
+    ],
+    "T-104": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s6",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s6.md"
       }
     ],
     "T-056": [
@@ -3968,6 +4227,13 @@
       }
     ],
     "T-090": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s6",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s6.md"
+      }
+    ],
+    "T-113": [
       {
         "doc_id": "dev-plan-wechat-flow-s6",
         "section": "3",

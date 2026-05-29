@@ -16,7 +16,7 @@ required_sections:
 # Dev Plan 分卷 — Sprint 5: CLI + 插件系统 + 中文排版 + 收尾功能
 
 [NAV]
-- Sprint 5 任务卡 → T-043..T-049, T-050a, T-050b, T-051, T-055, T-073, T-074, T-075, T-077..T-084, T-DS-009, T-VAL-05
+- Sprint 5 任务卡 → T-043..T-049, T-050a, T-050b, T-051, T-055, T-073, T-074, T-075, T-077..T-084, T-103, T-112
 [/NAV]
 
 **Sprint 目标**: CLI `validate` 可跑；`apply_zh_typo` MCP Tool 可用；插件沙箱骨架建立；MCP HTTP/SSE transport 就绪；素材库上传链路（T-077/T-078/T-079）就绪；/themes 模板市场增强（T-073）落地筛选与 seed 扩展；Block 补全 Phase 2（T-074，P1 必含 5 种）；MCP Tool 补全包装（T-080..T-084）。
@@ -25,7 +25,7 @@ required_sections:
 
 ## 3. 任务卡详细
 
-### T-DS-009: [DESIGN] Penpot — P-005 移动端只读预览视觉稿（PS-009）
+### T-103: [DESIGN] Penpot — P-005 移动端只读预览视觉稿（PS-009）
 
 - **目标**: 产出 P-005 移动端只读预览页面视觉稿，重点验证底部固定栏拇指热区可达性（320px 宽度）
 - **task_kind**: design
@@ -35,7 +35,7 @@ required_sections:
 - **priority**: P2
 - **complexity**: small
 - **sprint**: 5
-- **dependencies**: [T-DS-001]
+- **dependencies**: [T-095]
 - **acceptance_criteria**:
   - [ ] AC-001: P-005 视觉稿含 375px 和 320px 两个设备宽度 Frame，底部固定栏高 56px，「文档切换」和「一键复制」按钮可见
   - [ ] AC-002: 在 320px Frame 中验证「一键复制」按钮单手可达（拇指热区覆盖按钮中心区域，按钮最小触控区 ≥ 44×44px）[PS-009]
@@ -359,7 +359,7 @@ required_sections:
 - **tdd_acceptance**: all
 - **tdd_refactor**: auto
 - **security_sensitive**: false
-- **dependencies**: [T-005, T-010, T-DS-009]
+- **dependencies**: [T-005, T-010, T-103]
 - **acceptance_criteria**:
   - [ ] AC-001: Given 访问 `/preview/:docId`，When vw < 768px，Then 仅显示内容预览 iframe（375px 视口宽度）+ 底部固定栏（高 56px），无编辑区、左侧面板、右栏 [ui-spec-wechat-flow-p001-p005#§3.P-005]
   - [ ] AC-002: Given 底部固定栏「一键复制」按钮，When 点击（Clipboard API 支持），Then `composeCopy` 被调用，Toast 提示「已复制」；若 Clipboard API 不支持，Then 选中全文并 Toast 提示「请手动长按复制」[A-005 假设]
@@ -698,7 +698,7 @@ required_sections:
 
 ---
 
-### T-VAL-05: [VALIDATION] Sprint 5 验证：CLI validate + apply_zh_typo + 插件沙箱
+### T-112: [VALIDATION] Sprint 5 验证：CLI validate + apply_zh_typo + 插件沙箱
 
 - **目标**: 用户/开发者手动验证 CLI 工具链、中文排版修订 UI 流程、插件沙箱基本功能
 - **task_kind**: validation

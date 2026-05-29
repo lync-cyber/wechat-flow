@@ -16,7 +16,7 @@ required_sections:
 # Dev Plan 分卷 — Sprint 2: 规则集引擎 + 粘贴过滤 + 兼容性报告
 
 [NAV]
-- Sprint 2 任务卡 → T-013..T-019, T-052, T-094, T-DS-005, T-VAL-02
+- Sprint 2 任务卡 → T-013..T-019, T-052, T-094, T-099, T-109
 [/NAV]
 
 **Sprint 目标**: 渲染结果经 ≥25 条规则过滤；DiagnosticsPanel 展示兼容性分级；粘贴模拟可在 UI 中可视化。
@@ -25,7 +25,7 @@ required_sections:
 
 ## 3. 任务卡详细
 
-### T-DS-005: [DESIGN] Penpot — C-013 DiagnosticsPanel + C-013.1 Diff 视图视觉稿
+### T-099: [DESIGN] Penpot — C-013 DiagnosticsPanel + C-013.1 Diff 视图视觉稿
 
 - **目标**: 产出 DiagnosticsPanel 和 CompatibilityDiffView 的视觉稿，覆盖三色诊断展示和双栏 Diff 视图布局
 - **task_kind**: design
@@ -35,7 +35,7 @@ required_sections:
 - **sprint**: 2
 - **tdd_mode**: skip
 - **tdd_skip_reason**: "Penpot 设计稿，由用户视觉验证 sign-off"
-- **dependencies**: [T-DS-001]
+- **dependencies**: [T-095]
 - **acceptance_criteria**:
   - [ ] AC-001: C-013 视觉稿覆盖 `empty-no-issues`、`has-issues`、`running`、`collapsed`、`expanded` 5 个状态，每条诊断项含左侧色块（红/黄/绿）
   - [ ] AC-002: C-013.1 CompatibilityDiffView 视觉稿含双栏 before/after 布局，属性 diff 子列表（`+`/`-`/`=` 前缀行），命中规则行
@@ -235,7 +235,7 @@ required_sections:
 - **tdd_refactor**: auto
 - **tdd_acceptance**: [AC-001, AC-002, AC-003, AC-004]
 - **security_sensitive**: false
-- **dependencies**: [T-017, T-DS-005]
+- **dependencies**: [T-017, T-099]
 - **acceptance_criteria**:
   - [ ] AC-001: Given `diagnostics` 含 2 条 error 级别和 1 条 warn 级别诊断，When DiagnosticsPanel 展开，Then 每条 error 项左侧色块为 `--color-diag-error`（赤陶红），warn 项为 `--color-diag-warn`（暖黄棕），符合 `ui-spec-wechat-flow-c001-c014#§2.C-013`
   - [ ] AC-002: Given `isExpanded: false`，When DiagnosticsPanel 渲染，Then 高度为 `32px`，仅显示标题行；`isExpanded: true` 时高度 auto（最大 200px 可滚动）
@@ -341,7 +341,7 @@ required_sections:
 
 ---
 
-### T-VAL-02: [VALIDATION] Sprint 2 验证：规则集过滤 + 诊断面板
+### T-109: [VALIDATION] Sprint 2 验证：规则集过滤 + 诊断面板
 
 - **目标**: 用户手动验证规则集引擎可过滤不兼容 CSS，DiagnosticsPanel 展示分级诊断
 - **task_kind**: validation

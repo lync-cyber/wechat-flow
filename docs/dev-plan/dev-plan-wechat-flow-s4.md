@@ -16,7 +16,7 @@ required_sections:
 # Dev Plan 分卷 — Sprint 4: 输出能力 + MCP server + 图片处理
 
 [NAV]
-- Sprint 4 任务卡 → T-030..T-042, T-091, T-092, T-093, T-DS-008, T-DS-011, T-DS-012, T-VAL-04
+- Sprint 4 任务卡 → T-030..T-042, T-091, T-092, T-093, T-102, T-105, T-106, T-111
 [/NAV]
 
 **Sprint 目标**: 一键复制 inline HTML 可粘贴到公众号编辑器；MCP server `render_markdown` 可通过 stdio transport 调用；图床配置和上传可用。
@@ -25,7 +25,7 @@ required_sections:
 
 ## 3. 任务卡详细
 
-### T-DS-008: [DESIGN] Penpot — C-014 JobProgressBar + P-003 主题市场 + P-004 设置页视觉稿
+### T-102: [DESIGN] Penpot — C-014 JobProgressBar + P-003 主题市场 + P-004 设置页视觉稿
 
 - **目标**: 产出 JobProgressBar、主题市场页、设置页的视觉稿
 - **task_kind**: design
@@ -35,10 +35,10 @@ required_sections:
 - **sprint**: 4
 - **tdd_mode**: skip
 - **tdd_skip_reason**: "Penpot 设计稿，由用户视觉验证 sign-off"
-- **dependencies**: [T-DS-001]
+- **dependencies**: [T-095]
 - **acceptance_criteria**:
   - [ ] AC-001: C-014 JobProgressBar 视觉稿覆盖 `queued`/`running`/`completed`/`failed` 4 个状态，含进度轨道 + 进度填充 + 文字描述行
-  - [ ] AC-002: P-003 主题市场初版视觉稿含桌面档 4 列卡片网格布局 + 筛选栏（含 (主题, template) 组合卡片布局占位，完整三档视觉稿由 T-DS-011 交付）
+  - [ ] AC-002: P-003 主题市场初版视觉稿含桌面档 4 列卡片网格布局 + 筛选栏（含 (主题, template) 组合卡片布局占位，完整三档视觉稿由 T-105 交付）
   - [ ] AC-003: P-004 设置页视觉稿含左侧导航栏 + 右侧内容区，图床配置折叠卡片展开态可见
   - [ ] AC-004: 通过 Penpot MCP `find_shape` 可检索到 `C-014`、`P-003`、`P-004`
 - **deliverables**:
@@ -372,7 +372,7 @@ required_sections:
 - **tdd_acceptance**: all
 - **tdd_refactor**: auto
 - **security_sensitive**: false
-- **dependencies**: [T-034, T-DS-008]
+- **dependencies**: [T-034, T-102]
 - **acceptance_criteria**:
   - [ ] AC-001: Given job 处于 `running` 状态，When SSE 推送 `{ percent: 45 }`，Then JobProgressBar 进度填充宽度变为 45%，文字显示「正在导出 45%」[ui-spec-wechat-flow-c001-c014#§2.C-014]
   - [ ] AC-002: Given job 完成（`succeeded`），When SSE 推送完成事件，Then 进度条填充色变 `--color-success`，文字显示「导出成功」，含下载链接
@@ -401,7 +401,7 @@ required_sections:
 - **tdd_acceptance**: all
 - **tdd_refactor**: auto
 - **security_sensitive**: false
-- **dependencies**: [T-022, T-005, T-092, T-DS-008]
+- **dependencies**: [T-022, T-005, T-092, T-102]
 - **acceptance_criteria**:
   - [ ] AC-001: Given 访问 `/themes`，When 页面加载，Then 显示 ≥ 5 张 C-022 TemplateThemeCard（含主题缩略图 + template 选择器），以 `(themeId, templateId)` 为组合展示，使用 `listThemeTemplates(themeId)` 动态获取可用 template 列表 [F-003 AC-003 + ui-spec-wechat-flow-p001-p005#§3.P-003]
   - [ ] AC-002: Given 当前已应用的主题，When 在 P-003 页面，Then 对应卡片显示「正在使用」徽章（`--color-brand-subtle` 背景）
@@ -429,7 +429,7 @@ required_sections:
 - **tdd_acceptance**: all
 - **tdd_refactor**: auto
 - **security_sensitive**: true
-- **dependencies**: [T-005, T-033, T-DS-008]
+- **dependencies**: [T-005, T-033, T-102]
 - **acceptance_criteria**:
   - [ ] AC-001: Given 访问 `/settings`，When 页面加载，Then 显示左侧导航（编辑器/主题与品牌/同步与协作/图床配置/API密钥/关于），默认选中「编辑器」分组 [ui-spec-wechat-flow-p001-p005#§3.P-004]
   - [ ] AC-002: Given 「图床配置」导航项，When 点击，Then 右侧显示 6 个图床折叠卡片；展开「七牛云」卡片，可填写 AccessKey/SecretKey（密码框，不明文显示）
@@ -493,7 +493,7 @@ required_sections:
 - **tdd_refactor**: auto
 - **tdd_acceptance**: [AC-001, AC-002, AC-003, AC-004]
 - **security_sensitive**: false
-- **dependencies**: [T-033, T-091, T-DS-012]
+- **dependencies**: [T-033, T-091, T-106]
 - **acceptance_criteria**:
   - [ ] AC-001: Given 用户将图片拖拽到 SourcePane，When drop，Then 显示 C-018 `uploading` 状态并插入 `<img data-uploading="true">` 占位节点；上传成功后原子替换为最终 URL [F-006 AC-004]
   - [ ] AC-002: Given 用户在编辑器粘贴图片（clipboard item 含 image/*），When paste，Then 触发同一上传流程（复用 T-033 API）并显示进度百分比 [F-006 AC-004]
@@ -512,7 +512,7 @@ required_sections:
 
 ---
 
-### T-VAL-04: [VALIDATION] Sprint 4 验证：复制 HTML + 长图导出 + MCP render_markdown + 上传 UI
+### T-111: [VALIDATION] Sprint 4 验证：复制 HTML + 长图导出 + MCP render_markdown + 上传 UI
 
 - **目标**: 用户手动验证一键复制 HTML 可粘贴到公众号编辑器、长图异步导出、MCP stdio 调用
 - **task_kind**: validation
@@ -530,7 +530,7 @@ required_sections:
   - [ ] 通过 MCP stdio transport（`node dist/stdio.js`），发送 `render_markdown({ markdown: '# Hello' })` 消息，返回包含 `html`、`rulesetVersion`、`themeVersion` 字段的响应
   - [ ] 通过 MCP 调用 `export_long_image({ markdown: '...' })`，返回 `{ jobId: '...' }`，随后 `get_job({ jobId: '...' })` 轮询，最终 `status: 'succeeded'`，`result.url` 可访问
   - [ ] Editor session 链路：浏览器打开 Editor，DevTools Network 观察 `POST /api/v1/editor/session` 返回 200 + sessionJwt；后续 `POST /api/v1/images/upload` 携带该 JWT，DevTools 中检查 Authorization header 非空且非长期 API key
-  - [ ] 主题模板市场卡片缩略图视觉回归：对 5 内置主题各默认 template，使用 T-092 预填 Markdown 渲染缩略图，与 T-DS-011 Penpot 视觉稿对比，pixelmatch ratio ≤ 0.05
+  - [ ] 主题模板市场卡片缩略图视觉回归：对 5 内置主题各默认 template，使用 T-092 预填 Markdown 渲染缩略图，与 T-105 Penpot 视觉稿对比，pixelmatch ratio ≤ 0.05
 - **relates_to**: [F-004, F-005, F-006, F-013, M-009, M-010]
 
 ---
@@ -579,9 +579,9 @@ required_sections:
 
 ---
 
-### T-DS-011: [DESIGN] P-003 主题模板市场 Penpot 设计（含 (主题, template) 组合卡片缩略图）
+### T-105: [DESIGN] P-003 主题模板市场 Penpot 设计（含 (主题, template) 组合卡片缩略图）
 
-- **目标**: 产出 P-003 主题模板市场页的完整视觉稿（三档响应式）+ ≥ 5 张 (主题, template) 组合卡片缩略图，作为 T-041 与 T-VAL-04 视觉回归的参照
+- **目标**: 产出 P-003 主题模板市场页的完整视觉稿（三档响应式）+ ≥ 5 张 (主题, template) 组合卡片缩略图，作为 T-041 与 T-111 视觉回归的参照
 - **task_kind**: design
 - **tdd_acceptance**: skip
 - **priority**: P1
@@ -589,7 +589,7 @@ required_sections:
 - **sprint**: 4
 - **tdd_mode**: skip
 - **tdd_skip_reason**: "Penpot 设计稿，由用户视觉验证 sign-off"
-- **dependencies**: [T-DS-001]
+- **dependencies**: [T-095]
 - **acceptance_criteria**:
   - [ ] AC-001: Penpot 中绘制 P-003 主题模板市场页面视觉稿（桌面/平板/移动三档），网格布局使用 C-022 TemplateThemeCard 组件，与 `ui-spec-wechat-flow-p001-p005#§3.P-003` 对齐
   - [ ] AC-002: 绘制 ≥ 5 张 (主题, template) 组合卡片缩略图，各对应 5 内置主题（default / magazine / literary / business / tech）的默认 template，缩略图尺寸与 C-022 规格一致
@@ -603,7 +603,7 @@ required_sections:
 
 ---
 
-### T-DS-012: [DESIGN] 6 个新组件 Penpot 设计（C-017 ~ C-022）
+### T-106: [DESIGN] 6 个新组件 Penpot 设计（C-017 ~ C-022）
 
 - **目标**: 产出 C-017 ~ C-022 共 6 个新组件的 Penpot 视觉规格，涵盖状态变体与 Design Token 接线
 - **task_kind**: design
@@ -613,7 +613,7 @@ required_sections:
 - **sprint**: 4
 - **tdd_mode**: skip
 - **tdd_skip_reason**: "Penpot 设计稿，由用户视觉验证 sign-off"
-- **dependencies**: [T-DS-001]
+- **dependencies**: [T-095]
 - **acceptance_criteria**:
   - [ ] AC-001: 在 Penpot 中绘制 6 个新组件视觉规格，每个组件含 default / hover / active（或 disabled）至少 2 个状态变体：
     - C-017 ZhTypoReviseDialog — 双栏 diff Modal，左栏原文 / 右栏改后 + rule 计数 + undo 按钮

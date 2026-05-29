@@ -16,7 +16,7 @@ required_sections:
 # Dev Plan 分卷 — Sprint 3: 主题系统 + 组件注册中心 + Palette 派生
 
 [NAV]
-- Sprint 3 任务卡 → T-020..T-027, T-028a, T-028b, T-029, T-DS-006..T-DS-007, T-VAL-03
+- Sprint 3 任务卡 → T-020..T-027, T-028a, T-028b, T-029, T-100..T-101, T-110
 [/NAV]
 
 **Sprint 目标**: 五套内置主题热切换可见；内置 Block ≥ 25 个可从左侧面板插入；CommandPalette + InsertDrawer + ContextMenu + DirectiveAutocompletePopover 完成接线。
@@ -25,7 +25,7 @@ required_sections:
 
 ## 3. 任务卡详细
 
-### T-DS-006: [DESIGN] Penpot — C-009 CommandPalette + C-015 InsertDrawer + C-016 ContextMenu 视觉稿
+### T-100: [DESIGN] Penpot — C-009 CommandPalette + C-015 InsertDrawer + C-016 ContextMenu 视觉稿
 
 - **目标**: 产出高交互组件 CommandPalette（含 6 状态原型）、InsertDrawer、ContextMenu 的视觉稿
 - **task_kind**: design
@@ -35,7 +35,7 @@ required_sections:
 - **sprint**: 3
 - **tdd_mode**: skip
 - **tdd_skip_reason**: "Penpot 设计稿，由用户视觉验证 sign-off"
-- **dependencies**: [T-DS-001]
+- **dependencies**: [T-095]
 - **acceptance_criteria**:
   - [ ] AC-001: C-009 CommandPalette 视觉稿覆盖 `closed`、`open-empty`、`open-typing`、`open-results`、`no-results`、`executing` 6 个状态，符合 `ui-spec-wechat-flow-c001-c014#§2.C-009`（PS-005）
   - [ ] AC-002: C-015 InsertDrawer 视觉稿覆盖 `closed`、`idle`、`item-selected` 状态，含底部参数表单区展开示例
@@ -298,7 +298,7 @@ required_sections:
 - **tdd_refactor**: auto
 - **tdd_acceptance**: [AC-001, AC-002, AC-003, AC-004]
 - **security_sensitive**: false
-- **dependencies**: [T-026, T-DS-006]
+- **dependencies**: [T-026, T-100]
 - **acceptance_criteria**:
   - [ ] AC-001: Given 按 Ctrl+K（Windows/Linux）或 Cmd+K（macOS），When 触发，Then CommandPalette Modal 以 `--duration-slow` 动画展开，搜索框自动聚焦 [F-001 AC-008 + ui-spec Q6]
   - [ ] AC-002: Given CommandPalette 已打开，When 输入「主题」，Then 动作列表过滤为仅含主题相关命令，匹配字符以 `--color-brand` 加粗高亮 [ui-spec-wechat-flow-c001-c014#§2.C-009]
@@ -326,7 +326,7 @@ required_sections:
 - **tdd_refactor**: auto
 - **tdd_acceptance**: [AC-001, AC-002, AC-003]
 - **security_sensitive**: false
-- **dependencies**: [T-026, T-DS-006]
+- **dependencies**: [T-026, T-100]
 - **acceptance_criteria**:
   - [ ] AC-001: Given 点击 TopBar「+」按钮，When 触发，Then InsertDrawer 从右侧以 `--duration-base` 动画滑入（宽 320px），显示分类 Tab + Block 列表 [ui-spec-wechat-flow-c001-c014#§2.C-015]
   - [ ] AC-002: Given InsertDrawer 内选中一个 Block（如 callout），When 选中，Then 底部参数表单区展开，含可配属性输入；点击「插入」后 directive 语法片段插入到 SourcePane 光标处
@@ -355,7 +355,7 @@ required_sections:
 - **tdd_refactor**: auto
 - **tdd_acceptance**: [AC-001, AC-002]
 - **security_sensitive**: false
-- **dependencies**: [T-026, T-009, T-DS-006]
+- **dependencies**: [T-026, T-009, T-100]
 - **acceptance_criteria**:
   - [ ] AC-001: Given 在编辑器输入 `:::` 或 `:` 前缀，When 触发补全，Then 弹出 C-021 浮层并可选择 Block/Mark 及 variant，选中后插入对应 directive 片段 [ui-spec-wechat-flow-c001-c014#§2.C-021]
   - [ ] AC-002: Given DirectiveAutocompletePopover 已打开，When 用户按 Escape，Then 浮层关闭，编辑器焦点不丢失
@@ -402,7 +402,7 @@ required_sections:
 
 ---
 
-### T-DS-007: [DESIGN] Penpot — Sprint 3 设计稿签字验证
+### T-101: [DESIGN] Penpot — Sprint 3 设计稿签字验证
 
 - **目标**: 开发者/PM 目视检查 Sprint 3 UI 实现（主题切换、LeftPanelTabs、CommandPalette）与 Penpot 设计稿的一致性，完成 sign-off
 - **task_kind**: design
@@ -412,17 +412,17 @@ required_sections:
 - **sprint**: 3
 - **tdd_mode**: skip
 - **tdd_skip_reason**: "Penpot 设计稿，由用户视觉验证 sign-off"
-- **dependencies**: [T-DS-006]
+- **dependencies**: [T-100]
 - **acceptance_criteria**:
   - [ ] AC-001: 目视对照 Penpot C-009 CommandPalette `open-results` 状态与实际 UI，分组标题字号/颜色/快捷键提示布局无明显偏差
   - [ ] AC-002: 目视对照 Penpot C-007 ThemeCard `selected` 状态与实际 UI，边框色 `--color-brand` 和对勾图标可见
-  - [ ] AC-003: 签字记录写入 `docs/EVENT-LOG.jsonl`（`event=design_signoff, phase=development, ref=T-DS-007`）
+  - [ ] AC-003: 签字记录写入 `docs/EVENT-LOG.jsonl`（`event=design_signoff, phase=development, ref=T-101`）
 - **deliverables**:
-  - [ ] `docs/EVENT-LOG.jsonl` — design_signoff 事件（T-DS-007）
+  - [ ] `docs/EVENT-LOG.jsonl` — design_signoff 事件（T-101）
 
 ---
 
-### T-VAL-03: [VALIDATION] Sprint 3 验证：主题热切换 + Block 插入
+### T-110: [VALIDATION] Sprint 3 验证：主题热切换 + Block 插入
 
 - **目标**: 用户手动验证五套主题热切换可见、CommandPalette 可搜索命令、Block 可插入
 - **task_kind**: validation

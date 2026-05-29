@@ -16,7 +16,7 @@ required_sections:
 # Dev Plan 分卷 — Sprint 1: 三栏 UI 骨架 + 渲染管线核心
 
 [NAV]
-- Sprint 1 任务卡 → T-005..T-012, T-DS-002..T-DS-004, T-VAL-01
+- Sprint 1 任务卡 → T-005..T-012, T-096..T-098, T-108
 [/NAV]
 
 **Sprint 目标**: 编辑器三栏布局可见；输入 Markdown 后右栏实时出现 inline-styled HTML 预览；本地草稿自动持久化到 IndexedDB。
@@ -25,7 +25,7 @@ required_sections:
 
 ## 3. 任务卡详细
 
-### T-DS-002: [DESIGN] Penpot — P-001 三档响应式线框稿（PS-006）
+### T-096: [DESIGN] Penpot — P-001 三档响应式线框稿（PS-006）
 
 - **目标**: 在 Penpot 中产出 P-001 编辑器主页的桌面/平板/移动三档响应式线框对比图，作为 T-008 三栏布局实现的视觉参照
 - **task_kind**: design
@@ -35,7 +35,7 @@ required_sections:
 - **sprint**: 1
 - **tdd_mode**: skip
 - **tdd_skip_reason**: "Penpot 设计稿，由用户视觉验证 sign-off"
-- **dependencies**: [T-DS-001]
+- **dependencies**: [T-095]
 - **acceptance_criteria**:
   - [ ] AC-001: Penpot 项目内建立 `P-001-Desktop`、`P-001-Tablet`、`P-001-Mobile` 三个线框稿页面（或同页面三个 Frame），命名遵循 `P-001` 模式
   - [ ] AC-002: 桌面档线框稿标注三栏宽度（左 200px / 编辑器 auto / 右 320px）、TopBar 高 48px、底部状态栏高 32px，与 `ui-spec-wechat-flow#§5.1` 一致
@@ -51,7 +51,7 @@ required_sections:
 
 ---
 
-### T-DS-003: [DESIGN] Penpot — C-001/C-002/C-004/C-005 核心组件视觉稿
+### T-097: [DESIGN] Penpot — C-001/C-002/C-004/C-005 核心组件视觉稿
 
 - **目标**: 在 Penpot 中产出 TopBar、Splitter、SourcePane、PreviewPane 四个核心组件的视觉稿（含所有状态变体），作为 T-008/T-009/T-010 实现的像素级参照
 - **task_kind**: design
@@ -61,7 +61,7 @@ required_sections:
 - **sprint**: 1
 - **tdd_mode**: skip
 - **tdd_skip_reason**: "Penpot 设计稿，由用户视觉验证 sign-off"
-- **dependencies**: [T-DS-001]
+- **dependencies**: [T-095]
 - **acceptance_criteria**:
   - [ ] AC-001: C-001 TopBar 视觉稿覆盖 `default`、`document-unsaved`、`syncing`、`offline`、`conflict`、`focus-mode` 6 个状态，与 `ui-spec-wechat-flow-c001-c014#§2.C-001` 一致
   - [ ] AC-002: C-002 Splitter 视觉稿覆盖 `idle`、`hover`、`dragging`、`disabled` 4 个状态
@@ -187,7 +187,7 @@ required_sections:
 - **tdd_refactor**: auto
 - **tdd_acceptance**: [AC-001, AC-002, AC-003, AC-004, AC-005]
 - **security_sensitive**: false
-- **dependencies**: [T-005, T-DS-003]
+- **dependencies**: [T-005, T-097]
 - **acceptance_criteria**:
   - [ ] AC-001: Given 打开 `http://localhost:5173`，When 页面加载完成，Then 可见三栏布局：左栏背景 `#F4F1EC`（暖灰）、中栏背景 `#FAF8F5`（暖白）、右栏背景 `#F7F7F7`（微冷白），符合 `ui-spec-wechat-flow#§0.2` 层次原则
   - [ ] AC-002: Given 桌面档（≥1280px），When 拖拽左栏/中栏之间的 Splitter，Then 左栏宽度在 `[160px, 320px]` 范围内实时更新，拖拽结束后宽度值可从 IndexedDB 读回（持久化验证）[ui-spec-wechat-flow-c001-c014#§2.C-002]
@@ -252,7 +252,7 @@ required_sections:
 - **tdd_refactor**: auto
 - **tdd_acceptance**: [AC-001, AC-002, AC-003, AC-004, AC-005]
 - **security_sensitive**: true
-- **dependencies**: [T-008, T-DS-003]
+- **dependencies**: [T-008, T-097]
 - **acceptance_criteria**:
   - [ ] AC-001: Given PreviewPane 渲染，When 检查 iframe 元素属性，Then `iframe.getAttribute('sandbox') === ''`（空值，最严格沙箱），CSP 响应头或 meta 标签含 `default-src 'none'; style-src 'unsafe-inline'` [ARCH#§2.M-001, ui-spec-wechat-flow-c001-c014#§2.C-005]
   - [ ] AC-002: Given `htmlContent` Prop 更新，When 通过 `iframe.contentDocument.open/write/close` 写入内容，Then iframe 内显示更新后的 HTML，无 JS 执行（验证：DevTools 控制台无脚本执行记录）
@@ -327,9 +327,9 @@ required_sections:
 
 ---
 
-### T-DS-004: [DESIGN] Penpot — Sprint 1 设计稿签字验证
+### T-098: [DESIGN] Penpot — Sprint 1 设计稿签字验证
 
-- **目标**: 开发者/PM 目视检查 T-DS-002 和 T-DS-003 产出的设计稿，与 T-008/T-009/T-010 实现对照确认视觉一致性，完成 Sprint 1 设计 sign-off
+- **目标**: 开发者/PM 目视检查 T-096 和 T-097 产出的设计稿，与 T-008/T-009/T-010 实现对照确认视觉一致性，完成 Sprint 1 设计 sign-off
 - **task_kind**: design
 - **tdd_acceptance**: skip
 - **priority**: P0
@@ -337,17 +337,17 @@ required_sections:
 - **sprint**: 1
 - **tdd_mode**: skip
 - **tdd_skip_reason**: "Penpot 设计稿，由用户视觉验证 sign-off"
-- **dependencies**: [T-DS-002, T-DS-003]
+- **dependencies**: [T-096, T-097]
 - **acceptance_criteria**:
   - [ ] AC-001: 目视对照 Penpot P-001-Desktop 线框稿与 `localhost:5173` 实际渲染，三栏宽度、背景色梯度、TopBar 高度无明显偏差（允许 ±4px）
   - [ ] AC-002: 目视对照 Penpot C-004 SourcePane 视觉稿与实际 CodeMirror 高亮，标题色、行内代码色与 Token 定义一致
-  - [ ] AC-003: 签字记录写入 `docs/EVENT-LOG.jsonl`（`event=design_signoff, phase=development, ref=T-DS-004`）
+  - [ ] AC-003: 签字记录写入 `docs/EVENT-LOG.jsonl`（`event=design_signoff, phase=development, ref=T-098`）
 - **deliverables**:
-  - [ ] `docs/EVENT-LOG.jsonl` — design_signoff 事件（T-DS-004）
+  - [ ] `docs/EVENT-LOG.jsonl` — design_signoff 事件（T-098）
 
 ---
 
-### T-VAL-01: [VALIDATION] Sprint 1 验证：三栏布局 + 实时预览
+### T-108: [VALIDATION] Sprint 1 验证：三栏布局 + 实时预览
 
 - **目标**: 用户手动验证 Sprint 1 核心里程碑：三栏 UI 可见、输入 Markdown 后右栏实时显示预览、草稿持久化
 - **task_kind**: validation
