@@ -5,7 +5,7 @@
 ## 项目信息
 - 技术栈: Node.js + TypeScript（具体框架待 architect 决定）
 - 运行时: claude-code
-- 框架版本: cataforge 0.4.1
+- 框架版本: cataforge 0.5.0
 - 语言定位: 中文框架（提示词/文档/交互用中文；代码/变量/CLI参数用英文）
 - 执行模式: standard
   <!-- 用户原选 agile-lite 不约束行数；因既有 PRD 已达完整体量，Bootstrap 中切换为 standard。"不为简化而牺牲语义完整性"保留为项目偏好，amend / lite 类文档需注意 -->
@@ -27,7 +27,7 @@
 ## 项目状态 (orchestrator专属写入区，其他Agent禁止修改)
 - 当前阶段: development
 - 上次完成: pre_dev 人工审查检查点用户确认通过；Phase Transition 双绿（cataforge docs validate 0 stale / claude-md check 8555B 在 30K 限内）；进入 Phase 5 development
-- 下一步行动: tdd-engine 并行调度 Sprint 0 首批 5 个 P0 任务（T-001 Monorepo 骨架 + T-002 工具链 + T-003 Turborepo + T-004 contracts 骨架 + T-DS-001 Penpot Token 导入），按 sprint_group 依赖分组
+- 下一步行动: tdd-engine 并行调度 Sprint 0 首批 5 个 P0 任务（T-001 Monorepo 骨架 + T-002 工具链 + T-003 Turborepo + T-004 contracts 骨架 + T-095 Penpot Token 导入），按 sprint_group 依赖分组
 - 已完成阶段: [requirements, architecture, ui_design, dev_planning, cross_doc_amendment_r2]
 - 当前Sprint: Sprint 0 (启动中)
 - 文档状态:

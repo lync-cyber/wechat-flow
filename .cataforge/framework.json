@@ -1,5 +1,5 @@
 {
-  "version": "0.4.1",
+  "version": "0.5.0",
   "runtime_api_version": "1.0",
   "runtime": {
     "platform": "claude-code"
@@ -33,6 +33,17 @@
       },
       "fallback_on_missing_label": true
     }
+  },
+  "kg": {
+    "kg_active_doc_types": [
+      "prd",
+      "arch",
+      "test"
+    ],
+    "store_backend": "oxigraph",
+    "db_path": ".cataforge/kg/store",
+    "ontology_namespace": "https://cataforge.dev/kg/",
+    "base_namespace": "https://cataforge.dev/kg/instances/"
   },
   "claude_md_limits": {
     "max_bytes": 30000,
@@ -80,6 +91,7 @@
     "ANTI_PATTERN_MIN_COUNT_SKILL": 3,
     "ANTI_PATTERN_MIN_COUNT_AGENT": 4,
     "AGENT_MODEL_DEFAULTS": {
+      "orchestrator": "inherit",
       "product-manager": "standard",
       "architect": "heavy",
       "ui-designer": "standard",
@@ -96,7 +108,8 @@
     "AGENT_MODEL_TIER_HEAVY_WHITELIST": [
       "architect",
       "debugger"
-    ]
+    ],
+    "SKILL_RUNNER_TIMEOUT_DEFAULT_SECS": 300
   },
   "dispatcher_skills": [
     "tdd-engine",
@@ -375,6 +388,16 @@
         "from cataforge.cli.main import cli",
         "event",
         "log"
+      ]
+    },
+    {
+      "id": "mc-0.5.0-kg-config",
+      "release_version": "0.5.0",
+      "description": "framework.json 必须声明 kg.kg_active_doc_types — 自 0.5.0 起 doc-gen finalize / cataforge docs load / orchestrator Phase Transition 都按此分流；缺失会让所有调用静默走 legacy 路径，掩盖 KG cutover 的覆盖率门。",
+      "type": "file_must_contain",
+      "path": ".cataforge/framework.json",
+      "patterns": [
+        "kg_active_doc_types"
       ]
     }
   ]

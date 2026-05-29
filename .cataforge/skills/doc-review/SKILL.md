@@ -51,6 +51,13 @@ cataforge skill run doc-review -- {doc_type} docs/{doc_type}/{vol_file} --volume
 
 **规则**: 所有分卷必须全部通过 Layer 1 才进入 Layer 2。Layer 1 返回码语义按 §Layer 1 调用协议处理。
 
+**Layer 1 KG 分流**（自动，无需 agent 干预）: 当被审文档的 doc_type ∈ `framework.json.kg.kg_active_doc_types` 且 `.cataforge/kg/store/` 已存在时，下列两项检查自动从文件 glob 切换到 SPARQL：
+
+- `check_xref` → KG `query.exists()` 强校验。消除原 file-glob 路径在 URL fragment 与跨分卷引用上的假阳性（见 [`checker.py:_maybe_kg_xref_resolver`](../../../src/cataforge/skill/builtins/doc_review/checker.py)）
+- `check_bidirectional_coverage` → `kg.trace.bidirectional_coverage()` SPARQL 查询，覆盖判定从 "字面 ID 出现" 升级为 "图上有 `cf:implementsFeature` / `cf:verifiesTask` 边"。代码块 / HTML 注释里的 ID 不再算覆盖
+
+回退兜底：KG 连接失败 / 异常 / store 缺失 → 自动降级到 legacy file-glob，不阻塞 Layer 1 通过。该行为由 checker.py 内部实现，agent 无需感知。
+
 **Layer 2 短路条件** (降低轻量文档的审查开销):
 - 若 Layer 1 exit 0、被审文档行数 < `DOC_REVIEW_L2_SKIP_THRESHOLD_LINES`、且 `doc_type ∈ DOC_REVIEW_L2_SKIP_DOC_TYPES`，则**跳过 Layer 2** 直接判定为 `approved`
 - 命中短路时，仍需按 Step 3/4 产出 `REVIEW-{doc_id}-r{N}.md` 报告，并在报告标题下标注 `Layer 2 skipped (short-circuit)` 及触发条件（行数、doc_type）
@@ -67,6 +74,11 @@ cataforge skill run doc-review -- {doc_type} docs/{doc_type}/{vol_file} --volume
 - AC 可观测性(ac-observability, 仅 dev-plan): 审查"应正确渲染"等模糊措辞 → MEDIUM；要求每条 AC 至少含一个可观测终点（DOM 内容 / 返回值 / 副作用 / 文件落盘 / clipboard / 路由跳转）
 
 **维度收敛**: 调用方可传 `--focus <category[,...]>`（值取自 COMMON-RULES §统一问题分类体系），仅审查指定维度。不传时跑全维度。例如：`cataforge skill run doc-review -- prd docs/prd/prd-x.md --focus consistency,ambiguity`。
+
+**跨文档语义一致性**（当上游依赖文档已加载时追加）:
+- AC 传播完整性: PRD 的每个 AC-NNN 是否在当前文档（ARCH/DEV-PLAN）中有语义对应——不仅是 ID 引用，而是设计/任务确实覆盖了 AC 描述的验收条件
+- 契约传播: 上游文档的约束条件（边界值、异常流程、并发场景）是否在当前文档中保留，尤其注意 PRD 非功能需求 → ARCH 非功能架构、ARCH API 契约 → DEV-PLAN 任务 AC 的传播链
+- 术语一致: 上下游文档对同一概念的命名是否一致（如 PRD 称"订单"，ARCH 称"交易记录"，DEV-PLAN 称"order"——应统一或在文档内注明映射）
 
 **ui-spec专项审查维度**（仅当doc_type=ui-spec时追加）:
 - 设计方向一致性(consistency): §0设计方向声明是否贯穿到Token选择和组件风格——如声明"专业克制"但使用了高饱和度彩色和大圆角

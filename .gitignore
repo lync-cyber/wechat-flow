@@ -32,3 +32,6 @@ coverage/
 .nyc_output/
 playwright-report/
 test-results/
+
+# CataForge upgrade rollback backups (local-only)
+.cataforge/.backups/
