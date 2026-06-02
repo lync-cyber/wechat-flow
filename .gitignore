@@ -35,3 +35,9 @@ test-results/
 
 # CataForge upgrade rollback backups (local-only)
 .cataforge/.backups/
+
+# CataForge KG: ignore the binary RocksDB working store (rebuildable from
+# committed markdown / snapshots); keep the NQuads snapshots versioned so a
+# fresh clone restores via `cataforge kg rollback` without re-parsing docs
+.cataforge/kg/store/
+docs/.kg-reconcile-report.json
