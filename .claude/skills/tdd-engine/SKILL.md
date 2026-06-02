@@ -3,7 +3,7 @@ name: tdd-engine
 description: "TDD引擎 — 编排RED→GREEN→REFACTOR三阶段子代理执行TDD开发，支持 light-dispatch / light-inline / standard / prototype-inline 四档与 sprint 内独立任务并行调度。"
 argument-hint: "<任务卡ID如T-001>"
 suggested-tools: file_read, file_write, file_edit, shell_exec, file_glob, file_grep, agent_dispatch
-depends: [doc-nav]
+depends: [context]
 disable-model-invocation: false
 user-invocable: true
 ---
@@ -52,6 +52,7 @@ orchestrator (主线程)
 
 以下约束适用于所有 TDD 子代理，通过 AGENT.md 的 disallowedTools 和本节定义：
 
+- 各 Step 的 dispatch 块：角色定义 / 返回格式 / 异常处理由对应 AGENT.md 经 subagent_type 自动加载，prompt 仅内联任务上下文，各 Step 不再重述
 - AskUserQuestion 不可用。如需用户输入，返回 blocked 并在 `<questions>` 描述问题，orchestrator 以 continuation 重启
 - 返回 `<agent-result>` 格式（详见 dispatch-prompt.md §COMMON-SECTIONS）
 - blocked 时可追加 `<questions>` 字段
@@ -60,7 +61,7 @@ orchestrator (主线程)
 ## 输入规范
 
 - dev-plan#T-xxx任务卡(含tdd_acceptance, deliverables, context_load, 可选 task_kind/tdd_mode/tdd_refactor/security_sensitive/loc_estimate)
-- 通过doc-nav加载的arch相关章节(接口契约、数据模型、目录结构、命名规范)
+- 通过context加载的arch相关章节(接口契约、数据模型、目录结构、命名规范)
 
 ## 阶段间传递格式
 
@@ -108,7 +109,7 @@ orchestrator按以下步骤编排每个任务(T-xxx)的TDD。
 
 ### Step 1: 准备任务上下文
 
-通过doc-nav加载任务卡的context_load章节，提取以下内容并在主线程保留，后续子代理 prompt 将按需内联传入：
+通过context加载任务卡的context_load章节，提取以下内容并在主线程保留，后续子代理 prompt 将按需内联传入：
 
 - 验收标准(tdd_acceptance → AC列表)
 - 接口契约(arch#API-xxx)
@@ -122,8 +123,6 @@ orchestrator按以下步骤编排每个任务(T-xxx)的TDD。
 ### Step 2: RED Phase — 启动test-writer子代理
 
 - **[EVENT]** `cataforge event log --event tdd_phase --phase development --detail "TDD RED: {T-xxx}"`
-
-通过调度接口启动。角色定义、返回格式和异常处理已在 test-writer AGENT.md 中定义，通过 subagent_type 自动加载，prompt 内联任务上下文：
 
 ```
 调度请求:
@@ -172,8 +171,6 @@ orchestrator按以下步骤编排每个任务(T-xxx)的TDD。
 ### Step 3: GREEN Phase — 启动implementer子代理
 
 - **[EVENT]** `cataforge event log --event tdd_phase --phase development --detail "TDD GREEN: {T-xxx}"`
-
-通过调度接口启动。角色定义、返回格式和异常处理已在 implementer AGENT.md 中定义，通过 subagent_type 自动加载，prompt 内联任务上下文：
 
 ```
 调度请求:
@@ -231,8 +228,6 @@ orchestrator按以下步骤编排每个任务(T-xxx)的TDD。
 
 > **审计兜底**：sprint-review 阶段对该 sprint 的所有 impl_files 跑一次批量 `code-review --focus complexity,duplication,coupling`（Layer 1），覆盖 implementer 漏判的情况。
 
-触发后通过调度接口启动，prompt 内联必要上下文：
-
 ```
 调度请求:
   agent_id: "refactorer"
@@ -275,8 +270,6 @@ orchestrator按以下步骤编排每个任务(T-xxx)的TDD。
 将 Step 2 和 Step 3 合并为一次 implementer 子代理调用，子代理内部先写 AC 对应的失败测试再补最小实现。
 
 - **[EVENT]** `cataforge event log --event tdd_phase --phase development --detail "TDD LIGHT-DISPATCH: {T-xxx}"`
-
-通过调度接口启动，prompt 内联任务上下文：
 
 ```
 调度请求:
@@ -358,7 +351,7 @@ orchestrator完成以下收尾:
    - **即时 per-task code-review**（reviewer dispatch）: 仅对满足以下任一条件的任务触发：`security_sensitive: true`、`user_facing_critical_path: true`、`consumer_components` 非空。审查范围包含 impl_files 和 test_files
    - **延迟到 sprint-review 批量审查**: 其余任务不触发 per-task code-review，由 sprint-review 的 §Batch Code-Review 覆盖（见 ORCHESTRATOR-PROTOCOLS §Sprint Review Protocol）
    - **prototype-inline**: 跳过 per-task code-review（不变）
-4. 通过doc-gen(write-section)将dev-plan#§1对应任务行状态更新为done
+4. 通过context(write-section)将dev-plan#§1对应任务行状态更新为done
 5. 如 blocked 且含 questions → 按 ORCHESTRATOR-PROTOCOLS.md §TDD Blocked Recovery Protocol 处理
 6. 如 blocked 且无 questions → 记录原因并请求人工介入
 

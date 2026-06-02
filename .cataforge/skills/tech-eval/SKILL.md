@@ -1,9 +1,9 @@
 ---
 name: tech-eval
-description: "技术评估 — 技术方案对比、选型决策、调研记录。"
+description: "技术评估 — 技术方案对比、选型决策、调研记录。当需要做技术选型、框架/库对比、数据库或 API 风格决策、技术栈权衡时使用。"
 argument-hint: "<评估领域如'前端框架'或'数据库选型'>"
 suggested-tools: Read, Write, Edit
-depends: [doc-gen, research]
+depends: [context, research]
 disable-model-invocation: false
 user-invocable: true
 ---
@@ -20,7 +20,7 @@ user-invocable: true
 ## 输出规范
 - 方案对比表(优势/劣势/适用场景)
 - 选型推荐(含理由)
-- RESEARCH-NOTE记录(通过doc-gen产出)
+- RESEARCH-NOTE记录(通过context产出)
 
 ## 执行流程
 1. 明确评估维度(性能/生态/学习成本/维护性)

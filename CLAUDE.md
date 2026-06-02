@@ -5,7 +5,7 @@
 ## 项目信息
 - 技术栈: Node.js + TypeScript（具体框架待 architect 决定）
 - 运行时: claude-code
-- 框架版本: cataforge 0.5.0
+- 框架版本: cataforge 0.7.0
 - 语言定位: 中文框架（提示词/文档/交互用中文；代码/变量/CLI参数用英文）
 - 执行模式: standard
   <!-- 用户原选 agile-lite 不约束行数；因既有 PRD 已达完整体量，Bootstrap 中切换为 standard。"不为简化而牺牲语义完整性"保留为项目偏好，amend / lite 类文档需注意 -->
@@ -44,9 +44,9 @@
 
 ## 文档导航
 - 导航索引: `docs/.doc-index.json`（机器索引，所有 Agent 通过 `cataforge docs load` 查询；缺失时运行 `cataforge docs index` 重建）
-- 通用规则: .cataforge/rules/COMMON-RULES.md
-- 子代理协议: .cataforge/rules/SUB-AGENT-PROTOCOLS.md
-- 编排协议: .cataforge/agents/orchestrator/ORCHESTRATOR-PROTOCOLS.md (orchestrator专属)
+- 通用规则: .claude/rules/COMMON-RULES.md
+- 子代理协议: .claude/rules/SUB-AGENT-PROTOCOLS.md
+- 编排协议: .claude/agents/orchestrator/ORCHESTRATOR-PROTOCOLS.md (orchestrator专属)
 - 状态码Schema: .cataforge/schemas/agent-result.schema.json
 - 加载原则: 按任务需要通过 `cataforge docs load` 加载相关章节，不全量加载
 
@@ -74,10 +74,10 @@
 - Agent编排: orchestrator 通过 agent-dispatch skill 激活子代理
 - DEV阶段: orchestrator 通过 tdd-engine skill 编排 RED/GREEN/REFACTOR 三个子代理（独立上下文）
 - Skill调用: Agent按SKILL.md步骤式指令执行工作流
-- 状态持久化: PROJECT-STATE.md + docs/ 目录
+- 状态持久化: 项目指令文件（CLAUDE.md/AGENTS.md）§项目状态 + docs/ 目录
 - 子代理通信: 通过文件系统(docs/和src/)传递产出物路径
 - 运行时: 由 framework.json runtime.platform 决定（deploy 自动适配）
-- **写权限**: PROJECT-STATE.md 由 orchestrator 独占写入；其他Agent只写 docs/ 或 src/ 下的产出文件
+- **写权限**: 项目指令文件 §项目状态 由 orchestrator 独占写入；其他Agent只写 docs/ 或 src/ 下的产出文件
 - 统一配置 `.cataforge/framework.json`:
   - `upgrade.source` — 远程升级源配置。升级时保留用户已配置值，仅补充新字段
   - `upgrade.state` — 本地升级状态。升级时始终保留

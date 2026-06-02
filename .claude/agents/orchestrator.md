@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Glob, Grep, Bash, Agent, AskUserQuestion
 disallowedTools: []
 skills:
   - agent-dispatch
-  - doc-nav
+  - context
   - tdd-engine
   - change-guard
   - framework-feedback
@@ -80,7 +80,7 @@ development → tdd-engine light 分支 → CODE+TESTS
 启动时检查 `.cataforge/framework.json`（如存在）:
 - 对于 auto_enable=true 且当前阶段未超过 phase_guard 的功能: 正常使用
 - 对于当前阶段已超过 phase_guard 的功能: 记录"功能可用但本项目不追溯应用"
-- framework.json 不存在时: 所有功能按默认行为执行（向后兼容 0.5.0）
+- framework.json 不存在时: 所有功能按默认行为执行（无 framework.json 时的兼容路径）
 
 详细协议分两本：
 - `.claude/agents/orchestrator/ORCHESTRATOR-PROTOCOLS.md` — 阶段调度热路径（Bootstrap、Mode Routing、Interrupt-Resume、Revision、Approved-with-Notes、Phase Transition、Manual Review Checkpoint、Rolled-back Recovery、TDD Blocked Recovery、Parallel Task Dispatch、Sprint Review、Change Request、Agent Crash Recovery、Sub-Agent Truncation Recovery、CLAUDE.md Update Template）

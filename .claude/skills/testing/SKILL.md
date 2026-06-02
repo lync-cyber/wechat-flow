@@ -1,9 +1,9 @@
 ---
 name: testing
-description: "测试 — 测试策略规划、测试编写与执行、覆盖率分析、缺陷记录。"
+description: "测试 — 测试策略规划、测试编写与执行、覆盖率分析、缺陷记录。当需要规划测试策略、编写或执行测试套件、分析覆盖率或记录缺陷时使用。"
 argument-hint: "<操作: plan|write|execute|report> <测试类型: unit|integration|e2e|all>"
 suggested-tools: Read, Write, Edit, Bash, Glob, Grep
-depends: [doc-gen, doc-nav]
+depends: [context]
 disable-model-invocation: false
 user-invocable: true
 ---
@@ -77,11 +77,11 @@ user-invocable: true
 2. 覆盖率分析(对比目标)
 3. 缺陷清单(严重等级 + 关联任务)
 4. 结论与建议(是否达到发布标准)
-5. 通过doc-gen填充test-report模板
+5. 通过context填充test-report模板
 
 ## Layer 1 检查项 (e2e_backdoor_scan)
 
-> 权威清单见 `cataforge.skill.builtins.testing.CHECKS_MANIFEST`（framework-review 自动对账，本段与 manifest 不一致即 FAIL）。
+> 权威清单见 `cataforge.runtime.skill.builtins.testing.CHECKS_MANIFEST`（framework-review 自动对账，本段与 manifest 不一致即 FAIL）。
 
 - e2e 后门正则扫描 (tests/e2e/**) — 默认覆盖 .js/.ts/.jsx/.tsx + .py；命中 `window\.__\w+__\s*=` / `\?e2e=1` / `setStore\(.*JSON\.parse` 等模式即 WARN
 - 真实输入路径声明 — e2e 套件至少含一处 `keyboard.type` / `page.fill` / `send_keys` 等真实交互调用，无任何 → WARN（提示套件可能纯 fixture 注入）
@@ -92,7 +92,7 @@ user-invocable: true
 
 后门 + 真实输入正则按语言拆到 YAML：
 
-- 默认（cataforge package）：`cataforge.skill.builtins.testing.rules.e2e-{lang}.yaml`
+- 默认（cataforge package）：`cataforge.runtime.skill.builtins.testing.rules.e2e-{lang}.yaml`
 - 项目 override（opt-in）：`<project>/.cataforge/skills/testing/rules/e2e-{lang}.yaml`
 
 加新语言：在项目 `rules/` 放 `e2e-csharp.yaml` 等；schema 必填 `schema_version: 1` / `rule_type: e2e` / `language` / `extensions` + `backdoor_patterns`（每条需 `label`）/ `real_input_patterns`。framework-review B3-β 自动校验。
@@ -101,7 +101,7 @@ user-invocable: true
 
 - 禁止：e2e 通过 `window.__*__` / `?e2e=1` / `?test=1` 后门或守门绕过真实用户输入路径；e2e 必须 ≥1 次真实浏览器交互（`keyboard.type` / `page.click` 等）作为 verdict=approved 前置条件
 - 禁止：直接调用 store action / `setState` / `setAst(JSON.parse(...))` 等注入预构造数据替代真实输入路径 — 编辑器/表单/路由的 wiring 链路必须由测试照过
-- 禁止：把"沙盒不可达 → CI 兜底"作为 verdict=conditional_release 的放行理由 —— `conditional_release` 必须显式声明 `blocking_conditions: []`，未消除前 Phase Transition 不能推进（详见 §Verdict 三态语义对应 qa-engineer/AGENT.md）
+- 禁止：把"沙盒不可达 → CI 兜底"作为 verdict=conditional_release 的放行理由 —— `conditional_release` 必须显式声明 `blocking_conditions: []`，未消除前 Phase Transition 不能推进（详见 §Verdict 判定语义对应 qa-engineer/AGENT.md）
 - 避免：单元测试用 `vi.mock` / `jest.mock` 全 stub 替换被测包的顶层导出，导致接口契约未真实验证（sprint-review `ac-coverage` 维度会复核）
 
 ## 效率策略

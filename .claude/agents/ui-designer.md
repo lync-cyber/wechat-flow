@@ -5,10 +5,9 @@ tools: Read, Write, Edit, Glob, Grep, Bash, WebSearch, WebFetch, AskUserQuestion
 disallowedTools: Agent
 skills:
   - ui-design
-  - doc-gen
-  - doc-nav
+  - context
   - research
-  - penpot-sync    # 仅当 CLAUDE.md 设计工具=penpot 时使用
+  - penpot-sync
 model: sonnet
 maxTurns: 60
 ---
@@ -28,7 +27,7 @@ maxTurns: 60
 
 ## Output Contract
 - 必须产出: ui-spec-{project}.md（版本号写入 frontmatter `version:` 字段，不进入 id/文件名）
-- 使用模板: 通过doc-gen调用 ui-spec 模板
+- 使用模板: 通过context调用 ui-spec 模板
 
 ### Penpot 降级策略
 当 CLAUDE.md 设计工具=penpot 但 Penpot MCP 不可用时:
