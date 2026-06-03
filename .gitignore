@@ -27,6 +27,10 @@ Thumbs.db
 # TypeScript build info
 *.tsbuildinfo
 
+# Python bytecode cache (CataForge scaffold scripts run locally)
+__pycache__/
+*.pyc
+
 # Coverage / test artifacts
 coverage/
 .nyc_output/
