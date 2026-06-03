@@ -5,7 +5,7 @@
 ## 项目信息
 - 技术栈: Node.js + TypeScript（具体框架待 architect 决定）
 - 运行时: claude-code
-- 框架版本: cataforge 0.7.0
+- 框架版本: cataforge 0.8.0
 - 语言定位: 中文框架（提示词/文档/交互用中文；代码/变量/CLI参数用英文）
 - 执行模式: standard
   <!-- 用户原选 agile-lite 不约束行数；因既有 PRD 已达完整体量，Bootstrap 中切换为 standard。"不为简化而牺牲语义完整性"保留为项目偏好，amend / lite 类文档需注意 -->

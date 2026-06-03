@@ -1,0 +1,14 @@
+{
+  "active_doc_types": [
+    "arch",
+    "deploy-spec",
+    "dev-plan",
+    "prd",
+    "test-report",
+    "ui-spec"
+  ],
+  "path": ".cataforge\\kg\\snapshots\\20260603T094436Z_0.8.0-migration.nq",
+  "quad_count": 12356,
+  "store_backend": "oxigraph",
+  "timestamp": "20260603T094436Z"
+}

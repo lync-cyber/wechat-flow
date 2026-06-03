@@ -380,7 +380,7 @@ graph LR
 
 ## 3. 任务卡详细
 
-本 dev-plan 共 **96 任务卡**（77 code + 12 design + 7 validation）。任务编号 T-053 / T-054 / T-065 / T-076 为预留编号（当前未占用）。
+本 dev-plan 共 **96 任务卡**（77 code + 12 design + 7 validation）。任务编号 `T-053` / `T-054` / `T-065` / `T-076` 为预留编号（当前未占用）。
 
 任务卡体量超过 `DOC_SPLIT_THRESHOLD_LINES`，按 Sprint 拆分为独立分卷存放：
 
