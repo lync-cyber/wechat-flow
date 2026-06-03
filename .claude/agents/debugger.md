@@ -52,3 +52,6 @@ maxTurns: 40
 - 禁止: 大范围重构 — 修复 bug 不是重构的理由，只改必要的代码
 - 禁止: 忽略同类问题 — 如发现 A 文件有编码问题，应检查 B/C 文件是否有同样问题
 - 避免: 添加 try/except 吞掉异常而非修复根因 — 除非根因确实在调用方且无法修改
+
+## 语言细则
+- 见 `.cataforge/agents/debugger/rules/lang-js-ts.md`

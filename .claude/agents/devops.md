@@ -32,3 +32,6 @@ maxTurns: 50
 - 禁止: 跳过 SBOM / 容器镜像漏洞扫描或在 CI 中临时屏蔽红灯 —— 上线前任何 HIGH/CRITICAL CVE 未确认即合并都属 release blocker
 - 禁止: 修改源代码或测试
 - 禁止: Bash 执行除 `cataforge docs load` 以及实际部署/构建命令之外的无关命令
+
+## 语言细则
+- 见 `.cataforge/agents/devops/rules/lang-js-ts.md`
