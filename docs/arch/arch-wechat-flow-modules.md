@@ -326,7 +326,7 @@ required_sections:
 - **对外接口**:
   - 包级类型导出：`z.infer<typeof XxxSchema>` 直推 TS 类型
   - schema 工厂函数：每个领域对象一个 `z.object({...})` 定义
-  - JSON Schema 互转：`toJSON(schema) → JSONSchema7`（包装 `z.toJSONSchema()`），供 `describe_block` / `describe_mark` / `describe_theme` 等 MCP Tool 喂 LLM Agent
+  - JSON Schema 互转：`toJSON(schema) → JSONSchema`（包装 `z.toJSONSchema()`），供 `describe_block` / `describe_mark` / `describe_theme` 等 MCP Tool 喂 LLM Agent
   - 运行时校验：`schema.parse(input)` / `schema.safeParse(input)`
 - **依赖模块**: 无（最底层 contracts 包）；外部依赖 `zod@4.x` + 可选 `@zod/mini`（浏览器 bundle 体积敏感场景）
 - **内部关键组件**:

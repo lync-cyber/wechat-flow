@@ -144,11 +144,11 @@ required_sections:
   - [ ] AC-006: Given `packages/contracts/src/mcp/tool-contracts.ts`，When 统计导出的 Tool schema 数量（含 19 同步 + 4 异步 = 23），Then 与 ARCH api 卷 §3.1 + §3.2 注册的 Tool 总数一致；不一致时 CI 阻断（schema 数量对账测试在 `tests/contracts/tool-count.test.ts`）[ARCH#§3]
 - **deliverables**:
   - [ ] `packages/contracts/src/mcp/tool-contracts.ts` — 23 个 Tool 的 request/response Zod schema 骨架（19 同步 + 4 异步：upload_image / upload_to_wechat_asset / export_long_image / export_cover；包含 `renderMarkdownRequestSchema`、`renderMarkdownResponseSchema`，其余 Tool schema 以 `z.object({}).passthrough()` 占位）
-  - [ ] `packages/contracts/src/utils/to-json.ts` — `toJSON(schema) → JSONSchema7` 工具函数（包装 `z.toJSONSchema()`）
+  - [ ] `packages/contracts/src/utils/to-json.ts` — `toJSON(schema) → JSONSchema` 工具函数（包装 `z.toJSONSchema()`）
   - [ ] `packages/contracts/src/index.ts` — 统一导出
   - [ ] `packages/contracts/src/version/triple-structure.ts` — `versionTripleSchema = z.object({ coreVersion: z.string(), themeVersion: z.string(), rulesetVersion: z.string() })`
   - [ ] `packages/contracts/src/theme/template-definition.ts` — 导出 `TemplateDefinition` 类型（对应 ARCH E-011）[ARCH#§4.E-011]
-  - [ ] `packages/contracts/src/sanitize/extend-schema.ts` — 导出 `extendSanitizeSchema(tagSet: string[], attrMap: Record<string, string[]>): void` 共享契约（对应 ARCH M-012 D2 决策，供 M-002 core 与 M-005 theme-registry 消费）[ARCH#§2.M-012]
+  - [ ] `packages/contracts/src/sanitize/extend-schema.ts` — 导出 `extendSanitizeSchema(tagSet: ReadonlySet<string>, attrMap: ReadonlyMap<string, readonly string[]>): SanitizeSchema` 共享契约（对应 ARCH M-012 D2 决策，供 M-002 core 与 M-005 theme-registry 消费）[ARCH#§2.M-012]
   - [ ] `packages/contracts/src/diagnostic/diagnostic-report.ts` — `DiagnosticReport` 含 `diagnostics[]` / `nodeChangeRecords[]` / `nightRiskIssues[]` 三字段 [ARCH#§2.M-003]
   - [ ] `tests/contracts/tool-contracts.test.ts` — AC-001..AC-005 单元测试
 - **relates_to**: [F-013, M-012]
@@ -198,7 +198,7 @@ required_sections:
 - **acceptance_criteria**:
   - [ ] 运行 `pnpm install && pnpm turbo typecheck`，终端输出无红色错误，退出码 0
   - [ ] 运行 `pnpm biome check .`，输出无 lint 错误
-  - [ ] 运行 `pnpm vitest run`，输出"no test files found"（正常，Sprint 0 尚无测试用例）
+  - [ ] 运行 `pnpm vitest run`，所有测试 PASS，退出码 0
   - [ ] 打开 Penpot SaaS（design.penpot.app），找到项目下的 Design System 页面，可见 Token 变量组（Surface / Brand / Text 等）
   - [ ] 在开发终端运行 Penpot MCP `find_shape` 检索 `Token-Surface`，返回非空结果（验证 MCP link 就绪）
 - **relates_to**: [T-001, T-002, T-003, T-004, T-095]
