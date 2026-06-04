@@ -2,7 +2,8 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "rootDir": "src"
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "env.d.ts"]
 }

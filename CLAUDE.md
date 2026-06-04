@@ -3,9 +3,11 @@
 # CataForge
 
 ## 项目信息
+
 - 技术栈: Node.js + TypeScript（具体框架待 architect 决定）
 - 运行时: claude-code
-- 框架版本: cataforge 0.8.0
+- 框架版本: 0.8.0
+  <!-- 由 cataforge deploy 自动盖入已安装包版本。SemVer: MAJOR=不兼容变更, MINOR=新功能, PATCH=修复 -->
 - 语言定位: 中文框架（提示词/文档/交互用中文；代码/变量/CLI参数用英文）
 - 执行模式: standard
   <!-- 用户原选 agile-lite 不约束行数；因既有 PRD 已达完整体量，Bootstrap 中切换为 standard。"不为简化而牺牲语义完整性"保留为项目偏好，amend / lite 类文档需注意 -->
@@ -18,19 +20,21 @@
 - 项目名: wechat-flow
 - 项目定位: 面向微信公众号写作者的 Markdown 写作与排版工具 — 写作契约 + LLM 友好统一 API + 主题组件库；产物契约为经过微信编辑器粘贴过滤后视觉一致的 inline-styled HTML
 - 交付形态: Web App（含预览/编辑界面）+ npm 包 + MCP server / CLI 多形态
+
 ## 执行环境 (Bootstrap 时由 `cataforge setup --emit-env-block` 填入)
 <!-- 本节在 Bootstrap 步骤中生成。每次会话都会作为项目指令加载，
      权重高于 hook 注入的 additionalContext。项目生命周期内保持稳定。 -->
 {执行环境检测结果 — 未填入时 orchestrator 应在 Bootstrap 时调用:
  cataforge setup --emit-env-block}
  
+
 ## 项目状态 (orchestrator专属写入区，其他Agent禁止修改)
 - 当前阶段: development
-- 上次完成: Sprint 0 sprint-review = approved_with_notes（0 CRITICAL/HIGH/MEDIUM, 4 LOW, 范围偏移 0%）；4 LOW 用户选全部立即修复并验证（SR-001 dev-plan T-004 签名对齐 ReadonlySet/Map / SR-002 tool-count.test +4 response 导出测试 / SR-003 JSONSchema7→JSONSchema / SR-004 T-107 AC 更新）。最终 gate 全绿: docs validate OK / typecheck 29/29 / vitest 19/19 / biome 60 files。Sprint 0 完整收尾（6 任务 + 4 LOW 全清）
-- 下一步行动: 启动 Sprint 1（dev-plan-wechat-flow-s1，12 任务）— [DESIGN] T-096/T-097 Penpot 线框+核心组件视觉稿（ui-designer + 用户 sign-off）；代码线 T-005..T-012（editor Vue 骨架 / core 渲染管线 + inline-style / 三栏布局 / CodeMirror SourcePane / iframe PreviewPane / composeRender / IndexedDB）；T-098 设计签字 + T-108 验证。Sprint 间无人工 checkpoint（仅 pre_dev，已过）
+- 上次完成: Sprint 1 代码基础(T-005/006/007/012) + tests/ typecheck gap 修复(LOW2 兑现). 代码基础 4 任务骨架就绪(wiring 未接线, 留 T-008+/T-020+). tests-infra: tests/tsconfig.json 纳入 pnpm typecheck gate, 修 DocumentMeta cast, core types:[node]+editor .vue shim 消 IDE 飘红, biome ignore doc-index. 全门禁绿: pnpm typecheck(含tests) / vitest 40 / turbo lint 14 / biome 85 / docs validate OK
+- 下一步行动: commit 代码基础+tests-infra → [待用户定] 设计线 T-096/T-097 Penpot(解锁 UI 代码 T-008/009/010/011) 或暂停。Sprint 间无人工 checkpoint(仅 pre_dev,已过)
 - 已完成阶段: [requirements, architecture, ui_design, dev_planning, cross_doc_amendment_r2]
-- 当前Sprint: Sprint 0 DONE（6 任务 + 4 LOW 全清）；Sprint 1 待启动
-- 待办(deferred LOW, 跨 Sprint): (1) tool-contracts.ts placeholder z.object({}).passthrough() zod4-deprecated → S4 迁移 z.looseObject; (2) tests/+root config 未被 tsconfig 覆盖(IDE typecheck gap) → T-062/T-063 test-infra; (3) T-002 AC-003 "no test files found" 描述亦过时(reviewer 未列, 知会)
+- 当前Sprint: Sprint 1 进行中 — 代码基础 T-005/006/007/012 done + tests-infra 修复done; UI 代码 T-008/009/010/011 阻塞于设计 T-097; 设计线 T-096/097/098 + 验证 T-108 待启动
+- 待办(deferred LOW, 跨 Sprint): (1) tool-contracts.ts placeholder z.object({}).passthrough() zod4-deprecated → S4 迁移 z.looseObject; (2) ✓RESOLVED: tests/ typecheck 覆盖已落地(LOW2 提前兑现, 此前类型逃逸+IDE飘红已根治); (3) T-002 AC-003 "no test files found" 描述亦过时(reviewer 未列, 知会)
 - 文档状态:
   - prd: approved
   - arch: approved
@@ -44,14 +48,16 @@
 
 
 ## 文档导航
+
 - 导航索引: `docs/.doc-index.json`（机器索引，所有 Agent 通过 `cataforge docs load` 查询；缺失时运行 `cataforge docs index` 重建）
 - 通用规则: .claude/rules/COMMON-RULES.md
 - 子代理协议: .claude/rules/SUB-AGENT-PROTOCOLS.md
-- 编排协议: .claude/agents/orchestrator/ORCHESTRATOR-PROTOCOLS.md (orchestrator专属)
+- 编排协议: .cataforge/agents/orchestrator/ORCHESTRATOR-PROTOCOLS.md (orchestrator专属)
 - 状态码Schema: .cataforge/schemas/agent-result.schema.json
 - 加载原则: 按任务需要通过 `cataforge docs load` 加载相关章节，不全量加载
 
 ## 全局约定
+
 - 命名: TypeScript 社区默认 — camelCase 变量与函数 / PascalCase 类与类型 / SCREAMING_SNAKE 常量 / kebab-case 文件名（`my-module.ts`）
 - Commit: Conventional Commits（`feat:` / `fix:` / `docs:` / `refactor:` / `test:` / `chore:` / `build:` 前缀，可选 scope，例：`feat(theme): add literary theme`）
 - 分支: GitHub Flow — `main` 永远可发布；功能分支命名 `feature/<short-name>`，bugfix 分支 `fix/<short-name>`；通过 PR 合入 main
@@ -72,6 +78,7 @@
   - 自检：写完段落后用 COMMON-RULES §禁止设计阶段与变更说明残留 末尾的 regex 搜命中即删
 
 ## 框架机制
+
 - Agent编排: orchestrator 通过 agent-dispatch skill 激活子代理
 - DEV阶段: orchestrator 通过 tdd-engine skill 编排 RED/GREEN/REFACTOR 三个子代理（独立上下文）
 - Skill调用: Agent按SKILL.md步骤式指令执行工作流
@@ -84,6 +91,7 @@
   - `upgrade.state` — 本地升级状态。升级时始终保留
   - `features` — 功能注册表。升级时全量覆盖
   - `migration_checks` — 迁移检查声明。升级时全量覆盖
+
 ## 工具使用规范
 - 优先使用 LSP 工具（go_to_definition, find_references, hover）查找符号定义和引用
 - 避免用 grep/ripgrep 搜索代码符号，除非是搜索字符串字面量

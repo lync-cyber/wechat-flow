@@ -10,11 +10,13 @@
     "build": "turbo run build",
     "test": "turbo run test",
     "lint": "turbo run lint",
-    "typecheck": "turbo run typecheck",
+    "typecheck": "turbo run typecheck && tsc --noEmit -p tests/tsconfig.json",
     "kg:restore": "node scripts/kg-restore.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@types/node": "^25.9.1",
+    "fake-indexeddb": "^6.2.5",
     "turbo": "^2.3.3",
     "typescript": "^5.7.3",
     "vitest": "^2.1.8",

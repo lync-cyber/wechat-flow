@@ -13,7 +13,8 @@
       "**/.turbo/**",
       "**/coverage/**",
       "**/.cataforge/**",
-      "**/pnpm-lock.yaml"
+      "**/pnpm-lock.yaml",
+      "docs/.doc-index.json"
     ]
   },
   "formatter": {

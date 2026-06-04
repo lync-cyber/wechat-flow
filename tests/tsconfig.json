@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "types": ["node"],
+    "noEmit": true,
+    "paths": {
+      "@wechat-flow/contracts": ["../packages/contracts/src/index.ts"],
+      "@wechat-flow/core": ["../packages/core/src/index.ts"]
+    }
+  },
+  "include": ["**/*.ts"]
+}
