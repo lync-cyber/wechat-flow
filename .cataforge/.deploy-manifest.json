@@ -31,6 +31,7 @@
     ".claude/skills/doc-review",
     ".claude/skills/framework-feedback",
     ".claude/skills/framework-review",
+    ".claude/skills/framework-update",
     ".claude/skills/framework-walkthrough",
     ".claude/skills/penpot-implement",
     ".claude/skills/penpot-review",

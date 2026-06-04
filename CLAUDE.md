@@ -101,10 +101,10 @@
      权重高于 hook 注入的 additionalContext。项目生命周期内保持稳定。
      cataforge 0.4.1 已移除 setup --emit-env-block，本节由 orchestrator 手动填入，
      具体命令在 architect / tech-lead 阶段确定后由 amendment 更新。 -->
-- 包管理器: 待 architect 决定（候选: pnpm / npm / yarn）
-- 运行时: Node.js LTS（≥ 20.x）
-- 类型检查: TypeScript（`tsc --noEmit`）
-- 测试框架: 待定（候选: vitest / jest / node:test）
-- Lint: 待定（候选: biome / eslint + prettier）
-- 构建: 待定（候选: vite / tsup / esbuild — 视 architect 选型）
+- 包管理器: pnpm@9.15.9（monorepo workspace，见 pnpm-workspace.yaml）
+- 运行时: Node.js ≥ 22（package.json engines）
+- 类型检查: TypeScript 5.7（`pnpm typecheck` = turbo per-package `tsc --noEmit` + `tsc -p tests/tsconfig.json`）
+- 测试框架: vitest 2.1（`pnpm vitest run`）
+- Lint/Format: biome 1.9（`pnpm biome check .`）
+- 构建/任务编排: Turborepo 2.3（`turbo build`）；apps/editor 用 Vite 6
 
