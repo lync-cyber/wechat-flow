@@ -30,8 +30,8 @@
 
 ## 项目状态 (orchestrator专属写入区，其他Agent禁止修改)
 - 当前阶段: development
-- 上次完成: Sprint 1 代码基础(T-005/006/007/012) + tests/ typecheck gap 修复(LOW2 兑现). 代码基础 4 任务骨架就绪(wiring 未接线, 留 T-008+/T-020+). tests-infra: tests/tsconfig.json 纳入 pnpm typecheck gate, 修 DocumentMeta cast, core types:[node]+editor .vue shim 消 IDE 飘红, biome ignore doc-index. 全门禁绿: pnpm typecheck(含tests) / vitest 40 / turbo lint 14 / biome 85 / docs validate OK
-- 下一步行动: commit 代码基础+tests-infra → [待用户定] 设计线 T-096/T-097 Penpot(解锁 UI 代码 T-008/009/010/011) 或暂停。Sprint 间无人工 checkpoint(仅 pre_dev,已过)
+- 上次完成: Sprint 1 代码基础(T-005/006/007/012, commit 659089c) + tests-infra(LOW2 兑现) + cataforge 0.8.0 scaffold 同步(commit 038f54d). 代码基础 4 任务骨架就绪(wiring 未接线, 留 T-008+/T-020+). 框架同步: bootstrap 应用 42 scaffold update + deploy IDE 产物 + doctor 全绿, 清理冗余 .cataforge-new(backups 保留), §执行环境 填实(pnpm/vitest/biome/turbo/TS). 全门禁绿: pnpm typecheck(含tests) / vitest 40 / turbo lint 14 / biome 85 / docs validate OK
+- 下一步行动: **业务暂停于 Sprint 1 设计线前**(用户选). continue 时启动设计线 T-096/T-097 Penpot(主线程 MCP 绘制三档线框+核心组件视觉稿 + 用户逐稿 sign-off, 解锁 UI 代码 T-008/009/010/011) → T-098 签字 → T-108 验证. Sprint 间无人工 checkpoint(仅 pre_dev,已过)
 - 已完成阶段: [requirements, architecture, ui_design, dev_planning, cross_doc_amendment_r2]
 - 当前Sprint: Sprint 1 进行中 — 代码基础 T-005/006/007/012 done + tests-infra 修复done; UI 代码 T-008/009/010/011 阻塞于设计 T-097; 设计线 T-096/097/098 + 验证 T-108 待启动
 - 待办(deferred LOW, 跨 Sprint): (1) tool-contracts.ts placeholder z.object({}).passthrough() zod4-deprecated → S4 迁移 z.looseObject; (2) ✓RESOLVED: tests/ typecheck 覆盖已落地(LOW2 提前兑现, 此前类型逃逸+IDE飘红已根治); (3) T-002 AC-003 "no test files found" 描述亦过时(reviewer 未列, 知会)
