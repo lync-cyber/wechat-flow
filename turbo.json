@@ -3,14 +3,43 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
+      "inputs": ["src/**", "package.json", "tsconfig.json"],
       "outputs": ["dist/**"]
     },
-    "test": {
-      "dependsOn": ["^build"]
+    "lint": {
+      "inputs": ["src/**", "*.ts", "*.tsx", "biome.json", ".eslintrc*", "package.json"]
     },
-    "lint": {},
     "typecheck": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["lint", "^build"],
+      "inputs": ["src/**", "tsconfig.json", "package.json"]
+    },
+    "test": {
+      "dependsOn": ["typecheck", "^build"],
+      "inputs": ["src/**", "tests/**", "vitest.config*", "package.json"],
+      "outputs": ["coverage/**"]
+    },
+    "unit-test": {
+      "dependsOn": ["typecheck", "^build"],
+      "inputs": ["src/**", "tests/**", "vitest.config*", "package.json"],
+      "outputs": ["coverage/**"]
+    },
+    "ruleset-fixture": {
+      "dependsOn": ["unit-test"],
+      "inputs": ["src/**", "fixtures/**", "package.json"],
+      "outputs": ["dist/fixtures/**"]
+    },
+    "cross-runtime": {
+      "dependsOn": ["ruleset-fixture"],
+      "inputs": ["src/**", "package.json"]
+    },
+    "theme-guard": {
+      "dependsOn": ["cross-runtime"],
+      "inputs": ["src/**", "themes/**", "package.json"]
+    },
+    "visual-regression": {
+      "dependsOn": ["theme-guard"],
+      "inputs": ["src/**", "stories/**", "*.config.*", "package.json"],
+      "outputs": ["__snapshots__/**"]
     }
   }
 }

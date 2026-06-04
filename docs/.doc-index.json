@@ -296,10 +296,7 @@
         }
       },
       "split_from": "arch-wechat-flow",
-      "deps": [
-        "prd-wechat-flow",
-        "prd-wechat-flow-f001-f014"
-      ],
+      "deps": ["prd-wechat-flow", "prd-wechat-flow-f001-f014"],
       "dep_hashes": {
         "prd-wechat-flow": "bac304e9",
         "prd-wechat-flow-f001-f014": "67cb2af2"
@@ -417,10 +414,7 @@
         }
       },
       "split_from": "arch-wechat-flow",
-      "deps": [
-        "prd-wechat-flow",
-        "prd-wechat-flow-f001-f014"
-      ],
+      "deps": ["prd-wechat-flow", "prd-wechat-flow-f001-f014"],
       "dep_hashes": {
         "prd-wechat-flow": "bac304e9",
         "prd-wechat-flow-f001-f014": "67cb2af2"
@@ -538,10 +532,7 @@
         }
       },
       "split_from": "arch-wechat-flow",
-      "deps": [
-        "prd-wechat-flow",
-        "prd-wechat-flow-f001-f014"
-      ],
+      "deps": ["prd-wechat-flow", "prd-wechat-flow-f001-f014"],
       "dep_hashes": {
         "prd-wechat-flow": "bac304e9",
         "prd-wechat-flow-f001-f014": "67cb2af2"
@@ -767,10 +758,7 @@
           }
         }
       },
-      "deps": [
-        "prd-wechat-flow",
-        "prd-wechat-flow-f001-f014"
-      ],
+      "deps": ["prd-wechat-flow", "prd-wechat-flow-f001-f014"],
       "dep_hashes": {
         "prd-wechat-flow": "bac304e9",
         "prd-wechat-flow-f001-f014": "67cb2af2"
@@ -839,10 +827,7 @@
         }
       },
       "split_from": "dev-plan-wechat-flow",
-      "deps": [
-        "arch-wechat-flow",
-        "ui-spec-wechat-flow"
-      ],
+      "deps": ["arch-wechat-flow", "ui-spec-wechat-flow"],
       "dep_hashes": {
         "arch-wechat-flow": "5a5d2ccc",
         "ui-spec-wechat-flow": "08ef49ff"
@@ -2023,9 +2008,7 @@
         }
       },
       "split_from": "prd-wechat-flow",
-      "deps": [
-        "prd-wechat-flow"
-      ],
+      "deps": ["prd-wechat-flow"],
       "dep_hashes": {
         "prd-wechat-flow": "bac304e9"
       }
@@ -2153,9 +2136,7 @@
       "est_tokens": 1108,
       "content_hash": "0bc45e57",
       "sections": {},
-      "deps": [
-        "prd-wechat-flow"
-      ],
+      "deps": ["prd-wechat-flow"],
       "dep_hashes": {
         "prd-wechat-flow": "bac304e9"
       }
@@ -2169,9 +2150,7 @@
       "est_tokens": 1016,
       "content_hash": "f22dc094",
       "sections": {},
-      "deps": [
-        "prd-wechat-flow"
-      ],
+      "deps": ["prd-wechat-flow"],
       "dep_hashes": {
         "prd-wechat-flow": "bac304e9"
       }
@@ -2185,9 +2164,7 @@
       "est_tokens": 1064,
       "content_hash": "c9be92dc",
       "sections": {},
-      "deps": [
-        "prd-wechat-flow"
-      ],
+      "deps": ["prd-wechat-flow"],
       "dep_hashes": {
         "prd-wechat-flow": "bac304e9"
       }
@@ -2201,10 +2178,7 @@
       "est_tokens": 1821,
       "content_hash": "97a2f681",
       "sections": {},
-      "deps": [
-        "prd-wechat-flow",
-        "arch-wechat-flow"
-      ],
+      "deps": ["prd-wechat-flow", "arch-wechat-flow"],
       "dep_hashes": {
         "prd-wechat-flow": "bac304e9",
         "arch-wechat-flow": "5a5d2ccc"
@@ -2219,9 +2193,7 @@
       "est_tokens": 1275,
       "content_hash": "6e5231b6",
       "sections": {},
-      "deps": [
-        "prd-wechat-flow"
-      ],
+      "deps": ["prd-wechat-flow"],
       "dep_hashes": {
         "prd-wechat-flow": "bac304e9"
       }
@@ -2485,10 +2457,7 @@
       "est_tokens": 2771,
       "content_hash": "10fccb42",
       "sections": {},
-      "deps": [
-        "prd-wechat-flow",
-        "prd-wechat-flow-f001-f014"
-      ],
+      "deps": ["prd-wechat-flow", "prd-wechat-flow-f001-f014"],
       "dep_hashes": {
         "prd-wechat-flow": "bac304e9",
         "prd-wechat-flow-f001-f014": "67cb2af2"
@@ -2503,10 +2472,7 @@
       "est_tokens": 2477,
       "content_hash": "c8b37026",
       "sections": {},
-      "deps": [
-        "prd-wechat-flow",
-        "prd-wechat-flow-f001-f014"
-      ],
+      "deps": ["prd-wechat-flow", "prd-wechat-flow-f001-f014"],
       "dep_hashes": {
         "prd-wechat-flow": "bac304e9",
         "prd-wechat-flow-f001-f014": "67cb2af2"
@@ -2521,10 +2487,7 @@
       "est_tokens": 959,
       "content_hash": "98ae6445",
       "sections": {},
-      "deps": [
-        "prd-wechat-flow",
-        "prd-wechat-flow-f001-f014"
-      ],
+      "deps": ["prd-wechat-flow", "prd-wechat-flow-f001-f014"],
       "dep_hashes": {
         "prd-wechat-flow": "bac304e9",
         "prd-wechat-flow-f001-f014": "67cb2af2"
@@ -2539,10 +2502,7 @@
       "est_tokens": 3216,
       "content_hash": "646852e7",
       "sections": {},
-      "deps": [
-        "prd-wechat-flow",
-        "prd-wechat-flow-f001-f014"
-      ],
+      "deps": ["prd-wechat-flow", "prd-wechat-flow-f001-f014"],
       "dep_hashes": {
         "prd-wechat-flow": "bac304e9",
         "prd-wechat-flow-f001-f014": "67cb2af2"

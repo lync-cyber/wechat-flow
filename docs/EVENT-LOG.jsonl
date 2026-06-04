@@ -199,3 +199,14 @@
 {"ts": "2026-06-03T02:57:43+00:00", "event": "session_start", "phase": "session", "detail": "IDE session started"}
 {"ts": "2026-06-03T08:13:41+00:00", "event": "session_start", "phase": "session", "detail": "IDE session started"}
 {"ts": "2026-06-03T08:14:32+00:00", "event": "session_start", "phase": "session", "detail": "IDE session started"}
+{"ts": "2026-06-04T01:29:31+00:00", "event": "session_start", "phase": "session", "detail": "IDE session started"}
+{"ts": "2026-06-04T01:29:37+00:00", "event": "session_start", "phase": "session", "detail": "IDE session started"}
+{"event": "state_change", "phase": "development", "detail": "resume reconcile: T-001 monorepo scaffold completed out-of-band in commit 18c773d (ancestor of HEAD); 14 pkg skeletons + turbo graph verified (build --dry exit 0); bookkeeping caught up", "ts": "2026-06-04T01:37:55+00:00"}
+{"event": "tdd_phase", "phase": "development", "detail": "TDD SKIP (config): T-002 dispatch start", "agent": "orchestrator", "ts": "2026-06-04T01:37:55+00:00"}
+{"event": "tdd_phase", "phase": "development", "detail": "TDD SKIP (config): T-003 dispatch start", "agent": "orchestrator", "ts": "2026-06-04T01:37:55+00:00"}
+{"event": "state_change", "phase": "development", "agent": "orchestrator", "detail": "truncation recovery: main-thread takeover, T-002 completed 3/3 AC PASS (turbo typecheck exit0 / biome check 51 files exit0 / vitest run no-test exit0); minor: vitest.config.ts IDE-only type diag (vitest/config), non-blocking, logged for sprint-review", "ts": "2026-06-04T02:08:32+00:00"}
+{"event": "tdd_phase", "phase": "development", "agent": "orchestrator", "detail": "TDD SKIP (config) DONE: T-002, T-003 both AC-green", "ts": "2026-06-04T02:08:32+00:00"}
+{"ts": "2026-06-04T02:10:28+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-004 contracts schema 骨架 dispatch start", "agent": "orchestrator"}
+{"ts": "2026-06-04T02:13:27+00:00", "event": "session_start", "phase": "session", "detail": "IDE session started"}
+{"event": "tdd_phase", "phase": "development", "agent": "orchestrator", "detail": "TDD LIGHT-DISPATCH DONE: T-004 contracts schema — vitest 2 files/15 tests PASS (AC-001..006), tsc exit0, biome 60 files exit0, refactor_needed=false → REFACTOR skipped", "ts": "2026-06-04T02:26:42+00:00"}
+{"event": "state_change", "phase": "development", "agent": "orchestrator", "detail": "Sprint 0 code tasks T-001/002/003/004 all DONE & AC-green. Deferred LOW for sprint-review: (1) tool-contracts.ts placeholder z.object({}).passthrough() zod4-deprecated → migrate to z.looseObject when real Tool schemas land (S4); (2) tests/ + root config files not covered by any tsconfig → IDE-only typecheck gap (zod resolution in test), revisit at T-062/T-063 test-infra", "ts": "2026-06-04T02:26:42+00:00"}

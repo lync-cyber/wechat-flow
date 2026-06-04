@@ -5,8 +5,11 @@
   "main": "src/index.ts",
   "scripts": {
     "build": "echo skip",
-    "test": "echo skip",
-    "lint": "echo skip",
-    "typecheck": "echo skip"
+    "test": "vitest run --passWithNoTests",
+    "lint": "biome check .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^4.0.0"
   }
 }
