@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-06-04T08:43:49.615520+00:00",
+  "generated_at": "2026-06-05T01:59:27.135168+00:00",
   "documents": {
     "arch-wechat-flow-api": {
       "file_path": "docs/arch/arch-wechat-flow-api.md",
@@ -13,11 +13,11 @@
       "sections": {
         "3": {
           "heading": "## 3. 接口契约",
-          "level": 2,
           "line_start": 27,
           "line_end": 1032,
           "est_tokens": 11005,
           "deps": [],
+          "level": 2,
           "items": {
             "3.1": {
               "heading": "### 3.1 MCP Tool 契约 (API-001..API-016, API-033)",
@@ -316,11 +316,11 @@
       "sections": {
         "4": {
           "heading": "## 4. 数据模型",
-          "level": 2,
           "line_start": 21,
           "line_end": 455,
           "est_tokens": 5727,
           "deps": [],
+          "level": 2,
           "items": {
             "4.1": {
               "heading": "### 4.1 实体关系",
@@ -437,11 +437,11 @@
       "sections": {
         "2": {
           "heading": "## 2. 模块划分",
-          "level": 2,
           "line_start": 21,
           "line_end": 400,
           "est_tokens": 10028,
           "deps": [],
+          "level": 2,
           "items": {
             "M-001": {
               "heading": "### M-001: 编辑器 UI",
@@ -558,11 +558,11 @@
       "sections": {
         "1": {
           "heading": "## 1. 架构概览",
-          "level": 2,
           "line_start": 37,
           "line_end": 123,
           "est_tokens": 1993,
           "deps": [],
+          "level": 2,
           "items": {
             "1.1": {
               "heading": "### 1.1 项目类型",
@@ -596,38 +596,38 @@
         },
         "2": {
           "heading": "## 2. 模块划分",
-          "level": 2,
           "line_start": 124,
           "line_end": 127,
           "est_tokens": 70,
           "deps": [],
+          "level": 2,
           "items": {}
         },
         "3": {
           "heading": "## 3. 接口契约",
-          "level": 2,
           "line_start": 128,
           "line_end": 133,
           "est_tokens": 188,
           "deps": [],
+          "level": 2,
           "items": {}
         },
         "4": {
           "heading": "## 4. 数据模型",
-          "level": 2,
           "line_start": 134,
           "line_end": 137,
           "est_tokens": 62,
           "deps": [],
+          "level": 2,
           "items": {}
         },
         "5": {
           "heading": "## 5. 非功能架构",
-          "level": 2,
           "line_start": 138,
           "line_end": 214,
           "est_tokens": 2355,
           "deps": [],
+          "level": 2,
           "items": {
             "5.1": {
               "heading": "### 5.1 性能",
@@ -668,11 +668,11 @@
         },
         "6": {
           "heading": "## 6. 部署架构",
-          "level": 2,
           "line_start": 215,
           "line_end": 302,
           "est_tokens": 1538,
           "deps": [],
+          "level": 2,
           "items": {
             "6.1": {
               "heading": "### 6.1 分发形态",
@@ -699,11 +699,11 @@
         },
         "7": {
           "heading": "## 7. 开发约定",
-          "level": 2,
           "line_start": 303,
           "line_end": 383,
           "est_tokens": 1117,
           "deps": [],
+          "level": 2,
           "items": {
             "7.1": {
               "heading": "### 7.1 命名规范",
@@ -744,11 +744,11 @@
         },
         "8": {
           "heading": "## 8. 附录",
-          "level": 2,
           "line_start": 384,
           "line_end": 429,
           "est_tokens": 2009,
           "deps": [],
+          "level": 2,
           "items": {
             "8.1": {
               "heading": "### 8.1 F→M 覆盖表",
@@ -787,11 +787,11 @@
       "sections": {
         "3": {
           "heading": "## 3. 任务卡详细",
-          "level": 2,
           "line_start": 25,
           "line_end": 204,
           "est_tokens": 3330,
           "deps": [],
+          "level": 2,
           "items": {
             "T-001": {
               "heading": "### T-001: Monorepo 骨架初始化",
@@ -859,11 +859,11 @@
       "sections": {
         "3": {
           "heading": "## 3. 任务卡详细",
-          "level": 2,
           "line_start": 26,
           "line_end": 367,
           "est_tokens": 5860,
           "deps": [],
+          "level": 2,
           "items": {
             "T-096": {
               "heading": "### T-096: [DESIGN] Penpot — P-001 三档响应式线框稿（PS-006）",
@@ -979,11 +979,11 @@
       "sections": {
         "3": {
           "heading": "## 3. 任务卡详细",
-          "level": 2,
           "line_start": 26,
           "line_end": 362,
           "est_tokens": 5902,
           "deps": [],
+          "level": 2,
           "items": {
             "T-099": {
               "heading": "### T-099: [DESIGN] Penpot — C-013 DiagnosticsPanel + C-013.1 Diff 视图视觉稿",
@@ -1090,11 +1090,11 @@
       "sections": {
         "3": {
           "heading": "## 3. 任务卡详细",
-          "level": 2,
           "line_start": 26,
           "line_end": 443,
           "est_tokens": 6770,
           "deps": [],
+          "level": 2,
           "items": {
             "T-100": {
               "heading": "### T-100: [DESIGN] Penpot — C-009 CommandPalette + C-015 InsertDrawer + C-016 ContextMenu 视觉稿",
@@ -1222,11 +1222,11 @@
       "sections": {
         "3": {
           "heading": "## 3. 任务卡详细",
-          "level": 2,
           "line_start": 26,
           "line_end": 637,
           "est_tokens": 10758,
           "deps": [],
+          "level": 2,
           "items": {
             "T-102": {
               "heading": "### T-102: [DESIGN] Penpot — C-014 JobProgressBar + P-003 主题市场 + P-004 设置页视觉稿",
@@ -1402,11 +1402,11 @@
       "sections": {
         "3": {
           "heading": "## 3. 任务卡详细",
-          "level": 2,
           "line_start": 26,
           "line_end": 719,
           "est_tokens": 10054,
           "deps": [],
+          "level": 2,
           "items": {
             "T-103": {
               "heading": "### T-103: [DESIGN] Penpot — P-005 移动端只读预览视觉稿（PS-009）",
@@ -1604,11 +1604,11 @@
       "sections": {
         "3": {
           "heading": "## 3. 任务卡详细",
-          "level": 2,
           "line_start": 36,
           "line_end": 789,
           "est_tokens": 10492,
           "deps": [],
+          "level": 2,
           "items": {
             "T-104": {
               "heading": "### T-104: Penpot C-013 诊断密度测试 + PS-007/PS-008 深色主题 token 草稿",
@@ -1810,47 +1810,47 @@
       "sections": {
         "1": {
           "heading": "## 1. 迭代规划",
-          "level": 2,
           "line_start": 30,
           "line_end": 193,
           "est_tokens": 4452,
           "deps": [],
+          "level": 2,
           "items": {}
         },
         "2": {
           "heading": "## 2. 依赖图",
-          "level": 2,
           "line_start": 194,
           "line_end": 380,
           "est_tokens": 1431,
           "deps": [],
+          "level": 2,
           "items": {}
         },
         "3": {
           "heading": "## 3. 任务卡详细",
-          "level": 2,
           "line_start": 381,
           "line_end": 398,
           "est_tokens": 303,
           "deps": [],
+          "level": 2,
           "items": {}
         },
         "4": {
           "heading": "## 4. Penpot 同步任务专章",
-          "level": 2,
           "line_start": 399,
           "line_end": 428,
           "est_tokens": 541,
           "deps": [],
+          "level": 2,
           "items": {}
         },
         "5": {
           "heading": "## 5. 风险与假设",
-          "level": 2,
           "line_start": 429,
           "line_end": 473,
           "est_tokens": 1136,
           "deps": [],
+          "level": 2,
           "items": {
             "5.1": {
               "heading": "### 5.1 技术风险",
@@ -1877,11 +1877,11 @@
         },
         "6": {
           "heading": "## 6. 集成与E2E测试规划",
-          "level": 2,
           "line_start": 474,
           "line_end": 490,
           "est_tokens": 704,
           "deps": [],
+          "level": 2,
           "items": {}
         }
       },
@@ -1915,11 +1915,11 @@
       "sections": {
         "2": {
           "heading": "## 2. 功能需求",
-          "level": 2,
           "line_start": 21,
           "line_end": 318,
           "est_tokens": 6014,
           "deps": [],
+          "level": 2,
           "items": {
             "F-001": {
               "heading": "### F-001: 写作体验",
@@ -2041,11 +2041,11 @@
       "sections": {
         "1": {
           "heading": "## 1. 概述",
-          "level": 2,
           "line_start": 28,
           "line_end": 80,
           "est_tokens": 847,
           "deps": [],
+          "level": 2,
           "items": {
             "1.1": {
               "heading": "### 1.1 背景与动机",
@@ -2072,20 +2072,20 @@
         },
         "2": {
           "heading": "## 2. 功能需求",
-          "level": 2,
           "line_start": 81,
           "line_end": 107,
           "est_tokens": 260,
           "deps": [],
+          "level": 2,
           "items": {}
         },
         "3": {
           "heading": "## 3. 非功能需求",
-          "level": 2,
           "line_start": 108,
           "line_end": 160,
           "est_tokens": 825,
           "deps": [],
+          "level": 2,
           "items": {
             "3.1": {
               "heading": "### 3.1 性能",
@@ -2126,20 +2126,20 @@
         },
         "4": {
           "heading": "## 4. 约束与假设",
-          "level": 2,
           "line_start": 161,
           "line_end": 178,
           "est_tokens": 311,
           "deps": [],
+          "level": 2,
           "items": {}
         },
         "5": {
           "heading": "## 5. 术语表",
-          "level": 2,
           "line_start": 179,
           "line_end": 215,
           "est_tokens": 811,
           "deps": [],
+          "level": 2,
           "items": {}
         }
       }
@@ -2619,20 +2619,20 @@
       "sections": {
         "1": {
           "heading": "## 1. 计划 vs 实际对比",
-          "level": 2,
           "line_start": 17,
           "line_end": 31,
           "est_tokens": 248,
           "deps": [],
+          "level": 2,
           "items": {}
         },
         "2": {
           "heading": "## 2. AC 覆盖验证",
-          "level": 2,
           "line_start": 32,
           "line_end": 63,
           "est_tokens": 404,
           "deps": [],
+          "level": 2,
           "items": {
             "T-001": {
               "heading": "### T-001 (chore/skip-tdd)",
@@ -2680,20 +2680,20 @@
         },
         "3": {
           "heading": "## 3. 范围偏移检测",
-          "level": 2,
           "line_start": 64,
           "line_end": 77,
           "est_tokens": 287,
           "deps": [],
+          "level": 2,
           "items": {}
         },
         "4": {
           "heading": "## 4. per-task Layer 2 代码维度审查",
-          "level": 2,
           "line_start": 78,
           "line_end": 180,
           "est_tokens": 1737,
           "deps": [],
+          "level": 2,
           "items": {
             "T-001": {
               "heading": "### T-001 / T-002 / T-003（chore/config — 命中 CODE_REVIEW_L2_SKIP_TASK_KINDS）",
@@ -2769,47 +2769,47 @@
         },
         "5": {
           "heading": "## 5. 已知 deferred 项确认",
-          "level": 2,
           "line_start": 181,
           "line_end": 189,
           "est_tokens": 143,
           "deps": [],
+          "level": 2,
           "items": {}
         },
         "6": {
           "heading": "## 6. 问题列表",
-          "level": 2,
           "line_start": 190,
           "line_end": 217,
           "est_tokens": 645,
           "deps": [],
+          "level": 2,
           "items": {}
         },
         "7": {
           "heading": "## 7. 质量聚合",
-          "level": 2,
           "line_start": 218,
           "line_end": 233,
           "est_tokens": 89,
           "deps": [],
+          "level": 2,
           "items": {}
         },
         "8": {
           "heading": "## 8. Sprint 0 范围偏移结论",
-          "level": 2,
           "line_start": 234,
           "line_end": 242,
           "est_tokens": 65,
           "deps": [],
+          "level": 2,
           "items": {}
         },
         "9": {
           "heading": "## 9. 三态判定",
-          "level": 2,
           "line_start": 243,
           "line_end": 249,
           "est_tokens": 79,
           "deps": [],
+          "level": 2,
           "items": {}
         }
       },
@@ -2837,11 +2837,11 @@
       "sections": {
         "2": {
           "heading": "## 2. 组件清单",
-          "level": 2,
           "line_start": 22,
           "line_end": 867,
           "est_tokens": 12398,
           "deps": [],
+          "level": 2,
           "items": {
             "C-001": {
               "heading": "### C-001: 顶栏（TopBar）",
@@ -3032,11 +3032,11 @@
       "sections": {
         "3": {
           "heading": "## 3. 页面布局",
-          "level": 2,
           "line_start": 22,
           "line_end": 351,
           "est_tokens": 4592,
           "deps": [],
+          "level": 2,
           "items": {
             "P-001": {
               "heading": "### P-001: 编辑器主页（`/` 或 `/docs/:docId`）",
@@ -3101,11 +3101,11 @@
       "sections": {
         "0": {
           "heading": "## 0. 设计方向",
-          "level": 2,
           "line_start": 30,
           "line_end": 92,
           "est_tokens": 959,
           "deps": [],
+          "level": 2,
           "items": {
             "0.1": {
               "heading": "### 0.1 产品调性",
@@ -3146,11 +3146,11 @@
         },
         "1": {
           "heading": "## 1. 设计系统",
-          "level": 2,
           "line_start": 93,
           "line_end": 305,
           "est_tokens": 2114,
           "deps": [],
+          "level": 2,
           "items": {
             "1.1": {
               "heading": "#### 1.1.7 诊断分级色（Diagnostics）",
@@ -3198,29 +3198,29 @@
         },
         "2": {
           "heading": "## 2. 组件清单",
-          "level": 2,
           "line_start": 306,
           "line_end": 336,
           "est_tokens": 270,
           "deps": [],
+          "level": 2,
           "items": {}
         },
         "3": {
           "heading": "## 3. 页面布局",
-          "level": 2,
           "line_start": 337,
           "line_end": 349,
           "est_tokens": 79,
           "deps": [],
+          "level": 2,
           "items": {}
         },
         "4": {
           "heading": "## 4. 导航与路由",
-          "level": 2,
           "line_start": 350,
           "line_end": 383,
           "est_tokens": 262,
           "deps": [],
+          "level": 2,
           "items": {
             "4.1": {
               "heading": "### 4.1 路由表",
@@ -3247,11 +3247,11 @@
         },
         "5": {
           "heading": "## 5. 响应式策略",
-          "level": 2,
           "line_start": 384,
           "line_end": 507,
           "est_tokens": 1114,
           "deps": [],
+          "level": 2,
           "items": {
             "5.1": {
               "heading": "### 5.1 桌面档（≥1280px）",
@@ -3278,20 +3278,20 @@
         },
         "6": {
           "heading": "## 6. 假设清单",
-          "level": 2,
           "line_start": 508,
           "line_end": 531,
           "est_tokens": 842,
           "deps": [],
+          "level": 2,
           "items": {}
         },
         "7": {
           "heading": "## 7. Penpot 同步任务清单",
-          "level": 2,
           "line_start": 532,
           "line_end": 547,
           "est_tokens": 368,
           "deps": [],
+          "level": 2,
           "items": {}
         }
       },

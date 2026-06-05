@@ -180,7 +180,7 @@ required_sections:
 **布局**：占据右栏全部区域，背景 `--color-surface-preview`（略冷白，模拟微信阅读环境）。
 
 **内部结构**：
-- 顶部视口切换工具栏（高 `36px`）：3 个切换按钮（`375` / `768` / `auto`），当前激活状态用 `--color-brand-subtle` 背景高亮
+- 顶部视口切换工具栏（高 `36px`）：3 个切换按钮，显示标签「手机 / 平板 / 自适应」（对应 viewport 值 `375` / `768` / `auto`），当前激活状态用 `--color-brand-subtle` 背景高亮
 - iframe 容器（居中显示，width 按选中视口，周围留白 `--space-4`）
 - 右下角同步状态指示器（直径 `8px` 圆点，见 A-012）
 - 右上角复制按钮悬浮层（hover 时显示，`z-index: var(--z-toolbar)`）
