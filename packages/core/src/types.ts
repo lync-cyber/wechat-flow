@@ -8,4 +8,5 @@ export type RenderResult = z.infer<typeof renderMarkdownResponseSchema> & {
 export interface RenderOptions {
   themeId?: string;
   rulesetVersion?: string;
+  injectNodeIds?: boolean;
 }

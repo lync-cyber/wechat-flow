@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import SyncStateIndicator from "./SyncStateIndicator.vue";
 
 const props = withDefaults(
@@ -23,16 +23,20 @@ const props = withDefaults(
   }
 );
 
-// CSP in the sandboxed document head — defense-in-depth alongside sandbox=""
+// CSP in the sandboxed document head — defense-in-depth alongside sandbox="allow-same-origin"
 const CSP =
   "default-src 'none'; style-src 'unsafe-inline'; img-src https: data:; font-src https: data:;";
 
-// srcdoc supplies isolated content under sandbox="": parent access to contentDocument
-// is blocked by the (no allow-same-origin) sandbox, so write() is unusable; srcdoc is the
-// only zero-JS way to drive content from the host page.
+// .cm-highlighted: transient highlight applied by parent via contentDocument.classList
+// Color uses warm-base token palette for visual consistency with editor shell
+const HIGHLIGHT_CSS =
+  ".cm-highlighted { background-color: rgba(45, 90, 78, 0.15); outline: 2px solid rgba(45, 90, 78, 0.4); border-radius: 2px; }";
+
+// srcdoc supplies isolated content; sandbox="allow-same-origin" enables parent
+// contentDocument access for bidirectional highlight without enabling script execution.
 const srcdoc = computed(
   () =>
-    `<!DOCTYPE html><html><head><meta http-equiv="Content-Security-Policy" content="${CSP}"></head><body>${props.htmlContent}</body></html>`
+    `<!DOCTYPE html><html><head><meta http-equiv="Content-Security-Policy" content="${CSP}"><style>${HIGHLIGHT_CSS}</style></head><body>${props.htmlContent}</body></html>`
 );
 
 const iframeContainerStyle = computed(() => {
@@ -47,6 +51,10 @@ function handleViewportClick(v: "375" | "768" | "auto"): void {
 function handleRetry(): void {
   props.onRetry?.();
 }
+
+const iframeEl = ref<HTMLIFrameElement | null>(null);
+
+defineExpose({ iframeEl });
 </script>
 
 <template>
@@ -102,9 +110,11 @@ function handleRetry(): void {
         :style="iframeContainerStyle"
         data-testid="iframe-container"
       >
-        <!-- sandbox="" = strictest sandbox (no scripts/forms/same-origin); srcdoc supplies isolated content -->
+        <!-- sandbox="allow-same-origin": enables parent contentDocument access for bidirectional
+             highlight (AC-001/AC-002); scripts remain blocked by CSP default-src 'none' -->
         <iframe
-          sandbox=""
+          ref="iframeEl"
+          sandbox="allow-same-origin"
           :srcdoc="srcdoc"
           class="preview-pane__iframe"
           title="微信预览"

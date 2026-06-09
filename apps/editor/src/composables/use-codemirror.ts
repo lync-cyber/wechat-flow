@@ -10,6 +10,7 @@ export interface UseCodemirrorOptions {
   initialValue?: string;
   readonly?: boolean;
   onValueChange?: (value: string) => void;
+  onSelectionChange?: (cursorLine: number) => void;
 }
 
 export interface UseCodemirrorReturn {
@@ -21,7 +22,7 @@ export interface UseCodemirrorReturn {
 }
 
 export function useCodemirror(options: UseCodemirrorOptions = {}): UseCodemirrorReturn {
-  const { initialValue = "", readonly = false, onValueChange } = options;
+  const { initialValue = "", readonly = false, onValueChange, onSelectionChange } = options;
   const editorView: Ref<EditorView | null> = ref(null);
 
   let debounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -39,10 +40,10 @@ export function useCodemirror(options: UseCodemirrorOptions = {}): UseCodemirror
       EditorState.readOnly.of(readonly),
     ];
 
-    if (onValueChange) {
+    if (onValueChange || onSelectionChange) {
       extensions.push(
         EditorView.updateListener.of((update) => {
-          if (update.docChanged) {
+          if (onValueChange && update.docChanged) {
             if (debounceTimer !== null) {
               clearTimeout(debounceTimer);
             }
@@ -50,6 +51,11 @@ export function useCodemirror(options: UseCodemirrorOptions = {}): UseCodemirror
               onValueChange(update.state.doc.toString());
               debounceTimer = null;
             }, PREVIEW_DEBOUNCE_MS);
+          }
+          if (onSelectionChange && update.selectionSet) {
+            const head = update.state.selection.main.head;
+            const line = update.state.doc.lineAt(head).number;
+            onSelectionChange(line);
           }
         })
       );

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { type ComponentPublicInstance, onMounted, onUnmounted, ref } from "vue";
+import { useBidirectionalHighlight } from "../../composables/use-bidirectional-highlight.ts";
 import { useSplitterWidth } from "../../composables/use-splitter-width";
 import { useEditorStore } from "../../stores/editor.ts";
 import PreviewPane from "../editor/PreviewPane.vue";
@@ -8,6 +9,32 @@ import ResizableSplitter from "./ResizableSplitter.vue";
 import TopBar from "./TopBar.vue";
 
 const editorStore = useEditorStore();
+
+// Component refs for bidirectional highlight wiring
+const previewPaneRef = ref<
+  (ComponentPublicInstance & { iframeEl: HTMLIFrameElement | null }) | null
+>(null);
+const sourcePaneRef = ref<
+  (ComponentPublicInstance & { editorView: import("@codemirror/view").EditorView | null }) | null
+>(null);
+
+const { attachPreviewClickListener, detachPreviewClickListener, highlightPreviewNode } =
+  useBidirectionalHighlight({
+    getIframe: () => previewPaneRef.value?.iframeEl ?? null,
+    setCursorToLine: (line: number) => {
+      const view = sourcePaneRef.value?.editorView;
+      if (!view) return;
+      const doc = view.state.doc;
+      const targetLine = Math.min(Math.max(line, 1), doc.lines);
+      const pos = doc.line(targetLine).from;
+      view.dispatch({ selection: { anchor: pos }, scrollIntoView: true });
+    },
+    onNodeHighlight: () => {},
+  });
+
+function onSourceSelectionChange(cursorLine: number): void {
+  highlightPreviewNode(editorStore.nodeLocations, cursorLine);
+}
 
 const LEFT_PANEL_MIN = 160;
 const LEFT_PANEL_MAX = 320;
@@ -53,11 +80,13 @@ onMounted(() => {
   leftPanel.init();
   rightPanel.init();
   editorStore.loadDraft();
+  attachPreviewClickListener();
 });
 
 onUnmounted(() => {
   window.removeEventListener("keydown", onKeyDown);
   window.removeEventListener("resize", onResize);
+  detachPreviewClickListener();
 });
 </script>
 
@@ -116,7 +145,12 @@ onUnmounted(() => {
         class="editor-shell__center"
         data-testid="center-panel"
       >
-        <SourcePane :model-value="editorStore.content" :on-value-change="(v) => editorStore.setContent(v)" />
+        <SourcePane
+          ref="sourcePaneRef"
+          :model-value="editorStore.content"
+          :on-value-change="(v) => editorStore.setContent(v)"
+          :on-selection-change="onSourceSelectionChange"
+        />
       </main>
 
       <!-- Right splitter (desktop only, not focus mode) -->
@@ -139,6 +173,7 @@ onUnmounted(() => {
         :style="!isTablet ? { width: rightPanel.width.value + 'px' } : undefined"
       >
         <PreviewPane
+          ref="previewPaneRef"
           :html-content="editorStore.previewHtml"
           :viewport="previewViewport"
           :on-viewport-change="(v) => (previewViewport = v as '375' | '768' | 'auto')"
