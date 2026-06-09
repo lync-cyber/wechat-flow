@@ -1,12 +1,6 @@
-import { createRequire } from "node:module";
 import type { Element, Root as HastRoot, Properties } from "hast";
 import { sortedEntries } from "../utils/deterministic.ts";
 import { filterCssAttrs } from "./css-attr-filter.ts";
-
-const require = createRequire(import.meta.url);
-const juice = require("juice") as {
-  inlineContent: (html: string, css: string, opts?: Record<string, unknown>) => string;
-};
 
 export interface TokenDictionary {
   [selector: string]: Record<string, string>;
@@ -61,24 +55,6 @@ const DEFAULT_TOKENS: TokenDictionary = {
     color: "#666666",
   },
 };
-
-function buildCssString(tokens: TokenDictionary): string {
-  return sortedEntries(tokens)
-    .map(([selector, props]) => {
-      const declarations = sortedEntries(props)
-        .map(([prop, val]) => `${prop}: ${val}`)
-        .join("; ");
-      return `${selector} { ${declarations} }`;
-    })
-    .join("\n");
-}
-
-function buildPlaceholderHtml(tokens: TokenDictionary): string {
-  const tags = sortedEntries(tokens).map(([selector]) => {
-    return `<${selector}>placeholder</${selector}>`;
-  });
-  return `<div>${tags.join("")}</div>`;
-}
 
 function stripClassFromProperties(props: Properties): Properties {
   const next: Properties = {};
@@ -138,25 +114,12 @@ function applyInlineStyles(
 }
 
 function buildStyleMap(tokens: TokenDictionary): Map<string, string> {
-  const cssString = buildCssString(tokens);
-  const placeholderHtml = buildPlaceholderHtml(tokens);
-  const inlined = juice.inlineContent(placeholderHtml, cssString, {
-    removeStyleTags: true,
-    preserveMediaQueries: false,
-    applyWidthAttributes: false,
-    applyAttributesTableElements: false,
-  });
-
   const styleMap = new Map<string, string>();
-  const attrRegex = /<([\w]+)[^>]*\sstyle="([^"]+)"/g;
-  let execResult = attrRegex.exec(inlined);
-  while (execResult !== null) {
-    const tag = execResult[1].toLowerCase();
-    const styleVal = execResult[2];
-    if (!styleMap.has(tag)) {
-      styleMap.set(tag, styleVal);
-    }
-    execResult = attrRegex.exec(inlined);
+  for (const [selector, props] of sortedEntries(tokens)) {
+    const declarations = sortedEntries(props)
+      .map(([prop, val]) => `${prop}: ${val}`)
+      .join("; ");
+    styleMap.set(selector, declarations);
   }
   return styleMap;
 }

@@ -1,0 +1,134 @@
+:root {
+  /* Surface */
+  --color-surface: #faf8f5;
+  --color-surface-elevated: #f4f1ec;
+  --color-surface-overlay: #edeae3;
+  --color-surface-sunken: #e7e3da;
+  --color-surface-preview: #f7f7f7;
+
+  /* Border */
+  --color-border: #d9d4cb;
+  --color-border-strong: #c2bcb1;
+  --color-border-subtle: #e8e4dc;
+
+  /* Text */
+  --color-text-primary: #1c1917;
+  --color-text-secondary: #4a4541;
+  --color-text-muted: #7a746c;
+  --color-text-inverse: #faf8f5;
+  --color-text-link: #2d5a4e;
+  --color-text-link-hover: #1e3d35;
+
+  /* Brand */
+  --color-brand: #2d5a4e;
+  --color-brand-hover: #245048;
+  --color-brand-active: #1c3f38;
+  --color-brand-subtle: #e6efed;
+  --color-brand-muted: #a3c4bc;
+  --color-brand-highlight-outline: 2px dashed #2d5a4e;
+
+  /* Accent */
+  --color-accent: #b94a3e;
+  --color-accent-hover: #a33e33;
+  --color-accent-subtle: #f5e8e7;
+
+  /* Functional */
+  --color-success: #3a6b49;
+  --color-success-subtle: #e6f0e9;
+  --color-warning: #8c6a1a;
+  --color-warning-subtle: #f5edda;
+  --color-error: #b94a3e;
+  --color-error-subtle: #f5e8e7;
+  --color-info: #3d5e8c;
+  --color-info-subtle: #e6ecf5;
+
+  /* Diagnostics */
+  --color-diag-safe: #3a6b49;
+  --color-diag-warn: #8c6a1a;
+  --color-diag-error: #b94a3e;
+
+  /* Typography — font stacks */
+  --font-serif: "LXGW WenKai", "Source Han Serif SC", "Noto Serif SC", Georgia, Charter,
+    "Times New Roman", serif;
+  --font-sans: "Inter", system-ui, -apple-system, "PingFang SC", "Source Han Sans SC",
+    "Noto Sans SC", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", "Source Code Pro", ui-monospace,
+    "Courier New", monospace;
+
+  /* Typography — size */
+  --font-size-xs: 11px;
+  --font-size-sm: 13px;
+  --font-size-base: 15px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+
+  /* Typography — line height */
+  --line-height-tight: 1.35;
+  --line-height-base: 1.6;
+  --line-height-relaxed: 1.8;
+  --line-height-loose: 2;
+
+  /* Typography — weight */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Spacing (4px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  /* Radius */
+  --radius-none: 0;
+  --radius-sm: 2px;
+  --radius-base: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-full: 9999px;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 3px rgba(28, 25, 23, 0.08);
+  --shadow-base: 0 2px 8px rgba(28, 25, 23, 0.1);
+  --shadow-md: 0 4px 16px rgba(28, 25, 23, 0.12);
+  --shadow-lg: 0 8px 32px rgba(28, 25, 23, 0.16);
+
+  /* Z-index */
+  --z-splitter: 10;
+  --z-toolbar: 20;
+  --z-dropdown: 100;
+  --z-mobile-bar: 150;
+  --z-modal: 300;
+  --z-command: 400;
+  --z-toast: 500;
+
+  /* Motion */
+  --duration-instant: 80ms;
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 350ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-decelerate: cubic-bezier(0, 0, 0.2, 1);
+  --ease-accelerate: cubic-bezier(0.4, 0, 1, 1);
+
+  /* Breakpoints (reference only — consumed in JS/media queries) */
+  --bp-tablet: 768px;
+  --bp-desktop: 1280px;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+#app {
+  height: 100%;
+}

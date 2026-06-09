@@ -3,7 +3,9 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "rootDir": "src"
+    "paths": {
+      "@wechat-flow/core": ["../../packages/core/src/index.ts"]
+    }
   },
   "include": ["src/**/*", "env.d.ts"]
 }

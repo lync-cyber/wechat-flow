@@ -34,23 +34,36 @@ type WechatFlowDb = {
 };
 
 let dbInstance: IDBPDatabase<WechatFlowDb> | null = null;
+let openingPromise: Promise<IDBPDatabase<WechatFlowDb>> | null = null;
 
 export async function getDb(): Promise<IDBPDatabase<WechatFlowDb>> {
-  if (dbInstance === null) {
-    dbInstance = await openDB<WechatFlowDb>(DB_NAME, DB_VERSION, {
-      upgrade(db) {
-        const docStore = db.createObjectStore("documents", { keyPath: "id" });
-        docStore.createIndex("by_updatedAt", "updatedAt");
-        db.createObjectStore("preferences", { keyPath: "key" });
-      },
-    });
+  if (dbInstance !== null) {
+    return dbInstance;
   }
-  return dbInstance;
+  if (openingPromise !== null) {
+    return openingPromise;
+  }
+  openingPromise = openDB<WechatFlowDb>(DB_NAME, DB_VERSION, {
+    upgrade(db) {
+      const docStore = db.createObjectStore("documents", { keyPath: "id" });
+      docStore.createIndex("by_updatedAt", "updatedAt");
+      db.createObjectStore("preferences", { keyPath: "key" });
+    },
+  }).then((db) => {
+    dbInstance = db;
+    openingPromise = null;
+    return db;
+  });
+  return openingPromise;
 }
 
 export async function closeDb(): Promise<void> {
+  if (openingPromise !== null) {
+    await openingPromise;
+  }
   if (dbInstance !== null) {
     dbInstance.close();
     dbInstance = null;
   }
+  openingPromise = null;
 }

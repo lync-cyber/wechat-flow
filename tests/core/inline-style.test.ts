@@ -42,28 +42,26 @@ describe("AC-002: 产出 HTML 无 <style>、无 CSS 变量、无 class 属性", 
   });
 });
 
-describe("AC-003: juice inlineContent 产出可解析 CSS（无语法错误）", () => {
-  it("juice 对给定 HTML + CSS 内联后 style 属性值可通过声明解析", () => {
-    const juiceLib = require("juice") as {
-      inlineContent: (html: string, css: string, opts?: Record<string, unknown>) => string;
-    };
-    const testHtml = "<h1>标题</h1><p>段落</p>";
-    const testCss = "h1 { font-size: 22px; color: #333333; font-weight: bold; }";
-    const result = juiceLib.inlineContent(testHtml, testCss, {
-      removeStyleTags: true,
-      preserveMediaQueries: false,
-      applyWidthAttributes: false,
-      applyAttributesTableElements: false,
-    });
-    expect(result).toMatch(/<h1[^>]+style="/);
-    const styleMatch = result.match(/style="([^"]+)"/);
+describe("AC-003: inlineStyle 产出的 style 声明可解析（无语法错误，跨运行时无 Node 依赖）", () => {
+  it("inlineStyle 产出的 h1 style 每条声明形如 prop: value", () => {
+    const html = renderWithInlineStyle("# 标题\n\n段落");
+    const styleMatch = html.match(/<h1[^>]+style="([^"]+)"/);
     expect(styleMatch).not.toBeNull();
     const styleValue = styleMatch?.[1];
     expect(styleValue).not.toContain("var(--");
     const declarations = styleValue?.split(";").filter((s) => s.trim().length > 0) ?? [];
+    expect(declarations.length).toBeGreaterThan(0);
     for (const decl of declarations) {
       expect(decl).toMatch(/^\s*[\w-]+\s*:/);
     }
+  });
+});
+
+describe("AC-004: 链接 <a> 无 class 属性（stripClass 行为）", () => {
+  it("含链接的 Markdown 产出 HTML 中 <a> 无 class= 属性", () => {
+    const html = renderWithInlineStyle("[链接](https://example.com)");
+    expect(html).toMatch(/<a[^>]+href=/);
+    expect(html).not.toMatch(/<a[^>]+class="/);
   });
 });
 
