@@ -6,7 +6,9 @@
       "Bash(cataforge docs load *)",
       "Bash(cataforge docs index *)",
       "Bash(pnpm lint *)",
-      "Bash(cataforge doctor *)"
+      "Bash(cataforge doctor *)",
+      "Bash(cataforge penpot *)",
+      "mcp__penpot"
     ]
   },
   "hooks": {

@@ -6,8 +6,6 @@ export default defineConfig({
   test: {
     passWithNoTests: true,
     include: ["packages/*/src/**/*.test.ts", "apps/*/src/**/*.test.ts", "tests/**/*.test.ts"],
-    environmentMatchGlobs: [
-      ["apps/editor/**", "happy-dom"],
-    ],
+    environmentMatchGlobs: [["apps/editor/**", "happy-dom"]],
   },
 });
