@@ -40,3 +40,11 @@ describe("AC-004: result contains coreVersion field", () => {
     expect(result.coreVersion).toBe("0.0.0");
   });
 });
+
+describe("AC-001 inline-style integration: renderMarkdown 产出 html 含 style 属性无 class", () => {
+  it("h1 元素含 style= 属性且无 class= 属性", async () => {
+    const result = await renderMarkdown("# 标题");
+    expect(result.html).toMatch(/<h1[^>]+style="/);
+    expect(result.html).not.toMatch(/<h1[^>]+class="/);
+  });
+});

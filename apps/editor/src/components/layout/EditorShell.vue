@@ -51,6 +51,7 @@ onMounted(() => {
   window.addEventListener("resize", onResize);
   leftPanel.init();
   rightPanel.init();
+  editorStore.loadDraft();
 });
 
 onUnmounted(() => {
@@ -114,7 +115,7 @@ onUnmounted(() => {
         class="editor-shell__center"
         data-testid="center-panel"
       >
-        <SourcePane :on-value-change="(v) => editorStore.updatePreview(v)" />
+        <SourcePane :model-value="editorStore.content" :on-value-change="(v) => editorStore.setContent(v)" />
       </main>
 
       <!-- Right splitter (desktop only, not focus mode) -->

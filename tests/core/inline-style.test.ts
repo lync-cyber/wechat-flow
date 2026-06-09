@@ -67,6 +67,14 @@ describe("AC-003: juice inlineContent 产出可解析 CSS（无语法错误）",
   });
 });
 
+describe("AC-004: 链接 <a> 无 class 属性（stripClass 行为）", () => {
+  it("含链接的 Markdown 产出 HTML 中 <a> 无 class= 属性", () => {
+    const html = renderWithInlineStyle("[链接](https://example.com)");
+    expect(html).toMatch(/<a[^>]+href=/);
+    expect(html).not.toMatch(/<a[^>]+class="/);
+  });
+});
+
 describe("css-attr-filter: 过滤恶意 CSS", () => {
   it("拒绝 expression(", () => {
     expect(filterCssAttrs("color: expression(alert(1))")).toBe("");

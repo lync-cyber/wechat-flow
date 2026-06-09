@@ -14,9 +14,13 @@ export function useSplitterWidth(
   }
 
   async function init(): Promise<void> {
-    const saved = await loadSplitterWidth(panelId);
-    if (saved !== undefined) {
-      width.value = clamp(saved);
+    try {
+      const saved = await loadSplitterWidth(panelId);
+      if (saved !== undefined) {
+        width.value = clamp(saved);
+      }
+    } catch {
+      // Storage unavailable (db closed / private browsing) — keep default width
     }
   }
 
