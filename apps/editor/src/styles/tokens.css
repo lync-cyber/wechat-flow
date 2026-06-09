@@ -122,3 +122,13 @@
   --bp-tablet: 768px;
   --bp-desktop: 1280px;
 }
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+#app {
+  height: 100%;
+}

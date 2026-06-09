@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { computed } from "vue";
 import SyncStateIndicator from "./SyncStateIndicator.vue";
 
 const props = withDefaults(
@@ -21,30 +21,16 @@ const props = withDefaults(
   }
 );
 
-const iframeRef = ref<HTMLIFrameElement | null>(null);
-
-// CSP policy for writing into iframe document
+// CSP in the sandboxed document head — defense-in-depth alongside sandbox=""
 const CSP =
   "default-src 'none'; style-src 'unsafe-inline'; img-src https: data:; font-src https: data:;";
 
-function writeContent(html: string): void {
-  const doc = iframeRef.value?.contentDocument;
-  if (!doc) return;
-  doc.open();
-  doc.write(
-    `<!DOCTYPE html><html><head><meta http-equiv="Content-Security-Policy" content="${CSP}"></head><body>${html}</body></html>`
-  );
-  doc.close();
-}
-
-onMounted(() => {
-  writeContent(props.htmlContent);
-});
-
-watch(
-  () => props.htmlContent,
-  (html) => writeContent(html),
-  { immediate: false }
+// srcdoc supplies isolated content under sandbox="": parent access to contentDocument
+// is blocked by the (no allow-same-origin) sandbox, so write() is unusable; srcdoc is the
+// only zero-JS way to drive content from the host page.
+const srcdoc = computed(
+  () =>
+    `<!DOCTYPE html><html><head><meta http-equiv="Content-Security-Policy" content="${CSP}"></head><body>${props.htmlContent}</body></html>`
 );
 
 const iframeContainerStyle = computed(() => {
@@ -97,10 +83,10 @@ function handleViewportClick(v: "375" | "768" | "auto"): void {
         :style="iframeContainerStyle"
         data-testid="iframe-container"
       >
-        <!-- sandbox="" = strictest sandbox: no scripts, no forms, no same-origin -->
+        <!-- sandbox="" = strictest sandbox (no scripts/forms/same-origin); srcdoc supplies isolated content -->
         <iframe
-          ref="iframeRef"
           sandbox=""
+          :srcdoc="srcdoc"
           class="preview-pane__iframe"
           title="微信预览"
           data-testid="preview-iframe"
