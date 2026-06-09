@@ -78,15 +78,17 @@ describe("AC-005: type exports are present and correct", () => {
     expect(payload.text).toBe("hi");
   });
 
-  it("DiagnosticReport has three array fields", () => {
+  it("DiagnosticReport has three array fields and versionTriple", () => {
     const report: DiagnosticReport = {
       diagnostics: [],
       nodeChangeRecords: [],
       nightRiskIssues: [],
+      versionTriple: { coreVersion: "0.0.0", themeVersion: "0.0.0", rulesetVersion: "0.0.0" },
     };
     expect(Array.isArray(report.diagnostics)).toBe(true);
     expect(Array.isArray(report.nodeChangeRecords)).toBe(true);
     expect(Array.isArray(report.nightRiskIssues)).toBe(true);
+    expect(typeof report.versionTriple.rulesetVersion).toBe("string");
   });
 
   it("TemplateDefinition has templateId and themeId string fields", () => {
