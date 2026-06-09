@@ -7,6 +7,7 @@ const props = defineProps<{
   maxLeft: number;
   defaultLeft: number;
   disabled?: boolean;
+  invert?: boolean;
   onResize: (leftPx: number) => void;
 }>();
 
@@ -32,7 +33,8 @@ function onPointerDown(e: PointerEvent): void {
 
   const onMove = (moveEvent: PointerEvent) => {
     const delta = moveEvent.clientX - dragStartX;
-    const newWidth = clamp(dragStartLeft + delta);
+    // invert for right-side panels: dragging right shrinks the panel
+    const newWidth = clamp(dragStartLeft + (props.invert ? -delta : delta));
     props.onResize(newWidth);
   };
 

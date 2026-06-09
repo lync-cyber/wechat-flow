@@ -82,6 +82,24 @@ describe("ResizableSplitter — 拖拽序列 + clamp（AC-002）", () => {
     dispatchPointer("pointerup", 0);
   });
 
+  it("invert=true（右侧面板）拖拽右移使宽度减小，方向与鼠标一致", async () => {
+    const onResize = vi.fn();
+    const wrapper = mount(ResizableSplitter, { props: { ...baseProps, invert: true, onResize } });
+    await wrapper.find('[data-testid="splitter"]').trigger("pointerdown", { clientX: 100 });
+    dispatchPointer("pointermove", 130); // 右移 +30 → invert: 200 - 30 = 170（减小，未触 clamp）
+    expect(onResize).toHaveBeenLastCalledWith(170);
+    dispatchPointer("pointerup", 130);
+  });
+
+  it("invert=true 拖拽左移使宽度增大", async () => {
+    const onResize = vi.fn();
+    const wrapper = mount(ResizableSplitter, { props: { ...baseProps, invert: true, onResize } });
+    await wrapper.find('[data-testid="splitter"]').trigger("pointerdown", { clientX: 100 });
+    dispatchPointer("pointermove", 60); // 左移 -40 → invert: 200 + 40 = 240
+    expect(onResize).toHaveBeenLastCalledWith(240);
+    dispatchPointer("pointerup", 60);
+  });
+
   it("pointerup 结束拖拽，回 idle 且恢复 body 样式", async () => {
     const wrapper = mount(ResizableSplitter, { props: { ...baseProps, onResize: vi.fn() } });
     const el = wrapper.find('[data-testid="splitter"]');

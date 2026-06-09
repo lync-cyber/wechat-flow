@@ -20,6 +20,7 @@ const TABLET_BREAKPOINT = 1280;
 const isFocusMode = ref(false);
 const isTablet = ref(window.innerWidth < TABLET_BREAKPOINT);
 const isDrawerOpen = ref(false);
+const previewViewport = ref<"375" | "768" | "auto">("375");
 
 const leftPanel = useSplitterWidth("left", LEFT_PANEL_DEFAULT, LEFT_PANEL_MIN, LEFT_PANEL_MAX);
 const rightPanel = useSplitterWidth("right", RIGHT_PANEL_DEFAULT, RIGHT_PANEL_MIN, RIGHT_PANEL_MAX);
@@ -125,6 +126,7 @@ onUnmounted(() => {
         :min-left="RIGHT_PANEL_MIN"
         :max-left="RIGHT_PANEL_MAX"
         :default-left="rightPanel.width.value"
+        :invert="true"
         :on-resize="(w) => rightPanel.onResize(w)"
         data-testid="right-splitter"
       />
@@ -136,7 +138,12 @@ onUnmounted(() => {
         data-testid="right-panel"
         :style="!isTablet ? { width: rightPanel.width.value + 'px' } : undefined"
       >
-        <PreviewPane :html-content="editorStore.previewHtml" sync-state="idle" />
+        <PreviewPane
+          :html-content="editorStore.previewHtml"
+          :viewport="previewViewport"
+          :on-viewport-change="(v) => (previewViewport = v as '375' | '768' | 'auto')"
+          sync-state="idle"
+        />
       </aside>
     </div>
 
