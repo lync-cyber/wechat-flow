@@ -62,17 +62,18 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-004]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given `applyRuleset(hast, ruleset)` 调用，When 规则集为空数组，Then 返回 `{ hast: 原始hast, diagnostics: [], hits: [] }`，hast 未被修改 [ARCH#§2.M-003]
-  - [ ] AC-002: Given 注册一条 `scope: 'strip'` 的测试规则（移除所有 `style` 属性），When 调用 `applyRuleset`，Then 返回的 hast 所有元素无 `style` 属性，`hits` 数组含该规则 ID
+  - [ ] AC-001: Given `applyRuleset(hast, ruleset)` 调用，When 规则集为空数组，Then 返回 `{ hast: 原始hast, report }`，其中 `report` 为 `DiagnosticReport`（`diagnostics: []`、`nodeChangeRecords: []`、`nightRiskIssues: []`、`versionTriple` 由 `getRulesetVersion` 等填充），hast 未被修改 [ARCH#§2.M-003]
+  - [ ] AC-002: Given 注册一条 `scope: 'strip'` 的测试规则（移除所有 `style` 属性），When 调用 `applyRuleset`，Then 返回的 hast 所有元素无 `style` 属性，且 `report` 中含该规则 ID（通过 `report.nodeChangeRecords[].triggerRuleId` 或 `report.diagnostics[].ruleId` 可追溯）[ARCH#§2.M-003]
   - [ ] AC-003: Given `getRulesetVersion()` 调用，When 执行，Then 返回 `@wechat-flow/ruleset` 的 `package.json` version 字段字符串值 [ARCH#§2.M-003]
 - **deliverables**:
+  - [ ] `packages/contracts/src/diagnostic/structure.ts` — `DiagnosticReport` / `NodeChangeRecord` / `AttrDiffEntry` / `NightRiskEntry` schema（M-012 单源；T-004 未建立则在此补骨架）[ARCH#§2.M-003]
   - [ ] `packages/ruleset/src/rules/registry.ts` — `registerRule` / `getRules` / `getRulesetVersion`
   - [ ] `packages/ruleset/src/rules/scope/strip.ts` — strip scope 执行器骨架
   - [ ] `packages/ruleset/src/rules/scope/clamp.ts` — clamp scope 执行器骨架
   - [ ] `packages/ruleset/src/rules/scope/transform.ts` — transform scope 执行器骨架
   - [ ] `packages/ruleset/src/rules/scope/patch.ts` — patch scope 执行器骨架
   - [ ] `packages/ruleset/src/rules/scope/lint.ts` — lint scope 执行器骨架
-  - [ ] `packages/ruleset/src/apply.ts` — `applyRuleset(hast, ruleset) → { hast, diagnostics, hits }` [ARCH#§2.M-003]
+  - [ ] `packages/ruleset/src/apply.ts` — `applyRuleset(hast, ruleset) → { hast, report: DiagnosticReport }` [ARCH#§2.M-003]
   - [ ] `packages/ruleset/src/version/manifest.ts` — 版本号读取
   - [ ] `tests/ruleset/apply.test.ts` — AC-001..AC-003 单元测试
 - **relates_to**: [F-007, M-003]
@@ -173,7 +174,7 @@ required_sections:
 - **sprint**: 2
 - **tdd_mode**: light
 - **tdd_refactor**: auto
-- **tdd_acceptance**: [AC-001, AC-002, AC-003, AC-004]
+- **tdd_acceptance**: [AC-001, AC-002, AC-003, AC-004, AC-005]
 - **security_sensitive**: true
 - **dependencies**: [T-006, T-013]
 - **acceptance_criteria**:
@@ -181,11 +182,14 @@ required_sections:
   - [ ] AC-002: Given 含 `style="color:red; javascript:void(0)"` 的元素，When 经过 `css-attr-filter`，Then `javascript:` 声明被移除，`color:red` 保留
   - [ ] AC-003: Given `extendSanitizeSchema(['wf-card'], { 'wf-card': ['variant', 'accent'] })` 调用，When 后续输入含 `<wf-card variant="feature">` 的 hast，Then 该标签通过 sanitize 不被移除
   - [ ] AC-004: Given 含 `expression(alert(1))` 的 CSS 值，When 经过 css-attr-filter，Then 该 CSS 声明被过滤，不出现在输出 style 属性中
+  - [ ] AC-005: Given `renderMarkdown(md, options)` 主路径调用，When 渲染完成，Then 返回的 `RenderResult.postPaste === false`（`renderMarkdownResponseSchema` 含 `postPaste: z.boolean()`，`renderMarkdown` 返回值赋 `false`），符合 arch postPaste 三路径对账契约（renderMarkdown / Preview / render_markdown 恒 false，composeCopy 路径才置 true）[ARCH#§2.M-002]
 - **deliverables**:
   - [ ] `packages/core/src/pipeline/sanitize.ts` — rehype-sanitize 集成，位置：transform 之后、规则集之前
   - [ ] `packages/core/src/sanitize/schema.ts` — `wechatFlowSanitizeSchema`（基于 `defaultSchema` deepmerge）+ `extendSanitizeSchema(tagSet, attrMap)` [ARCH#§2.M-002]
   - [ ] 更新 `packages/core/src/pipeline/css-attr-filter.ts` — 拒绝 `expression(` / `javascript:` / `behavior:` / `@import` [ARCH#§2.M-002]
-  - [ ] `tests/core/sanitize.test.ts` — AC-001..AC-004 单元测试
+  - [ ] 更新 `packages/contracts/src/mcp/tool-contracts.ts` — `renderMarkdownResponseSchema` 增加 `postPaste: z.boolean()` [ARCH#§2.M-002]
+  - [ ] 更新 `packages/core/src/render.ts` — `renderMarkdown` 返回值赋 `postPaste: false`
+  - [ ] `tests/core/sanitize.test.ts` — AC-001..AC-005 单元测试
 - **relates_to**: [F-002, M-002]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-002

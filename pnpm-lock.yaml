@@ -11,6 +11,9 @@ importers:
       '@biomejs/biome':
         specifier: ^1.9.4
         version: 1.9.4
+      '@types/hast':
+        specifier: ^3.0.4
+        version: 3.0.4
       '@types/node':
         specifier: ^25.9.1
         version: 25.9.1
@@ -150,7 +153,18 @@ importers:
 
   packages/plugin-api: {}
 
-  packages/ruleset: {}
+  packages/ruleset:
+    dependencies:
+      '@wechat-flow/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+    devDependencies:
+      '@types/hast':
+        specifier: ^3.0.4
+        version: 3.0.4
+      '@types/node':
+        specifier: ^25.9.1
+        version: 25.9.1
 
   packages/themes:
     dependencies:

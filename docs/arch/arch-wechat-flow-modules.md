@@ -29,7 +29,7 @@ required_sections:
 - **内部关键组件**:
   - `EditorShell.vue` — 三栏布局与状态栏
   - `SourcePane`（基于 CodeMirror 6）— directive 语法高亮、补全
-  - `PreviewPane` — iframe 沙箱（`sandbox=""` 空属性 + CSP `default-src 'none'`，零 JS）挂载与视口切换（375 / 768 / desktop）；目录跳转、源码↔预览高亮联动、复制按钮覆盖层等 UI 钩子全部在主线程通过 `iframe.contentDocument` 与 overlay 实现，不向 iframe 内注入脚本
+  - `PreviewPane` — iframe 沙箱（`sandbox="allow-same-origin"`，**无 `allow-scripts`** + CSP `default-src 'none'`，零 JS）挂载与视口切换（375 / 768 / desktop）；目录跳转、源码↔预览高亮联动、复制按钮覆盖层等 UI 钩子全部在主线程通过 `iframe.contentDocument` 与 overlay 实现，不向 iframe 内注入脚本。`allow-same-origin` 是主线程读写 `contentDocument`（源码↔预览高亮联动、目录跳转 `scrollTo`）的物理前提——opaque origin 下 `contentDocument` 访问抛 SecurityError；禁脚本由「无 `allow-scripts`（不创建脚本执行环境）+ CSP `default-src 'none'`（`script-src` 缺省回退，阻断所有脚本源 / inline / eval）」两层共同保证，沙箱配置与 CSP 互为冗余。安全论证见 arch#§5.3、决策记录 §8.2 Q3.8
   - `CommandPalette`、`InsertDrawer`、`ContextMenu` — 共享同一 command registry
   - `DiagnosticsPanel` — 兼容性报告分级展示（red / yellow / green）；inbound 数据契约为 M-003 输出的 `DiagnosticReport`（含 `diagnostics: Diagnostic[]`、`nodeChangeRecords: NodeChangeRecord[]`、`nightRiskIssues: NightRiskEntry[]` 三大字段）；面板渲染 `nodeChangeRecords` → 子组件 `CompatibilityDiffView`（C-013.1）双栏对比；`nightRiskIssues` 非空时面板进入 `night-risk-alert` 视觉态（ui-spec C-013）
   - `CompatibilityDiffView` — DiagnosticsPanel 子组件；订阅 `DiagnosticReport.nodeChangeRecords[]` 中匹配 `nodeSelector` 的 `NodeChangeRecord`，按 `before` / `after` outerHTML 与 `attrDiff` 渲染双栏对比；不主动调用渲染管线，所有数据由 M-003 在过滤执行时一次性记录

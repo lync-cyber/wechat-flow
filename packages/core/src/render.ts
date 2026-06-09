@@ -1,4 +1,5 @@
 import { inlineStyle } from "./pipeline/inline-style.ts";
+import { injectNodeIds } from "./pipeline/node-id-injector.ts";
 import { parseMarkdown } from "./pipeline/parse.ts";
 import { serializeHast } from "./pipeline/serialize.ts";
 import { transformToHast } from "./pipeline/transform.ts";
@@ -10,7 +11,10 @@ export async function renderMarkdown(
   options?: RenderOptions
 ): Promise<RenderResult> {
   const mdast = parseMarkdown(input);
-  const hast = transformToHast(mdast, options);
+  let hast = transformToHast(mdast, options);
+  if (options?.injectNodeIds) {
+    hast = injectNodeIds(hast);
+  }
   const styledHast = inlineStyle(hast);
   const html = serializeHast(styledHast);
 

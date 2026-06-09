@@ -7,11 +7,13 @@ const props = withDefaults(
     modelValue?: string;
     readonly?: boolean;
     onValueChange?: (value: string) => void;
+    onSelectionChange?: (cursorLine: number) => void;
   }>(),
   {
     modelValue: "",
     readonly: false,
     onValueChange: undefined,
+    onSelectionChange: undefined,
   }
 );
 
@@ -27,6 +29,7 @@ const { mount, destroy, setValue, editorView } = useCodemirror({
   onValueChange: props.onValueChange
     ? props.onValueChange
     : (value: string) => emit("update:modelValue", value),
+  onSelectionChange: props.onSelectionChange,
 });
 
 defineExpose({ editorView });

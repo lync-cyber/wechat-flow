@@ -7,7 +7,8 @@
     "noEmit": true,
     "paths": {
       "@wechat-flow/contracts": ["../packages/contracts/src/index.ts"],
-      "@wechat-flow/core": ["../packages/core/src/index.ts"]
+      "@wechat-flow/core": ["../packages/core/src/index.ts"],
+      "@wechat-flow/ruleset": ["../packages/ruleset/src/index.ts"]
     }
   },
   "include": ["**/*.ts"]
