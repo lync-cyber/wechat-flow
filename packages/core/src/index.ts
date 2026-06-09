@@ -15,4 +15,5 @@ export {
 } from "./utils/deterministic.ts";
 export { saveDraft, loadDocument, listDocuments, deleteDocument } from "./documents/manager.ts";
 export { saveSplitterWidth, loadSplitterWidth } from "./storage/preferences.ts";
+export { closeDb } from "./storage/indexeddb-adapter.ts";
 export type { DocumentRecord, DocumentMeta } from "./storage/indexeddb-adapter.ts";
