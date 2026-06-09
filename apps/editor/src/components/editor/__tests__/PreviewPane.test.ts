@@ -146,3 +146,57 @@ describe("AC-003: 视口切换工具栏行为", () => {
     wrapper.unmount();
   });
 });
+
+// C-005 loading 态（ui-spec C-005 状态表 `loading`）：iframe 区域居中 spinner
+describe("C-005 loading 态", () => {
+  it("isLoading=true 时显示 loading 指示（渲染中…）", async () => {
+    const wrapper = mount(PreviewPane, { props: { ...defaultProps, isLoading: true } });
+    await nextTick();
+    const loading = wrapper.find('[data-testid="preview-loading"]');
+    expect(loading.exists()).toBe(true);
+    expect(loading.text()).toContain("渲染中");
+    wrapper.unmount();
+  });
+
+  it("isLoading=false 时不显示 loading 指示", async () => {
+    const wrapper = mount(PreviewPane, { props: { ...defaultProps, isLoading: false } });
+    await nextTick();
+    expect(wrapper.find('[data-testid="preview-loading"]').exists()).toBe(false);
+    wrapper.unmount();
+  });
+});
+
+// C-005 error 态（ui-spec C-005 状态表 `error`）：! 图标 + 错误说明 + 「重试」按钮
+describe("C-005 error 态", () => {
+  it("error 非空时显示错误说明 + 「重试」按钮，iframe 被替换", async () => {
+    const wrapper = mount(PreviewPane, {
+      props: { ...defaultProps, error: "渲染失败，请重试" },
+    });
+    await nextTick();
+    const errView = wrapper.find('[data-testid="preview-error"]');
+    expect(errView.exists()).toBe(true);
+    expect(errView.text()).toContain("渲染失败");
+    expect(wrapper.find('[data-testid="preview-retry-btn"]').text()).toBe("重试");
+    expect(wrapper.find('[data-testid="iframe-container"]').exists()).toBe(false);
+    wrapper.unmount();
+  });
+
+  it("点击「重试」触发 onRetry 回调", async () => {
+    const onRetry = vi.fn();
+    const wrapper = mount(PreviewPane, {
+      props: { ...defaultProps, error: "渲染失败", onRetry },
+    });
+    await nextTick();
+    await wrapper.find('[data-testid="preview-retry-btn"]').trigger("click");
+    expect(onRetry).toHaveBeenCalledTimes(1);
+    wrapper.unmount();
+  });
+
+  it("error 为空时不显示错误视图，iframe 正常存在", async () => {
+    const wrapper = mount(PreviewPane, { props: defaultProps, attachTo: document.body });
+    await nextTick();
+    expect(wrapper.find('[data-testid="preview-error"]').exists()).toBe(false);
+    expect(wrapper.find("iframe").exists()).toBe(true);
+    wrapper.unmount();
+  });
+});

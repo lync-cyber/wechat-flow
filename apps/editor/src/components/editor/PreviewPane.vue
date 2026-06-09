@@ -11,6 +11,7 @@ const props = withDefaults(
     error?: string;
     syncState?: "idle" | "connecting" | "syncing" | "synced" | "offline" | "error" | "conflict";
     onViewportChange?: (v: string) => void;
+    onRetry?: () => void;
   }>(),
   {
     viewport: "375",
@@ -18,6 +19,7 @@ const props = withDefaults(
     isLoading: false,
     syncState: "idle",
     onViewportChange: undefined,
+    onRetry: undefined,
   }
 );
 
@@ -40,6 +42,10 @@ const iframeContainerStyle = computed(() => {
 
 function handleViewportClick(v: "375" | "768" | "auto"): void {
   props.onViewportChange?.(v);
+}
+
+function handleRetry(): void {
+  props.onRetry?.();
 }
 </script>
 
@@ -78,7 +84,20 @@ function handleViewportClick(v: "375" | "768" | "auto"): void {
 
     <!-- iframe wrapper -->
     <div class="preview-pane__scroll">
+      <!-- error state replaces the preview area -->
+      <div v-if="error" class="preview-pane__error" data-testid="preview-error">
+        <div class="preview-pane__error-icon" aria-hidden="true">!</div>
+        <p class="preview-pane__error-msg">{{ error }}</p>
+        <button
+          type="button"
+          class="preview-pane__retry-btn"
+          data-testid="preview-retry-btn"
+          @click="handleRetry"
+        >重试</button>
+      </div>
+
       <div
+        v-else
         class="preview-pane__iframe-container"
         :style="iframeContainerStyle"
         data-testid="iframe-container"
@@ -91,6 +110,11 @@ function handleViewportClick(v: "375" | "768" | "auto"): void {
           title="微信预览"
           data-testid="preview-iframe"
         />
+        <!-- loading overlay covers the iframe area while rendering -->
+        <div v-if="isLoading" class="preview-pane__loading" data-testid="preview-loading">
+          <div class="preview-pane__spinner" aria-hidden="true" />
+          <span class="preview-pane__loading-text">渲染中…</span>
+        </div>
       </div>
     </div>
 
@@ -151,6 +175,7 @@ function handleViewportClick(v: "375" | "768" | "auto"): void {
   max-width: 100%;
   height: 100%;
   flex-shrink: 0;
+  position: relative;
 }
 
 .preview-pane__iframe {
@@ -164,5 +189,80 @@ function handleViewportClick(v: "375" | "768" | "auto"): void {
   position: absolute;
   bottom: var(--space-2, 8px);
   right: var(--space-2, 8px);
+}
+
+.preview-pane__loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3, 12px);
+  background: var(--color-surface-preview);
+}
+
+.preview-pane__spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-border-subtle);
+  border-top-color: var(--color-brand-muted);
+  border-radius: var(--radius-full, 9999px);
+  animation: preview-spin 0.8s linear infinite;
+}
+
+@keyframes preview-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.preview-pane__loading-text {
+  font-size: var(--font-size-sm, 13px);
+  color: var(--color-text-muted);
+}
+
+.preview-pane__error {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4, 16px);
+  padding: var(--space-6, 24px);
+  text-align: center;
+}
+
+.preview-pane__error-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  font-weight: var(--font-weight-bold, 700);
+  line-height: 1;
+  color: var(--color-error);
+}
+
+.preview-pane__error-msg {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-sm, 14px);
+  color: var(--color-text-secondary);
+}
+
+.preview-pane__retry-btn {
+  padding: var(--space-2, 8px) var(--space-5, 20px);
+  border: none;
+  border-radius: var(--radius-base, 4px);
+  background: var(--color-brand);
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-sm, 13px);
+  font-weight: var(--font-weight-medium, 500);
+  cursor: pointer;
+}
+
+.preview-pane__retry-btn:hover {
+  background: var(--color-brand-hover);
 }
 </style>
