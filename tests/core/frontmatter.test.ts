@@ -307,6 +307,60 @@ describe("AC-004: paint 包含非 paintable token 产生 warn", () => {
 });
 
 // ---------------------------------------------------------------------------
+// options.themeId 经注册中心解析主题
+// ---------------------------------------------------------------------------
+
+describe("options.themeId 经注册中心解析主题", () => {
+  beforeEach(() => {
+    resetThemeRegistry();
+    registerTheme(techLikeTheme);
+  });
+
+  it("无 frontmatter 时 themeId: 'tech' 使 pre 使用 tech 主题样式", async () => {
+    const md = "```js\nconsole.log('hi');\n```";
+    const result = await renderMarkdown(md, { themeId: "tech" });
+    const preStyle = extractTagStyle(result.html, "pre");
+    if (!preStyle) throw new Error("no <pre> with style in output HTML");
+    expect(extractCssProp(preStyle, "background-color")).toBe("#1A1A2E");
+    expect(result.themeVersion).toBe("1.0.0");
+  });
+
+  it("frontmatter theme 优先于 options.themeId", async () => {
+    const otherTheme: ThemeDefinition = {
+      id: "other",
+      name: "Other",
+      tokens: { "--color-brand": "#AABBCC" },
+      blocks: {
+        pre: {
+          "background-color": "#FFFFFF",
+          "font-family": "Arial, sans-serif",
+          color: "#000000",
+          padding: "4px",
+          "font-size": "14px",
+        },
+      },
+      paintable: [],
+      assets: {},
+      meta: { author: "t", version: "3.0.0", wcagContrast: { checked: true, minRatio: 4.5 } },
+    };
+    registerTheme(otherTheme);
+    const md = "---\ntheme: tech\n---\n```js\nhi\n```";
+    const result = await renderMarkdown(md, { themeId: "other" });
+    const preStyle = extractTagStyle(result.html, "pre");
+    if (!preStyle) throw new Error("no <pre> with style in output HTML");
+    expect(extractCssProp(preStyle, "background-color")).toBe("#1A1A2E");
+    expect(result.themeVersion).toBe("1.0.0");
+  });
+
+  it("themeId 指向未注册主题时回退默认 tokens 且不抛异常", async () => {
+    const md = "# Hello";
+    const result = await renderMarkdown(md, { themeId: "not-registered" });
+    expect(result.html.length).toBeGreaterThan(0);
+    expect(result.themeVersion).toBe("0.0.0");
+  });
+});
+
+// ---------------------------------------------------------------------------
 // 优先级：options.theme 显式传入优先于 frontmatter
 // ---------------------------------------------------------------------------
 

@@ -355,3 +355,6 @@
 {"ts": "2026-06-10T09:57:50+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD GREEN: T-115 (RED 32 FAILED 已主线程确认, test-writer 截断仅丢汇报)"}
 {"event": "tdd_phase", "phase": "development", "detail": "TDD done: T-027(509基线+34) + T-114(538基线+29) + T-115(570全量, GREEN 32/32, REFACTOR skipped no trigger); G4=f6253d4", "ts": "2026-06-10T10:10:19+00:00"}
 {"event": "state_change", "phase": "development", "detail": "Sprint 3 开发+设计任务 12/14 全部完成; 余 T-101 设计签字 + T-110 validation(用户清单已发)", "ts": "2026-06-10T10:10:19+00:00"}
+{"ts": "2026-06-10T10:13:20+00:00", "event": "session_start", "phase": "session", "detail": "IDE session started"}
+{"event": "state_change", "phase": "development", "detail": "T-110 浏览器代理验证(preview MCP, 6项清单): 4-ContextMenu 6-frontmatter theme/base-color 原生通过; 发现5缺陷: F1 ThemeCard未接switchTheme, F2 renderMarkdown忽略options.themeId, F3 main.ts未注册blocks/marks(InsertDrawer空+补全无候选), F4 TopBar主题标签硬编码, F5 registerDirectiveCompletion空壳(updateListener无逻辑+extension未传入CM+Popover未渲染)", "ts": "2026-06-10T11:00:39+00:00"}
+{"event": "state_change", "phase": "development", "detail": "T-110 五缺陷主线程修复+浏览器复验全过: 1-主题卡热切换 2-Palette执行预览跟随 3-InsertDrawer 25块+参数表单+插入 5-补全触发/过滤/插入光标定位/Esc焦点保持; 门禁 vitest 575/575 + typecheck 47/47 + tests-tsc 0 + biome 0; T-110=done", "ts": "2026-06-10T11:00:39+00:00"}

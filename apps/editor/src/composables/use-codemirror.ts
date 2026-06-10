@@ -1,5 +1,5 @@
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
-import { EditorState } from "@codemirror/state";
+import { EditorState, type Extension } from "@codemirror/state";
 import { EditorView, keymap, lineNumbers, placeholder } from "@codemirror/view";
 import { type Ref, onBeforeUnmount, ref } from "vue";
 import { markdownLanguageExtension } from "../lib/cm-markdown-lang";
@@ -11,6 +11,7 @@ export interface UseCodemirrorOptions {
   readonly?: boolean;
   onValueChange?: (value: string) => void;
   onSelectionChange?: (cursorLine: number) => void;
+  extraExtensions?: Extension[];
 }
 
 export interface UseCodemirrorReturn {
@@ -22,7 +23,13 @@ export interface UseCodemirrorReturn {
 }
 
 export function useCodemirror(options: UseCodemirrorOptions = {}): UseCodemirrorReturn {
-  const { initialValue = "", readonly = false, onValueChange, onSelectionChange } = options;
+  const {
+    initialValue = "",
+    readonly = false,
+    onValueChange,
+    onSelectionChange,
+    extraExtensions = [],
+  } = options;
   const editorView: Ref<EditorView | null> = ref(null);
 
   let debounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -38,6 +45,7 @@ export function useCodemirror(options: UseCodemirrorOptions = {}): UseCodemirror
       cmBaseTheme,
       cmSyntaxHighlighting,
       EditorState.readOnly.of(readonly),
+      ...extraExtensions,
     ];
 
     if (onValueChange || onSelectionChange) {

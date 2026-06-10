@@ -505,6 +505,36 @@ describe("AC-003: production-path wiring — SourcePane.vue contains registerDir
     expect(result).toBeTruthy();
   });
 
+  it("extension 在文档出现 ':::ca' 前缀时调用 onTrigger，删除后调用 onClose", async () => {
+    const { registerDirectiveCompletion } = (await import(
+      /* @vite-ignore */ COMPLETION_MODULE
+    )) as typeof import("../../apps/editor/src/editor/extensions/directive-completion.ts");
+    const { EditorView } = await import("@codemirror/view");
+
+    const onTrigger = vi.fn();
+    const onClose = vi.fn();
+    const view = new EditorView({
+      doc: "",
+      extensions: [registerDirectiveCompletion({ onClose, onSelect: () => {}, onTrigger })],
+      parent: document.body,
+    });
+
+    view.dispatch({ changes: { from: 0, insert: ":::ca" }, selection: { anchor: 5 } });
+    await new Promise((resolve) => setTimeout(resolve, 80));
+
+    expect(onTrigger).toHaveBeenCalled();
+    const context = onTrigger.mock.calls[onTrigger.mock.calls.length - 1][0];
+    expect(context.triggerType).toBe("block");
+    expect(context.query).toBe("ca");
+    expect(context.from).toBe(0);
+    expect(context.to).toBe(5);
+
+    view.dispatch({ changes: { from: 0, to: 5, insert: "plain" }, selection: { anchor: 5 } });
+    expect(onClose).toHaveBeenCalled();
+
+    view.destroy();
+  });
+
   it("module exports detectDirectiveTrigger, buildCandidates, buildDirectiveSnippet — all callable with valid args", async () => {
     const mod = (await import(/* @vite-ignore */ COMPLETION_MODULE)) as typeof import(
       "../../apps/editor/src/editor/extensions/directive-completion.ts"

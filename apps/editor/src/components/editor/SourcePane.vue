@@ -1,7 +1,13 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { listBlocks } from "@wechat-flow/core/src/registry/block.ts";
+import { listMarks } from "@wechat-flow/core/src/registry/mark.ts";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useCodemirror } from "../../composables/use-codemirror";
-import { registerDirectiveCompletion } from "../../editor/extensions/directive-completion.ts";
+import {
+  buildDirectiveSnippet,
+  registerDirectiveCompletion,
+} from "../../editor/extensions/directive-completion.ts";
+import DirectiveAutocompletePopover from "./DirectiveAutocompletePopover.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -25,13 +31,46 @@ const emit = defineEmits<{
 const editorContainer = ref<HTMLElement | null>(null);
 
 const isAutocompleteOpen = ref(false);
+const autocompleteTriggerType = ref<"block" | "inline">("block");
+const autocompleteInput = ref("");
+const popoverPosition = ref({ left: 0, top: 0 });
+let autocompleteRange = { from: 0, to: 0 };
+
+const availableBlocks = computed(() => listBlocks());
+const availableMarks = computed(() => listMarks());
+
+function closeAutocomplete(): void {
+  isAutocompleteOpen.value = false;
+}
+
+function onAutocompleteSelect(payload: { type: "block" | "inline"; blockId: string }): void {
+  const view = editorView.value;
+  if (view) {
+    const snippet = buildDirectiveSnippet({ type: payload.type, blockId: payload.blockId });
+    // cursor lands on the content slot (block: empty middle line; inline: inside brackets)
+    // so the directive prefix no longer matches and the popover does not re-trigger
+    const cursorOffset =
+      payload.type === "block" ? snippet.indexOf("\n") + 1 : snippet.indexOf("[") + 1;
+    view.dispatch({
+      changes: { from: autocompleteRange.from, to: autocompleteRange.to, insert: snippet },
+      selection: { anchor: autocompleteRange.from + cursorOffset },
+    });
+    view.focus();
+  }
+  isAutocompleteOpen.value = false;
+}
 
 const directiveCompletionExtension = registerDirectiveCompletion({
-  onClose: () => {
-    isAutocompleteOpen.value = false;
-  },
-  onSelect: () => {
-    isAutocompleteOpen.value = false;
+  onClose: closeAutocomplete,
+  onSelect: onAutocompleteSelect,
+  onTrigger: (context) => {
+    autocompleteTriggerType.value = context.triggerType;
+    autocompleteInput.value = context.query;
+    autocompleteRange = { from: context.from, to: context.to };
+    if (context.coords) {
+      popoverPosition.value = context.coords;
+    }
+    isAutocompleteOpen.value = true;
   },
 });
 
@@ -42,6 +81,7 @@ const { mount, destroy, setValue, editorView } = useCodemirror({
     ? props.onValueChange
     : (value: string) => emit("update:modelValue", value),
   onSelectionChange: props.onSelectionChange,
+  extraExtensions: [directiveCompletionExtension],
 });
 
 defineExpose({ editorView });
@@ -79,6 +119,16 @@ watch(
       ref="editorContainer"
       class="source-pane__editor"
       data-testid="source-pane-editor"
+    />
+    <DirectiveAutocompletePopover
+      :is-open="isAutocompleteOpen"
+      :trigger-type="autocompleteTriggerType"
+      :blocks="availableBlocks"
+      :marks="availableMarks"
+      :current-input="autocompleteInput"
+      :on-select="onAutocompleteSelect"
+      :on-close="closeAutocomplete"
+      :style="{ position: 'fixed', left: `${popoverPosition.left}px`, top: `${popoverPosition.top}px` }"
     />
   </div>
 </template>

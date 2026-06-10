@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DiagnosticReport } from "@wechat-flow/contracts";
-import { listThemes, registerTheme } from "@wechat-flow/core/src/registry/theme.ts";
+import { describeTheme, listThemes, registerTheme } from "@wechat-flow/core/src/registry/theme.ts";
 import { type ComponentPublicInstance, computed, onMounted, onUnmounted, ref } from "vue";
 import { useBidirectionalHighlight } from "../../composables/use-bidirectional-highlight.ts";
 import { useSplitterWidth } from "../../composables/use-splitter-width";
@@ -74,6 +74,19 @@ function switchTheme(themeId: string): void {
 const commandPaletteCommands = computed<CommandDefinition[]>(() => {
   listThemes();
   return buildEditorCommands({ switchTheme });
+});
+
+const FALLBACK_THEME_ACCENT = "#2D5A4E";
+
+const currentThemeName = computed(() => {
+  const def = describeTheme(editorStore.currentTheme);
+  return def?.name ?? editorStore.currentTheme;
+});
+
+const currentThemeAccent = computed(() => {
+  const tokens = describeTheme(editorStore.currentTheme)?.tokens;
+  const brand = tokens && (tokens as Record<string, string>)["--color-brand"];
+  return typeof brand === "string" ? brand : FALLBACK_THEME_ACCENT;
 });
 
 const diagnostics = computed<DiagnosticReport>(() => editorStore.lastReport);
@@ -177,8 +190,8 @@ onUnmounted(() => {
     <!-- cataforge: wiring-placeholder — onUndo/onRedo/onCopy 接线延后至对应功能任务 -->
     <TopBar
       doc-title="Untitled"
-      theme-name="默认主题"
-      theme-accent-color="#2D5A4E"
+      :theme-name="currentThemeName"
+      :theme-accent-color="currentThemeAccent"
       sync-state="idle"
       :is-focus-mode="isFocusMode"
       :has-unsaved-changes="false"
@@ -209,7 +222,7 @@ onUnmounted(() => {
         data-testid="left-panel"
         :style="!isTablet ? { width: leftPanel.width.value + 'px' } : undefined"
       >
-        <LeftPanelTabs default-tab="theme" />
+        <LeftPanelTabs default-tab="theme" :on-theme-select="switchTheme" />
       </aside>
 
       <!-- Left splitter (desktop only, not focus mode) -->

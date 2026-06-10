@@ -11,6 +11,7 @@ const props = withDefaults(
   defineProps<{
     defaultTab?: TabId;
     onTabChange?: (tab: TabId) => void;
+    onThemeSelect?: (themeId: string) => void;
   }>(),
   {
     defaultTab: "theme",
@@ -30,6 +31,7 @@ function switchTab(tab: TabId): void {
 
 function selectTheme(id: string): void {
   selectedThemeId.value = id;
+  props.onThemeSelect?.(id);
 }
 
 function insertBlock(block: ReturnType<typeof listBlocks>[number]): void {

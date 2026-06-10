@@ -85,6 +85,20 @@ describe("AC-001: 主题 Tab 激活态 + ThemeCard 列表", () => {
     expect(onTabChange).toHaveBeenCalledWith("components");
   });
 
+  it("点击主题卡时 onThemeSelect 以主题 id 调用", async () => {
+    const onThemeSelect = vi.fn();
+    const wrapper = mount(LeftPanelTabs, {
+      props: { defaultTab: "theme", onThemeSelect },
+      global: { plugins: [makeRouter()] },
+    });
+    await nextTick();
+
+    await wrapper.find('[data-testid="theme-card-elegant"]').trigger("click");
+    await nextTick();
+
+    expect(onThemeSelect).toHaveBeenCalledWith("elegant");
+  });
+
   it("主题 Tab 下方渲染「自定义配色」和「调色板派生」两个链接", async () => {
     const wrapper = mount(LeftPanelTabs, {
       props: { defaultTab: "theme" },

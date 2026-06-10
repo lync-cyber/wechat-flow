@@ -1,3 +1,4 @@
+import type { Extension } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 import type { BlockDefinition } from "@wechat-flow/core/src/registry/block.ts";
 import type { MarkDefinition } from "@wechat-flow/core/src/registry/mark.ts";
@@ -20,9 +21,18 @@ export interface SnippetOptions {
   params?: Record<string, string>;
 }
 
+export interface TriggerContext {
+  triggerType: "block" | "inline";
+  query: string;
+  from: number;
+  to: number;
+  coords: { left: number; top: number } | null;
+}
+
 export interface CompletionCallbacks {
   onClose: () => void;
   onSelect: (payload: { type: "block" | "inline"; blockId: string }) => void;
+  onTrigger?: (context: TriggerContext) => void;
 }
 
 export function detectDirectiveTrigger(prefix: string): TriggerResult | null {
@@ -69,10 +79,43 @@ export function buildDirectiveSnippet(options: SnippetOptions): string {
   return `:${blockId}[${paramsStr}]`;
 }
 
-export function registerDirectiveCompletion(callbacks: CompletionCallbacks): object {
-  const { onClose, onSelect } = callbacks;
-  return EditorView.updateListener.of((_update) => {
-    void onSelect;
-    void onClose;
-  });
+export function registerDirectiveCompletion(callbacks: CompletionCallbacks): Extension {
+  const { onClose, onTrigger } = callbacks;
+  return [
+    EditorView.updateListener.of((update) => {
+      if (!update.docChanged && !update.selectionSet) {
+        return;
+      }
+      const pos = update.state.selection.main.head;
+      const line = update.state.doc.lineAt(pos);
+      const prefix = update.state.doc.sliceString(line.from, pos);
+      const trigger = detectDirectiveTrigger(prefix);
+      if (!trigger) {
+        onClose();
+        return;
+      }
+      const from = trigger.triggerType === "block" ? line.from : pos - trigger.query.length - 1;
+      // coordsAtPos reads layout — defer to the measure phase, not the update listener itself
+      update.view.requestMeasure({
+        read: (view) => {
+          const coords = view.coordsAtPos(pos);
+          onTrigger?.({
+            triggerType: trigger.triggerType,
+            query: trigger.query,
+            from,
+            to: pos,
+            coords: coords ? { left: coords.left, top: coords.bottom } : null,
+          });
+        },
+      });
+    }),
+    EditorView.domEventHandlers({
+      keydown: (event) => {
+        if (event.key === "Escape") {
+          onClose();
+        }
+        return false;
+      },
+    }),
+  ];
 }

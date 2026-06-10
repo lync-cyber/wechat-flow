@@ -20,10 +20,15 @@ export async function renderMarkdown(
   const { content, meta } = parseFrontmatter(input);
 
   // paint > base-color > theme default priority
+  // theme resolution: options.theme > frontmatter meta.theme > options.themeId
   let effectiveTheme: ThemeDefinition | undefined = options?.theme;
 
   if (!effectiveTheme && meta.theme) {
     effectiveTheme = describeTheme(meta.theme);
+  }
+
+  if (!effectiveTheme && options?.themeId) {
+    effectiveTheme = describeTheme(options.themeId);
   }
 
   const paintDiagnostics: Diagnostic[] = [];

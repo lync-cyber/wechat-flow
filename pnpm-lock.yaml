@@ -11,6 +11,12 @@ importers:
       '@biomejs/biome':
         specifier: ^1.9.4
         version: 1.9.4
+      '@codemirror/state':
+        specifier: ^6.6.0
+        version: 6.6.0
+      '@codemirror/view':
+        specifier: ^6.43.0
+        version: 6.43.0
       '@stryker-mutator/core':
         specifier: ^9.6.1
         version: 9.6.1(@types/node@25.9.1)
@@ -82,9 +88,15 @@ importers:
       '@lezer/highlight':
         specifier: ^1.2.3
         version: 1.2.3
+      '@wechat-flow/blocks':
+        specifier: workspace:^
+        version: link:../../packages/blocks
       '@wechat-flow/core':
         specifier: workspace:^
         version: link:../../packages/core
+      '@wechat-flow/marks':
+        specifier: workspace:^
+        version: link:../../packages/marks
       '@wechat-flow/theme-business':
         specifier: workspace:^
         version: link:../../packages/themes/business
