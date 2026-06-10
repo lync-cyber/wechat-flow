@@ -345,3 +345,5 @@
 {"ts": "2026-06-10T08:43:23+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD GREEN: T-022"}
 {"ts": "2026-06-10T08:55:21+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-029"}
 {"ts": "2026-06-10T09:07:12+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD REFACTOR: T-029 (trigger: implementer self-report coupling)"}
+{"event": "tdd_phase", "phase": "development", "detail": "TDD done: T-022(GREEN 18AC测试全过) + T-026(wiring EditorShell) + T-029(含REFACTOR completed, render.ts 178→77行, 越权检查通过)", "ts": "2026-06-10T09:13:13+00:00"}
+{"event": "state_change", "phase": "development", "detail": "Sprint 3 代码主线 G0-G3 完成(8/14): commits d9f5600/a1d6c46/5b69bc8/051dce8; 门禁 vitest 475/475, typecheck 40/40, biome 0; 余6任务阻塞于用户侧 T-100 Penpot 设计", "ts": "2026-06-10T09:13:13+00:00"}
