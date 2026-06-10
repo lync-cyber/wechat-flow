@@ -13,6 +13,12 @@ vi.mock("../../../use-cases/render.ts", () => ({
     html: "<h1>Hello</h1>",
     diagnostics: [],
     versionTriple: { coreVersion: "0.0.0", themeVersion: "0.0.0", rulesetVersion: "0.0.0" },
+    report: {
+      diagnostics: [],
+      nodeChangeRecords: [],
+      nightRiskIssues: [],
+      versionTriple: { coreVersion: "0.0.0", themeVersion: "0.0.0", rulesetVersion: "0.0.0" },
+    },
   }),
 }));
 

@@ -51,3 +51,10 @@ deps: []
 - 基线/推荐: 确认进入 Sprint 0 (Recommended)
 - 实际/选择: 先审阅 dev-plan
 - 偏差类型: preference
+
+### 2026-06-10 | orchestrator | T-109-pre-check
+- 触发信号: validation-pre-wiring-audit
+- 问题/假设: dev-plan Sprint 2 假设 T-019 完成后 M-003 诊断流端到端可达
+- 基线/推荐: arch M-002 管线序列含 stage 4 ruleset(applyRuleset)，应有任务卡承载 renderMarkdown 接线
+- 实际/选择: 无任务卡承载该接线；T-019 以占位空 DiagnosticReport 满足字面 AC；orchestrator 以 T-019 continuation 补真实接线后再进 T-109
+- 偏差类型: upstream-gap (dev-plan 任务分解遗漏 M-002↔M-003 集成点)

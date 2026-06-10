@@ -1,3 +1,4 @@
+import { applyRuleset, builtinRules, getRulesetVersion } from "@wechat-flow/ruleset";
 import { inlineStyle } from "./pipeline/inline-style.ts";
 import { injectNodeIds } from "./pipeline/node-id-injector.ts";
 import { parseMarkdown } from "./pipeline/parse.ts";
@@ -15,6 +16,11 @@ export async function renderMarkdown(
   const mdast = parseMarkdown(input);
   let hast = transformToHast(mdast, options);
   hast = sanitizeHast(hast, wechatFlowSanitizeSchema);
+
+  const rules = options?.rules !== undefined ? options.rules : builtinRules;
+  const { hast: rulesetHast, report } = applyRuleset(hast, rules);
+  hast = rulesetHast;
+
   if (options?.injectNodeIds) {
     hast = injectNodeIds(hast);
   }
@@ -23,10 +29,11 @@ export async function renderMarkdown(
 
   return {
     html,
-    diagnostics: [],
-    rulesetVersion: options?.rulesetVersion ?? "0.0.0",
+    diagnostics: report.diagnostics,
+    rulesetVersion: getRulesetVersion(),
     themeVersion: "0.0.0", // cataforge: wiring-placeholder — theme registry wiring deferred
     postPaste: false,
     coreVersion,
+    report,
   };
 }

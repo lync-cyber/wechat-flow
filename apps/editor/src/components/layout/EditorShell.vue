@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { type ComponentPublicInstance, onMounted, onUnmounted, ref } from "vue";
+import type { DiagnosticReport } from "@wechat-flow/contracts";
+import { type ComponentPublicInstance, computed, onMounted, onUnmounted, ref } from "vue";
 import { useBidirectionalHighlight } from "../../composables/use-bidirectional-highlight.ts";
 import { useSplitterWidth } from "../../composables/use-splitter-width";
 import { useEditorStore } from "../../stores/editor.ts";
+import DiagnosticsPanel from "../diagnostics/DiagnosticsPanel.vue";
 import PreviewPane from "../editor/PreviewPane.vue";
 import SourcePane from "../editor/SourcePane.vue";
 import ResizableSplitter from "./ResizableSplitter.vue";
+import StatusBar from "./StatusBar.vue";
 import TopBar from "./TopBar.vue";
 
 const editorStore = useEditorStore();
@@ -48,6 +51,18 @@ const isFocusMode = ref(false);
 const isTablet = ref(window.innerWidth < TABLET_BREAKPOINT);
 const isDrawerOpen = ref(false);
 const previewViewport = ref<"375" | "768" | "auto">("375");
+const isDiagnosticsExpanded = ref(false);
+
+const diagnostics = computed<DiagnosticReport>(() => editorStore.lastReport);
+
+const statusBarMetrics = computed(() => ({
+  words: editorStore.content.trim() === "" ? 0 : editorStore.content.trim().length,
+  readMinutes: 1,
+}));
+
+function onToggleDiagnostics(): void {
+  isDiagnosticsExpanded.value = !isDiagnosticsExpanded.value;
+}
 
 const leftPanel = useSplitterWidth("left", LEFT_PANEL_DEFAULT, LEFT_PANEL_MIN, LEFT_PANEL_MAX);
 const rightPanel = useSplitterWidth("right", RIGHT_PANEL_DEFAULT, RIGHT_PANEL_MIN, RIGHT_PANEL_MAX);
@@ -182,8 +197,15 @@ onUnmounted(() => {
       </aside>
     </div>
 
-    <!-- Status bar placeholder -->
-    <footer class="editor-shell__statusbar" data-testid="status-bar" />
+    <!-- Diagnostics panel (above status bar, collapsible) -->
+    <DiagnosticsPanel
+      :diagnostics="diagnostics"
+      :is-expanded="isDiagnosticsExpanded"
+      @toggle="onToggleDiagnostics"
+    />
+
+    <!-- Status bar -->
+    <StatusBar :diagnostics="diagnostics" :metrics="statusBarMetrics" :is-diagnostics-expanded="isDiagnosticsExpanded" @toggle-diagnostics="onToggleDiagnostics" />
   </div>
 
   <!-- Tablet: hamburger button in TopBar is handled below -->

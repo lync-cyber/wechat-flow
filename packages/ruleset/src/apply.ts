@@ -40,15 +40,15 @@ export function applyRuleset(hast: Root, ruleset: RuleDefinition[]): ApplyRulese
 
   const stripResult = executeStrip(hast, stripRules);
   const afterClamp = executeClamp(stripResult.hast, clampRules);
-  const afterTransform = executeTransform(afterClamp, transformRules);
-  const afterPatch = executePatch(afterTransform, patchRules);
+  const transformResult = executeTransform(afterClamp, transformRules);
+  const afterPatch = executePatch(transformResult.hast, patchRules);
   const lintResult = executeLint(afterPatch, lintRules);
 
   return {
     hast: lintResult.hast,
     report: {
       diagnostics: lintResult.diagnostics,
-      nodeChangeRecords: stripResult.nodeChangeRecords,
+      nodeChangeRecords: [...stripResult.nodeChangeRecords, ...transformResult.nodeChangeRecords],
       nightRiskIssues: [],
       versionTriple,
     },

@@ -4,7 +4,8 @@
   "compilerOptions": {
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "paths": {
-      "@wechat-flow/core": ["../../packages/core/src/index.ts"]
+      "@wechat-flow/core": ["../../packages/core/src/index.ts"],
+      "@wechat-flow/contracts": ["../../packages/contracts/src/index.ts"]
     }
   },
   "include": ["src/**/*", "env.d.ts"]

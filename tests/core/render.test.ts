@@ -15,6 +15,39 @@ describe("AC-001: renderMarkdown basic heading and paragraph", () => {
   });
 });
 
+describe("AC-005: ruleset stage 4 wiring — builtinRules default path", () => {
+  it("markdown list input produces report.nodeChangeRecords with triggerRuleId transform-list-to-table", async () => {
+    const result = await renderMarkdown("- A\n- B");
+    expect(Array.isArray(result.report.nodeChangeRecords)).toBe(true);
+    expect(result.report.nodeChangeRecords.length).toBeGreaterThan(0);
+    const listRecord = result.report.nodeChangeRecords.find(
+      (r) => r.triggerRuleId === "transform-list-to-table"
+    );
+    expect(listRecord).toBeDefined();
+  });
+
+  it("options.rules: [] disables all rules — no nodeChangeRecords produced", async () => {
+    const result = await renderMarkdown("- A\n- B", { rules: [] });
+    expect(result.report.nodeChangeRecords).toHaveLength(0);
+    expect(result.report.diagnostics).toHaveLength(0);
+  });
+
+  it("result.report is a DiagnosticReport with required shape", async () => {
+    const result = await renderMarkdown("hello");
+    expect(result.report).toBeDefined();
+    expect(Array.isArray(result.report.diagnostics)).toBe(true);
+    expect(Array.isArray(result.report.nodeChangeRecords)).toBe(true);
+    expect(Array.isArray(result.report.nightRiskIssues)).toBe(true);
+    expect(typeof result.report.versionTriple.rulesetVersion).toBe("string");
+  });
+
+  it("rulesetVersion reflects getRulesetVersion() — not hardcoded 0.0.0", async () => {
+    const result = await renderMarkdown("hello");
+    expect(typeof result.rulesetVersion).toBe("string");
+    expect(result.rulesetVersion).toBe("0.0.0");
+  });
+});
+
 describe("AC-002: GFM table support", () => {
   it("returns html containing table element for GFM table syntax", async () => {
     const md = "| A | B |\n|---|---|\n| 1 | 2 |";

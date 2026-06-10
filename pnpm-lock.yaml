@@ -115,6 +115,9 @@ importers:
       '@wechat-flow/contracts':
         specifier: workspace:*
         version: link:../contracts
+      '@wechat-flow/ruleset':
+        specifier: workspace:*
+        version: link:../ruleset
       hast-util-from-html:
         specifier: ^2.0.3
         version: 2.0.3
