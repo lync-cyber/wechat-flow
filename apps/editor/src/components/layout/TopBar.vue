@@ -12,6 +12,8 @@ const props = defineProps<{
   onUndo: () => void;
   onRedo: () => void;
   onCopy: () => void;
+  onInsert?: () => void;
+  onMore?: () => void;
 }>();
 </script>
 
@@ -54,12 +56,12 @@ const props = defineProps<{
       class="top-bar__toolbar"
       data-testid="top-bar-toolbar"
     >
-      <button type="button" aria-label="insert">+</button>
+      <button type="button" aria-label="insert" data-testid="top-bar-insert-btn" @click="props.onInsert?.()">+</button>
       <button type="button" aria-label="viewport">□</button>
       <button type="button" class="top-bar__copy-btn" @click="props.onCopy">
         复制到公众号
       </button>
-      <button type="button" aria-label="more">...</button>
+      <button type="button" aria-label="more" data-testid="top-bar-more-btn" @click="props.onMore?.()">...</button>
     </div>
 
     <!-- User menu placeholder -->

@@ -85,6 +85,21 @@ importers:
       '@wechat-flow/core':
         specifier: workspace:^
         version: link:../../packages/core
+      '@wechat-flow/theme-business':
+        specifier: workspace:^
+        version: link:../../packages/themes/business
+      '@wechat-flow/theme-default':
+        specifier: workspace:^
+        version: link:../../packages/themes/default
+      '@wechat-flow/theme-literary':
+        specifier: workspace:^
+        version: link:../../packages/themes/literary
+      '@wechat-flow/theme-magazine':
+        specifier: workspace:^
+        version: link:../../packages/themes/magazine
+      '@wechat-flow/theme-tech':
+        specifier: workspace:^
+        version: link:../../packages/themes/tech
       pinia:
         specifier: ^3.0.0
         version: 3.0.4(typescript@5.9.3)(vue@3.5.35(typescript@5.9.3))

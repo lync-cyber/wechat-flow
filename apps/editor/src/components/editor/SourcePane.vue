@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useCodemirror } from "../../composables/use-codemirror";
+import { registerDirectiveCompletion } from "../../editor/extensions/directive-completion.ts";
 
 const props = withDefaults(
   defineProps<{
@@ -22,6 +23,17 @@ const emit = defineEmits<{
 }>();
 
 const editorContainer = ref<HTMLElement | null>(null);
+
+const isAutocompleteOpen = ref(false);
+
+const directiveCompletionExtension = registerDirectiveCompletion({
+  onClose: () => {
+    isAutocompleteOpen.value = false;
+  },
+  onSelect: () => {
+    isAutocompleteOpen.value = false;
+  },
+});
 
 const { mount, destroy, setValue, editorView } = useCodemirror({
   initialValue: props.modelValue,
