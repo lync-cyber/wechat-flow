@@ -24,14 +24,15 @@ export async function renderMarkdown(
   if (options?.injectNodeIds) {
     hast = injectNodeIds(hast);
   }
-  const styledHast = inlineStyle(hast);
+  const themeTokens = options?.theme?.blocks;
+  const styledHast = inlineStyle(hast, themeTokens);
   const html = serializeHast(styledHast);
 
   return {
     html,
     diagnostics: report.diagnostics,
     rulesetVersion: getRulesetVersion(),
-    themeVersion: "0.0.0", // cataforge: wiring-placeholder — theme registry wiring deferred
+    themeVersion: options?.theme?.meta?.version ?? "0.0.0",
     postPaste: false,
     coreVersion,
     report,

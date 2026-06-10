@@ -1,10 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "src",
     "paths": {
-      "@wechat-flow/contracts": ["../contracts/src/index.ts"]
+      "@wechat-flow/contracts": ["../../contracts/src/index.ts"]
     }
   },
   "include": ["src/**/*"]

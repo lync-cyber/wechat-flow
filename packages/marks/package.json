@@ -8,5 +8,8 @@
     "test": "vitest run --passWithNoTests",
     "lint": "biome check .",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@wechat-flow/core": "workspace:*"
   }
 }

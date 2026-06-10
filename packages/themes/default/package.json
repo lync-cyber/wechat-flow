@@ -1,5 +1,5 @@
 {
-  "name": "@wechat-flow/themes",
+  "name": "@wechat-flow/theme-default",
   "version": "0.0.0",
   "type": "module",
   "main": "src/index.ts",

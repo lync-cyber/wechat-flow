@@ -332,3 +332,11 @@
 {"event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-023", "ts": "2026-06-10T06:39:02+00:00"}
 {"event": "state_change", "phase": "development", "agent": "implementer", "detail": "truncation recovery: main-thread takeover (T-023, 完成度100%: 交付物齐全+vitest 319/319+tsc 0+biome 0; 截断点在汇报阶段)", "ts": "2026-06-10T06:53:37+00:00"}
 {"event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH done: T-020 (refactor_needed=false, self-report) + T-023 (refactor_needed=false, orchestrator替补判定)", "ts": "2026-06-10T06:53:37+00:00"}
+{"event": "state_change", "phase": "development", "detail": "G1 并行冲突护栏命中: T-021/T-025 均需改 packages/core 渲染管线, 降级为 G1a(T-021 LIGHT + T-024 RED) → G1b(T-024 GREEN + T-025 LIGHT) 两批", "ts": "2026-06-10T06:56:22+00:00"}
+{"event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-021", "ts": "2026-06-10T06:56:22+00:00"}
+{"event": "tdd_phase", "phase": "development", "detail": "TDD RED: T-024", "ts": "2026-06-10T06:56:22+00:00"}
+{"event": "incident", "phase": "development", "agent": "implementer", "detail": "T-021 子代理崩溃(Stream idle timeout, 46 tools后无返回); 部分产出结构错误(单包packages/themes/src vs 任务卡packages/themes/default) + paintable语义误用(塞入BLOCK_STYLES); 已回滚themes包体+测试, 保留contracts(+version)/types(+theme入参)干净增量", "ts": "2026-06-10T07:58:28+00:00"}
+{"event": "state_change", "phase": "development", "detail": "Agent Crash Recovery: T-021 从部分产出继续(1/1次); 同时发现contracts/theme-definition.ts为共享契约咽喉, T-021/T-024-GREEN/T-025 改为全串行", "ts": "2026-06-10T07:58:28+00:00"}
+{"event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH retry: T-021", "ts": "2026-06-10T07:58:28+00:00"}
+{"ts": "2026-06-10T08:07:09+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD GREEN: T-024"}
+{"ts": "2026-06-10T08:21:04+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-025 (T-024 REFACTOR skipped, no trigger)"}

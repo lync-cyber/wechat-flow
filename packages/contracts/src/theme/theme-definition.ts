@@ -9,13 +9,17 @@ export const wcagContrastMetaSchema = z.object({
 
 export const themeMetaSchema = z.object({
   author: z.string().optional(),
+  version: z.string().optional(),
   wcagContrast: wcagContrastMetaSchema.optional(),
 });
+
+export const themeBlocksSchema = z.record(z.string(), z.record(z.string(), z.string()));
 
 export const themeDefinitionSchema = z.object({
   id: z.string(),
   name: z.string(),
   tokens: themeTokensSchema,
+  blocks: themeBlocksSchema.optional(),
   paintable: z.record(z.string(), z.unknown()).optional(),
   assets: z.record(z.string(), z.unknown()).optional(),
   meta: themeMetaSchema.optional(),
@@ -39,6 +43,7 @@ export const guardResultSchema = z.object({
 
 export type ThemeTokens = z.infer<typeof themeTokensSchema>;
 export type ThemeMeta = z.infer<typeof themeMetaSchema>;
+export type ThemeBlocks = z.infer<typeof themeBlocksSchema>;
 export type ThemeDefinition = z.infer<typeof themeDefinitionSchema>;
 export type ThemeListEntry = z.infer<typeof themeListEntrySchema>;
 export type GuardFailure = z.infer<typeof guardFailureSchema>;
