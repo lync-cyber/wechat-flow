@@ -4,6 +4,7 @@ import { type ComponentPublicInstance, computed, onMounted, onUnmounted, ref } f
 import { useBidirectionalHighlight } from "../../composables/use-bidirectional-highlight.ts";
 import { useSplitterWidth } from "../../composables/use-splitter-width";
 import { useEditorStore } from "../../stores/editor.ts";
+import CompatibilityDiffView from "../diagnostics/CompatibilityDiffView.vue";
 import DiagnosticsPanel from "../diagnostics/DiagnosticsPanel.vue";
 import PreviewPane from "../editor/PreviewPane.vue";
 import SourcePane from "../editor/SourcePane.vue";
@@ -52,6 +53,8 @@ const isTablet = ref(window.innerWidth < TABLET_BREAKPOINT);
 const isDrawerOpen = ref(false);
 const previewViewport = ref<"375" | "768" | "auto">("375");
 const isDiagnosticsExpanded = ref(false);
+const isDiffOpen = ref(false);
+const diffNodeSelector = ref<string | undefined>(undefined);
 
 const diagnostics = computed<DiagnosticReport>(() => editorStore.lastReport);
 
@@ -63,6 +66,19 @@ const statusBarMetrics = computed(() => ({
 function onToggleDiagnostics(): void {
   isDiagnosticsExpanded.value = !isDiagnosticsExpanded.value;
 }
+
+function onShowDiff(nodeSelector: string): void {
+  diffNodeSelector.value = nodeSelector;
+  isDiffOpen.value = true;
+}
+
+function onCloseDiff(): void {
+  isDiffOpen.value = false;
+}
+
+const diffRecords = computed(() =>
+  editorStore.lastReport.nodeChangeRecords.filter((r) => r.nodeSelector === diffNodeSelector.value)
+);
 
 const leftPanel = useSplitterWidth("left", LEFT_PANEL_DEFAULT, LEFT_PANEL_MIN, LEFT_PANEL_MAX);
 const rightPanel = useSplitterWidth("right", RIGHT_PANEL_DEFAULT, RIGHT_PANEL_MIN, RIGHT_PANEL_MAX);
@@ -202,6 +218,15 @@ onUnmounted(() => {
       :diagnostics="diagnostics"
       :is-expanded="isDiagnosticsExpanded"
       @toggle="onToggleDiagnostics"
+      @show-diff="onShowDiff"
+    />
+
+    <!-- Compatibility diff modal -->
+    <CompatibilityDiffView
+      :is-open="isDiffOpen"
+      :node-selector="diffNodeSelector"
+      :node-change-records="diffRecords"
+      @close="onCloseDiff"
     />
 
     <!-- Status bar -->

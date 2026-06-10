@@ -66,7 +66,7 @@ required_sections:
   - [ ] AC-002: Given 注册一条 `scope: 'strip'` 的测试规则（移除所有 `style` 属性），When 调用 `applyRuleset`，Then 返回的 hast 所有元素无 `style` 属性，且 `report` 中含该规则 ID（通过 `report.nodeChangeRecords[].triggerRuleId` 或 `report.diagnostics[].ruleId` 可追溯）[ARCH#§2.M-003]
   - [ ] AC-003: Given `getRulesetVersion()` 调用，When 执行，Then 返回 `@wechat-flow/ruleset` 的 `package.json` version 字段字符串值 [ARCH#§2.M-003]
 - **deliverables**:
-  - [ ] `packages/contracts/src/diagnostic/structure.ts` — `DiagnosticReport` / `NodeChangeRecord` / `AttrDiffEntry` / `NightRiskEntry` schema（M-012 单源；T-004 未建立则在此补骨架）[ARCH#§2.M-003]
+  - [ ] `packages/contracts/src/diagnostic/diagnostic-report.ts` — `DiagnosticReport` / `NodeChangeRecord` / `AttrDiffEntry` / `NightRiskEntry` schema（M-012 单源；T-004 未建立则在此补骨架）[ARCH#§2.M-003]
   - [ ] `packages/ruleset/src/rules/registry.ts` — `registerRule` / `getRules` / `getRulesetVersion`
   - [ ] `packages/ruleset/src/rules/scope/strip.ts` — strip scope 执行器骨架
   - [ ] `packages/ruleset/src/rules/scope/clamp.ts` — clamp scope 执行器骨架
@@ -337,7 +337,7 @@ required_sections:
   - [ ] AC-003: Given 移动端违规词（如 `position:fixed`）出现在诊断报告，When StatusBar 渲染，Then `i` 图标旁可见警告色标记，tooltip 文字描述违规内容
 - **deliverables**:
   - [ ] 更新 `apps/editor/src/components/layout/StatusBar.vue` — 三态状态机实现 + 平板断点图标降级
-  - [ ] `apps/editor/src/components/layout/StatusBar.test.ts` — AC-001..AC-003 单元测试
+  - [ ] `apps/editor/src/components/layout/__tests__/StatusBar.test.ts` — AC-001..AC-003 单元测试
 - **relates_to**: [F-002, M-001, C-023]
 - **context_load**:
   - ui-spec-wechat-flow-c001-c014#§2.C-023
