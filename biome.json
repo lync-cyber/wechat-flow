@@ -29,6 +29,10 @@
       "recommended": true,
       "style": {
         "noNonNullAssertion": "warn"
+      },
+      "suspicious": {
+        "noFocusedTests": "error",
+        "noSkippedTests": "warn"
       }
     }
   },
