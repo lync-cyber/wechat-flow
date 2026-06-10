@@ -1,0 +1,8 @@
+{
+  "ruleId": "lint-position-fixed",
+  "scope": "lint",
+  "priority": 40,
+  "description": "Diagnose position:fixed usage — fixed positioning is not supported in the WeChat article renderer",
+  "expectedDiagnostics": [{ "severity": "error", "ruleId": "lint-position-fixed" }],
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

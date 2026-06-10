@@ -1,0 +1,7 @@
+{
+  "ruleId": "strip-transform-origin",
+  "scope": "strip",
+  "priority": 80,
+  "description": "Remove transform-origin CSS declarations — not supported in the WeChat article renderer",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

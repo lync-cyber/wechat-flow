@@ -1,0 +1,7 @@
+{
+  "ruleId": "strip-position",
+  "scope": "strip",
+  "priority": 90,
+  "description": "Remove position CSS declarations — WeChat layout model does not support positioned elements",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

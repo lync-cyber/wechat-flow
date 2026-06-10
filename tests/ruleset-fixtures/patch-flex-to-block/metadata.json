@@ -1,0 +1,7 @@
+{
+  "ruleId": "patch-flex-to-block",
+  "scope": "patch",
+  "priority": 50,
+  "description": "Replace display:flex with display:block and display:inline-flex with display:inline-block — flex layout is not fully supported in WeChat article rendering",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

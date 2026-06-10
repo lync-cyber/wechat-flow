@@ -1,0 +1,7 @@
+{
+  "ruleId": "clamp-font-size",
+  "scope": "clamp",
+  "priority": 80,
+  "description": "Clamp font-size to the range [14px, 32px] — values outside this range render illegibly in WeChat articles",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

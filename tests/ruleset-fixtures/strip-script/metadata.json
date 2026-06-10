@@ -1,0 +1,7 @@
+{
+  "ruleId": "strip-script",
+  "scope": "strip",
+  "priority": 100,
+  "description": "Remove <script> elements — JavaScript is stripped by the WeChat editor paste filter",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

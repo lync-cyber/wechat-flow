@@ -17,3 +17,7 @@ export { saveDraft, loadDocument, listDocuments, deleteDocument } from "./docume
 export { saveSplitterWidth, loadSplitterWidth } from "./storage/preferences.ts";
 export { closeDb } from "./storage/indexeddb-adapter.ts";
 export type { DocumentRecord, DocumentMeta } from "./storage/indexeddb-adapter.ts";
+export { simulatePaste } from "./simulate-paste.ts";
+export type { SimulatePasteResult } from "./simulate-paste.ts";
+export type { NodeDiff } from "./diff/per-node-diff.ts";
+export type { DroppedAttr } from "./simulator/strip-attrs.ts";

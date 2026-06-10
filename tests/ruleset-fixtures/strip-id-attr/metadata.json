@@ -1,0 +1,7 @@
+{
+  "ruleId": "strip-id-attr",
+  "scope": "strip",
+  "priority": 90,
+  "description": "Remove id attributes — WeChat strips anchor targets and id-based CSS selectors are ineffective after paste",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

@@ -1,0 +1,7 @@
+{
+  "ruleId": "strip-font-family",
+  "scope": "strip",
+  "priority": 80,
+  "description": "Remove font-family declarations — WeChat overrides all font families with its system font stack",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

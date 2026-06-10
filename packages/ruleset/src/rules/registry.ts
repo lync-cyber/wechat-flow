@@ -1,3 +1,4 @@
+import type { Diagnostic } from "@wechat-flow/contracts";
 import type { Node } from "hast";
 import { rulesetVersion } from "../version/manifest.ts";
 
@@ -8,7 +9,10 @@ export interface RuleDefinition {
   scope: RuleScope;
   priority: number;
   matcher: (node: Node) => boolean;
-  transform: (node: Node) => Node;
+  /** Return null to delete the matched node entirely. For lint rules, return the node unchanged. */
+  transform: (node: Node) => Node | null;
+  /** For lint-scope rules: produce diagnostics for matched nodes. */
+  diagnose?: (node: Node) => Diagnostic[];
   fixture?: string;
 }
 

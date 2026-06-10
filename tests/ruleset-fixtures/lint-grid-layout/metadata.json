@@ -1,0 +1,8 @@
+{
+  "ruleId": "lint-grid-layout",
+  "scope": "lint",
+  "priority": 40,
+  "description": "Diagnose display:grid usage — CSS Grid is not supported in the WeChat article renderer",
+  "expectedDiagnostics": [{ "severity": "error", "ruleId": "lint-grid-layout" }],
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

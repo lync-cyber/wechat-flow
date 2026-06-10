@@ -1,0 +1,7 @@
+{
+  "ruleId": "strip-css-var",
+  "scope": "strip",
+  "priority": 90,
+  "description": "Expand CSS custom properties to their literal values — var() references are stripped by the WeChat paste filter",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

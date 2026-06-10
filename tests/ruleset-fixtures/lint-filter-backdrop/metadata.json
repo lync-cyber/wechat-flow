@@ -1,0 +1,8 @@
+{
+  "ruleId": "lint-filter-backdrop",
+  "scope": "lint",
+  "priority": 40,
+  "description": "Diagnose backdrop-filter usage — not supported in the WeChat article renderer",
+  "expectedDiagnostics": [{ "severity": "error", "ruleId": "lint-filter-backdrop" }],
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

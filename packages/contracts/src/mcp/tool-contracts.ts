@@ -14,6 +14,7 @@ export const renderMarkdownResponseSchema = z.object({
   diagnostics: z.array(z.object({}).passthrough()),
   rulesetVersion: z.string(),
   themeVersion: z.string(),
+  postPaste: z.boolean(),
 });
 
 // ---- lint_markdown (API-002) ----

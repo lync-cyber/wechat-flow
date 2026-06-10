@@ -1,0 +1,7 @@
+{
+  "ruleId": "clamp-rgba-alpha",
+  "scope": "clamp",
+  "priority": 70,
+  "description": "Clamp rgba alpha values below 0.15 up to 0.15 — near-transparent colors become invisible after WeChat's color processing",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

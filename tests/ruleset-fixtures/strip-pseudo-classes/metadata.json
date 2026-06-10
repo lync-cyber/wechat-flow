@@ -1,0 +1,7 @@
+{
+  "ruleId": "strip-pseudo-classes",
+  "scope": "strip",
+  "priority": 70,
+  "description": "Strip pseudo-class and pseudo-element artifacts from inline style — these selectors are dropped by the WeChat paste filter and produce no visual effect",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

@@ -1,0 +1,7 @@
+{
+  "ruleId": "strip-flex-gap",
+  "scope": "strip",
+  "priority": 80,
+  "description": "Remove gap, justify-content, and align-items from flex containers — these properties are not supported in the WeChat article renderer",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

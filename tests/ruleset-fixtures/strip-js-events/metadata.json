@@ -1,0 +1,7 @@
+{
+  "ruleId": "strip-js-events",
+  "scope": "strip",
+  "priority": 100,
+  "description": "Remove inline event handler attributes (on*) — JavaScript event handlers are stripped by the WeChat paste filter",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

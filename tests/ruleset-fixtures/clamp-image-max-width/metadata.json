@@ -1,0 +1,7 @@
+{
+  "ruleId": "clamp-image-max-width",
+  "scope": "clamp",
+  "priority": 70,
+  "description": "Clamp image max-width to 100% — values exceeding 100% cause overflow in WeChat article layout",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

@@ -1,0 +1,7 @@
+{
+  "ruleId": "clamp-line-height",
+  "scope": "clamp",
+  "priority": 80,
+  "description": "Clamp line-height to the range [1.2, 2.5] — values outside this range cause layout issues in WeChat article rendering",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

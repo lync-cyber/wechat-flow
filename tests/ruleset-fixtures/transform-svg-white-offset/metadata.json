@@ -1,0 +1,7 @@
+{
+  "ruleId": "transform-svg-white-offset",
+  "scope": "transform",
+  "priority": 60,
+  "description": "Replace pure white (#ffffff) with near-white (#fefefe) inside SVG elements — WeChat treats #ffffff as transparent in certain SVG contexts",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

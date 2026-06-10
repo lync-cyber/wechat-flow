@@ -1,8 +1,10 @@
 import { inlineStyle } from "./pipeline/inline-style.ts";
 import { injectNodeIds } from "./pipeline/node-id-injector.ts";
 import { parseMarkdown } from "./pipeline/parse.ts";
+import { sanitizeHast } from "./pipeline/sanitize.ts";
 import { serializeHast } from "./pipeline/serialize.ts";
 import { transformToHast } from "./pipeline/transform.ts";
+import { wechatFlowSanitizeSchema } from "./sanitize/schema.ts";
 import type { RenderOptions, RenderResult } from "./types.ts";
 import { coreVersion } from "./version/triple.ts";
 
@@ -12,6 +14,7 @@ export async function renderMarkdown(
 ): Promise<RenderResult> {
   const mdast = parseMarkdown(input);
   let hast = transformToHast(mdast, options);
+  hast = sanitizeHast(hast, wechatFlowSanitizeSchema);
   if (options?.injectNodeIds) {
     hast = injectNodeIds(hast);
   }
@@ -23,6 +26,7 @@ export async function renderMarkdown(
     diagnostics: [],
     rulesetVersion: options?.rulesetVersion ?? "0.0.0",
     themeVersion: "0.0.0", // cataforge: wiring-placeholder — theme registry wiring deferred
+    postPaste: false,
     coreVersion,
   };
 }

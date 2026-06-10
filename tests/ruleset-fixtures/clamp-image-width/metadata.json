@@ -1,0 +1,7 @@
+{
+  "ruleId": "clamp-image-width",
+  "scope": "clamp",
+  "priority": 70,
+  "description": "Clamp explicit image width to 677px — the maximum usable content width in WeChat article layout",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

@@ -1,0 +1,7 @@
+{
+  "ruleId": "transform-data-uri-unquote",
+  "scope": "transform",
+  "priority": 60,
+  "description": "Remove quotes from data URI url() values — quoted data URIs are stripped by the WeChat paste filter",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

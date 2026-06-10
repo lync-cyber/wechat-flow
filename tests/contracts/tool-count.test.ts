@@ -109,6 +109,7 @@ describe("AC-006 response schema exports: all 23 response schemas are exported f
       diagnostics: [],
       rulesetVersion: "1.0.0",
       themeVersion: "1.0.0",
+      postPaste: false,
     });
     expect(valid.success).toBe(true);
   });

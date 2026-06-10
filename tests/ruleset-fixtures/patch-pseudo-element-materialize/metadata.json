@@ -1,0 +1,8 @@
+{
+  "ruleId": "patch-pseudo-element-materialize",
+  "scope": "lint",
+  "priority": 50,
+  "description": "Diagnose ::before and ::after pseudo-element usage — these are stripped by the WeChat paste filter and require manual materialisation",
+  "expectedDiagnostics": [],
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

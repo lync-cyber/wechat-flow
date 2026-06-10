@@ -287,3 +287,21 @@
 {"ts": "2026-06-09T13:47:48+00:00", "event": "state_change", "phase": "development", "detail": "arch amendment 启动: architect 评估 PreviewPane sandbox allow-same-origin 安全权衡 + arch M-001(contentDocument联动)⊥§5.3(sandbox='' opaque origin)内部矛盾; R-001 闭环路径"}
 {"event": "state_change", "phase": "development", "detail": "arch amendment 完成: architect 方案A (sandbox=allow-same-origin 无allow-scripts + CSP default-src none, 单origin双层禁脚本); amend M-001/5.3/5.4/Q3.8决策记录; R-001闭环; docs validate 0 stale; 代码无需调整", "ts": "2026-06-09T13:55:12+00:00"}
 {"event": "state_change", "phase": "development", "detail": "Sprint2 G0: T-013 done + T-094 done(building blocks+wiring+code-review r1/r2+revision修R-002~R-005+arch amend); T-099 待 penpot MCP 接入本会话(需重启会话加载 .mcp.json)", "ts": "2026-06-09T13:55:12+00:00"}
+{"ts": "2026-06-09T14:04:15+00:00", "event": "state_change", "phase": "development", "detail": "Sprint2 G0 (T-013+T-094+arch amend) 本地 merge --no-ff 合入 main (f45788c); 无 GitHub remote 故本地合并模式(同 Sprint 1); feature/sprint2-ruleset-diagnostics 分支保留"}
+{"ts": "2026-06-10T01:19:31+00:00", "event": "session_start", "phase": "session", "detail": "IDE session started"}
+{"ts": "2026-06-10T01:19:44+00:00", "event": "session_start", "phase": "session", "detail": "IDE session started"}
+{"ts": "2026-06-10T01:20:28+00:00", "event": "session_start", "phase": "session", "detail": "IDE session started"}
+{"ts": "2026-06-10T01:28:10+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD RED (batched C2): T-014+T-015 共享 M-003"}
+{"ts": "2026-06-10T01:28:11+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD RED: T-016 (security_sensitive light->standard 升档)"}
+{"ts": "2026-06-10T01:28:12+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-017"}
+{"ts": "2026-06-10T01:40:20+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD RED continuation: T-014+T-015 fixture 补全(截断恢复)"}
+{"ts": "2026-06-10T01:40:21+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD GREEN: T-016"}
+{"ts": "2026-06-10T01:51:34+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD GREEN: T-014"}
+{"ts": "2026-06-10T01:51:36+00:00", "event": "state_change", "phase": "development", "detail": "T-016 GREEN complete, dispatch per-task code-review (security_sensitive); T-017 light complete"}
+{"ts": "2026-06-10T01:53:25+00:00", "event": "state_change", "phase": "development", "detail": "skill-run: code-review Layer 1 passed", "agent": "reviewer", "status": "completed", "ref": "skill:code-review/code_lint"}
+{"ts": "2026-06-10T02:00:07+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD GREEN: T-015"}
+{"ts": "2026-06-10T02:00:08+00:00", "event": "state_change", "phase": "development", "detail": "T-014 GREEN 主线程复验通过(strip全绿,REFACTOR skipped no trigger); T-016 code-review 截断重派(continuation)"}
+{"ts": "2026-06-10T02:13:26+00:00", "event": "state_change", "phase": "development", "detail": "T-015 GREEN 主线程复验51/52; 裁决strip-pseudo-classes scope=strip(dev-plan AC锚定), fixture metadata为偏差工件, 派debugger修复"}
+{"ts": "2026-06-10T02:13:27+00:00", "event": "tdd_phase", "phase": "development", "detail": "T-016 revision: code-review r1 needs_revision (R-002 HIGH css转义绕过), 派implementer修复HIGH"}
+{"ts": "2026-06-10T02:23:29+00:00", "event": "state_change", "phase": "development", "detail": "dispatch_batch_end: Sprint 2 G1 全部完成. T-014/015/017 completed, T-016 r2 approved_with_notes. 门禁: vitest 238/238, typecheck 30+tests-tsc 0, biome 0. 待用户确认awn+commit"}
+{"ts": "2026-06-10T02:29:20+00:00", "event": "state_change", "phase": "development", "detail": "T-016 r2 notes 用户裁决inline全闭环(R-001/R-003/R-004), 终态 vitest 240/240 tests-tsc 0 biome 0; 用户裁决G1单commit + 推进T-099"}

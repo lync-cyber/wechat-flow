@@ -1,0 +1,7 @@
+{
+  "ruleId": "transform-svg-url-normalize",
+  "scope": "transform",
+  "priority": 60,
+  "description": "Remove quotes from SVG url() fragment references — url(\"#x\") must become url(#x) to survive the WeChat paste filter",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

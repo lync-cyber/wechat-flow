@@ -1,0 +1,7 @@
+{
+  "ruleId": "strip-style-tag",
+  "scope": "strip",
+  "priority": 100,
+  "description": "Remove <style> block elements — inline styles are the only safe styling mechanism in WeChat articles",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

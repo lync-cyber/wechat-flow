@@ -1,0 +1,7 @@
+{
+  "ruleId": "transform-list-to-table",
+  "scope": "transform",
+  "priority": 60,
+  "description": "Convert <ul><li> list markup to a two-column <table> with a marker column — WeChat strips list-style rendering",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

@@ -55,6 +55,7 @@ describe("AC-003: renderMarkdownResponseSchema valid parse", () => {
       diagnostics: [],
       rulesetVersion: "1.0.0",
       themeVersion: "1.0.0",
+      postPaste: false,
     });
     expect(result.success).toBe(true);
   });

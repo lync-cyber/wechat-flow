@@ -1,0 +1,7 @@
+{
+  "ruleId": "transform-ul-marker-type",
+  "scope": "transform",
+  "priority": 60,
+  "description": "Materialise list-style-type markers as inline Unicode characters prepended to each li — WeChat strips CSS list markers",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}
