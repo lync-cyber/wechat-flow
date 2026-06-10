@@ -353,3 +353,5 @@
 {"ts": "2026-06-10T09:41:10+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-114"}
 {"ts": "2026-06-10T09:51:02+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD RED: T-115"}
 {"ts": "2026-06-10T09:57:50+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD GREEN: T-115 (RED 32 FAILED 已主线程确认, test-writer 截断仅丢汇报)"}
+{"event": "tdd_phase", "phase": "development", "detail": "TDD done: T-027(509基线+34) + T-114(538基线+29) + T-115(570全量, GREEN 32/32, REFACTOR skipped no trigger); G4=f6253d4", "ts": "2026-06-10T10:10:19+00:00"}
+{"event": "state_change", "phase": "development", "detail": "Sprint 3 开发+设计任务 12/14 全部完成; 余 T-101 设计签字 + T-110 validation(用户清单已发)", "ts": "2026-06-10T10:10:19+00:00"}
