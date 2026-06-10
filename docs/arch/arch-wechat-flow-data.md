@@ -315,7 +315,7 @@ CREATE INDEX IF NOT EXISTS idx_upload_job_id ON upload_records(job_id);
 | nightRiskIssues | array | required（可为空数组） | `NightRiskEntry[]`，含每项 `{nodeSelector, contrastRatio, foreground, background, suggestion}`；由 M-003 `lint/readability.ts` 在节点遍历时对 `contrastRatio < 4.5` (WCAG AA) 节点产；M-001 DiagnosticsPanel `night-risk-alert` 状态据此激活 |
 | generatedAt | datetime | required | 生成时间 |
 
-> **持久化**：E-008 默认仅作为内存对象在 M-003 → M-002 → M-001 之间传递；编辑器侧不强制写 IndexedDB（详 §4.2 末尾的持久化与持久度说明）。schema 完整定义见 `@wechat-flow/contracts` `diagnostic/structure.ts`（M-012）。
+> **持久化**：E-008 默认仅作为内存对象在 M-003 → M-002 → M-001 之间传递；编辑器侧不强制写 IndexedDB（详 §4.2 末尾的持久化与持久度说明）。schema 完整定义见 `@wechat-flow/contracts` `diagnostic/diagnostic-report.ts`（M-012）。
 
 映射：F-002 AC-005 / AC-006 / F-007 AC-004 / F-011 AC-002 / F-011 AC-006 (nightRiskIssues 来源)
 
