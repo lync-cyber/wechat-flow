@@ -8,6 +8,7 @@ import CompatibilityDiffView from "../diagnostics/CompatibilityDiffView.vue";
 import DiagnosticsPanel from "../diagnostics/DiagnosticsPanel.vue";
 import PreviewPane from "../editor/PreviewPane.vue";
 import SourcePane from "../editor/SourcePane.vue";
+import LeftPanelTabs from "../panel/LeftPanelTabs.vue";
 import ResizableSplitter from "./ResizableSplitter.vue";
 import StatusBar from "./StatusBar.vue";
 import TopBar from "./TopBar.vue";
@@ -157,7 +158,7 @@ onUnmounted(() => {
         data-testid="left-panel"
         :style="!isTablet ? { width: leftPanel.width.value + 'px' } : undefined"
       >
-        <!-- C-006 placeholder -->
+        <LeftPanelTabs default-tab="theme" />
       </aside>
 
       <!-- Left splitter (desktop only, not focus mode) -->

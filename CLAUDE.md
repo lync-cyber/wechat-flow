@@ -31,9 +31,9 @@
 ## 项目状态 (orchestrator专属写入区，其他Agent禁止修改)
 - 当前阶段: development
 - 上次完成: **Sprint 2 正式关闭**: 残留notes全闭环(用户裁决"全部现在修")——SR-001/SR-002→df56379(strip/clamp/patch执行器按priority应用全部匹配规则, 删除型规则后停止; transform保持单命中/lint已多命中均锚定测试; getRulesetVersion测试改与version/manifest.ts单源对比; 新增strip-multi-rule.test.ts 6边界用例), SR-005→337f01b(arch M-003/M-012/E-008 schema引用对齐diagnostic/diagnostic-report.ts, docs index/validate绿; sprint-review报告中structure.ts为冻结审计记录不改). 门禁: vitest 304/304, typecheck 31/31, biome 0, tests-tsc 0. **运行学习存档**: ①子代理截断→主线程盘点+接管收尾是标准动作 ②IDE TS诊断假阳性高发(本轮又1次apply.test.ts unused误报+1真阳性clamp.ts unused Element)——一切以CLI为准 ③validation前必须做系统接线审计 ④改契约必须同步全部测试替身(composeRender mock)
-- 下一步行动: **Sprint 3 G0 批次执行中**: T-020(主题注册中心, light) + T-023(调色板派生, light) 并行调度(deliverables无路径重叠: core/registry vs packages/palette). 完成后 G1: T-021→T-024/T-025. dev: localhost:5173(用户自有dev server)
+- 下一步行动: **Sprint 3 G2 批次**: T-022 RED+T-026 LIGHT 并行 → T-022 GREEN → T-029. 之后 T-027/T-114/T-115 阻塞于 T-100(用户Penpot设计). dev: localhost:5173(用户自有dev server)
 - 已完成阶段: [requirements, architecture, ui_design, dev_planning, cross_doc_amendment_r2]
-- 当前Sprint: **Sprint 3(主题系统+组件注册+Palette) 进行中**. 任务14个: T-020✱,T-023✱(G0执行中), T-021,T-022,T-024,T-025,T-026,T-027,T-029,T-114,T-115(待), T-100,T-101(design,用户Penpot), T-110(validation). 本地merge模式(无GitHub remote). (Sprint 1/2 已关闭已合main, SPRINT-REVIEW-s2-r2 notes全修)
+- 当前Sprint: **Sprint 3(主题系统+组件注册+Palette) 进行中**. done: G0=d9f5600(T-020,T-023), G1=a1d6c46(T-021,T-024,T-025; T-021经1次crash recovery重派+包结构裁定: 删stub @wechat-flow/themes→每主题独立包@wechat-flow/theme-*, workspace增packages/themes/*). 待: T-022,T-026,T-029,T-027,T-114,T-115; T-100,T-101(design,用户Penpot); T-110(validation). contracts/theme-definition.ts为共享契约咽喉→涉及任务全串行. 本地merge模式(无GitHub remote). (Sprint 1/2 已关闭已合main)
 - 待办(deferred, 跨 Sprint): (1) LOW tool-contracts zod4-deprecated→S4 z.looseObject; (2) LOW T-002 AC-003 描述过时(知会); (3) MEDIUM [T-011 R-005] postPaste true端真值路径(composeCopy stage5后调simulatePaste置true)待 Sprint 4 T-030(schema已严格化z.boolean()必填+true穿透测试已锚定, 仅剩composeCopy实现本体); (4) MEDIUM [T-010 R-001] iframe sandbox XSS阻断 happy-dom 假绿→Playwright E2E(T-058); (5) **[arch] M-002 指定 juice 内联化 与 §5.2 跨运行时(browser-main)矛盾** → 已去 juice 直接构建 styleMap 解决当前; 未来复杂 CSS 主题若需浏览器 CSS inliner 由 architect 评估(amend arch M-002 或浏览器兼容 inliner)
 - 文档状态:
   - prd: approved

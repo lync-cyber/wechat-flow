@@ -221,7 +221,31 @@ importers:
         specifier: ^25.9.1
         version: 25.9.1
 
+  packages/themes/business:
+    dependencies:
+      '@wechat-flow/contracts':
+        specifier: workspace:*
+        version: link:../../contracts
+
   packages/themes/default:
+    dependencies:
+      '@wechat-flow/contracts':
+        specifier: workspace:*
+        version: link:../../contracts
+
+  packages/themes/literary:
+    dependencies:
+      '@wechat-flow/contracts':
+        specifier: workspace:*
+        version: link:../../contracts
+
+  packages/themes/magazine:
+    dependencies:
+      '@wechat-flow/contracts':
+        specifier: workspace:*
+        version: link:../../contracts
+
+  packages/themes/tech:
     dependencies:
       '@wechat-flow/contracts':
         specifier: workspace:*

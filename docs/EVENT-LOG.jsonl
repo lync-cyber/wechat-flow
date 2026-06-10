@@ -340,3 +340,6 @@
 {"event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH retry: T-021", "ts": "2026-06-10T07:58:28+00:00"}
 {"ts": "2026-06-10T08:07:09+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD GREEN: T-024"}
 {"ts": "2026-06-10T08:21:04+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-025 (T-024 REFACTOR skipped, no trigger)"}
+{"event": "tdd_phase", "phase": "development", "detail": "TDD RED: T-022", "ts": "2026-06-10T08:34:11+00:00"}
+{"event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-026", "ts": "2026-06-10T08:34:11+00:00"}
+{"ts": "2026-06-10T08:43:23+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD GREEN: T-022"}
