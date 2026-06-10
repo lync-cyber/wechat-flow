@@ -1,10 +1,14 @@
+import type { Diagnostic, ThemeDefinition } from "@wechat-flow/contracts";
 import { applyRuleset, builtinRules, getRulesetVersion } from "@wechat-flow/ruleset";
+import { parseFrontmatter } from "./pipeline/frontmatter.ts";
 import { inlineStyle } from "./pipeline/inline-style.ts";
 import { injectNodeIds } from "./pipeline/node-id-injector.ts";
 import { parseMarkdown } from "./pipeline/parse.ts";
 import { sanitizeHast } from "./pipeline/sanitize.ts";
 import { serializeHast } from "./pipeline/serialize.ts";
+import { applyBaseColorToBlocks, applyPaintToBlocks } from "./pipeline/theme-override.ts";
 import { transformToHast } from "./pipeline/transform.ts";
+import { describeTheme } from "./registry/theme.ts";
 import { wechatFlowSanitizeSchema } from "./sanitize/schema.ts";
 import type { RenderOptions, RenderResult } from "./types.ts";
 import { coreVersion } from "./version/triple.ts";
@@ -13,8 +17,37 @@ export async function renderMarkdown(
   input: string,
   options?: RenderOptions
 ): Promise<RenderResult> {
-  const mdast = parseMarkdown(input);
-  let hast = transformToHast(mdast, options);
+  const { content, meta } = parseFrontmatter(input);
+
+  // paint > base-color > theme default priority
+  let effectiveTheme: ThemeDefinition | undefined = options?.theme;
+
+  if (!effectiveTheme && meta.theme) {
+    effectiveTheme = describeTheme(meta.theme);
+  }
+
+  const paintDiagnostics: Diagnostic[] = [];
+
+  if (effectiveTheme) {
+    // Apply base-color derivation first (lower priority than paint)
+    if (meta["base-color"] && typeof meta["base-color"] === "string") {
+      const derivedBlocks = applyBaseColorToBlocks(effectiveTheme, meta["base-color"]);
+      effectiveTheme = { ...effectiveTheme, blocks: derivedBlocks };
+    }
+
+    // Apply paint overrides (highest priority)
+    if (meta.paint && typeof meta.paint === "object") {
+      const { blocks: paintedBlocks, warnDiagnostics } = applyPaintToBlocks(
+        effectiveTheme,
+        meta.paint as Record<string, string>
+      );
+      effectiveTheme = { ...effectiveTheme, blocks: paintedBlocks };
+      paintDiagnostics.push(...warnDiagnostics);
+    }
+  }
+
+  const mdast = parseMarkdown(content);
+  let hast = transformToHast(mdast, { ...options, theme: effectiveTheme });
   hast = sanitizeHast(hast, wechatFlowSanitizeSchema);
 
   const rules = options?.rules !== undefined ? options.rules : builtinRules;
@@ -24,17 +57,21 @@ export async function renderMarkdown(
   if (options?.injectNodeIds) {
     hast = injectNodeIds(hast);
   }
-  const themeTokens = options?.theme?.blocks;
+
+  const themeTokens = effectiveTheme?.blocks;
   const styledHast = inlineStyle(hast, themeTokens);
   const html = serializeHast(styledHast);
 
+  // Merge paint diagnostics into report diagnostics
+  const allDiagnostics = [...paintDiagnostics, ...report.diagnostics];
+
   return {
     html,
-    diagnostics: report.diagnostics,
+    diagnostics: allDiagnostics,
     rulesetVersion: getRulesetVersion(),
-    themeVersion: options?.theme?.meta?.version ?? "0.0.0",
+    themeVersion: effectiveTheme?.meta?.version ?? "0.0.0",
     postPaste: false,
     coreVersion,
-    report,
+    report: { ...report, diagnostics: allDiagnostics },
   };
 }

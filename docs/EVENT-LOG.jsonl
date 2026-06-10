@@ -343,3 +343,5 @@
 {"event": "tdd_phase", "phase": "development", "detail": "TDD RED: T-022", "ts": "2026-06-10T08:34:11+00:00"}
 {"event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-026", "ts": "2026-06-10T08:34:11+00:00"}
 {"ts": "2026-06-10T08:43:23+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD GREEN: T-022"}
+{"ts": "2026-06-10T08:55:21+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-029"}
+{"ts": "2026-06-10T09:07:12+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD REFACTOR: T-029 (trigger: implementer self-report coupling)"}

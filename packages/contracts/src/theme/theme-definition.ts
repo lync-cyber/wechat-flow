@@ -15,12 +15,16 @@ export const themeMetaSchema = z.object({
 
 export const themeBlocksSchema = z.record(z.string(), z.record(z.string(), z.string()));
 
+// paintable: list of CSS custom property names that paint overrides may target;
+// empty array (or empty object for legacy compat) means no properties are paintable.
+export const paintableSchema = z.union([z.array(z.string()), z.record(z.string(), z.unknown())]);
+
 export const themeDefinitionSchema = z.object({
   id: z.string(),
   name: z.string(),
   tokens: themeTokensSchema,
   blocks: themeBlocksSchema.optional(),
-  paintable: z.record(z.string(), z.unknown()).optional(),
+  paintable: paintableSchema.optional(),
   assets: z.record(z.string(), z.unknown()).optional(),
   meta: themeMetaSchema.optional(),
 });
