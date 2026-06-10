@@ -1,7 +1,11 @@
 import type { Element, Properties, Root } from "hast";
 import { describe, expect, it } from "vitest";
 import type { RuleDefinition } from "../../packages/ruleset/src/index.ts";
-import { applyRuleset, getRulesetVersion } from "../../packages/ruleset/src/index.ts";
+import {
+  applyRuleset,
+  getRulesetVersion,
+  rulesetVersion,
+} from "../../packages/ruleset/src/index.ts";
 
 function makeHast(children: Element[]): Root {
   return { type: "root", children };
@@ -100,6 +104,6 @@ describe("AC-003: getRulesetVersion returns package.json version", () => {
 
     expect(typeof version).toBe("string");
     expect(version.length).toBeGreaterThan(0);
-    expect(version).toBe("0.0.0");
+    expect(version).toBe(rulesetVersion);
   });
 });

@@ -2,27 +2,23 @@ import type { Node, Parent, Root } from "hast";
 import type { RuleDefinition } from "../registry.ts";
 
 function patchNode(node: Node, rules: RuleDefinition[]): Node {
-  const matchingRule = rules.find((r) => r.scope === "patch" && r.matcher(node));
-  if (matchingRule) {
-    const transformed = matchingRule.transform(node);
-    const result = transformed ?? node;
-    if ("children" in result) {
-      const parent = result as Parent;
-      return {
-        ...parent,
-        children: parent.children.map((child) => patchNode(child, rules)),
-      } as unknown as Node;
-    }
-    return result;
+  const patchRules = rules.filter((r) => r.scope === "patch");
+  let current: Node = node;
+
+  for (const rule of patchRules) {
+    if (!rule.matcher(current)) continue;
+    const transformed = rule.transform(current);
+    current = transformed ?? current;
   }
-  if ("children" in node) {
-    const parent = node as Parent;
+
+  if ("children" in current) {
+    const parent = current as Parent;
     return {
       ...parent,
       children: parent.children.map((child) => patchNode(child, rules)),
     } as unknown as Node;
   }
-  return node;
+  return current;
 }
 
 export function executePatch(hast: Root, rules: RuleDefinition[]): Root {

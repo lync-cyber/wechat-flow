@@ -8,43 +8,35 @@ export interface StripResult {
 }
 
 function stripNode(node: Node, rules: RuleDefinition[], records: NodeChangeRecord[]): Node | null {
-  const matchingRule = rules.find((r) => r.scope === "strip" && r.matcher(node));
+  const stripRules = rules.filter((r) => r.scope === "strip");
+  let current: Node = node;
 
-  if (matchingRule) {
-    const before = JSON.stringify(node);
-    const transformed = matchingRule.transform(node);
+  for (const rule of stripRules) {
+    if (!rule.matcher(current)) continue;
+    const before = JSON.stringify(current);
+    const transformed = rule.transform(current);
     if (transformed === null) {
       records.push({
-        nodeSelector: (node as Element).tagName ?? "unknown",
+        nodeSelector: (current as Element).tagName ?? "unknown",
         before,
         after: "null",
         attrDiff: [],
-        triggerRuleId: matchingRule.id,
+        triggerRuleId: rule.id,
       });
       return null;
     }
-    const after = JSON.stringify(transformed);
     records.push({
       nodeSelector: (transformed as Element).tagName ?? "unknown",
       before,
-      after,
+      after: JSON.stringify(transformed),
       attrDiff: [],
-      triggerRuleId: matchingRule.id,
+      triggerRuleId: rule.id,
     });
-    if ("children" in transformed) {
-      const parent = transformed as Parent;
-      const newChildren: Node[] = [];
-      for (const child of parent.children) {
-        const result = stripNode(child, rules, records);
-        if (result !== null) newChildren.push(result);
-      }
-      return { ...parent, children: newChildren } as unknown as Node;
-    }
-    return transformed;
+    current = transformed;
   }
 
-  if ("children" in node) {
-    const parent = node as Parent;
+  if ("children" in current) {
+    const parent = current as Parent;
     const newChildren: Node[] = [];
     for (const child of parent.children) {
       const result = stripNode(child, rules, records);
@@ -53,7 +45,7 @@ function stripNode(node: Node, rules: RuleDefinition[], records: NodeChangeRecor
     return { ...parent, children: newChildren } as unknown as Node;
   }
 
-  return node;
+  return current;
 }
 
 export function executeStrip(hast: Root, rules: RuleDefinition[]): StripResult {
