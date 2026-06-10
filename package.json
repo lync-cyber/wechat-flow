@@ -8,7 +8,8 @@
   },
   "scripts": {
     "build": "turbo run build",
-    "test": "turbo run test",
+    "test": "vitest run",
+    "test:turbo": "turbo run test",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck && tsc --noEmit -p tests/tsconfig.json",
     "kg:restore": "node scripts/kg-restore.mjs"

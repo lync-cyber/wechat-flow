@@ -318,3 +318,8 @@
 {"ts": "2026-06-10T03:58:04+00:00", "event": "state_change", "phase": "development", "detail": "skill-run: sprint-review Layer 1 reported issues", "agent": "reviewer", "status": "needs_revision", "ref": "skill:sprint-review/sprint_check"}
 {"ts": "2026-06-10T04:06:27+00:00", "event": "state_change", "phase": "development", "detail": "SPRINT-REVIEW-s2-r1 verdict=needs_revision: SR-003 HIGH(CompatibilityDiffView未挂载EditorShell, show-diff链断裂)→T-018 revision; SR-002 MEDIUM(strip执行器单规则per节点)等4条notes入backlog; drift-rate 2.6%"}
 {"ts": "2026-06-10T04:12:59+00:00", "event": "state_change", "phase": "development", "detail": "SPRINT-REVIEW-s2-r2 approved_with_notes: SR-003/004闭环(CompatibilityDiffView生产路径挂载+6接线测试), 残留notes SR-001 LOW/SR-002 MEDIUM/SR-005 LOW. 门禁: vitest 298/298 typecheck 31/31 biome 0. Sprint 2 待用户notes裁决后关闭"}
+{"ts": "2026-06-10T04:31:40+00:00", "event": "session_start", "phase": "session", "detail": "IDE session started"}
+{"ts": "2026-06-10T04:31:49+00:00", "event": "session_start", "phase": "session", "detail": "IDE session started"}
+{"ts": "2026-06-10T04:32:23+00:00", "event": "session_start", "phase": "session", "detail": "IDE session started"}
+{"ts": "2026-06-10T04:34:18+00:00", "event": "session_start", "phase": "session", "detail": "IDE session started"}
+{"ts": "2026-06-10T04:44:42+00:00", "event": "state_change", "phase": "development", "detail": "Sprint 2 关闭: 残留notes全闭环(SR-001/002→df56379 strip/clamp/patch多规则命中+版本单源测试; SR-005→337f01b arch文件名对齐+docs validate绿). 门禁: vitest 304/304 typecheck 31/31 biome 0 tests-tsc 0. 下一Sprint 3(主题系统)待用户启动", "agent": "orchestrator", "status": "completed"}
