@@ -13,6 +13,12 @@ deps: []
 
 sprint-review Layer 1 builtins 与 dev-plan 模板格式失配, 跨 Sprint 复现: (1) task_status_done checker 期望任务卡内 status 字段, 但 dev-plan 模板/实践以 CLAUDE.md §项目状态 + EVENT-LOG 追踪任务状态, 导致 s1 12条 / s3 全量 HIGH 误报, reviewer 每轮需人工双重佐证绕过; (2) deliverables_exist 不识别任务卡 deliverables 的二选一条件语义(或/|), s1 T-011 误报 HIGH; (3) gold-plating 默认 glob 不豁免测试辅助文件/设计系统桥接产物, s1 15条 LOW 误报. 建议: checker 支持状态外部追踪模式或 dev-plan 模板补 status 字段并保持两者自洽; deliverables 支持备选语法; unplanned_glob_patterns 默认值增补测试支撑类 glob
 
+## 附注: 打包/上报过程中发现的额外框架问题
+
+1. **framework-review Layer 1 自身 FAIL**: 下方 framework-review 摘要显示 scaffold 自带的 `skills/doc-gen` 与 `skills/doc-nav` SKILL.md 缺「输入定义/输出定义」必需章节, 框架发放的资产不满足自家 `B1_required_sections` 检查器(自洽性问题)。
+2. **feedback assembler id slug 化**: 对中文长 summary 生成的 frontmatter `id` 会被截断且保留中文字符(见本文件 frontmatter), 建议 slug 化时转拼音/ASCII 或截断到完整词边界。
+3. **`feedback --gh` 仓库推断错误**: `cataforge feedback bug --gh` 依赖当前目录 git remote 推断目标仓库(`gh issue create` 报 "no git remotes found"), 而下游项目常无 remote(本地模式)或 remote 指向下游业务仓库; 应使用 `framework.json#upgrade.source.repo` 作为 issue 目标仓库(本例为 lync-cyber/CataForge), 该配置已存在且语义吻合。本 issue 即通过 `gh issue create --repo` 手动绕过创建。
+
 ## Environment
 
 - **CataForge package**: `0.8.0`
