@@ -1,5 +1,7 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { mount } from "@vue/test-utils";
-import { resetBlockRegistry } from "@wechat-flow/core/src/registry/block.ts";
+import { registerBlock, resetBlockRegistry } from "@wechat-flow/core/src/registry/block.ts";
 import { registerTheme, resetThemeRegistry } from "@wechat-flow/core/src/registry/theme.ts";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
@@ -257,5 +259,35 @@ describe("AC-004: BlockLibItem onInsert 回调", () => {
     const badge = wrapper.find('[data-testid="variant-badge"]');
     expect(badge.exists()).toBe(true);
     expect(badge.text()).toContain("3");
+  });
+});
+
+describe("AC-004: LeftPanelTabs 内 BlockLibItem 插入接线", () => {
+  beforeEach(() => {
+    resetBlockRegistry();
+    registerBlock({ id: "heading", name: "标题", attrsSchema: z.object({}), variants: [] });
+  });
+
+  it("组件 Tab 中点击 BlockLibItem 时 onInsertBlock 收到该 block 的 directive 片段", async () => {
+    const onInsertBlock = vi.fn();
+    const wrapper = mount(LeftPanelTabs, {
+      props: { defaultTab: "components" as const, onInsertBlock },
+      global: { plugins: [makeRouter()] },
+    });
+    await nextTick();
+
+    await wrapper.find('[data-testid="block-lib-item"]').trigger("click");
+    await nextTick();
+
+    expect(onInsertBlock).toHaveBeenCalledOnce();
+    const directive = onInsertBlock.mock.calls[0][0] as string;
+    expect(directive).toMatch(/^:::heading\n/);
+    expect(directive).toMatch(/\n:::$/);
+  });
+
+  it("EditorShell 将 onInsertDirective 接线到 LeftPanelTabs 的 on-insert-block prop", () => {
+    const shellPath = join(process.cwd(), "apps/editor/src/components/layout/EditorShell.vue");
+    const source = readFileSync(shellPath, "utf-8");
+    expect(source).toMatch(/<LeftPanelTabs[^>]*:on-insert-block="onInsertDirective"/s);
   });
 });

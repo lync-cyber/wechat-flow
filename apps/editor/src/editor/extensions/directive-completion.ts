@@ -110,9 +110,10 @@ export function registerDirectiveCompletion(callbacks: CompletionCallbacks): Ext
       });
     }),
     EditorView.domEventHandlers({
-      keydown: (event) => {
+      keydown: (event, view) => {
         if (event.key === "Escape") {
           onClose();
+          view.focus();
         }
         return false;
       },

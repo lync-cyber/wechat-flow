@@ -12,6 +12,7 @@ const props = withDefaults(
     defaultTab?: TabId;
     onTabChange?: (tab: TabId) => void;
     onThemeSelect?: (themeId: string) => void;
+    onInsertBlock?: (directive: string) => void;
   }>(),
   {
     defaultTab: "theme",
@@ -35,7 +36,7 @@ function selectTheme(id: string): void {
 }
 
 function insertBlock(block: ReturnType<typeof listBlocks>[number]): void {
-  // wiring to editor insert deferred — no AC requires it here
+  props.onInsertBlock?.(`:::${block.id}\n内容\n:::`);
 }
 </script>
 

@@ -66,6 +66,26 @@ describe("command-registry: buildEditorCommands", () => {
       expect(typeof cmd.run).toBe("function");
     }
   });
+
+  it("所有命令的 run() 执行均不抛异常", () => {
+    const cmds = buildEditorCommands({ switchTheme: vi.fn() });
+    for (const cmd of cmds) {
+      expect(() => cmd.run(), `command ${cmd.id} run() should not throw`).not.toThrow();
+    }
+  });
+
+  it("空实现命令显式标记 placeholder: true，switch-theme 系列为真实实现无标记", () => {
+    const cmds = buildEditorCommands({ switchTheme: vi.fn() });
+    for (const cmd of cmds) {
+      if (cmd.id.startsWith("switch-theme-")) {
+        expect(cmd.placeholder, `command ${cmd.id} has real run impl`).toBeUndefined();
+      } else {
+        expect(cmd.placeholder, `command ${cmd.id} is a stub and must declare placeholder`).toBe(
+          true
+        );
+      }
+    }
+  });
 });
 
 describe("command-registry: filterCommands", () => {

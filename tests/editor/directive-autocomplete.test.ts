@@ -474,6 +474,33 @@ describe("AC-002: Escape key closes the DirectiveAutocompletePopover", () => {
     expect(onClose).not.toHaveBeenCalled();
   });
 
+  it("编辑器内按 Escape 关闭浮层后焦点归还编辑器（document.activeElement 回到 contentDOM）", async () => {
+    const { registerDirectiveCompletion } = (await import(
+      /* @vite-ignore */ COMPLETION_MODULE
+    )) as typeof import("../../apps/editor/src/editor/extensions/directive-completion.ts");
+    const { EditorView } = await import("@codemirror/view");
+
+    const onClose = vi.fn();
+    const view = new EditorView({
+      doc: ":::ca",
+      extensions: [registerDirectiveCompletion({ onClose, onSelect: () => {} })],
+      parent: document.body,
+    });
+
+    const focusStealer = document.createElement("button");
+    document.body.appendChild(focusStealer);
+    focusStealer.focus();
+    expect(document.activeElement).toBe(focusStealer);
+
+    view.contentDOM.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+
+    expect(onClose).toHaveBeenCalled();
+    expect(view.hasFocus || document.activeElement === view.contentDOM).toBe(true);
+
+    view.destroy();
+    focusStealer.remove();
+  });
+
   it("registerDirectiveCompletion returns a truthy extension and accepts onClose callback", async () => {
     const { registerDirectiveCompletion } = (await import(
       /* @vite-ignore */ COMPLETION_MODULE

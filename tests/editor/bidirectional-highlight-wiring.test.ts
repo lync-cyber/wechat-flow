@@ -11,11 +11,12 @@ import { describe, expect, it, vi } from "vitest";
 // ============================================================
 
 describe("renderMarkdown with injectNodeIds=true produces data-node-id attributes", () => {
+  // 首个用例承担整条 render 管线的首次动态 import，高并发下冷启动可超默认 5s
   it("html contains data-node-id attributes when injectNodeIds=true", async () => {
     const { renderMarkdown } = await import("../../packages/core/src/render.ts");
     const result = await renderMarkdown("# Hello\n\nWorld paragraph", { injectNodeIds: true });
     expect(result.html).toMatch(/data-node-id="/);
-  });
+  }, 15000);
 
   it("html does NOT contain data-node-id attributes when injectNodeIds is omitted (default false)", async () => {
     const { renderMarkdown } = await import("../../packages/core/src/render.ts");

@@ -222,7 +222,7 @@ onUnmounted(() => {
         data-testid="left-panel"
         :style="!isTablet ? { width: leftPanel.width.value + 'px' } : undefined"
       >
-        <LeftPanelTabs default-tab="theme" :on-theme-select="switchTheme" />
+        <LeftPanelTabs default-tab="theme" :on-theme-select="switchTheme" :on-insert-block="onInsertDirective" />
       </aside>
 
       <!-- Left splitter (desktop only, not focus mode) -->
