@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-06-10T04:36:23.166055+00:00",
+  "generated_at": "2026-06-12T02:05:42.105523+00:00",
   "documents": {
     "arch-wechat-flow-api": {
       "file_path": "docs/arch/arch-wechat-flow-api.md",
@@ -1904,6 +1904,36 @@
         "ui-spec-wechat-flow-p001-p005": "64a110dd"
       }
     },
+    "feedback-bug-kg-迁移三个正交-bug-在-0-8-0-main-1c7bbca-仍未修复-修复曾落在-cataforge-本地": {
+      "file_path": "docs/feedback/bug-kg-migration-three-bugs-20260611.md",
+      "doc_type": "framework-feedback",
+      "volume": "main",
+      "status": "approved",
+      "total_lines": 179,
+      "est_tokens": 3326,
+      "content_hash": "7991f1e9",
+      "sections": {}
+    },
+    "feedback-bug-sprint-review-layer-1-builtins-与-dev-plan-模板格式失配-跨-sprint-复": {
+      "file_path": "docs/feedback/bug-sprint-review-layer1-20260611.md",
+      "doc_type": "framework-feedback",
+      "volume": "main",
+      "status": "approved",
+      "total_lines": 185,
+      "est_tokens": 3236,
+      "content_hash": "44330d32",
+      "sections": {}
+    },
+    "feedback-suggest-四项框架改进建议-来自-wechat-flow-项目-sprint-0-3-运行学习-1-tdd-engine": {
+      "file_path": "docs/feedback/suggest-runtime-learnings-20260611.md",
+      "doc_type": "framework-feedback",
+      "volume": "main",
+      "status": "approved",
+      "total_lines": 27,
+      "est_tokens": 423,
+      "content_hash": "8366fe2c",
+      "sections": {}
+    },
     "prd-wechat-flow-f001-f014": {
       "file_path": "docs/prd/prd-wechat-flow-f001-f014.md",
       "doc_type": "prd",
@@ -3185,6 +3215,24 @@
       ],
       "dep_hashes": {
         "dev-plan-wechat-flow": "3f12576f"
+      }
+    },
+    "sprint-review-s3-r1": {
+      "file_path": "docs/reviews/sprint/SPRINT-REVIEW-s3-r1.md",
+      "doc_type": "sprint-review",
+      "volume": "main",
+      "status": "approved",
+      "total_lines": 160,
+      "est_tokens": 3132,
+      "content_hash": "08119d0a",
+      "sections": {},
+      "deps": [
+        "dev-plan-wechat-flow",
+        "dev-plan-wechat-flow-s3"
+      ],
+      "dep_hashes": {
+        "dev-plan-wechat-flow": "3f12576f",
+        "dev-plan-wechat-flow-s3": "111a0b2b"
       }
     },
     "ui-spec-wechat-flow-c001-c014": {
