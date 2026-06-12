@@ -1,6 +1,6 @@
 ---
 id: "dev-plan-wechat-flow-s5"
-version: "0.4.1"
+version: "0.5.0"
 doc_type: dev-plan
 author: tech-lead
 status: approved
@@ -715,5 +715,5 @@ required_sections:
   - [ ] 通过 MCP HTTP transport（`POST /mcp/tools/apply_zh_typo`），发送含中英混排的 Markdown，返回 `{ fixed: '...', totalChanges: N }` 响应
   - [ ] 点击模板卡片应用模板成功（T-073 模板市场验证）
   - [ ] 素材库上传 smoke test：mock 微信 API 返回 mediaId，接口返回 `{ jobId: uuid }`（T-077 验证）
-  - [ ] Tool 全集 grep 验证：23 个 Tool 文件在 `apps/mcp-server/src/tools/` 下存在，包含 `describe_template`
+  - [ ] Tool 全集 grep 验证：24 个 Tool 文件在 `apps/mcp-server/src/tools/` 下存在，包含 `describe_template`、`register_variant`
 - **relates_to**: [F-010, F-014, M-007, M-009, M-011]

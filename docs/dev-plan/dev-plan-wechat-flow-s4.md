@@ -1,6 +1,6 @@
 ---
 id: "dev-plan-wechat-flow-s4"
-version: "0.4.1"
+version: "0.5.0"
 doc_type: dev-plan
 author: tech-lead
 status: approved
@@ -16,7 +16,7 @@ required_sections:
 # Dev Plan 分卷 — Sprint 4: 输出能力 + MCP server + 图片处理
 
 [NAV]
-- Sprint 4 任务卡 → T-030..T-042, T-091, T-092, T-093, T-102, T-105, T-106, T-111
+- Sprint 4 任务卡 → T-030..T-042, T-091, T-092, T-093, T-102, T-105, T-106, T-111, T-118..T-122
 [/NAV]
 
 **Sprint 目标**: 一键复制 inline HTML 可粘贴到公众号编辑器；MCP server `render_markdown` 可通过 stdio transport 调用；图床配置和上传可用。
@@ -253,7 +253,7 @@ required_sections:
   - [ ] `apps/mcp-server/src/transport/stdio.ts` — stdio transport 入口
   - [ ] `apps/mcp-server/src/auth/api-key.ts` — API key 哈希验证 + scope 读取 [ARCH#§2.M-009]
   - [ ] `apps/mcp-server/src/auth/scope-guard.ts` — user/admin scope 前置守卫
-  - [ ] `apps/mcp-server/src/tools/router.ts` — Tool dispatcher 骨架（23 个 Tool 占位）
+  - [ ] `apps/mcp-server/src/tools/router.ts` — Tool dispatcher 骨架（24 个 Tool 占位，含 register_variant）
   - [ ] `apps/mcp-server/src/index.ts` — server 入口
   - [ ] `tests/mcp-server/auth.test.ts` — AC-002..AC-003 单元测试
 - **relates_to**: [F-013, M-009]
@@ -635,3 +635,164 @@ required_sections:
   - ui-spec-wechat-flow-c001-c014#§2.C-020
   - ui-spec-wechat-flow-c001-c014#§2.C-021
   - ui-spec-wechat-flow-c001-c014#§2.C-022
+
+---
+
+### T-118: M-012 contracts schema 演进（customCss + registerVariant + themeBlocks variant 维度）
+
+- **目标**: 在 `@wechat-flow/contracts` 契约层追加 `customCss` 字段、`registerVariant` 请求/响应 schema、`RejectedDeclaration` 类型、themeBlocksSchema variant 维度，并将 tool-count 对账测试从 23 更新到 24
+- **模块**: M-012 (schema 契约层)
+- **task_kind**: feature
+- **priority**: P0
+- **complexity**: medium
+- **sprint**: 4
+- **tdd_mode**: light
+- **tdd_refactor**: auto
+- **tdd_acceptance**: [AC-001, AC-002, AC-003, AC-004, AC-005]
+- **security_sensitive**: false
+- **dependencies**: [T-004]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given `import { renderMarkdownRequestSchema } from '@wechat-flow/contracts'`，When `renderMarkdownRequestSchema.safeParse({ markdown: '# H', customCss: 'p { color: red; }' })`，Then `result.success === true`；`customCss` 字段类型推导为 `string | undefined` [ARCH#§3.API-001]
+  - [ ] AC-002: Given `import { registerVariantRequestSchema, registerVariantResponseSchema } from '@wechat-flow/contracts'`，When `registerVariantRequestSchema.safeParse({ blockId: 'callout', variantId: 'my:dark', label: 'Dark', style: { root: { 'background-color': '#000' } } })`，Then `result.success === true` [ARCH#§3.API-034]
+  - [ ] AC-003: Given `registerVariantResponseSchema.safeParse({ registered: false, variantId: 'my:dark', rejectedDeclarations: [{ slot: 'root', property: 'background-color', value: '#000', reason: 'not in whitelist' }] })`，When 解析，Then `result.success === true`；`rejectedDeclarations[0]` 含 `slot / property / value / reason` 四字段 [ARCH#§3.API-034]
+  - [ ] AC-004: Given `import { themeBlocksSchema } from '@wechat-flow/contracts'`，When `themeBlocksSchema.safeParse({ callout: { default: { 'background-color': '#fff' }, dark: { 'background-color': '#000' } } })`，Then `result.success === true`；schema 结构为 `z.record(z.string(), z.record(z.string(), z.record(z.string(), z.string())))` 即 `blockName → variantId → prop → value`，`default` 键无特殊校验（由 guard 逻辑在 M-005 处执行） [ARCH#§8.2.Q3.15]
+  - [ ] AC-005: Given `tests/contracts/tool-count.test.ts`，When 运行，Then 断言 `packages/contracts/src/mcp/tool-contracts.ts` 导出的 Tool schema 数量为 24（20 同步 + 4 异步），测试不通过时输出 `Expected 24 tool schemas, got N` [ARCH#§3]
+- **deliverables**:
+  - [ ] 更新 `packages/contracts/src/mcp/render-markdown.ts`（或 `tool-contracts.ts` 对应位置）— 追加 `customCss: z.string().optional()`
+  - [ ] `packages/contracts/src/mcp/register-variant.ts` — 导出 `registerVariantRequestSchema`、`registerVariantResponseSchema`、`RejectedDeclaration` 类型
+  - [ ] 更新 `packages/contracts/src/theme/theme-definition.ts` — `themeBlocksSchema` 改为三层嵌套 record（`blockName → variantId → Record<prop, value>`）
+  - [ ] 更新 `packages/contracts/src/mcp/tool-contracts.ts` — 追加 `register_variant` Tool schema 占位，Tool 总数 24
+  - [ ] 更新 `tests/contracts/tool-count.test.ts` — 断言值改为 24
+- **relates_to**: [M-012, API-001, API-034]
+- **context_load**:
+  - arch-wechat-flow-api#§3.API-001
+  - arch-wechat-flow-api#§3.API-034
+  - arch-wechat-flow-modules#§2.M-012
+
+---
+
+### T-119: M-005 registerVariant / getBlockBaseStyle + blocks defineBlock base-style 携带
+
+- **目标**: 在 M-005 注册中心实现 `registerVariant` 与 `getBlockBaseStyle` 接口；在 `packages/blocks` 的 `defineBlock` 调用中为每个内置 Block 携带 `baseStyle` 槽位样式；与 plugin-api `defineVariant` 共享 `registry/variant.ts` 校验链路
+- **模块**: M-005 (主题与组件注册中心)
+- **task_kind**: feature
+- **priority**: P0
+- **complexity**: medium
+- **sprint**: 4
+- **tdd_mode**: standard
+- **tdd_refactor**: auto
+- **tdd_acceptance**: [AC-001, AC-002, AC-003, AC-004, AC-005, AC-006]
+- **security_sensitive**: false
+- **dependencies**: [T-118, T-020]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given `registerVariant({ blockId: 'callout', id: 'my:dark', label: 'Dark', style: { root: { 'background-color': '#1a1a1a' } } })` 调用，When 执行，Then `listBlockVariants('callout')` 返回含 `{ id: 'my:dark', label: 'Dark' }` 的条目；`getBlockBaseStyle('callout', 'my:dark')` 返回 `{ 'background-color': '#1a1a1a' }` [ARCH#§2.M-005]
+  - [ ] AC-002: Given `registerVariant` 的 `style` 参数含不在 css-attr-filter 白名单内的属性（如 `{ root: { position: 'fixed' } }`），When 调用，Then 抛结构化错误，错误对象含 `rejectedDeclarations: [{ slot: 'root', property: 'position', value: 'fixed', reason: 'not in css-attr-filter whitelist' }]`，不产生部分注册 [ARCH#§3.API-034]
+  - [ ] AC-003: Given 对已注册 variantId 重复调用 `registerVariant`（相同 blockId + variantId），When 调用，Then 抛 `E_VARIANT_CONFLICT` 错误（409 语义），现有注册条目不变 [ARCH#§3.API-034]
+  - [ ] AC-004: Given `packages/blocks/src/blocks/callout.ts` 的 `defineBlock('callout', ...)` 调用，When 执行，Then `getBlockBaseStyle('callout', 'default')` 返回非空 record（含 callout block 的骨架结构样式，如 `{ 'border-left': '4px solid currentColor', 'padding': '...' }`）[ARCH#§8.2.Q3.15]
+  - [ ] AC-005: Given `defineBlock` 携带的 `baseStyle` 缺 `root` 槽位键，或缺 `default` variant 条目，When 注册执行，Then 抛结构化错误并拒绝注册（`default` 键守护在 M-005 注册时执行，schema 层不约束——对账 T-118 AC-004）[ARCH#§8.2.Q3.15]
+  - [ ] AC-006（production path）: `packages/blocks/src/factory.ts` 中可检索到 `baseStyle` 字段的接收与传递，`registerVariant` 调用出现在 `packages/core/src/theme/variant-registry.ts` 或 `registry/variant.ts` 中并可被直接检索到
+- **deliverables**:
+  - [ ] `packages/core/src/theme/registry/variant.ts` — `registerVariant(opts)` 实现（校验 + 存储，进程内 Map）
+  - [ ] 更新 `packages/core/src/theme/registry/block.ts` — `defineBlock` 签名扩展 `baseStyle?: Record<string, Record<string, string>>`，注册时存入 `default` variant
+  - [ ] 更新 `packages/core/src/theme/index.ts` — 导出 `registerVariant`、`getBlockBaseStyle`
+  - [ ] 更新 `packages/blocks/src/blocks/*.ts` — 至少 callout / card / steps / quote / pull-quote / compare 携带 `baseStyle`（root 槽必含）
+  - [ ] `tests/core/theme/register-variant.test.ts` — AC-001..AC-005 单元测试
+- **relates_to**: [M-005, F-010]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-005
+  - arch-wechat-flow-api#§3.API-034
+  - prd-wechat-flow-f001-f014#§2.F-010
+
+---
+
+### T-120: pipeline/inline-style.ts 分层合成 + pipeline/custom-css.ts juice pass
+
+- **目标**: 改造 `pipeline/inline-style.ts` 为 L1⊕L2 分层合成（(block,variant) 键索引 + base-style ⊕ theme token override）；新增 `pipeline/custom-css.ts` 实现 L3 条件 juice/client cascade pass（无 customCss 时字节级不变约束）；整理 `TokenDictionary` 同名异构问题
+- **模块**: M-002 (渲染管线核心)
+- **task_kind**: feature
+- **priority**: P0
+- **complexity**: large
+- **sprint**: 4
+- **tdd_mode**: standard
+- **tdd_refactor**: required
+- **tdd_acceptance**: [AC-001, AC-002, AC-003, AC-004, AC-005, AC-006]
+- **security_sensitive**: false
+- **dependencies**: [T-118, T-119, T-007]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given `renderMarkdown({ markdown: ':::callout\ncontent\n:::', themeId: 'default' })` 无 `customCss` 参数，When 执行，Then 输出 HTML 的 callout 容器元素的 `style` 属性含 `getBlockBaseStyle('callout', 'default')` 的声明，不含 CSS 变量（`var(--`）[ARCH#§2.M-002 stage 5]
+  - [ ] AC-002: Given 相同 Markdown + 相同 themeId + 无 `customCss`，When 与当前 T-007 实现的输出对比，Then SHA-256 完全相同（字节级不变约束，L1⊕L2 路径不扰动现有 CI fixture 基线）[ARCH#§8.2.Q3.9]
+  - [ ] AC-003: Given `renderMarkdown({ markdown: '# Hello', themeId: 'default', customCss: 'h1 { color: red; }' })`，When 执行，Then 输出 HTML 中 `<h1>` 元素的 `style` 属性含 `color: red`（juice cascade 生效）[ARCH#§8.2.Q3.9]
+  - [ ] AC-004: Given `customCss` 含 css-attr-filter 白名单外的属性（如 `h1 { position: fixed; }`），When 执行，Then 输出 HTML 中 `<h1>` 不含 `position` 属性；`result.diagnostics` 含 `source: 'custom-css'` 的诊断条目，`message` 描述被拒绝的声明 [ARCH#§3.API-001]
+  - [ ] AC-005: Given 渲染管线 stage 5 的 `pipeline/custom-css.ts`，When `customCss` 为 `undefined` 或空字符串，Then 跳过整个 juice pass，不引入任何 juice 调用开销；测试通过 spy 确认 `inlineContent` 未被调用
+  - [ ] AC-006: Given `packages/core/src/pipeline/inline-style.ts` 局部 `TokenDictionary` 类型，When 与 `packages/contracts/src/palette/token-dictionary.ts` 的 `TokenDictionary` 比较，Then 两者不再同名且语义清晰区分（pipeline 内部类型改名或导入明确区分）[ARCH#§2.M-002]
+- **deliverables**:
+  - [ ] 更新 `packages/core/src/pipeline/inline-style.ts` — 分层合成：`getBlockBaseStyle` 查 L1，themeBlocksSchema override 查 L2，(block,variant) 键索引展开，`sortedEntries` 确定性遍历；局部 `TokenDictionary` 类型重命名消除歧义
+  - [ ] `packages/core/src/pipeline/custom-css.ts` — L3 条件 pass：`customCss` 非空时 serialize → `juice/client` `inlineContent` → re-parse → 全树重过 `css-attr-filter`；被拒声明产 `Diagnostic` 汇入 `RenderResult.diagnostics`
+  - [ ] 更新 `packages/core/package.json` — 追加 `juice` 为活依赖（`juice/client` 入口）
+  - [ ] `tests/core/pipeline/inline-style-layered.test.ts` — AC-001..AC-002, AC-006 单元测试
+  - [ ] `tests/core/pipeline/custom-css.test.ts` — AC-003..AC-005 单元测试
+- **relates_to**: [M-002, API-001]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-002
+  - arch-wechat-flow-api#§3.API-001
+  - arch-wechat-flow#§8.2
+
+---
+
+### T-121: pipeline/transform.ts containerDirective/leafDirective 展开（容器渲染缝隙）
+
+- **目标**: 在 `pipeline/transform.ts` 补全 containerDirective / leafDirective 的展开逻辑，将 `:::blockId{.variant}` 指令展开为 Block 渲染模板 hast 结构（含 root/title/body 槽位），消费 `RenderOptions` 的 themeId/variant 上下文；修复 `_options` 参数未消费缺陷
+- **模块**: M-002 (渲染管线核心)
+- **task_kind**: feature
+- **priority**: P0
+- **complexity**: medium
+- **sprint**: 4
+- **tdd_mode**: standard
+- **tdd_refactor**: auto
+- **tdd_acceptance**: [AC-001, AC-002, AC-003, AC-004]
+- **security_sensitive**: false
+- **dependencies**: [T-119, T-120]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given Markdown `:::callout{.warning}\ncontent\n:::` 经 `renderMarkdown`，When 执行，Then 输出 HTML 含 Block 骨架结构（外层容器 div 含 `data-block="callout"` 属性，inner body slot 含 `<p>content</p>`）[ARCH#§2.M-002 stage 2]
+  - [ ] AC-002: Given `:::callout{.my-variant}\ncontent\n:::` 且 `my-variant` 已通过 `registerVariant` 注册，When `renderMarkdown` 执行，Then 输出元素的 `style` 属性包含 `getBlockBaseStyle('callout', 'my-variant')` 声明（分层合成通路 L1 正确消费 variant 上下文） [ARCH#§8.2.Q3.15]
+  - [ ] AC-003: Given `pipeline/transform.ts` 内 `_options` 参数，When 调用 `renderMarkdown({ themeId: 'magazine' })`，Then `options.themeId` 值 `'magazine'` 被传入 directive 展开逻辑中（可通过 spy 确认 options 对象在展开路径中被读取，非 undefined）
+  - [ ] AC-004: Given attrsSchema 含必填字段的 Block（假设 `:::steps{.list}` 缺少 required 属性），When `renderMarkdown` 执行，Then `result.diagnostics` 含 `source: 'transform'`、`severity: 'warning'` 的诊断条目，渲染不中断（降级为原始 hast 节点）[ARCH#§2.M-002]
+- **deliverables**:
+  - [ ] 更新 `packages/core/src/pipeline/transform.ts` — containerDirective / leafDirective handler 实现：attrsSchema 校验（zod safeParse）+ Block hast 骨架生成 + slot 填充 + variant 参数透传给 inline-style 阶段；`_options` 参数重命名为 `options` 并消费 `themeId/variant`
+  - [ ] `tests/core/pipeline/transform-container.test.ts` — AC-001..AC-004 单元测试
+- **relates_to**: [M-002, F-003]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-002
+  - arch-wechat-flow-modules#§2.M-005
+
+---
+
+### T-122: M-009 register_variant Tool 实现 + router 注册（API-034）
+
+- **目标**: 在 MCP server 实现 `register_variant` Tool（API-034），连接 M-005 `registerVariant`，在 tools/router.ts 注册为第 24 个 Tool
+- **模块**: M-009 (MCP server)
+- **task_kind**: feature
+- **priority**: P0
+- **complexity**: small
+- **sprint**: 4
+- **tdd_mode**: light
+- **tdd_refactor**: auto
+- **tdd_acceptance**: [AC-001, AC-002, AC-003, AC-004, AC-005, AC-006, AC-007]
+- **security_sensitive**: false
+- **dependencies**: [T-118, T-119, T-036]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given 通过 stdio transport 调用 `register_variant({ blockId: 'callout', variantId: 'my:dark', label: 'Dark', style: { root: { 'background-color': '#1a1a1a' } } })`，When 执行，Then 返回 `{ registered: true, variantId: 'my:dark', rejectedDeclarations: [] }` [ARCH#§3.API-034]
+  - [ ] AC-002: Given `register_variant` 调用 `style` 含白名单外属性，When 执行，Then 返回 `{ registered: false, variantId: '...', rejectedDeclarations: [{ slot, property, value, reason }] }`，`registered` 为 `false`，不产生部分注册 [ARCH#§3.API-034]
+  - [ ] AC-003: Given `blockId` 不存在于 Block 注册中心，When 调用 `register_variant`，Then 返回错误 `{ code: 'E_BLOCK_NOT_FOUND' }`（HTTP 语义 404）[ARCH#§3.API-034]
+  - [ ] AC-004: Given 对已注册的 (blockId, variantId) 组合重复调用 `register_variant`（内置 / 插件 / 先前注册均算占用），When 执行，Then 返回错误 `{ code: 'E_VARIANT_CONFLICT' }`（HTTP 语义 409），现有注册条目不变 [ARCH#§3.API-034]
+  - [ ] AC-005: Given `style` 含该 Block 渲染模板未声明的槽位键（如 `{ 'unknown-slot': { color: '#000' } }`），When 调用，Then 返回错误 `{ code: 'E_SLOT_UNKNOWN' }`（HTTP 语义 422）[ARCH#§3.API-034]
+  - [ ] AC-006: Given `blockId` / `variantId` / `label` 任一为空字符串，或 `style` 为空 map / 不符合 `Record<string, Record<string, string>>` 结构，When 调用，Then 返回错误 `{ code: 'E_SCHEMA' }`（HTTP 语义 400）[ARCH#§3.API-034]
+  - [ ] AC-007（production path）: `apps/mcp-server/src/tools/router.ts` 中可检索到 `register_variant` 注册调用，且文件字面包含 `registerTool('register_variant', ...)` 或等价的路由注册语句；`apps/mcp-server/src/tools/register-variant.ts` 文件存在
+- **deliverables**:
+  - [ ] `apps/mcp-server/src/tools/register-variant.ts` — `register_variant` Tool 实现（thin wrapper → M-005 `registerVariant`）
+  - [ ] 更新 `apps/mcp-server/src/tools/router.ts` — 注册 `register_variant`（Tool 总数达 24）
+  - [ ] `tests/mcp-server/tools/register-variant.test.ts` — AC-001..AC-006 单元测试
+- **relates_to**: [F-010, F-013, M-009, M-005, API-034]
+- **context_load**:
+  - arch-wechat-flow-api#§3.API-034
+  - arch-wechat-flow-modules#§2.M-009
