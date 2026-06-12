@@ -50,14 +50,15 @@ required_sections:
   | 2 | transform | mdast → hast | `pipeline/transform.ts` | rehype 适配 + directive 展开 |
   | 3 | sanitize | hast → hast | `pipeline/sanitize.ts` | rehype-sanitize + wechatFlowSanitizeSchema |
   | 4 | ruleset (M-003) | hast → hast | `applyRuleset()` | strip/clamp/transform/patch/lint 五类作用域 |
-  | 5 | inline-style + serialize | hast → string | `pipeline/inline-style.ts` + `pipeline/serialize.ts` | juice 内联化 + canonical 序列化 |
+  | 5 | inline-style + serialize | hast → string | `pipeline/inline-style.ts` + `pipeline/custom-css.ts` + `pipeline/serialize.ts` | token styleMap 分层合成（§8.2 Q3.15 三层）→ 条件 juice cascade pass（customCss 存在时，§8.2 Q3.9/Q3.16）→ canonical 序列化 |
 
   `composeRender` 输出 = stage 5 结束的 inline-styled HTML（`postPaste: false`）。**不在 renderMarkdown 主路径执行 M-004 simulatePaste**。
 - **postPaste 字段语义**: `RenderResult` 含 `postPaste: boolean`；renderMarkdown / Preview / MCP `render_markdown` 路径 `postPaste === false`；composeCopy / `export_clipboard_payload` 路径在 stage 5 之后显式调用 M-004，置 `postPaste === true`。三路径产物可通过此字段对账，禁止双跑 simulatePaste。
 - **内部关键组件**:
   - `pipeline/parse.ts` — Markdown → mdast (remark + remark-directive)
   - `pipeline/transform.ts` — mdast → hast (rehype 适配 + directive 组件展开)
-  - `pipeline/inline-style.ts` — token + 主题样式展开为元素 inline style
+  - `pipeline/inline-style.ts` — 分层样式合成（§8.2 Q3.15）：L1 block base-style（M-005 注册查询）⊕ L2 主题 token override，按 (block, variant) 键与标签名索引展开为元素 inline style，`sortedEntries` 确定性遍历
+  - `pipeline/custom-css.ts` — L3 custom CSS cascade pass（条件分支）：customCss / 注册 variant 样式存在时，serialize 后经 `juice/client` `inlineContent` 做选择器匹配 + specificity 级联，re-parse 回 hast 并**全树重过** `css-attr-filter`；无 custom CSS 时跳过整个 pass，token 路径产物字节级不变（CI fixture 基线不受扰动）；被白名单拒绝的选择器/声明以结构化诊断汇入 `RenderResult.diagnostics`
   - `pipeline/sanitize.ts` — 调用 `rehype-sanitize` 6.x，使用 `wechatFlowSanitizeSchema`（导出自 `sanitize/schema.ts`，基于 `hast-util-sanitize` 5.x 的 `defaultSchema` deepmerge）；位置：mdast→hast (`transform.ts`) **之后**、过滤规则集（M-003）**之前**；是 hast 进入 stage 链下游的**单一守门点**
   - `pipeline/css-attr-filter.ts` — sanitizer 之后的 CSS 属性二级白名单（解析 `style` 值为 declaration 列表，按 `packages/ruleset` 的 CSS 子集声明放行；拒绝 `expression(` / `javascript:` / `behavior:` / `@import`）
   - `pipeline/serialize.ts` — 稳定排序的 HTML 字符串化；统一调 `utils/canonical-json.ts` + `utils/deterministic.ts` 的辅助函数，禁用任何隐式迭代顺序
@@ -140,10 +141,10 @@ required_sections:
 
 ### M-005: 主题与组件注册中心
 
-- **职责**: 内置主题、Block / Mark / Variant / Token、主题装饰资产的注册与查询；主题守护 9 维静态校验（含「内置 template 完整性」维度，F-011 AC-009）；主题热切换；template 作为主题命名空间下的预设变体登记（F-008）；扩展点支持第三方主题与 template pack 注册
+- **职责**: 内置主题、Block / Mark / Variant / Token、主题装饰资产的注册与查询；Block base-style（§8.2 Q3.15 L1 层）随 `defineBlock` 注册持有、按 (blockId, variantId) 查询供 M-002 stage 5 合成；自定义样式容器 variant 双路径注册（plugin-api `defineVariant` 与 MCP API-034 `register_variant`，共享 `registry/variant.ts` 存储与 F-010 AC-005 校验链路，进程内生命周期，§8.2 Q3.16）；主题守护 9 维静态校验（含「内置 template 完整性」维度，F-011 AC-009）；主题热切换；template 作为主题命名空间下的预设变体登记（F-008）；扩展点支持第三方主题与 template pack 注册
 - **映射功能**: F-003 (AC-001..AC-012) / F-008 (AC-001 注册, AC-002 白名单覆盖, AC-003 frontmatter 语义, AC-004 describe_theme/describe_template) / F-009 (AC-001 继承 + AC-002 品牌包) / F-011 (AC-003 主题守护 9 维 / AC-009 template 完整性)
 - **对外接口**: 包级 API：
-  - 主题层：`registerTheme(definition)`、`listThemes()`、`describeTheme(id)`、`listBlocks()`、`describeBlock(id)`、`listBlockVariants(blockId)`、`derivePalette(seed)`、`validateThemeGuard(theme) → GuardResult`
+  - 主题层：`registerTheme(definition)`、`listThemes()`、`describeTheme(id)`、`listBlocks()`、`describeBlock(id)`、`listBlockVariants(blockId)`、`registerVariant({ blockId, id, label, style }) → void`（style 即该 variant 的 base-style；校验失败抛结构化错误，含被拒绝声明清单）、`getBlockBaseStyle(blockId, variantId) → Record<string, string>`（M-002 stage 5 合成入口）、`derivePalette(seed)`、`validateThemeGuard(theme) → GuardResult`
   - **template 层（主题命名空间隔离）**：
     - `defineTemplate({ themeId, templateId, render }) → void` — 独立注册 API；与 `defineTheme.templates` 字段语义等价
     - `listThemeTemplates(themeId: string): TemplateMeta[]` — 返回该主题已注册的全部 template 元数据（轻量，不含 Markdown 正文）
@@ -267,18 +268,18 @@ required_sections:
 
 ### M-009: MCP server
 
-- **职责**: 对 LLM Agent 暴露 23 个 Tool（19 同步 + 4 异步长任务；含 `get_job` 与 `get_ruleset_version`；含 `describe_template` 提供 F-008 主题预设变体查询）；stdio + HTTP/SSE 双 transport；API key + per-key 配额；Idempotency-Key 去重；版本三元组透传到响应；**鉴权基线**两级（`scope=user` Tool 调用 vs `scope=admin` 管理端点；admin key 只走 M-010 admin 路由，不能调 Tool）
-- **映射功能**: F-013 (AC-001..AC-006) / F-008 (AC-004 describe_template Tool)
-- **对外接口**: MCP Tool（23 个，19 同步 + 4 异步）— 详见 [`arch-wechat-flow-api.md`](./arch-wechat-flow-api.md) API-001..API-016 + API-033
+- **职责**: 对 LLM Agent 暴露 24 个 Tool（20 同步 + 4 异步长任务；含 `get_job` 与 `get_ruleset_version`；含 `describe_template` 提供 F-008 主题预设变体查询；含 `register_variant` 提供 F-010 AC-010 注册式自定义样式容器 variant）；stdio + HTTP/SSE 双 transport；API key + per-key 配额；Idempotency-Key 去重；版本三元组透传到响应；**鉴权基线**两级（`scope=user` Tool 调用 vs `scope=admin` 管理端点；admin key 只走 M-010 admin 路由，不能调 Tool）
+- **映射功能**: F-013 (AC-001..AC-006) / F-008 (AC-004 describe_template Tool) / F-010 (AC-010 register_variant Tool)
+- **对外接口**: MCP Tool（24 个，20 同步 + 4 异步）— 详见 [`arch-wechat-flow-api.md`](./arch-wechat-flow-api.md) API-001..API-016 + API-033 + API-034
 - **依赖模块**: M-008 (应用层 use case) / M-002 / M-005 / M-006 / M-010 / M-012
 - **内部关键组件**:
   - `transport/stdio.ts`、`transport/http-sse.ts` — 双 transport entry
   - `auth/api-key.ts` — API key 鉴权 + per-key 配额；校验 `scope` 字段；user / admin 两级 key 哈希存储于 E-010 ApiKey 表；明文仅在创建时由 admin API 返回一次
   - `auth/scope-guard.ts` — Tool 路由前置守卫：仅 `scope=user` 可达 Tool 路由表；admin scope 直接 403 `E_PERMISSION_DENIED`
   - `idempotency/dedup.ts` — `sha256(input + toolsetVersion)` 去重缓存
-  - `tools/router.ts` — 23 个 Tool 的 dispatcher，映射到 M-008 composer 或 M-005 查询（`describe_template` 直达 M-005 `describeTemplate(themeId, templateId)`）；Tool 层为 thin wrapper，禁止持有业务逻辑（业务逻辑统一在 M-008 / M-006 / M-005 / M-004）
+  - `tools/router.ts` — 24 个 Tool 的 dispatcher，映射到 M-008 composer 或 M-005 查询（`describe_template` 直达 M-005 `describeTemplate(themeId, templateId)`；`register_variant` 直达 M-005 `registerVariant(...)`，注册条目进程内生命周期见 §8.2 Q3.16）；Tool 层为 thin wrapper，禁止持有业务逻辑（业务逻辑统一在 M-008 / M-006 / M-005 / M-004）
   - `version/triple-injection.ts` — 响应注入版本三元组
-- **Skill bundle 协同**: `skill/SKILL.md` 引用本模块 23 个 Tool 的调用顺序约定（典型链：`list_themes` → `describe_theme` → `describe_template` → `render_markdown` → `simulate_paste` → `upload_to_wechat_asset`），由 LLM Agent 解析为语义任务；Skill bundle 与 MCP server 共版本号发布
+- **Skill bundle 协同**: `skill/SKILL.md` 引用本模块 24 个 Tool 的调用顺序约定（典型链：`list_themes` → `describe_theme` → `describe_template` → `render_markdown` → `simulate_paste` → `upload_to_wechat_asset`），由 LLM Agent 解析为语义任务；Skill bundle 与 MCP server 共版本号发布
 - **两阶段取数语义**: `describe_theme.templates` 仅返回 `TemplateMeta[]`（轻量元数据，含 `id` / `themeId` / `metadata`，不含 Markdown 正文），用于 LLM Agent 浏览主题命名空间下可选 template；`describe_template` 返回完整 `TemplateDefinition`（含可用于创建文档的 Markdown 正文 + 覆盖统计 + mdast 摘要 + 依赖清单），**仅在 one-time 创建文档时拷贝** —— 拷贝完成后 frontmatter 中的 `theme` / `template` 字段不再持续消费 Markdown 正文，仅作为审计标记保留
 - **context_load**: [prd#§2.F-013, prd#§3.2, arch#§3]
 
@@ -330,7 +331,7 @@ required_sections:
   - 运行时校验：`schema.parse(input)` / `schema.safeParse(input)`
 - **依赖模块**: 无（最底层 contracts 包）；外部依赖 `zod@4.x` + 可选 `@zod/mini`（浏览器 bundle 体积敏感场景）
 - **内部关键组件**:
-  - `mcp/tool-contracts.ts` — 23 个 Tool 的 request / response Zod schema；如 `renderMarkdownRequestSchema = z.object({ markdown: z.string(), themeId: z.string().optional(), rulesetVersion: z.string().optional(), paint: z.record(z.string()).optional(), baseColor: z.string().optional() })`；长任务 Tool 的 `jobId` 字段统一 `z.string().uuid()`；新增 `describeTemplateRequestSchema` / `describeTemplateResponseSchema`（详 API-033）
+  - `mcp/tool-contracts.ts` — 24 个 Tool 的 request / response Zod schema；如 `renderMarkdownRequestSchema = z.object({ markdown: z.string(), themeId: z.string().optional(), rulesetVersion: z.string().optional(), paint: z.record(z.string()).optional(), baseColor: z.string().optional(), customCss: z.string().optional() })`；长任务 Tool 的 `jobId` 字段统一 `z.string().uuid()`；`describeTemplateRequestSchema` / `describeTemplateResponseSchema`（详 API-033）；`registerVariantRequestSchema` / `registerVariantResponseSchema`（详 API-034）
   - `relay/route-contracts.ts` — Hono RPC 路由契约（与 Hono 4.x `zValidator` middleware 集成）
   - `component/attrs-schema.ts` — Block / Mark 的 `attrsSchema` 类型工厂；`describe_block` 调用 `toJSON(block.attrsSchema)` 输出 JSON Schema
   - `theme/manifest-schema.ts`、`theme/template-schema.ts`（导出 `TemplateDefSchema` / `TemplateMetaSchema` / `CoverageReportSchema`，详 E-011）、`pack/manifest-schema.ts`、`ruleset/rule-schema.ts`

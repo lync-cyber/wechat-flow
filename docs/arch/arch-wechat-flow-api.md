@@ -15,8 +15,8 @@ required_sections:
 # Architecture 分卷 — 接口契约: wechat-flow
 
 [NAV]
-- §3 接口契约 → API-001..API-015, API-016（合并条目，含 6 个 Tool）, API-017..API-033
-  - §3.1 MCP Tool 契约 (API-001..API-015, API-016 合并条目, API-033 describe_template)
+- §3 接口契约 → API-001..API-015, API-016（合并条目，含 6 个 Tool）, API-017..API-034
+  - §3.1 MCP Tool 契约 (API-001..API-015, API-016 合并条目, API-033 describe_template, API-034 register_variant)
   - §3.2 Relay REST/SSE 接口 (API-017..API-021)
   - §3.3 CLI 命令契约 (API-022..API-025)
   - §3.4 Yjs 同步接口 (API-026..API-027)
@@ -68,7 +68,7 @@ required_sections:
 > ```
 > M-009 / M-010 rate-limit 中间件按此字段执行；任何字段命名漂移视为 contracts 违规。
 
-### 3.1 MCP Tool 契约 (API-001..API-016, API-033)
+### 3.1 MCP Tool 契约 (API-001..API-016, API-033..API-034)
 
 #### API-001: render_markdown
 
@@ -83,6 +83,7 @@ request:
     rulesetVersion: { type: string, required: false, desc: "锁定规则集版本，缺省取最新" }
     paint: { type: "Record<string, string>", required: false, desc: "单文档配色覆盖（受 theme.paintable 约束）" }
     baseColor: { type: string, required: false, desc: "调色板派生 seed（hex / lch）" }
+    customCss: { type: string, required: false, desc: "原生 CSS 文本（无状态 per-call，F-013 AC-002）；经 juice cascade pass 内联进产物（§8.2 Q3.9/Q3.16），逐声明过 css-attr-filter 白名单；被拒绝的选择器/声明以 Diagnostic 汇入 response.diagnostics（source=custom-css），不阻断渲染；伪类/媒体查询/keyframes 不参与内联（产物契约为 inline-styled HTML）" }
 response:
   schema:
     html: { type: string, desc: "最终 inline-styled HTML" }
@@ -418,7 +419,7 @@ response:
     })
 ```
 
-> 说明：API-016 是 6 个相关 Tool 的合并条目（4 个长任务 + `get_job` + `get_ruleset_version`）；与 §3.1 API-001..API-015 + API-033 合并后 Tool 总数为 **23**（**19 同步 + 4 异步**）。同步 19 = API-001..API-015（含 API-009 拆 `list_tokens` + `describe_token` 共 16 同步）+ `get_job` + `get_ruleset_version`（2 同步轮询入口）+ `describe_template`（API-033，1 同步）；异步 4 = `upload_image` + `upload_to_wechat_asset` + `export_long_image` + `export_cover`。编号在物料化时可按需展开为 API-016a..API-016f。所有长任务 Tool 与 `get_job` 的 `jobId` 字段统一 `z.string().uuid()`，与 Relay REST API-017/018/019 及 E-008 主键约束对齐。
+> 说明：API-016 是 6 个相关 Tool 的合并条目（4 个长任务 + `get_job` + `get_ruleset_version`）；与 §3.1 API-001..API-015 + API-033 + API-034 合并后 Tool 总数为 **24**（**20 同步 + 4 异步**）。同步 20 = API-001..API-015（含 API-009 拆 `list_tokens` + `describe_token` 共 16 同步）+ `get_job` + `get_ruleset_version`（2 同步轮询入口）+ `describe_template`（API-033，1 同步）+ `register_variant`（API-034，1 同步）；异步 4 = `upload_image` + `upload_to_wechat_asset` + `export_long_image` + `export_cover`。编号在物料化时可按需展开为 API-016a..API-016f。所有长任务 Tool 与 `get_job` 的 `jobId` 字段统一 `z.string().uuid()`，与 Relay REST API-017/018/019 及 E-008 主键约束对齐。
 
 #### API-033: describe_template
 
@@ -469,6 +470,50 @@ zod_schema: |
       tokens: z.array(z.string()),
       blocks: z.array(z.string()),
     }),
+  });
+```
+
+#### API-034: register_variant
+
+```yaml
+tool: register_variant
+module: M-009
+maps_to: F-010 AC-010 / F-013 AC-002
+desc: "向已有 Block 注册自定义样式容器 variant（§8.2 Q3.16）；与 plugin-api defineVariant 共享 M-005 registry/variant.ts 存储与 F-010 AC-005 校验链路；注册条目存活于 MCP server 进程内 registry，重启即失（不持久化）；注册成功后立即可被 list_block_variants / describe_variant 发现并在 Markdown 中引用。"
+request:
+  body:
+    blockId: { type: string, required: true, desc: "目标 Block ID，须命中 list_blocks 返回值" }
+    variantId: { type: string, required: true, desc: "variant ID，建议带 namespace 前缀（如 my-pack:dark-card）避免与内置 / 插件 variant 冲突（F-010 AC-006 同约定）" }
+    label: { type: string, required: true, desc: "人类可读显示名" }
+    style: { type: "Record<string, Record<string, string>>", required: true, desc: "该 variant 的 base-style（§8.2 Q3.15 L1 层）：槽位键 → 声明 map；槽位键对应 Block 渲染模板内部结构（root 必含，其余如 title / body 由 describe_block 披露）；逐声明经 css-attr-filter 白名单校验" }
+response:
+  schema:
+    registered: { type: boolean, desc: "true 仅当全部声明通过白名单且无冲突" }
+    variantId: { type: string }
+    rejectedDeclarations: { type: "RejectedDeclaration[]", desc: "被白名单拒绝的声明清单（slot + property + value + reason），供 LLM 修正重试；非空时 registered=false，不产生部分注册" }
+  errors:
+    SchemaValidationError: { code: "E_SCHEMA", http: 400, desc: "入参校验失败（blockId / variantId / label 为空字符串，或 style 不符合 Record<string, Record<string, string>> 结构 / 为空 map）" }
+    BlockNotFound: { code: "E_BLOCK_NOT_FOUND", http: 404, desc: "blockId 不存在于 Block 注册中心" }
+    VariantConflict: { code: "E_VARIANT_CONFLICT", http: 409, desc: "variantId 已存在于该 Block（内置 / 插件 / 先前注册均算冲突）" }
+    SlotUnknown: { code: "E_SLOT_UNKNOWN", http: 422, desc: "style 含该 Block 渲染模板未声明的槽位键" }
+zod_schema: |
+  // request
+  const RegisterVariantRequestSchema = z.object({
+    blockId: z.string(),
+    variantId: z.string(),
+    label: z.string(),
+    style: z.record(z.string(), z.record(z.string(), z.string())),
+  });
+  // response
+  const RegisterVariantResponseSchema = z.object({
+    registered: z.boolean(),
+    variantId: z.string(),
+    rejectedDeclarations: z.array(z.object({
+      slot: z.string(),
+      property: z.string(),
+      value: z.string(),
+      reason: z.string(),
+    })),
   });
 ```
 
@@ -839,7 +884,7 @@ behavior:
 > - 必须携带 `X-Admin-Request: 1` 自定义 header（防 CSRF / 误触发）
 > - 来源 IP 须命中环境变量 `ADMIN_IP_ALLOWLIST` 白名单；缺省仅允许 loopback (`127.0.0.1` / `::1`)
 > - 所有 admin 调用写审计日志（actor=apiKeyId, action, target, ts），日志通过 §5.5 审计追溯通道持久化
-> - admin key 与 user key 在 E-010 表用 `scope` 字段区分；admin scope 不可调 23 个 Tool（M-009 `auth/scope-guard.ts` 拦截）
+> - admin key 与 user key 在 E-010 表用 `scope` 字段区分；admin scope 不可调 24 个 Tool（M-009 `auth/scope-guard.ts` 拦截）
 
 #### API-028: POST /api/v1/admin/api-keys
 

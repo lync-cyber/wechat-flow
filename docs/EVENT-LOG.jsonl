@@ -379,3 +379,14 @@
 {"ts": "2026-06-11T07:16:48+00:00", "event": "session_start", "phase": "session", "detail": "IDE session started"}
 {"ts": "2026-06-12T02:12:17+00:00", "event": "session_start", "phase": "session", "detail": "IDE session started"}
 {"ts": "2026-06-12T02:12:25+00:00", "event": "session_start", "phase": "session", "detail": "IDE session started"}
+{"ts": "2026-06-12T03:36:59+00:00", "event": "session_start", "phase": "session", "detail": "IDE session started"}
+{"ts": "2026-06-12T03:37:05+00:00", "event": "session_start", "phase": "session", "detail": "IDE session started"}
+{"ts": "2026-06-12T03:37:14+00:00", "event": "session_start", "phase": "session", "detail": "IDE session started"}
+{"ts": "2026-06-12T04:09:40+00:00", "event": "state_change", "phase": "development", "detail": "skill-run: doc-review Layer 1 reported issues", "agent": "reviewer", "status": "needs_revision", "ref": "skill:doc-review/doc_check"}
+{"ts": "2026-06-12T04:09:48+00:00", "event": "state_change", "phase": "development", "detail": "skill-run: doc-review Layer 1 passed", "agent": "reviewer", "status": "completed", "ref": "skill:doc-review/doc_check"}
+{"ts": "2026-06-12T04:10:03+00:00", "event": "state_change", "phase": "development", "detail": "skill-run: doc-review Layer 1 reported issues", "agent": "reviewer", "status": "needs_revision", "ref": "skill:doc-review/doc_check"}
+{"ts": "2026-06-12T04:10:11+00:00", "event": "state_change", "phase": "development", "detail": "skill-run: doc-review Layer 1 passed", "agent": "reviewer", "status": "completed", "ref": "skill:doc-review/doc_check"}
+{"ts": "2026-06-12T04:10:25+00:00", "event": "state_change", "phase": "development", "detail": "skill-run: doc-review Layer 1 passed", "agent": "reviewer", "status": "completed", "ref": "skill:doc-review/doc_check"}
+{"ts": "2026-06-12T04:10:33+00:00", "event": "state_change", "phase": "development", "detail": "skill-run: doc-review Layer 1 reported issues", "agent": "reviewer", "status": "needs_revision", "ref": "skill:doc-review/doc_check"}
+{"ts": "2026-06-12T04:25:10+00:00", "event": "state_change", "phase": "development", "detail": "architect 专项评审 + change-guard L3 cascade amendment 闭环: Q3.9 重写(CSS 内联化混合架构 token styleMap + juice/client cascade 条件分支, 用户覆盖自研受控 cascade 推荐) / Q3.15 新增(Block 样式三层合成) / Q3.16 新增(customCss 参数 + API-034 register_variant 双轨) / MCP Tool 23→24 全链路对账 / rn-006 调研记录新建"}
+{"ts": "2026-06-12T04:25:24+00:00", "event": "review_verdict", "phase": "development", "detail": "REVIEW-prd-r5 approved_with_notes(2 LOW: 1修复+1裁误报) + REVIEW-arch-r6 needs_revision(1H+2M+1L)→修复4项+calibration撤销2项→REVIEW-arch-r7 approved; docs index 60 文档全绿", "status": "approved"}

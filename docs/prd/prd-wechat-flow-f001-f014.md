@@ -229,6 +229,7 @@ required_sections:
   - [ ] AC-007: 调色板派生扩展点：第三方主题可消费调色板派生 API，从单色/三色 seed 生成完整 token 字典。
   - [ ] AC-008: 插件沙箱隔离：未通过校验或运行时违规的组件降级为占位符。
   - [ ] AC-009: 注册式插件市场（架构扩展点，具体实现由 architect 阶段规划）。
+  - [ ] AC-010: MCP 注册扩展点：自动化调用方（LLM Agent）可经 MCP Tool `register_variant` 向已有 Block 注册自定义样式容器 variant，与 AC-006 `defineVariant` 共享同一注册语义与自动校验链路（白名单标签 / 白名单 CSS / variant 申报一致性，见 AC-005）；注册成功后立即可被 `list_block_variants` / `describe_variant` 发现并在 Markdown 中引用；注册条目的生命周期与持久化语义由 architect 阶段决策。
 - **优先级**: P1
 - **备注**:
   - 典型开发者工作流：`wechat-flow init my-pack` → `wechat-flow dev`（热重载）→ `wechat-flow validate`（规则集校验）→ `wechat-flow publish`。
@@ -276,7 +277,7 @@ required_sections:
 - **验收标准**:
   - [ ] AC-001: 浏览器编辑器与对外 API 共享同一组应用层 use case（渲染/复制/导出管线），底层机制层 stage 无 DOM 依赖；固定 `coreVersion + themeVersion + rulesetVersion`，相同 Markdown 输入产出字节级一致（SHA-256 相同）。
   - [ ] AC-002: Tool 契约入参/出参具备强类型 schema 定义（含运行时校验能力），保证调用方与组件开发者的类型契约一致性；具体类型系统共享机制（共用同一 schema 库 / 各自定义经契约对齐等）由 architect 阶段决策。契约包含以下工具：
-    - `render_markdown`：主入口，返回 `{ html, diagnostics, rulesetVersion, themeVersion }`
+    - `render_markdown`：主入口，返回 `{ html, diagnostics, rulesetVersion, themeVersion }`；支持可选 `customCss` 入参——调用方按需随调提交原生 CSS 文本（无状态 per-call），工具将其内联进产物并执行与主题样式同一份 CSS 白名单过滤，被拒绝的选择器/声明以 `diagnostics` 中 `source: 'custom-css'` 条目回传（记录 property + value + 拒绝原因，供 LLM 修正重试），不阻断渲染
     - `lint_markdown`：仅诊断、不渲染，供调用方预检查
     - `list_themes` / `describe_theme`：枚举主题与其可配 token、paintable 范围、装饰资产清单、该主题已注册的 template 预设变体清单（templateId + 缩略元数据）
     - `list_blocks` / `describe_block` / `list_marks` / `describe_mark` / `list_tokens` / `describe_token`：枚举可用 Block/Mark/Token 与 schema（attrsSchema 以 JSON Schema 形态返回），调用方据此生成合法 Markdown
