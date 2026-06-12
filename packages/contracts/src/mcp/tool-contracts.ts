@@ -11,99 +11,99 @@ export const renderMarkdownRequestSchema = z.object({
 
 export const renderMarkdownResponseSchema = z.object({
   html: z.string(),
-  diagnostics: z.array(z.object({}).passthrough()),
+  diagnostics: z.array(z.looseObject({})),
   rulesetVersion: z.string(),
   themeVersion: z.string(),
   postPaste: z.boolean(),
 });
 
 // ---- lint_markdown (API-002) ----
-export const lintMarkdownRequestSchema = z.object({}).passthrough();
-export const lintMarkdownResponseSchema = z.object({}).passthrough();
+export const lintMarkdownRequestSchema = z.looseObject({});
+export const lintMarkdownResponseSchema = z.looseObject({});
 
 // ---- list_themes (API-003) ----
-export const listThemesRequestSchema = z.object({}).passthrough();
-export const listThemesResponseSchema = z.object({}).passthrough();
+export const listThemesRequestSchema = z.looseObject({});
+export const listThemesResponseSchema = z.looseObject({});
 
 // ---- describe_theme (API-004) ----
-export const describeThemeRequestSchema = z.object({}).passthrough();
-export const describeThemeResponseSchema = z.object({}).passthrough();
+export const describeThemeRequestSchema = z.looseObject({});
+export const describeThemeResponseSchema = z.looseObject({});
 
 // ---- list_blocks (API-005) ----
-export const listBlocksRequestSchema = z.object({}).passthrough();
-export const listBlocksResponseSchema = z.object({}).passthrough();
+export const listBlocksRequestSchema = z.looseObject({});
+export const listBlocksResponseSchema = z.looseObject({});
 
 // ---- describe_block (API-006) ----
-export const describeBlockRequestSchema = z.object({}).passthrough();
-export const describeBlockResponseSchema = z.object({}).passthrough();
+export const describeBlockRequestSchema = z.looseObject({});
+export const describeBlockResponseSchema = z.looseObject({});
 
 // ---- list_marks (API-007) ----
-export const listMarksRequestSchema = z.object({}).passthrough();
-export const listMarksResponseSchema = z.object({}).passthrough();
+export const listMarksRequestSchema = z.looseObject({});
+export const listMarksResponseSchema = z.looseObject({});
 
 // ---- describe_mark (API-008) ----
-export const describeMarkRequestSchema = z.object({}).passthrough();
-export const describeMarkResponseSchema = z.object({}).passthrough();
+export const describeMarkRequestSchema = z.looseObject({});
+export const describeMarkResponseSchema = z.looseObject({});
 
 // ---- list_tokens (API-009a) ----
-export const listTokensRequestSchema = z.object({}).passthrough();
-export const listTokensResponseSchema = z.object({}).passthrough();
+export const listTokensRequestSchema = z.looseObject({});
+export const listTokensResponseSchema = z.looseObject({});
 
 // ---- describe_token (API-009b) ----
-export const describeTokenRequestSchema = z.object({}).passthrough();
-export const describeTokenResponseSchema = z.object({}).passthrough();
+export const describeTokenRequestSchema = z.looseObject({});
+export const describeTokenResponseSchema = z.looseObject({});
 
 // ---- list_block_variants (API-010) ----
-export const listBlockVariantsRequestSchema = z.object({}).passthrough();
-export const listBlockVariantsResponseSchema = z.object({}).passthrough();
+export const listBlockVariantsRequestSchema = z.looseObject({});
+export const listBlockVariantsResponseSchema = z.looseObject({});
 
 // ---- describe_variant (API-011) ----
-export const describeVariantRequestSchema = z.object({}).passthrough();
-export const describeVariantResponseSchema = z.object({}).passthrough();
+export const describeVariantRequestSchema = z.looseObject({});
+export const describeVariantResponseSchema = z.looseObject({});
 
 // ---- derive_palette (API-012) ----
-export const derivePaletteRequestSchema = z.object({}).passthrough();
-export const derivePaletteResponseSchema = z.object({}).passthrough();
+export const derivePaletteRequestSchema = z.looseObject({});
+export const derivePaletteResponseSchema = z.looseObject({});
 
 // ---- apply_zh_typo (API-013) ----
-export const applyZhTypoRequestSchema = z.object({}).passthrough();
-export const applyZhTypoResponseSchema = z.object({}).passthrough();
+export const applyZhTypoRequestSchema = z.looseObject({});
+export const applyZhTypoResponseSchema = z.looseObject({});
 
 // ---- simulate_paste (API-014) ----
-export const simulatePasteRequestSchema = z.object({}).passthrough();
-export const simulatePasteResponseSchema = z.object({}).passthrough();
+export const simulatePasteRequestSchema = z.looseObject({});
+export const simulatePasteResponseSchema = z.looseObject({});
 
 // ---- export_clipboard_payload (API-015) ----
-export const exportClipboardPayloadRequestSchema = z.object({}).passthrough();
-export const exportClipboardPayloadResponseSchema = z.object({}).passthrough();
+export const exportClipboardPayloadRequestSchema = z.looseObject({});
+export const exportClipboardPayloadResponseSchema = z.looseObject({});
 
 // ---- upload_image async (API-016a) ----
-export const uploadImageRequestSchema = z.object({}).passthrough();
-export const uploadImageResponseSchema = z.object({}).passthrough();
+export const uploadImageRequestSchema = z.looseObject({});
+export const uploadImageResponseSchema = z.looseObject({});
 
 // ---- upload_to_wechat_asset async (API-016b) ----
-export const uploadToWechatAssetRequestSchema = z.object({}).passthrough();
-export const uploadToWechatAssetResponseSchema = z.object({}).passthrough();
+export const uploadToWechatAssetRequestSchema = z.looseObject({});
+export const uploadToWechatAssetResponseSchema = z.looseObject({});
 
 // ---- export_long_image async (API-016c) ----
-export const exportLongImageRequestSchema = z.object({}).passthrough();
-export const exportLongImageResponseSchema = z.object({}).passthrough();
+export const exportLongImageRequestSchema = z.looseObject({});
+export const exportLongImageResponseSchema = z.looseObject({});
 
 // ---- export_cover async (API-016d) ----
-export const exportCoverRequestSchema = z.object({}).passthrough();
-export const exportCoverResponseSchema = z.object({}).passthrough();
+export const exportCoverRequestSchema = z.looseObject({});
+export const exportCoverResponseSchema = z.looseObject({});
 
 // ---- get_job (API-016e) ----
-export const getJobRequestSchema = z.object({}).passthrough();
-export const getJobResponseSchema = z.object({}).passthrough();
+export const getJobRequestSchema = z.looseObject({});
+export const getJobResponseSchema = z.looseObject({});
 
 // ---- get_ruleset_version (API-016f) ----
-export const getRulesetVersionRequestSchema = z.object({}).passthrough();
-export const getRulesetVersionResponseSchema = z.object({}).passthrough();
+export const getRulesetVersionRequestSchema = z.looseObject({});
+export const getRulesetVersionResponseSchema = z.looseObject({});
 
 // ---- describe_template (API-033) ----
-export const describeTemplateRequestSchema = z.object({}).passthrough();
-export const describeTemplateResponseSchema = z.object({}).passthrough();
+export const describeTemplateRequestSchema = z.looseObject({});
+export const describeTemplateResponseSchema = z.looseObject({});
 
 /**
  * Registry of all 23 Tool request schemas (19 sync + 4 async).
