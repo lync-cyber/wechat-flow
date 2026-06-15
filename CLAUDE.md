@@ -6,7 +6,7 @@
 
 - 技术栈: Node.js + TypeScript（具体框架待 architect 决定）
 - 运行时: claude-code
-- 框架版本: 0.9.1
+- 框架版本: 0.11.0
   <!-- 由 cataforge deploy 自动盖入已安装包版本。SemVer: MAJOR=不兼容变更, MINOR=新功能, PATCH=修复 -->
 - 语言定位: 中文框架（提示词/文档/交互用中文；代码/变量/CLI参数用英文）
 - 执行模式: standard
@@ -21,12 +21,12 @@
 - 项目定位: 面向微信公众号写作者的 Markdown 写作与排版工具 — 写作契约 + LLM 友好统一 API + 主题组件库；产物契约为经过微信编辑器粘贴过滤后视觉一致的 inline-styled HTML
 - 交付形态: Web App（含预览/编辑界面）+ npm 包 + MCP server / CLI 多形态
 
-## 执行环境 (Bootstrap 时由 `cataforge setup --emit-env-block` 填入)
+## 执行环境 (Bootstrap 时由 `python .cataforge/scripts/framework/setup.py --emit-env-block` 填入)
+
 <!-- 本节在 Bootstrap 步骤中生成。每次会话都会作为项目指令加载，
      权重高于 hook 注入的 additionalContext。项目生命周期内保持稳定。 -->
 {执行环境检测结果 — 未填入时 orchestrator 应在 Bootstrap 时调用:
- cataforge setup --emit-env-block}
- 
+ python .cataforge/scripts/framework/setup.py --emit-env-block}
 
 ## 项目状态 (orchestrator专属写入区，其他Agent禁止修改)
 - 当前阶段: development
@@ -49,12 +49,12 @@
 
 ## 文档导航
 
-- 导航索引: `docs/.doc-index.json`（机器索引，所有 Agent 通过 `cataforge docs load` 查询；缺失时运行 `cataforge docs index` 重建）
+- 导航索引: `docs/.doc-index.json`（机器索引，所有 Agent 通过 `cataforge context read` 查询；缺失时运行 `cataforge context index` 重建）
 - 通用规则: .claude/rules/COMMON-RULES.md
 - 子代理协议: .claude/rules/SUB-AGENT-PROTOCOLS.md
 - 编排协议: .cataforge/agents/orchestrator/ORCHESTRATOR-PROTOCOLS.md (orchestrator专属)
 - 状态码Schema: .cataforge/schemas/agent-result.schema.json
-- 加载原则: 按任务需要通过 `cataforge docs load` 加载相关章节，不全量加载
+- 加载原则: 按章节/条目粒度按需通过 `cataforge context read` 加载，不全量加载
 
 ## 全局约定
 
@@ -91,6 +91,13 @@
   - `upgrade.state` — 本地升级状态。升级时始终保留
   - `features` — 功能注册表。升级时全量覆盖
   - `migration_checks` — 迁移检查声明。升级时全量覆盖
+
+## 执行环境 (Bootstrap 时由 `cataforge setup --emit-env-block` 填入)
+<!-- 本节在 Bootstrap 步骤中生成。每次会话都会作为项目指令加载，
+     权重高于 hook 注入的 additionalContext。项目生命周期内保持稳定。 -->
+{执行环境检测结果 — 未填入时 orchestrator 应在 Bootstrap 时调用:
+ cataforge setup --emit-env-block}
+ 
 
 ## 工具使用规范
 - 优先使用 LSP 工具（go_to_definition, find_references, hover）查找符号定义和引用

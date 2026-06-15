@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-06-12T08:52:34.273066+00:00",
+  "generated_at": "2026-06-15T02:30:04.921602+00:00",
   "documents": {
     "arch-wechat-flow-api": {
       "file_path": "docs/arch/arch-wechat-flow-api.md",
@@ -2786,6 +2786,22 @@
       "total_lines": 113,
       "est_tokens": 1606,
       "content_hash": "49de301c",
+      "sections": {},
+      "deps": [
+        "dev-plan-wechat-flow"
+      ],
+      "dep_hashes": {
+        "dev-plan-wechat-flow": "96854461"
+      }
+    },
+    "review-dev-plan-wechat-flow-r6": {
+      "file_path": "docs/reviews/doc/REVIEW-dev-plan-wechat-flow-r6.md",
+      "doc_type": "review",
+      "volume": "main",
+      "status": "approved",
+      "total_lines": 106,
+      "est_tokens": 1263,
+      "content_hash": "c214aa5c",
       "sections": {},
       "deps": [
         "dev-plan-wechat-flow"
