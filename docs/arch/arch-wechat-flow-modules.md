@@ -31,7 +31,7 @@ required_sections:
   - `SourcePane`（基于 CodeMirror 6）— directive 语法高亮、补全
   - `PreviewPane` — iframe 沙箱（`sandbox="allow-same-origin"`，**无 `allow-scripts`** + CSP `default-src 'none'`，零 JS）挂载与视口切换（375 / 768 / desktop）；目录跳转、源码↔预览高亮联动、复制按钮覆盖层等 UI 钩子全部在主线程通过 `iframe.contentDocument` 与 overlay 实现，不向 iframe 内注入脚本。`allow-same-origin` 是主线程读写 `contentDocument`（源码↔预览高亮联动、目录跳转 `scrollTo`）的物理前提——opaque origin 下 `contentDocument` 访问抛 SecurityError；禁脚本由「无 `allow-scripts`（不创建脚本执行环境）+ CSP `default-src 'none'`（`script-src` 缺省回退，阻断所有脚本源 / inline / eval）」两层共同保证，沙箱配置与 CSP 互为冗余。安全论证见 arch#§5.3、决策记录 §8.2 Q3.8
   - `CommandPalette`、`InsertDrawer`、`ContextMenu` — 共享同一 command registry
-  - `DiagnosticsPanel` — 兼容性报告分级展示（red / yellow / green）；inbound 数据契约为 M-003 输出的 `DiagnosticReport`（含 `diagnostics: Diagnostic[]`、`nodeChangeRecords: NodeChangeRecord[]`、`nightRiskIssues: NightRiskEntry[]` 三大字段）；面板渲染 `nodeChangeRecords` → 子组件 `CompatibilityDiffView`（C-013.1）双栏对比；`nightRiskIssues` 非空时面板进入 `night-risk-alert` 视觉态（ui-spec C-013）
+  - `DiagnosticsPanel` — 兼容性报告分级展示（red / yellow / green）；inbound 数据契约为 M-003 输出的 `DiagnosticReport`（含 `diagnostics: Diagnostic[]`、`nodeChangeRecords: NodeChangeRecord[]`、`nightRiskIssues: NightRiskEntry[]` 三大字段）；面板渲染 `nodeChangeRecords` → 子组件 `CompatibilityDiffView`（UC-013.1）双栏对比；`nightRiskIssues` 非空时面板进入 `night-risk-alert` 视觉态（ui-spec UC-013）
   - `CompatibilityDiffView` — DiagnosticsPanel 子组件；订阅 `DiagnosticReport.nodeChangeRecords[]` 中匹配 `nodeSelector` 的 `NodeChangeRecord`，按 `before` / `after` outerHTML 与 `attrDiff` 渲染双栏对比；不主动调用渲染管线，所有数据由 M-003 在过滤执行时一次性记录
   - `ThemeSelector`、`PaintDrawer`、`PaletteDerivationDrawer` — 主题选择与单文档配色派生
   - `ThemeMarketGallery` — 主题模板市场（F-008）的 (主题, template) 卡片画廊；订阅 M-005 `listThemes()` × `listThemeTemplates(themeId)` 笛卡尔积，按缩略元数据渲染卡片，选中后调用 M-005 `describeTemplate(themeId, templateId)` 取预填 Markdown 创建新文档
@@ -73,7 +73,7 @@ required_sections:
 - **映射功能**: F-007 (AC-001..AC-004) / F-011 (AC-001 规则级 fixture / AC-005 补丁库 / AC-006 可读性 / AC-007 关键词)
 - **对外接口**:
   - 包级 API：`applyRuleset(hast, ruleset) → {hast, report}`，其中 `report: DiagnosticReport`；`getRulesetVersion() → string`；被 M-002 调用
-  - **outbound 数据契约**：`DiagnosticReport.nodeChangeRecords[] → M-001 C-013.1 CompatibilityDiffView 消费`；`DiagnosticReport.nightRiskIssues[] → M-001 DiagnosticsPanel `night-risk-alert` 状态消费`
+  - **outbound 数据契约**：`DiagnosticReport.nodeChangeRecords[] → M-001 UC-013.1 CompatibilityDiffView 消费`；`DiagnosticReport.nightRiskIssues[] → M-001 DiagnosticsPanel `night-risk-alert` 状态消费`
 - **依赖模块**: M-012 (schema 契约层 — Rule schema、DiagnosticReport schema)
 - **内部关键组件**:
   - `rules/registry.ts` — 规则注册中心
@@ -89,8 +89,8 @@ required_sections:
     ```ts
     interface DiagnosticReport {
       diagnostics: Diagnostic[];                   // severity / ruleId / nodeRef / message
-      nodeChangeRecords: NodeChangeRecord[];       // 粘贴前后逐节点变更（C-013.1 数据源）
-      nightRiskIssues: NightRiskEntry[];           // 夜间风险条目（C-013 night-risk-alert 数据源）
+      nodeChangeRecords: NodeChangeRecord[];       // 粘贴前后逐节点变更（UC-013.1 数据源）
+      nightRiskIssues: NightRiskEntry[];           // 夜间风险条目（UC-013 night-risk-alert 数据源）
       versionTriple: VersionTriple;
     }
 

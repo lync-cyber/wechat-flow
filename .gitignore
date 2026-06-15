@@ -43,8 +43,9 @@ reports/mutation/
 # CataForge upgrade rollback backups (local-only)
 .cataforge/.backups/
 
-# CataForge KG: ignore the binary RocksDB working store (rebuildable from
-# committed markdown / snapshots); keep the NQuads snapshots versioned so a
-# fresh clone restores via `cataforge kg rollback` without re-parsing docs
-.cataforge/kg/store/
+# CataForge KG: under kg-first the RocksDB store is the committed source of
+# truth, so its structural files are tracked; pure-runtime LOG/LOCK/IDENTITY
+# are ignored via .cataforge/.gitignore, and NQuads snapshots stay versioned.
+# The RocksDB WAL is structural — re-include it past the top-level *.log rule.
+!.cataforge/kg/store/*.log
 docs/.kg-reconcile-report.json

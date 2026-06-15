@@ -25,7 +25,7 @@ required_sections:
 
 ## 3. 任务卡详细
 
-### T-099: [DESIGN] Penpot — C-013 DiagnosticsPanel + C-013.1 Diff 视图视觉稿
+### T-099: [DESIGN] Penpot — UC-013 DiagnosticsPanel + UC-013.1 Diff 视图视觉稿
 
 - **目标**: 产出 DiagnosticsPanel 和 CompatibilityDiffView 的视觉稿，覆盖三色诊断展示和双栏 Diff 视图布局
 - **task_kind**: design
@@ -37,14 +37,14 @@ required_sections:
 - **tdd_skip_reason**: "Penpot 设计稿，由用户视觉验证 sign-off"
 - **dependencies**: [T-095]
 - **acceptance_criteria**:
-  - [ ] AC-001: C-013 视觉稿覆盖 `empty-no-issues`、`has-issues`、`running`、`collapsed`、`expanded` 5 个状态，每条诊断项含左侧色块（红/黄/绿）
-  - [ ] AC-002: C-013.1 CompatibilityDiffView 视觉稿含双栏 before/after 布局，属性 diff 子列表（`+`/`-`/`=` 前缀行），命中规则行
-  - [ ] AC-003: 通过 Penpot MCP `find_shape` 可检索到 `C-013` 和 `C-013.1` 组件
+  - [ ] AC-001: UC-013 视觉稿覆盖 `empty-no-issues`、`has-issues`、`running`、`collapsed`、`expanded` 5 个状态，每条诊断项含左侧色块（红/黄/绿）
+  - [ ] AC-002: UC-013.1 CompatibilityDiffView 视觉稿含双栏 before/after 布局，属性 diff 子列表（`+`/`-`/`=` 前缀行），命中规则行
+  - [ ] AC-003: 通过 Penpot MCP `find_shape` 可检索到 `UC-013` 和 `UC-013.1` 组件
 - **deliverables**:
-  - [ ] Penpot 项目：C-013, C-013.1 视觉稿页面
-- **relates_to**: [ui-spec-wechat-flow-c001-c014#§2.C-013]
+  - [ ] Penpot 项目：UC-013, UC-013.1 视觉稿页面
+- **relates_to**: [ui-spec-wechat-flow-c001-c014#§2.UC-013]
 - **context_load**:
-  - ui-spec-wechat-flow-c001-c014#§2.C-013
+  - ui-spec-wechat-flow-c001-c014#§2.UC-013
 
 ---
 
@@ -227,9 +227,9 @@ required_sections:
 
 ---
 
-### T-018: M-001 DiagnosticsPanel（C-013）+ CompatibilityDiffView（C-013.1）
+### T-018: M-001 DiagnosticsPanel（UC-013）+ CompatibilityDiffView（UC-013.1）
 
-- **目标**: 实现 DiagnosticsPanel 组件（C-013）和兼容性 Diff 视图（C-013.1），接收 `DiagnosticReport` 数据，展示分级诊断列表和 before/after 节点对照
+- **目标**: 实现 DiagnosticsPanel 组件（UC-013）和兼容性 Diff 视图（UC-013.1），接收 `DiagnosticReport` 数据，展示分级诊断列表和 before/after 节点对照
 - **moduli**: M-001 (编辑器 UI)
 - **task_kind**: feature
 - **priority**: P0
@@ -241,20 +241,20 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-017, T-099]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given `diagnostics` 含 2 条 error 级别和 1 条 warn 级别诊断，When DiagnosticsPanel 展开，Then 每条 error 项左侧色块为 `--color-diag-error`（赤陶红），warn 项为 `--color-diag-warn`（暖黄棕），符合 `ui-spec-wechat-flow-c001-c014#§2.C-013`
+  - [ ] AC-001: Given `diagnostics` 含 2 条 error 级别和 1 条 warn 级别诊断，When DiagnosticsPanel 展开，Then 每条 error 项左侧色块为 `--color-diag-error`（赤陶红），warn 项为 `--color-diag-warn`（暖黄棕），符合 `ui-spec-wechat-flow-c001-c014#§2.UC-013`
   - [ ] AC-002: Given `isExpanded: false`，When DiagnosticsPanel 渲染，Then 高度为 `32px`，仅显示标题行；`isExpanded: true` 时高度 auto（最大 200px 可滚动）
   - [ ] AC-003: Given 诊断列表项右侧「查看变更」链接，When 点击，Then CompatibilityDiffView Modal 打开，左栏 before HTML 和右栏 after HTML 均非空，命中规则 ID 可见
   - [ ] AC-004: Given `diagnostics` 含 error，When DiagnosticsPanel 处于折叠态（A-010 假设），Then 面板自动展开（`isExpanded` 状态切换为 `true`）
-  - [ ] AC-005: Given `DiagnosticReport.nodeChangeRecords` 数组非空，When CompatibilityDiffView 渲染，Then C-013 CompatibilityDiffView 展示 before/after 双栏对比（每条 nodeChangeRecord 各占一行）；`nodeChangeRecords` 为空时该视图区域隐藏 [ARCH#§2.M-003]
+  - [ ] AC-005: Given `DiagnosticReport.nodeChangeRecords` 数组非空，When CompatibilityDiffView 渲染，Then UC-013 CompatibilityDiffView 展示 before/after 双栏对比（每条 nodeChangeRecord 各占一行）；`nodeChangeRecords` 为空时该视图区域隐藏 [ARCH#§2.M-003]
   - [ ] AC-006: Given `DiagnosticReport.nightRiskIssues` 数组非空，When DiagnosticsPanel 渲染，Then 面板进入 `night-risk-alert` CSS 态（边框色 `--color-diag-error`，面板标题前置风险标记图标）；`nightRiskIssues` 为空时恢复常规态 [ARCH#§2.M-003]
 - **deliverables**:
-  - [ ] `apps/editor/src/components/diagnostics/DiagnosticsPanel.vue` — C-013 实现
-  - [ ] `apps/editor/src/components/diagnostics/CompatibilityDiffView.vue` — C-013.1 实现（含 nodeChangeRecords 双栏对比）
+  - [ ] `apps/editor/src/components/diagnostics/DiagnosticsPanel.vue` — UC-013 实现
+  - [ ] `apps/editor/src/components/diagnostics/CompatibilityDiffView.vue` — UC-013.1 实现（含 nodeChangeRecords 双栏对比）
   - [ ] `apps/editor/src/components/diagnostics/DiagnosticsItem.vue` — 单条诊断列表项
-- **relates_to**: [F-002, F-011, M-001, C-013]
+- **relates_to**: [F-002, F-011, M-001, UC-013]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-001
-  - ui-spec-wechat-flow-c001-c014#§2.C-013
+  - ui-spec-wechat-flow-c001-c014#§2.UC-013
   - prd-wechat-flow-f001-f014#§2.F-002
 
 ---
@@ -301,7 +301,7 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-009, T-010]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given 用户在预览 iframe 中点击某个 `<p data-node-id="...">`，When 触发，Then SourcePane CodeMirror 光标定位到该节点对应的源码行 [F-001 AC-004 + ui-spec-wechat-flow-c001-c014#§2.C-004]
+  - [ ] AC-001: Given 用户在预览 iframe 中点击某个 `<p data-node-id="...">`，When 触发，Then SourcePane CodeMirror 光标定位到该节点对应的源码行 [F-001 AC-004 + ui-spec-wechat-flow-c001-c014#§2.UC-004]
   - [ ] AC-002: Given 源码光标移动到某行，When CodeMirror selectionChange 事件触发，Then PreviewPane 内对应 `data-node-id` 节点高亮 `.cm-highlighted` 类 200ms 后淡出
   - [ ] AC-003: Given 节点映射建立，When mdast → hast 阶段，Then 每个块级节点产出 `data-node-id="{sourceLine}:{nodeIndex}"` 属性
   - [ ] AC-004: 高亮联动通过主线程 `iframe.contentDocument` 通信，不向 iframe 内注入脚本
@@ -314,13 +314,13 @@ required_sections:
 - **context_load**:
   - prd-wechat-flow-f001-f014#§2.F-001
   - arch-wechat-flow-modules#§2.M-001
-  - ui-spec-wechat-flow-c001-c014#§2.C-004
+  - ui-spec-wechat-flow-c001-c014#§2.UC-004
 
 ---
 
-### T-052: StatusBar 状态机与平板降级（C-023）
+### T-052: StatusBar 状态机与平板降级（UC-023）
 
-- **目标**: 实现 StatusBar 三态状态机（idle / warn / error）+ 平板断点下的图标降级模式，关联 UI-SPEC C-023
+- **目标**: 实现 StatusBar 三态状态机（idle / warn / error）+ 平板断点下的图标降级模式，关联 UI-SPEC UC-023
 - **模块**: M-001 (编辑器 UI)
 - **task_kind**: feature
 - **priority**: P0
@@ -332,15 +332,15 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-019]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given `diagnostics` 为空，When StatusBar 渲染，Then 状态机处于 `idle` 态，兼容性摘要以 `--color-text-muted` 弱化色显示；`diagnostics` 含 warn 时切换为 `warn` 态，`diagnostics` 含 error 时切换为 `error` 态（三态可观测：每态 CSS class 变化可在 DOM 中断言）[UI-SPEC#§2.C-023]
+  - [ ] AC-001: Given `diagnostics` 为空，When StatusBar 渲染，Then 状态机处于 `idle` 态，兼容性摘要以 `--color-text-muted` 弱化色显示；`diagnostics` 含 warn 时切换为 `warn` 态，`diagnostics` 含 error 时切换为 `error` 态（三态可观测：每态 CSS class 变化可在 DOM 中断言）[UI-SPEC#§2.UC-023]
   - [ ] AC-002: Given 视口宽度 < 768px（平板断点），When StatusBar 渲染，Then 兼容性摘要区改为图标（`i`）+ hover/focus 显示 tooltip，不截断文字；视口 ≥ 768px 时恢复文字摘要模式
   - [ ] AC-003: Given 移动端违规词（如 `position:fixed`）出现在诊断报告，When StatusBar 渲染，Then `i` 图标旁可见警告色标记，tooltip 文字描述违规内容
 - **deliverables**:
   - [ ] 更新 `apps/editor/src/components/layout/StatusBar.vue` — 三态状态机实现 + 平板断点图标降级
   - [ ] `apps/editor/src/components/layout/__tests__/StatusBar.test.ts` — AC-001..AC-003 单元测试
-- **relates_to**: [F-002, M-001, C-023]
+- **relates_to**: [F-002, M-001, UC-023]
 - **context_load**:
-  - ui-spec-wechat-flow-c001-c014#§2.C-023
+  - ui-spec-wechat-flow-c001-c014#§2.UC-023
   - arch-wechat-flow-modules#§2.M-001
 
 ---

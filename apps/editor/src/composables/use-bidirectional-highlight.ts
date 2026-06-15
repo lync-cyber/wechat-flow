@@ -14,7 +14,7 @@ export interface BidirectionalHighlightReturn {
   onIframeLoad: () => void;
 }
 
-// Highlight fade duration in ms (C-004 constraint: no script injection into iframe)
+// Highlight fade duration in ms (UC-004 constraint: no script injection into iframe)
 const HIGHLIGHT_DURATION_MS = 200;
 
 export function useBidirectionalHighlight(

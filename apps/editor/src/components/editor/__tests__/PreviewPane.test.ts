@@ -149,8 +149,8 @@ describe("AC-003: 视口切换工具栏行为", () => {
   });
 });
 
-// C-005 loading 态（ui-spec C-005 状态表 `loading`）：iframe 区域居中 spinner
-describe("C-005 loading 态", () => {
+// UC-005 loading 态（ui-spec UC-005 状态表 `loading`）：iframe 区域居中 spinner
+describe("UC-005 loading 态", () => {
   it("isLoading=true 时显示 loading 指示（渲染中…）", async () => {
     const wrapper = mount(PreviewPane, { props: { ...defaultProps, isLoading: true } });
     await nextTick();
@@ -168,8 +168,8 @@ describe("C-005 loading 态", () => {
   });
 });
 
-// C-005 error 态（ui-spec C-005 状态表 `error`）：! 图标 + 错误说明 + 「重试」按钮
-describe("C-005 error 态", () => {
+// UC-005 error 态（ui-spec UC-005 状态表 `error`）：! 图标 + 错误说明 + 「重试」按钮
+describe("UC-005 error 态", () => {
   it("error 非空时显示错误说明 + 「重试」按钮，iframe 被替换", async () => {
     const wrapper = mount(PreviewPane, {
       props: { ...defaultProps, error: "渲染失败，请重试" },

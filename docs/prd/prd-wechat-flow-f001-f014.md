@@ -39,7 +39,7 @@ required_sections:
   - 新建文档默认进入主题模板市场（P-003），同时保留「空白文档起步」快速入口；写作者从市场卡片起步后可在编辑器自由全选替换。
   - UI 骨架详见本条目子节。
 
-**[DRAFT_UI_INPUT] UI 界面规格参考输入**（本段为给 ui-designer 的参考输入，非 PRD 规范性约束；v1 实际 UI 入口与菜单结构以 ui-spec C-001/C-009/C-016 为准；未在 ui-spec 落地的项不属于 v1 范围）：
+**[DRAFT_UI_INPUT] UI 界面规格参考输入**（本段为给 ui-designer 的参考输入，非 PRD 规范性约束；v1 实际 UI 入口与菜单结构以 ui-spec UC-001/UC-009/UC-016 为准；未在 ui-spec 落地的项不属于 v1 范围）：
 
 三栏布局：
 

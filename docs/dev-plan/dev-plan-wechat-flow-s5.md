@@ -148,19 +148,19 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-044, T-027]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given 点击 ContextMenu「中文排版修订」，When 触发，Then diff 预览 Modal（C-012 form-variant）弹出，展示修订前/后对比和逐 rule 计数 [F-014 AC-003 + F-001 AC-008]
+  - [ ] AC-001: Given 点击 ContextMenu「中文排版修订」，When 触发，Then diff 预览 Modal（UC-012 form-variant）弹出，展示修订前/后对比和逐 rule 计数 [F-014 AC-003 + F-001 AC-008]
   - [ ] AC-002: Given diff 预览 Modal，When 用户点击「确认修订」，Then 编辑器内容替换为 `fixed` 字符串，PreviewPane 刷新，Toast 提示「已修订 N 处」
   - [ ] AC-003: Given 用户确认修订后，When 按 Ctrl+Z 撤销，Then 编辑器内容回到修订前的状态（修订操作纳入 CodeMirror undo 栈）[F-014 AC-004]
-  - [ ] AC-004: Given 编辑器内容为空或无排版问题，When 触发「中文排版修订」，Then ContextMenu 该菜单项处于 `item-disabled` 状态（灰色不可点击）[ui-spec-wechat-flow-c001-c014#§2.C-016]
+  - [ ] AC-004: Given 编辑器内容为空或无排版问题，When 触发「中文排版修订」，Then ContextMenu 该菜单项处于 `item-disabled` 状态（灰色不可点击）[ui-spec-wechat-flow-c001-c014#§2.UC-016]
 - **deliverables**:
-  - [ ] `apps/editor/src/components/zh-typo/ZhTypoPreviewModal.vue` — diff 预览 Modal（包装 C-012）
+  - [ ] `apps/editor/src/components/zh-typo/ZhTypoPreviewModal.vue` — diff 预览 Modal（包装 UC-012）
   - [ ] 更新 `apps/editor/src/components/panel/ContextMenu.vue` — 接线「中文排版修订」菜单项
   - [ ] `apps/editor/src/composables/use-zh-typo.ts` — 触发 → 预览 → 确认 → 写回 composable
-- **relates_to**: [F-014, M-001, C-012, C-016]
+- **relates_to**: [F-014, M-001, UC-012, UC-016]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-001
   - prd-wechat-flow-f001-f014#§2.F-014
-  - ui-spec-wechat-flow-c001-c014#§2.C-016
+  - ui-spec-wechat-flow-c001-c014#§2.UC-016
 
 ---
 
