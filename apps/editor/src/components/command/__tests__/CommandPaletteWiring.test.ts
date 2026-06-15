@@ -5,8 +5,19 @@ import { registerTheme, resetThemeRegistry } from "@wechat-flow/core/src/registr
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
+import { createRouter, createWebHistory } from "vue-router";
 import { useEditorStore } from "../../../stores/editor.ts";
 import EditorShell from "../../layout/EditorShell.vue";
+
+function makeRouter() {
+  return createRouter({
+    history: createWebHistory(),
+    routes: [
+      { path: "/", component: { template: "<div/>" } },
+      { path: "/themes", component: { template: "<div/>" } },
+    ],
+  });
+}
 
 vi.mock("../../../use-cases/render.ts", () => ({
   composeRender: vi.fn().mockResolvedValue({
@@ -46,7 +57,7 @@ describe("AC-001: Ctrl+K 在 EditorShell 级打开 CommandPalette", () => {
   it("初始状态 CommandPalette 不在 DOM", async () => {
     const wrapper = mount(EditorShell, {
       attachTo: document.body,
-      global: { plugins: [createPinia()] },
+      global: { plugins: [createPinia(), makeRouter()] },
     });
     await nextTick();
     expect(wrapper.find('[data-testid="command-palette"]').exists()).toBe(false);
@@ -56,7 +67,7 @@ describe("AC-001: Ctrl+K 在 EditorShell 级打开 CommandPalette", () => {
   it("Ctrl+K keydown 后 CommandPalette 出现在 DOM", async () => {
     const wrapper = mount(EditorShell, {
       attachTo: document.body,
-      global: { plugins: [createPinia()] },
+      global: { plugins: [createPinia(), makeRouter()] },
     });
     await nextTick();
 
@@ -72,7 +83,7 @@ describe("AC-001: Ctrl+K 在 EditorShell 级打开 CommandPalette", () => {
   it("Cmd+K（metaKey）也能打开 CommandPalette", async () => {
     const wrapper = mount(EditorShell, {
       attachTo: document.body,
-      global: { plugins: [createPinia()] },
+      global: { plugins: [createPinia(), makeRouter()] },
     });
     await nextTick();
 
@@ -88,7 +99,7 @@ describe("AC-001: Ctrl+K 在 EditorShell 级打开 CommandPalette", () => {
   it("面板打开后含 command-palette--open class", async () => {
     const wrapper = mount(EditorShell, {
       attachTo: document.body,
-      global: { plugins: [createPinia()] },
+      global: { plugins: [createPinia(), makeRouter()] },
     });
     await nextTick();
 
@@ -110,7 +121,7 @@ describe("AC-003: switch-theme-tech 命令执行 → editorStore.currentTheme �
 
     const wrapper = mount(EditorShell, {
       attachTo: document.body,
-      global: { plugins: [pinia] },
+      global: { plugins: [pinia, makeRouter()] },
     });
     await nextTick();
 
@@ -145,7 +156,7 @@ describe("AC-004: Esc 在 EditorShell 级关闭 CommandPalette", () => {
   it("面板打开后按 Esc 面板消失", async () => {
     const wrapper = mount(EditorShell, {
       attachTo: document.body,
-      global: { plugins: [createPinia()] },
+      global: { plugins: [createPinia(), makeRouter()] },
     });
     await nextTick();
 

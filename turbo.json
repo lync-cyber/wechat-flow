@@ -4,7 +4,7 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["src/**", "package.json", "tsconfig.json"],
-      "outputs": ["dist/**"]
+      "outputs": []
     },
     "lint": {
       "inputs": ["src/**", "*.ts", "*.tsx", "biome.json", ".eslintrc*", "package.json"]
