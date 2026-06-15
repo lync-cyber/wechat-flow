@@ -4,7 +4,7 @@ version: "0.4.1"
 doc_type: dev-plan
 author: tech-lead
 status: approved
-deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "ui-spec-wechat-flow", "ui-spec-wechat-flow-c001-c014"]
+deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "ui-spec-wechat-flow", "ui-spec-wechat-flow-uc001-uc014"]
 consumers: [developer, qa-engineer]
 volume: sprint
 volume_type: sprint
@@ -42,9 +42,9 @@ required_sections:
   - [ ] AC-003: 通过 Penpot MCP `find_shape` 可检索到 `UC-013` 和 `UC-013.1` 组件
 - **deliverables**:
   - [ ] Penpot 项目：UC-013, UC-013.1 视觉稿页面
-- **relates_to**: [ui-spec-wechat-flow-c001-c014#§2.UC-013]
+- **relates_to**: [ui-spec-wechat-flow-uc001-uc014#§2.UC-013]
 - **context_load**:
-  - ui-spec-wechat-flow-c001-c014#§2.UC-013
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-013
 
 ---
 
@@ -241,7 +241,7 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-017, T-099]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given `diagnostics` 含 2 条 error 级别和 1 条 warn 级别诊断，When DiagnosticsPanel 展开，Then 每条 error 项左侧色块为 `--color-diag-error`（赤陶红），warn 项为 `--color-diag-warn`（暖黄棕），符合 `ui-spec-wechat-flow-c001-c014#§2.UC-013`
+  - [ ] AC-001: Given `diagnostics` 含 2 条 error 级别和 1 条 warn 级别诊断，When DiagnosticsPanel 展开，Then 每条 error 项左侧色块为 `--color-diag-error`（赤陶红），warn 项为 `--color-diag-warn`（暖黄棕），符合 `ui-spec-wechat-flow-uc001-uc014#§2.UC-013`
   - [ ] AC-002: Given `isExpanded: false`，When DiagnosticsPanel 渲染，Then 高度为 `32px`，仅显示标题行；`isExpanded: true` 时高度 auto（最大 200px 可滚动）
   - [ ] AC-003: Given 诊断列表项右侧「查看变更」链接，When 点击，Then CompatibilityDiffView Modal 打开，左栏 before HTML 和右栏 after HTML 均非空，命中规则 ID 可见
   - [ ] AC-004: Given `diagnostics` 含 error，When DiagnosticsPanel 处于折叠态（A-010 假设），Then 面板自动展开（`isExpanded` 状态切换为 `true`）
@@ -254,7 +254,7 @@ required_sections:
 - **relates_to**: [F-002, F-011, M-001, UC-013]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-001
-  - ui-spec-wechat-flow-c001-c014#§2.UC-013
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-013
   - prd-wechat-flow-f001-f014#§2.F-002
 
 ---
@@ -301,7 +301,7 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-009, T-010]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given 用户在预览 iframe 中点击某个 `<p data-node-id="...">`，When 触发，Then SourcePane CodeMirror 光标定位到该节点对应的源码行 [F-001 AC-004 + ui-spec-wechat-flow-c001-c014#§2.UC-004]
+  - [ ] AC-001: Given 用户在预览 iframe 中点击某个 `<p data-node-id="...">`，When 触发，Then SourcePane CodeMirror 光标定位到该节点对应的源码行 [F-001 AC-004 + ui-spec-wechat-flow-uc001-uc014#§2.UC-004]
   - [ ] AC-002: Given 源码光标移动到某行，When CodeMirror selectionChange 事件触发，Then PreviewPane 内对应 `data-node-id` 节点高亮 `.cm-highlighted` 类 200ms 后淡出
   - [ ] AC-003: Given 节点映射建立，When mdast → hast 阶段，Then 每个块级节点产出 `data-node-id="{sourceLine}:{nodeIndex}"` 属性
   - [ ] AC-004: 高亮联动通过主线程 `iframe.contentDocument` 通信，不向 iframe 内注入脚本
@@ -314,7 +314,7 @@ required_sections:
 - **context_load**:
   - prd-wechat-flow-f001-f014#§2.F-001
   - arch-wechat-flow-modules#§2.M-001
-  - ui-spec-wechat-flow-c001-c014#§2.UC-004
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-004
 
 ---
 
@@ -340,7 +340,7 @@ required_sections:
   - [ ] `apps/editor/src/components/layout/__tests__/StatusBar.test.ts` — AC-001..AC-003 单元测试
 - **relates_to**: [F-002, M-001, UC-023]
 - **context_load**:
-  - ui-spec-wechat-flow-c001-c014#§2.UC-023
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-023
   - arch-wechat-flow-modules#§2.M-001
 
 ---

@@ -4,7 +4,7 @@ version: "0.4.1"
 doc_type: dev-plan
 author: tech-lead
 status: approved
-deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "ui-spec-wechat-flow", "ui-spec-wechat-flow-c001-c014"]
+deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "ui-spec-wechat-flow", "ui-spec-wechat-flow-uc001-uc014"]
 consumers: [developer, qa-engineer]
 volume: sprint
 volume_type: sprint
@@ -37,17 +37,17 @@ required_sections:
 - **tdd_skip_reason**: "Penpot 设计稿，由用户视觉验证 sign-off"
 - **dependencies**: [T-095]
 - **acceptance_criteria**:
-  - [ ] AC-001: UC-009 CommandPalette 视觉稿覆盖 `closed`、`open-empty`、`open-typing`、`open-results`、`no-results`、`executing` 6 个状态，符合 `ui-spec-wechat-flow-c001-c014#§2.UC-009`（PS-005）
+  - [ ] AC-001: UC-009 CommandPalette 视觉稿覆盖 `closed`、`open-empty`、`open-typing`、`open-results`、`no-results`、`executing` 6 个状态，符合 `ui-spec-wechat-flow-uc001-uc014#§2.UC-009`（PS-005）
   - [ ] AC-002: UC-015 InsertDrawer 视觉稿覆盖 `closed`、`idle`、`item-selected` 状态，含底部参数表单区展开示例
-  - [ ] AC-003: UC-016 ContextMenu 视觉稿含完整菜单结构（5 个菜单项 + 2 条分隔线），符合 `ui-spec-wechat-flow-c001-c014#§2.UC-016`
+  - [ ] AC-003: UC-016 ContextMenu 视觉稿含完整菜单结构（5 个菜单项 + 2 条分隔线），符合 `ui-spec-wechat-flow-uc001-uc014#§2.UC-016`
   - [ ] AC-004: 通过 Penpot MCP `find_shape` 可检索到 `UC-009`、`UC-015`、`UC-016`
 - **deliverables**:
   - [ ] Penpot 项目：UC-009, UC-015, UC-016 视觉稿页面
-- **relates_to**: [ui-spec-wechat-flow-c001-c014#§2.UC-009, §2.UC-015, §2.UC-016, PS-005]
+- **relates_to**: [ui-spec-wechat-flow-uc001-uc014#§2.UC-009, §2.UC-015, §2.UC-016, PS-005]
 - **context_load**:
-  - ui-spec-wechat-flow-c001-c014#§2.UC-009
-  - ui-spec-wechat-flow-c001-c014#§2.UC-015
-  - ui-spec-wechat-flow-c001-c014#§2.UC-016
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-009
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-015
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-016
 
 ---
 
@@ -269,8 +269,8 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-020, T-021]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given LeftPanelTabs 渲染，When 点击「主题」Tab，Then Tab 标题底边出现 `2px solid --color-brand` 指示线，Tab 内容区显示 ThemeCard 列表（含所有已注册主题）[ui-spec-wechat-flow-c001-c014#§2.UC-006]
-  - [ ] AC-002: Given ThemeCard `isSelected: true`，When 渲染，Then 卡片边框变 `2px solid --color-brand`，左上角出现对勾图标 [ui-spec-wechat-flow-c001-c014#§2.UC-007]
+  - [ ] AC-001: Given LeftPanelTabs 渲染，When 点击「主题」Tab，Then Tab 标题底边出现 `2px solid --color-brand` 指示线，Tab 内容区显示 ThemeCard 列表（含所有已注册主题）[ui-spec-wechat-flow-uc001-uc014#§2.UC-006]
+  - [ ] AC-002: Given ThemeCard `isSelected: true`，When 渲染，Then 卡片边框变 `2px solid --color-brand`，左上角出现对勾图标 [ui-spec-wechat-flow-uc001-uc014#§2.UC-007]
   - [ ] AC-003: Given ThemeCard `isPlaceholder: true`（社区扩展占位），When 渲染，Then 卡片 opacity 0.6，缩略图替换为「更多主题即将上线」文字，点击跳转 `/themes` 路由 [F-003 AC-003]
   - [ ] AC-004: Given BlockLibItem，When 用户点击，Then `onInsert` 回调被调用，含对应 BlockDefinition 参数（directives 片段可插入编辑器）
 - **deliverables**:
@@ -280,9 +280,9 @@ required_sections:
 - **relates_to**: [F-003, M-001, UC-006, UC-007, UC-008]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-001
-  - ui-spec-wechat-flow-c001-c014#§2.UC-006
-  - ui-spec-wechat-flow-c001-c014#§2.UC-007
-  - ui-spec-wechat-flow-c001-c014#§2.UC-008
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-006
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-007
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-008
 
 ---
 
@@ -301,7 +301,7 @@ required_sections:
 - **dependencies**: [T-026, T-100]
 - **acceptance_criteria**:
   - [ ] AC-001: Given 按 Ctrl+K（Windows/Linux）或 Cmd+K（macOS），When 触发，Then CommandPalette Modal 以 `--duration-slow` 动画展开，搜索框自动聚焦 [F-001 AC-008 + ui-spec Q6]
-  - [ ] AC-002: Given CommandPalette 已打开，When 输入「主题」，Then 动作列表过滤为仅含主题相关命令，匹配字符以 `--color-brand` 加粗高亮 [ui-spec-wechat-flow-c001-c014#§2.UC-009]
+  - [ ] AC-002: Given CommandPalette 已打开，When 输入「主题」，Then 动作列表过滤为仅含主题相关命令，匹配字符以 `--color-brand` 加粗高亮 [ui-spec-wechat-flow-uc001-uc014#§2.UC-009]
   - [ ] AC-003: Given 「切换至 tech 主题」命令被选中并按 Enter 执行，When 执行，Then 编辑器当前主题切换为 `tech`，PreviewPane 样式更新
   - [ ] AC-004: Given CommandPalette 打开，When 按 Esc 键，Then CommandPalette 关闭（`isOpen` 变 `false`）
 - **deliverables**:
@@ -310,7 +310,7 @@ required_sections:
 - **relates_to**: [F-001, M-001, UC-009]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-001
-  - ui-spec-wechat-flow-c001-c014#§2.UC-009
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-009
 
 ---
 
@@ -328,9 +328,9 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-026, T-100]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given 点击 TopBar「+」按钮，When 触发，Then InsertDrawer 从右侧以 `--duration-base` 动画滑入（宽 320px），显示分类 Tab + Block 列表 [ui-spec-wechat-flow-c001-c014#§2.UC-015]
+  - [ ] AC-001: Given 点击 TopBar「+」按钮，When 触发，Then InsertDrawer 从右侧以 `--duration-base` 动画滑入（宽 320px），显示分类 Tab + Block 列表 [ui-spec-wechat-flow-uc001-uc014#§2.UC-015]
   - [ ] AC-002: Given InsertDrawer 内选中一个 Block（如 callout），When 选中，Then 底部参数表单区展开，含可配属性输入；点击「插入」后 directive 语法片段插入到 SourcePane 光标处
-  - [ ] AC-003: Given 点击 TopBar「...」按钮，When 触发，Then ContextMenu 展开，含「中文排版修订」和「复制 HTML」等菜单项，符合 `ui-spec-wechat-flow-c001-c014#§2.UC-016` 菜单结构
+  - [ ] AC-003: Given 点击 TopBar「...」按钮，When 触发，Then ContextMenu 展开，含「中文排版修订」和「复制 HTML」等菜单项，符合 `ui-spec-wechat-flow-uc001-uc014#§2.UC-016` 菜单结构
 - **deliverables**:
   - [ ] `apps/editor/src/components/panel/InsertDrawer.vue` — UC-015 实现
   - [ ] `apps/editor/src/components/panel/ContextMenu.vue` — UC-016 实现（包装 UC-010 DropdownMenu）
@@ -338,8 +338,8 @@ required_sections:
 - **relates_to**: [F-001, M-001, UC-015, UC-016]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-001
-  - ui-spec-wechat-flow-c001-c014#§2.UC-015
-  - ui-spec-wechat-flow-c001-c014#§2.UC-016
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-015
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-016
 
 ---
 
@@ -357,7 +357,7 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-026, T-009, T-100]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given 在编辑器输入 `:::` 或 `:` 前缀，When 触发补全，Then 弹出 UC-021 浮层并可选择 Block/Mark 及 variant，选中后插入对应 directive 片段 [ui-spec-wechat-flow-c001-c014#§2.UC-021]
+  - [ ] AC-001: Given 在编辑器输入 `:::` 或 `:` 前缀，When 触发补全，Then 弹出 UC-021 浮层并可选择 Block/Mark 及 variant，选中后插入对应 directive 片段 [ui-spec-wechat-flow-uc001-uc014#§2.UC-021]
   - [ ] AC-002: Given DirectiveAutocompletePopover 已打开，When 用户按 Escape，Then 浮层关闭，编辑器焦点不丢失
   - [ ] AC-003（production path）: `apps/editor/src/components/editor/DirectiveAutocompletePopover.vue` 作为 CodeMirror extension 在 `SourcePane.vue` 中注册，可在代码中检索到 `registerDirectiveCompletion(view)` 调用点
 - **deliverables**:
@@ -368,7 +368,7 @@ required_sections:
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-001
   - arch-wechat-flow-modules#§2.M-005
-  - ui-spec-wechat-flow-c001-c014#§2.UC-021
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-021
 
 ---
 

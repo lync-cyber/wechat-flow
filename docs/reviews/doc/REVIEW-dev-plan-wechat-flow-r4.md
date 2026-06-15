@@ -30,9 +30,9 @@ deps: ["dev-plan-wechat-flow", "dev-plan-wechat-flow-s0", "dev-plan-wechat-flow-
 
 - **严重度**: HIGH  
 - **category**: completeness  
-- **证据**: `docs/prd/prd-wechat-flow-f001-f014.md` F-005 备注（v1 P0 含 AC-001/002/004 **UI 落地**）；`docs/ui-spec/ui-spec-wechat-flow-c001-c014.md` C-009 §导出组（复制 HTML / 下载 HTML / **导出长图 / 导出封面横版 / 导出封面方版**）；`docs/dev-plan/dev-plan-wechat-flow-s4.md` T-027（AC 仅覆盖主题切换）、T-028a（ContextMenu 无长图/封面项）、T-040（JobProgressBar 接线 SSE 但无触发入口）  
+- **证据**: `docs/prd/prd-wechat-flow-f001-f014.md` F-005 备注（v1 P0 含 AC-001/002/004 **UI 落地**）；`docs/ui-spec/ui-spec-wechat-flow-uc001-uc014.md` UC-009 §导出组（复制 HTML / 下载 HTML / **导出长图 / 导出封面横版 / 导出封面方版**）；`docs/dev-plan/dev-plan-wechat-flow-s4.md` T-027（AC 仅覆盖主题切换）、T-028a（ContextMenu 无长图/封面项）、T-040（JobProgressBar 接线 SSE 但无触发入口）  
 - **问题**: 后端链路（T-034/T-035 relay + T-039 MCP Tool）与进度 UI（T-040）已规划，但 **CommandPalette 导出组 5 条命令**及对应 `composeExportLongImage` / `composeExportCover` 编辑器 use case **无任务卡**；T-VAL-04 仅验证 MCP 路径调用 `export_long_image`，不覆盖写作者从 UI 触发的 P0 路径。  
-- **影响**: Sprint 4 演示路径「一键导出长图/封面」无法按 PRD F-005 P0 验收；F-001 命令 registry 与 ui-spec C-009 导出组不一致。  
+- **影响**: Sprint 4 演示路径「一键导出长图/封面」无法按 PRD F-005 P0 验收；F-001 命令 registry 与 ui-spec UC-009 导出组不一致。  
 - **修复建议**: 新增 Sprint 4 feature 任务（或扩展 T-027/T-028a）：在 command registry 注册导出组 5 命令；实现 M-008 长图/封面 composer + ContextMenu/CommandPalette 接线 + T-040 JobProgressBar 联动；T-VAL-04 增加 UI 触发 E2E。
 
 ---
@@ -85,8 +85,8 @@ deps: ["dev-plan-wechat-flow", "dev-plan-wechat-flow-s0", "dev-plan-wechat-flow-
 
 - **严重度**: HIGH  
 - **category**: consistency  
-- **证据**: `docs/dev-plan/dev-plan-wechat-flow.md` §1 Sprint 6 表（T-064 **P0**，「C-006 Tab 3 + **P-002** 文档列表」，依赖 T-012,T-026）；`docs/dev-plan/dev-plan-wechat-flow-s6.md` T-064（**P1**，依赖 T-012,T-005，deliverables 无 P-002/C-006 UI，仅 store/composable）  
-- **问题**: F-001 AC-005（多文档管理 P0）在分卷任务卡中降级且缺少 LeftPanel Tab 3 / P-002 侧栏文档列表 UI 交付物；与 T-026 C-006 衔接断裂。  
+- **证据**: `docs/dev-plan/dev-plan-wechat-flow.md` §1 Sprint 6 表（T-064 **P0**，「UC-006 Tab 3 + **P-002** 文档列表」，依赖 T-012,T-026）；`docs/dev-plan/dev-plan-wechat-flow-s6.md` T-064（**P1**，依赖 T-012,T-005，deliverables 无 P-002/UC-006 UI，仅 store/composable）  
+- **问题**: F-001 AC-005（多文档管理 P0）在分卷任务卡中降级且缺少 LeftPanel Tab 3 / P-002 侧栏文档列表 UI 交付物；与 T-026 UC-006 衔接断裂。  
 - **影响**: 写作者 P0 多文档流程（切换/列表/备份）无法在 Sprint 6 按 PRD 验收。  
 - **修复建议**: 对齐主卷：T-064 升 P0；dependencies 加 T-026；deliverables 补 `LeftPanelTabs` 文档 Tab + P-002 桌面侧栏列表组件；修正 `packages/app` 路径（见 PLAN-003）。
 
@@ -94,25 +94,25 @@ deps: ["dev-plan-wechat-flow", "dev-plan-wechat-flow-s0", "dev-plan-wechat-flow-
 
 ### Medium
 
-#### PLAN-007: C-020 BaseColorDeriveModal 仅有设计任务、无实现任务
+#### PLAN-007: UC-020 BaseColorDeriveModal 仅有设计任务、无实现任务
 
 - **严重度**: MEDIUM  
 - **category**: completeness  
-- **证据**: `docs/ui-spec-wechat-flow-c001-c014.md` C-009 主题组「调色板派生 → C-020」、C-020 规格；`docs/dev-plan/dev-plan-wechat-flow-s4.md` T-DS-012（Penpot 设计）；`docs/dev-plan/dev-plan-wechat-flow-s3.md` T-023（后端 derivePalette）；T-082（MCP derive_palette）  
+- **证据**: `docs/ui-spec-wechat-flow-uc001-uc014.md` UC-009 主题组「调色板派生 → UC-020」、UC-020 规格；`docs/dev-plan/dev-plan-wechat-flow-s4.md` T-DS-012（Penpot 设计）；`docs/dev-plan/dev-plan-wechat-flow-s3.md` T-023（后端 derivePalette）；T-082（MCP derive_palette）  
 - **问题**: F-003 AC-011 除 frontmatter 解析（T-029）外，ui-spec 要求 CommandPalette 触发 **base-color 派生 Modal**；dev-plan 无对应 Vue 组件实现任务。  
 - **影响**: 写作者无法从 UI 使用 base-color 派生；CommandPalette 主题组命令无法落地。  
-- **修复建议**: 新增 Sprint 3/4 任务（如 T-0xx）：实现 C-020 + CommandPalette 接线 + T-029 写回 frontmatter；依赖 T-023、T-DS-012。
+- **修复建议**: 新增 Sprint 3/4 任务（如 T-0xx）：实现 UC-020 + CommandPalette 接线 + T-029 写回 frontmatter；依赖 T-023、T-DS-012。
 
 ---
 
-#### PLAN-008: T-046 中文排版 UI 引用 C-012，与 ui-spec C-017 组件 ID 不一致
+#### PLAN-008: T-046 中文排版 UI 引用 UC-012，与 ui-spec UC-017 组件 ID 不一致
 
 - **严重度**: MEDIUM  
 - **category**: consistency  
-- **证据**: `docs/dev-plan/dev-plan-wechat-flow-s5.md` T-046 AC-001/deliverables（C-012 form-variant、`ZhTypoPreviewModal.vue`）；`docs/ui-spec-wechat-flow-c001-c014.md` C-017 ZhTypoReviseDialog；T-DS-012 设计 C-017  
-- **问题**: 实现任务与 ui-spec 正式组件编号/结构（C-017 双栏 diff + rule 计数）不对齐；Penpot sign-off（T-DS-012）与代码验收对象不一致。  
+- **证据**: `docs/dev-plan/dev-plan-wechat-flow-s5.md` T-046 AC-001/deliverables（UC-012 form-variant、`ZhTypoPreviewModal.vue`）；`docs/ui-spec-wechat-flow-uc001-uc014.md` UC-017 ZhTypoReviseDialog；T-DS-012 设计 UC-017  
+- **问题**: 实现任务与 ui-spec 正式组件编号/结构（UC-017 双栏 diff + rule 计数）不对齐；Penpot sign-off（T-DS-012）与代码验收对象不一致。  
 - **影响**: 设计评审与实现验收双轨；implementer 可能按错误组件规格实现。  
-- **修复建议**: T-046 AC/deliverables/relates_to 改为 C-017；组件路径改为 `ZhTypoReviseDialog.vue`；增加 T-DS-012 依赖。
+- **修复建议**: T-046 AC/deliverables/relates_to 改为 UC-017；组件路径改为 `ZhTypoReviseDialog.vue`；增加 T-DS-012 依赖。
 
 ---
 
@@ -131,7 +131,7 @@ deps: ["dev-plan-wechat-flow", "dev-plan-wechat-flow-s0", "dev-plan-wechat-flow-
 
 - **严重度**: MEDIUM  
 - **category**: consistency  
-- **证据**: `docs/prd/prd-wechat-flow-f001-f014.md` F-003 P0 + AC-008/009/010；`docs/dev-plan/dev-plan-wechat-flow-s6.md` T-087/T-088 均为 **P1** Sprint 6；T-088 无 T-DS-012（C-019 设计）依赖  
+- **证据**: `docs/prd/prd-wechat-flow-f001-f014.md` F-003 P0 + AC-008/009/010；`docs/dev-plan/dev-plan-wechat-flow-s6.md` T-087/T-088 均为 **P1** Sprint 6；T-088 无 T-DS-012（UC-019 设计）依赖  
 - **问题**: 主题装饰/上下文渲染/paint drawer 均在最后一 Sprint 以 P1 交付，与 F-003 Feature 级 P0 存在优先级落差；paint UI 晚于 T-029 解析能力 3 个 Sprint。  
 - **影响**: Sprint 3/4 演示无法验收 AC-008..010 的编辑器侧能力。  
 - **修复建议**: T-087 升 P0 或并入 Sprint 3 主题包任务；T-088 升 P0 并加 T-DS-012 依赖；T-VAL-03/04 增加 paint/装饰 smoke 项。
@@ -199,7 +199,7 @@ deps: ["dev-plan-wechat-flow", "dev-plan-wechat-flow-s0", "dev-plan-wechat-flow-
 
 1. **CompatibilityDiffView 权威数据源**：产品确认预览态 Diff 展示 **规则集变更（M-003 nodeChangeRecords）** 还是 **粘贴模拟变更（M-004 nodeDiffs）**？这将决定 T-018 是否修订还是触发 PRD/ARCH amendment（关联 PLAN-002）。
 
-2. **F-005 长图/封面 UI 入口范围**：ui-spec C-009 导出组含 5 命令，C-016 ContextMenu **不含**长图/封面；v1 P0 是否 **仅 CommandPalette 导出组** 即可，还是需在 ContextMenu 增项（关联 PLAN-001）？
+2. **F-005 长图/封面 UI 入口范围**：ui-spec UC-009 导出组含 5 命令，UC-016 ContextMenu **不含**长图/封面；v1 P0 是否 **仅 CommandPalette 导出组** 即可，还是需在 ContextMenu 增项（关联 PLAN-001）？
 
 3. **F-005 AC-003（素材库上传）v1 边界**：PRD 标注「v1 API only / UI deferred」，但 dev-plan Sprint 5 已排 T-077..T-079（P1）；v1 发布是否必须交付该 API 链，还是可整体移至 Sprint 7+？
 

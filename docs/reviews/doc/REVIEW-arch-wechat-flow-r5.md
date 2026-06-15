@@ -51,8 +51,8 @@ deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "arch-wechat-flow-api", "
   - `docs/arch/arch-wechat-flow-modules.md` M-004 → `simulatePaste` 产出 `nodeDiffs`
   - `docs/arch/arch-wechat-flow-data.md` E-008 → `nodeDiffs`（M-004，F-002 AC-006）与 `nodeChangeRecords`（M-003）并存
   - `docs/prd/prd-wechat-flow-f001-f014.md` F-002 备注「兼容性报告是 F-011 **粘贴过滤模拟**产物的可视化」；F-011 AC-002「**粘贴过滤模拟**…作为兼容性详情面板的核心可视化数据」
-  - `docs/ui-spec/ui-spec-wechat-flow-c001-c014.md` C-013.1 声明数据来自 M-003 `nodeChangeRecords`
-- **问题描述**: PRD 明确要求兼容性详情展示「**粘贴**前后」逐节点对照（M-004 simulatePaste）；ARCH 0.6.1 将 C-013.1 CompatibilityDiffView 唯一数据源改为 M-003 规则集执行期的 `nodeChangeRecords`（strip/clamp/transform/patch）。二者阶段不同：M-003 在 render 管线内（Q3.13 与 M-004 边界已分），M-004 仅在 composeCopy / simulate_paste 路径。预览态（postPaste:false）不会跑 M-004，却可能展示 M-003 变更——无法满足 F-002 AC-006「粘贴前后」语义，也与 F-004 AC-004/005 复制路径的 simulatePaste 验收脱节。
+  - `docs/ui-spec/ui-spec-wechat-flow-uc001-uc014.md` UC-013.1 声明数据来自 M-003 `nodeChangeRecords`
+- **问题描述**: PRD 明确要求兼容性详情展示「**粘贴**前后」逐节点对照（M-004 simulatePaste）；ARCH 0.6.1 将 UC-013.1 CompatibilityDiffView 唯一数据源改为 M-003 规则集执行期的 `nodeChangeRecords`（strip/clamp/transform/patch）。二者阶段不同：M-003 在 render 管线内（Q3.13 与 M-004 边界已分），M-004 仅在 composeCopy / simulate_paste 路径。预览态（postPaste:false）不会跑 M-004，却可能展示 M-003 变更——无法满足 F-002 AC-006「粘贴前后」语义，也与 F-004 AC-004/005 复制路径的 simulatePaste 验收脱节。
 - **影响**: implementer 按 ARCH 实现将导致兼容性面板在 PRD/F-011 门禁下不可验收；dev-plan T-002（M-004 nodeDiffs）与 T-003（CompatibilityDiffView 绑 nodeChangeRecords）存在任务级分裂。
 - **修复建议**: 二选一并在 ARCH/PRD/ui-spec/dev-plan 四方同步：(A) CompatibilityDiffView 改绑 M-004 `nodeDiffs`（预览态可选懒加载 simulatePaste），nodeChangeRecords 仅服务规则命中列表；(B) 若产品确认「预览态展示规则集变更即可」，则修订 PRD F-002 备注/AC-006 与 F-011 AC-002 措辞，并删除 E-008 中易误导的 `nodeDiffs` 字段或标注废弃。
 
@@ -204,7 +204,7 @@ deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "arch-wechat-flow-api", "
 
 ## Open Questions
 
-1. **兼容性 Diff 产品语义**：C-013.1 应展示「规则集执行变更」（M-003）还是「粘贴模拟变更」（M-004），或两者分 Tab？当前 PRD 与 ARCH 0.6.1 答案相反，需产品确认后再改文档（关联 ARCH-002）。
+1. **兼容性 Diff 产品语义**：UC-013.1 应展示「规则集执行变更」（M-003）还是「粘贴模拟变更」（M-004），或两者分 Tab？当前 PRD 与 ARCH 0.6.1 答案相反，需产品确认后再改文档（关联 ARCH-002）。
 
 2. **`defineTemplate` 参数模型**：template 是否仅为静态 Markdown 文件，还是需要 `render()` 动态生成？若仅静态，PRD/ARCH/dev-plan 是否统一改为 `markdown`（关联 ARCH-003）？
 
@@ -236,5 +236,5 @@ deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "arch-wechat-flow-api", "
 | 数据模型 | E-001..E-011 覆盖主流程；E-008 双 diff 字段与 UI 消费不一致；E-009 客户端/服务端 docId 断层 |
 | 非功能 / 可扩展性 | §5.2 确定性规范可执行；§5.3 安全链完整；pack/template 第三方扩展仍薄 |
 | PRD 一致性 | F-005 P0 未回写 §8.1；粘贴模拟 vs 规则集 Diff 语义冲突 |
-| UI-SPEC 一致性 | C-013.1 与 ARCH 一致但与 PRD 冲突；P-003 路由 ARCH 未索引 |
+| UI-SPEC 一致性 | UC-013.1 与 ARCH 一致但与 PRD 冲突；P-003 路由 ARCH 未索引 |
 | DEV-PLAN 一致性 | T-004 16 Tool、T-092 describe_template 响应形状与 ARCH 0.6.1 漂移 |

@@ -17,7 +17,7 @@ deps:
   - arch-wechat-flow-modules
   - arch-wechat-flow-api
   - ui-spec-wechat-flow
-  - ui-spec-wechat-flow-c001-c014
+  - ui-spec-wechat-flow-uc001-uc014
   - ui-spec-wechat-flow-p001-p005
 ---
 

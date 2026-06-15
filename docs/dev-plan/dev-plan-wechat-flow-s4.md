@@ -4,7 +4,7 @@ version: "0.5.0"
 doc_type: dev-plan
 author: tech-lead
 status: approved
-deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "arch-wechat-flow-api", "arch-wechat-flow-data", "ui-spec-wechat-flow", "ui-spec-wechat-flow-c001-c014", "ui-spec-wechat-flow-p001-p005"]
+deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "arch-wechat-flow-api", "arch-wechat-flow-data", "ui-spec-wechat-flow", "ui-spec-wechat-flow-uc001-uc014", "ui-spec-wechat-flow-p001-p005"]
 consumers: [developer, qa-engineer]
 volume: sprint
 volume_type: sprint
@@ -43,9 +43,9 @@ required_sections:
   - [ ] AC-004: 通过 Penpot MCP `find_shape` 可检索到 `UC-014`、`P-003`、`P-004`
 - **deliverables**:
   - [ ] Penpot 项目：UC-014, P-003, P-004 视觉稿页面
-- **relates_to**: [ui-spec-wechat-flow-c001-c014#§2.UC-014, ui-spec-wechat-flow-p001-p005#§3.P-003, §3.P-004]
+- **relates_to**: [ui-spec-wechat-flow-uc001-uc014#§2.UC-014, ui-spec-wechat-flow-p001-p005#§3.P-003, §3.P-004]
 - **context_load**:
-  - ui-spec-wechat-flow-c001-c014#§2.UC-014
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-014
   - ui-spec-wechat-flow-p001-p005#§3.P-003
   - ui-spec-wechat-flow-p001-p005#§3.P-004
 
@@ -374,18 +374,18 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-034, T-102]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given job 处于 `running` 状态，When SSE 推送 `{ percent: 45 }`，Then JobProgressBar 进度填充宽度变为 45%，文字显示「正在导出 45%」[ui-spec-wechat-flow-c001-c014#§2.UC-014]
+  - [ ] AC-001: Given job 处于 `running` 状态，When SSE 推送 `{ percent: 45 }`，Then JobProgressBar 进度填充宽度变为 45%，文字显示「正在导出 45%」[ui-spec-wechat-flow-uc001-uc014#§2.UC-014]
   - [ ] AC-002: Given job 完成（`succeeded`），When SSE 推送完成事件，Then 进度条填充色变 `--color-success`，文字显示「导出成功」，含下载链接
-  - [ ] AC-003: Given Toast 组件，When `type: 'success'`，Then 背景 `--color-success-subtle`，左边框 `3px solid --color-success`，3000ms 后自动消失 [ui-spec-wechat-flow-c001-c014#§2.UC-011]
-  - [ ] AC-004: Given Toast `type: 'error'`，When 渲染，Then 不自动消失（需用户手动关闭）[ui-spec-wechat-flow-c001-c014#§2.UC-011]
+  - [ ] AC-003: Given Toast 组件，When `type: 'success'`，Then 背景 `--color-success-subtle`，左边框 `3px solid --color-success`，3000ms 后自动消失 [ui-spec-wechat-flow-uc001-uc014#§2.UC-011]
+  - [ ] AC-004: Given Toast `type: 'error'`，When 渲染，Then 不自动消失（需用户手动关闭）[ui-spec-wechat-flow-uc001-uc014#§2.UC-011]
 - **deliverables**:
   - [ ] `apps/editor/src/components/common/JobProgressBar.vue` — UC-014 实现
   - [ ] `apps/editor/src/components/common/Toast.vue` — UC-011 实现
   - [ ] `apps/editor/src/composables/use-sse-job.ts` — SSE 事件流订阅 composable（连接 relay SSE 端点）
 - **relates_to**: [F-005, M-001, UC-011, UC-014]
 - **context_load**:
-  - ui-spec-wechat-flow-c001-c014#§2.UC-011
-  - ui-spec-wechat-flow-c001-c014#§2.UC-014
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-011
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-014
 
 ---
 
@@ -507,7 +507,7 @@ required_sections:
 - **relates_to**: [F-006, M-001, M-008, UC-018]
 - **context_load**:
   - prd-wechat-flow-f001-f014#§2.F-006
-  - ui-spec-wechat-flow-c001-c014#§2.UC-018
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-018
   - arch-wechat-flow-modules#§2.M-010
 
 ---
@@ -622,19 +622,19 @@ required_sections:
     - UC-020 BaseColorDeriveModal — 居中 Modal + 色块矩阵（派生色预览）
     - UC-021 DirectiveAutocompletePopover — 光标下浮层 + 二级 Block/Mark variant 选择列表
     - UC-022 TemplateThemeCard — (主题, template) 组合卡片，含缩略图 + template 下拉选择器
-  - [ ] AC-002: 每个组件 Penpot 命名遵循 `C-{NNN}` 模式，与 `ui-spec-wechat-flow-c001-c014` 对应章节对齐
+  - [ ] AC-002: 每个组件 Penpot 命名遵循 `C-{NNN}` 模式，与 `ui-spec-wechat-flow-uc001-uc014` 对应章节对齐
   - [ ] AC-003: 组件挂接到 Penpot Design System Token，通过 Penpot MCP `find_shape` 可检索到 UC-017 ~ UC-022
   - [ ] AC-004: 签字记录写入 `docs/EVENT-LOG.jsonl`（`phase=development, event=design_signoff`）
 - **deliverables**:
   - [ ] Penpot 项目：UC-017 ~ UC-022 共 6 个组件视觉规格页面
 - **relates_to**: [UC-017, UC-018, UC-019, UC-020, UC-021, UC-022]
 - **context_load**:
-  - ui-spec-wechat-flow-c001-c014#§2.UC-017
-  - ui-spec-wechat-flow-c001-c014#§2.UC-018
-  - ui-spec-wechat-flow-c001-c014#§2.UC-019
-  - ui-spec-wechat-flow-c001-c014#§2.UC-020
-  - ui-spec-wechat-flow-c001-c014#§2.UC-021
-  - ui-spec-wechat-flow-c001-c014#§2.UC-022
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-017
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-018
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-019
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-020
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-021
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-022
 
 ---
 

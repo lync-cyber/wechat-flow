@@ -1,5 +1,5 @@
 ---
-id: "ui-spec-wechat-flow-c001-c014"
+id: "ui-spec-wechat-flow-uc001-uc014"
 version: "0.2.1"
 doc_type: ui-spec
 author: ui-designer

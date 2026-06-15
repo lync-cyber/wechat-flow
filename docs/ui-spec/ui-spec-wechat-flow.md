@@ -19,7 +19,7 @@ required_sections:
 [NAV]
 - §0 设计方向 — 调性定义、核心原则、可访问性基线、视觉语言
 - §1 设计系统 → §1.1 色彩 Token, §1.2 排版 Token, §1.3 间距与圆角, §1.4 阴影与层叠, §1.5 动效, §1.6 断点
-- §2 组件清单（分卷）→ UC-001..UC-023（见 ui-spec-wechat-flow-c001-c014.md）
+- §2 组件清单（分卷）→ UC-001..UC-023（见 ui-spec-wechat-flow-uc001-uc014.md）
 - §3 页面布局（分卷）→ P-001..P-005（见 ui-spec-wechat-flow-p001-p005.md）
 - §4 导航与路由
 - §5 响应式策略
@@ -305,7 +305,7 @@ CSS 媒体查询约定：
 
 ## 2. 组件清单
 
-组件详情见分卷：`docs/ui-spec/ui-spec-wechat-flow-c001-c014.md`（UC-001..UC-022）。
+组件详情见分卷：`docs/ui-spec/ui-spec-wechat-flow-uc001-uc014.md`（UC-001..UC-022）。
 
 交叉引用：
 - UC-001 顶栏（TopBar）

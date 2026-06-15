@@ -74,7 +74,7 @@ deps: ["dev-plan-wechat-flow", "dev-plan-wechat-flow-s0", "dev-plan-wechat-flow-
 
 ## Layer 2 抽样发现
 
-**Penpot 前置约束兑现**: 抽查 T-008（三栏布局）和 T-009（SourcePane），T-008 的 `dependencies` 包含 `[T-005, T-DS-003]`，T-DS-003 正是对应的视觉稿任务（涵盖 C-001/C-002/C-004/C-005），前置约束已兑现。未发现前端 code 任务遗漏 T-DS-NNN 依赖的问题。
+**Penpot 前置约束兑现**: 抽查 T-008（三栏布局）和 T-009（SourcePane），T-008 的 `dependencies` 包含 `[T-005, T-DS-003]`，T-DS-003 正是对应的视觉稿任务（涵盖 UC-001/UC-002/UC-004/UC-005），前置约束已兑现。未发现前端 code 任务遗漏 T-DS-NNN 依赖的问题。
 
 **Validation 任务质量**: 抽查 T-VAL-00，其 `acceptance_criteria` 均含可观测动词（`pnpm install && pnpm turbo typecheck` 输出无红色错误、`pnpm biome check .` 无 lint 错误、Penpot 可见 Token 变量组等），具体可操作，非空话。Validation 任务 AC 质量合格。
 
