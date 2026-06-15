@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-06-15T02:30:04.921602+00:00",
+  "generated_at": "2026-06-15T09:18:13.020469+00:00",
   "documents": {
     "arch-wechat-flow-api": {
       "file_path": "docs/arch/arch-wechat-flow-api.md",
@@ -1945,6 +1945,16 @@
         "ui-spec-wechat-flow-c001-c014": "ebf66047",
         "ui-spec-wechat-flow-p001-p005": "64a110dd"
       }
+    },
+    "feedback-bug-0-11-0-scaffold-skill-md-cataforge-docs-out-of-the-box-doctor-3-fail": {
+      "file_path": "docs/feedback/bug-deprecated-skill-cmd-refs-20260615.md",
+      "doc_type": "framework-feedback",
+      "volume": "main",
+      "status": "approved",
+      "total_lines": 213,
+      "est_tokens": 2478,
+      "content_hash": "d3232d2a",
+      "sections": {}
     },
     "feedback-bug-kg-迁移三个正交-bug-在-0-8-0-main-1c7bbca-仍未修复-修复曾落在-cataforge-本地": {
       "file_path": "docs/feedback/bug-kg-migration-three-bugs-20260611.md",

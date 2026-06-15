@@ -6,7 +6,7 @@
 
 - 技术栈: Node.js + TypeScript（具体框架待 architect 决定）
 - 运行时: claude-code
-- 框架版本: 0.11.0
+- 框架版本: 0.11.1
   <!-- 由 cataforge deploy 自动盖入已安装包版本。SemVer: MAJOR=不兼容变更, MINOR=新功能, PATCH=修复 -->
 - 语言定位: 中文框架（提示词/文档/交互用中文；代码/变量/CLI参数用英文）
 - 执行模式: standard
@@ -21,12 +21,16 @@
 - 项目定位: 面向微信公众号写作者的 Markdown 写作与排版工具 — 写作契约 + LLM 友好统一 API + 主题组件库；产物契约为经过微信编辑器粘贴过滤后视觉一致的 inline-styled HTML
 - 交付形态: Web App（含预览/编辑界面）+ npm 包 + MCP server / CLI 多形态
 
-## 执行环境 (Bootstrap 时由 `python .cataforge/scripts/framework/setup.py --emit-env-block` 填入)
+## 执行环境 (Bootstrap 时由 `cataforge setup env-block` 填入)
 
 <!-- 本节在 Bootstrap 步骤中生成。每次会话都会作为项目指令加载，
      权重高于 hook 注入的 additionalContext。项目生命周期内保持稳定。 -->
-{执行环境检测结果 — 未填入时 orchestrator 应在 Bootstrap 时调用:
- python .cataforge/scripts/framework/setup.py --emit-env-block}
+- 包管理器: pnpm@9.15.9（monorepo workspace，见 pnpm-workspace.yaml）
+- 运行时: Node.js ≥ 22（package.json engines）
+- 类型检查: TypeScript 5.7（`pnpm typecheck` = turbo per-package `tsc --noEmit` + `tsc -p tests/tsconfig.json`）
+- 测试框架: vitest 2.1（`pnpm vitest run`）
+- Lint/Format: biome 1.9（`pnpm biome check .`）
+- 构建/任务编排: Turborepo 2.3（`turbo build`）；apps/editor 用 Vite 6
 
 ## 项目状态 (orchestrator专属写入区，其他Agent禁止修改)
 - 当前阶段: development
@@ -92,26 +96,7 @@
   - `features` — 功能注册表。升级时全量覆盖
   - `migration_checks` — 迁移检查声明。升级时全量覆盖
 
-## 执行环境 (Bootstrap 时由 `cataforge setup --emit-env-block` 填入)
-<!-- 本节在 Bootstrap 步骤中生成。每次会话都会作为项目指令加载，
-     权重高于 hook 注入的 additionalContext。项目生命周期内保持稳定。 -->
-{执行环境检测结果 — 未填入时 orchestrator 应在 Bootstrap 时调用:
- cataforge setup --emit-env-block}
- 
-
 ## 工具使用规范
 - 优先使用 LSP 工具（go_to_definition, find_references, hover）查找符号定义和引用
 - 避免用 grep/ripgrep 搜索代码符号，除非是搜索字符串字面量
-
-## 执行环境
-<!-- 本节在 Bootstrap 步骤中生成。每次会话都会作为项目指令加载，
-     权重高于 hook 注入的 additionalContext。项目生命周期内保持稳定。
-     cataforge 0.4.1 已移除 setup --emit-env-block，本节由 orchestrator 手动填入，
-     具体命令在 architect / tech-lead 阶段确定后由 amendment 更新。 -->
-- 包管理器: pnpm@9.15.9（monorepo workspace，见 pnpm-workspace.yaml）
-- 运行时: Node.js ≥ 22（package.json engines）
-- 类型检查: TypeScript 5.7（`pnpm typecheck` = turbo per-package `tsc --noEmit` + `tsc -p tests/tsconfig.json`）
-- 测试框架: vitest 2.1（`pnpm vitest run`）
-- Lint/Format: biome 1.9（`pnpm biome check .`）
-- 构建/任务编排: Turborepo 2.3（`turbo build`）；apps/editor 用 Vite 6
 
