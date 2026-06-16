@@ -1,0 +1,35 @@
+# 本地质量守卫 — 仅对 staged 文件做增量快检查，目标单次提交在数秒内完成。
+# 深度全量检查（全图依赖守卫 / 全历史密钥扫描 / 全量 typecheck+test）在 CI 执行，
+# 见 .github/workflows/ci.yml。规则与修复指引见 GUARDS.md。
+min_version: "1.7.0"
+
+pre-commit:
+  parallel: true
+  skip:
+    - merge
+    - rebase
+  commands:
+    # 格式化 + lint（自动修复并重新 stage，不因纯格式问题阻断提交）
+    format-lint:
+      glob: "*.{ts,tsx,mts,cts,js,jsx,mjs,cjs,vue,json,jsonc,css}"
+      run: pnpm exec biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+      stage_fixed: true
+    # 密钥 / 敏感信息扫描（本地：staged 文件）
+    secrets:
+      glob: "*"
+      run: pnpm exec secretlint --maskSecrets --secretlintignore .secretlintignore {staged_files}
+    # 模块边界守卫（对外公共 API 边界 / 禁跨包深引用，覆盖 .ts 与 .vue）
+    module-boundaries:
+      glob: "*.{ts,tsx,mts,cts,vue}"
+      run: node scripts/check-module-boundaries.mjs {staged_files}
+
+# push 前的中间层：仅对变更影响的包做类型检查（turbo --affected，默认对比 main）
+# + 全图架构守卫。比 pre-commit 重，但比 CI 早一步兜住会挂 CI 的问题。
+# CI 仍跑全量 typecheck（含 tests/tsconfig），此处只做快速 pre-flight。
+pre-push:
+  parallel: false
+  commands:
+    typecheck:
+      run: pnpm typecheck:affected
+    arch-guard:
+      run: pnpm guard:arch
