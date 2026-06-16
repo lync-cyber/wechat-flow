@@ -1,6 +1,6 @@
 import "@wechat-flow/blocks";
 import "@wechat-flow/marks";
-import { registerTheme } from "@wechat-flow/core/src/registry/theme.ts";
+import { registerTheme } from "@wechat-flow/core";
 import businessTheme from "@wechat-flow/theme-business";
 import defaultTheme from "@wechat-flow/theme-default";
 import literaryTheme from "@wechat-flow/theme-literary";

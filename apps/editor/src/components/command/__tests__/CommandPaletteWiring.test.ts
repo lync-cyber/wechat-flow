@@ -1,7 +1,7 @@
 import "fake-indexeddb/auto";
 import { mount } from "@vue/test-utils";
 import { closeDb } from "@wechat-flow/core";
-import { registerTheme, resetThemeRegistry } from "@wechat-flow/core/src/registry/theme.ts";
+import { registerTheme, resetThemeRegistry } from "@wechat-flow/core";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";

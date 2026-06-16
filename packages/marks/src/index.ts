@@ -1,4 +1,4 @@
-import { onMarkRegistryReset, registerMark } from "@wechat-flow/core/src/registry/mark.ts";
+import { onMarkRegistryReset, registerMark } from "@wechat-flow/core";
 import { badge } from "./marks/badge.ts";
 import { bold } from "./marks/bold.ts";
 import { emphasis } from "./marks/emphasis.ts";

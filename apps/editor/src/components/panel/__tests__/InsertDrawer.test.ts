@@ -1,9 +1,5 @@
 import { mount } from "@vue/test-utils";
-import {
-  listBlocks,
-  registerBlock,
-  resetBlockRegistry,
-} from "@wechat-flow/core/src/registry/block.ts";
+import { listBlocks, registerBlock, resetBlockRegistry } from "@wechat-flow/core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
 import { z } from "zod";

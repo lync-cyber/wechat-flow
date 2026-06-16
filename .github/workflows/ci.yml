@@ -7,6 +7,7 @@ on:
     branches: [main]
 
 jobs:
+  # 既有质量门禁：lint + 全量类型检查 + 覆盖率测试（保持不变，新增 turbo 缓存）
   quality-gate:
     runs-on: ubuntu-latest
     steps:
@@ -20,6 +21,13 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+      - name: Turbo 缓存
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm typecheck
@@ -30,3 +38,29 @@ jobs:
         with:
           json-summary-path: ./coverage/coverage-summary.json
           json-final-path: ./coverage/coverage-final.json
+
+  # 架构与安全守卫：全图依赖守卫 + 模块边界守卫 + 全 git 历史密钥扫描
+  # 与 quality-gate 并行。规则与渐进式落地见 GUARDS.md。
+  guards:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: 架构守卫（依赖图：分层方向 / 禁循环）
+        # 观察期可改为：env DEPCRUISE_WARN_ONLY=1 pnpm guard:arch（只报告不阻断）
+        run: pnpm guard:arch
+      - name: 模块边界守卫（公共 API 边界 / 禁跨包深引用）
+        run: pnpm guard:boundaries
+      - name: 密钥扫描（全 git 历史，深度兜底）
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

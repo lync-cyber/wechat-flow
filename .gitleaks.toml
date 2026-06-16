@@ -1,0 +1,14 @@
+title = "wechat-flow gitleaks 配置"
+
+# 继承 gitleaks 内置规则集，再叠加项目级 allowlist。
+[extend]
+useDefault = true
+
+[allowlist]
+description = "全局忽略路径：锁文件 / 变异测试沙盒 / 文档 / 二进制资产"
+paths = [
+  '''pnpm-lock\.yaml''',
+  '''\.stryker-tmp/''',
+  '''docs/.*\.md$''',
+  '''.*\.(png|jpe?g|gif|svg|ico|woff2?)$''',
+]

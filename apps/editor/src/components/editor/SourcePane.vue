@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { listBlocks } from "@wechat-flow/core/src/registry/block.ts";
-import { listMarks } from "@wechat-flow/core/src/registry/mark.ts";
+import { listBlocks } from "@wechat-flow/core";
+import { listMarks } from "@wechat-flow/core";
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useCodemirror } from "../../composables/use-codemirror";
 import {
