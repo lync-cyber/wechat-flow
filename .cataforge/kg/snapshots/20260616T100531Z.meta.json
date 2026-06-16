@@ -1,0 +1,14 @@
+{
+  "active_doc_types": [
+    "arch",
+    "deploy-spec",
+    "dev-plan",
+    "prd",
+    "test-report",
+    "ui-spec"
+  ],
+  "path": ".cataforge\\kg\\snapshots\\20260616T100531Z.nq",
+  "quad_count": 14439,
+  "store_backend": "oxigraph",
+  "timestamp": "20260616T100531Z"
+}
