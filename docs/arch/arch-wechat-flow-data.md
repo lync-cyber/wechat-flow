@@ -311,7 +311,7 @@ CREATE INDEX IF NOT EXISTS idx_upload_job_id ON upload_records(job_id);
 | versionTriple | string | required | 序列化的 `{coreVersion, themeVersion, rulesetVersion}` |
 | diagnostics | array | required | `Diagnostic[]`，含每项 `{severity, ruleId?, nodeRef?, message}` |
 | nodeDiffs | array | optional | M-004 粘贴过滤模拟产出的逐节点差异（F-002 AC-006，复制路径触发） |
-| nodeChangeRecords | array | required（可为空数组） | `NodeChangeRecord[]`，含每项 `{nodeSelector, before (outerHTML), after (outerHTML), attrDiff: AttrDiffEntry[], triggerRuleId}`；由 M-003 在执行 strip / clamp / transform / patch 作用域规则时记录；M-001 C-013.1 CompatibilityDiffView 据此渲染双栏对比 |
+| nodeChangeRecords | array | required（可为空数组） | `NodeChangeRecord[]`，含每项 `{nodeSelector, before (outerHTML), after (outerHTML), attrDiff: AttrDiffEntry[], triggerRuleId}`；由 M-003 在执行 strip / clamp / transform / patch 作用域规则时记录；M-001 UC-013.1 CompatibilityDiffView 据此渲染双栏对比 |
 | nightRiskIssues | array | required（可为空数组） | `NightRiskEntry[]`，含每项 `{nodeSelector, contrastRatio, foreground, background, suggestion}`；由 M-003 `lint/readability.ts` 在节点遍历时对 `contrastRatio < 4.5` (WCAG AA) 节点产；M-001 DiagnosticsPanel `night-risk-alert` 状态据此激活 |
 | generatedAt | datetime | required | 生成时间 |
 

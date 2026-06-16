@@ -14,7 +14,7 @@ afterEach(() => {
   document.body.style.cursor = "";
 });
 
-describe("ResizableSplitter — 状态机（C-002）", () => {
+describe("ResizableSplitter — 状态机（UC-002）", () => {
   it("idle 初始无 hover/dragging/disabled class", () => {
     const wrapper = mount(ResizableSplitter, { props: { ...baseProps, onResize: vi.fn() } });
     const el = wrapper.find('[data-testid="splitter"]');

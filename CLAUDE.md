@@ -6,7 +6,7 @@
 
 - 技术栈: Node.js + TypeScript（具体框架待 architect 决定）
 - 运行时: claude-code
-- 框架版本: 0.11.0
+- 框架版本: 0.11.1
   <!-- 由 cataforge deploy 自动盖入已安装包版本。SemVer: MAJOR=不兼容变更, MINOR=新功能, PATCH=修复 -->
 - 语言定位: 中文框架（提示词/文档/交互用中文；代码/变量/CLI参数用英文）
 - 执行模式: standard
@@ -21,17 +21,21 @@
 - 项目定位: 面向微信公众号写作者的 Markdown 写作与排版工具 — 写作契约 + LLM 友好统一 API + 主题组件库；产物契约为经过微信编辑器粘贴过滤后视觉一致的 inline-styled HTML
 - 交付形态: Web App（含预览/编辑界面）+ npm 包 + MCP server / CLI 多形态
 
-## 执行环境 (Bootstrap 时由 `python .cataforge/scripts/framework/setup.py --emit-env-block` 填入)
+## 执行环境 (Bootstrap 时由 `cataforge setup env-block` 填入)
 
 <!-- 本节在 Bootstrap 步骤中生成。每次会话都会作为项目指令加载，
      权重高于 hook 注入的 additionalContext。项目生命周期内保持稳定。 -->
-{执行环境检测结果 — 未填入时 orchestrator 应在 Bootstrap 时调用:
- python .cataforge/scripts/framework/setup.py --emit-env-block}
+- 包管理器: pnpm@9.15.9（monorepo workspace，见 pnpm-workspace.yaml）
+- 运行时: Node.js ≥ 22（package.json engines）
+- 类型检查: TypeScript 5.7（`pnpm typecheck` = turbo per-package `tsc --noEmit` + `tsc -p tests/tsconfig.json`）
+- 测试框架: vitest 2.1（`pnpm vitest run`）
+- Lint/Format: biome 1.9（`pnpm biome check .`）
+- 构建/任务编排: Turborepo 2.3（`turbo build`）；apps/editor 用 Vite 6
 
 ## 项目状态 (orchestrator专属写入区，其他Agent禁止修改)
 - 当前阶段: development
-- 上次完成: **dev-plan amendment 闭环 = L3 cascade(PRD→ARCH→dev-plan) 全链路收口**: tech-lead 子代理产 **T-118..T-122 五卡**(全 S4, contracts→M-005→pipeline→transform→MCP 依赖序: T-118 contracts schema 演进[customCss+registerVariant+themeBlocks variant 维度+tool-count 测试 24]/T-119 M-005 registerVariant+getBlockBaseStyle+blocks baseStyle 携带/T-120 inline-style 分层合成+custom-css.ts juice pass/T-121 容器 directive 展开[原 deferred(6)]/T-122 API-034 Tool 实现), 三卷计数 24 同步(s0 历史卷保留 23 知会), T-058 追加 T-121 前置, 新关键路径 T-004→T-118→T-119→T-120→T-121→T-058. 门禁: REVIEW-dev-plan-r5 needs_revision(1 HIGH s6 T-085 缺 T-092+3 MEDIUM+2 LOW)→6项全修(T-122 四路错误码 AC 全覆盖+T-119 default/root 守护负向 AC+计数106+字段名+T-058 前置说明)→REVIEW-dev-plan-r6 **approved**. 收口三件套全绿(docs index 65 文档/ingest/kg reconcile=0). 上游反馈已发布 **CataForge #253/#254/#255**(KG 实体读取链三缺陷/drift 工具链三缺口/generate 定稿指向脱节), 渲染包存档 docs/feedback/fb-*. **运行学习存档(保留)**: ①子代理事故处置(截断→接管/崩溃→重派) ②contracts 契约咽喉→串行 ③IDE诊断以CLI为准 ④接线类AC须行为级测试(readFileSync字符串锚定不足) ⑤user_facing_critical_path 的 validation 不可省 ⑥preview MCP: 先resize, Vue @click 用 preview_eval ⑦grep 对账要搜变体写法("23 Tool"≠"23 个 Tool") ⑧**amendment 收口三件套=docs index+context ingest+kg reconcile**(仅 index/validate 会漏 KG 同步; repair 不修 ghost_section, 须 kg delete 未编码相对id; KG 实体级 ref 渲染空壳#253, 子代理输入须给文件行段锚点)
-- 下一步行动: **Sprint 4(输出能力+MCP server) 待用户指令启动** — 启动前置已全部就绪: L3 cascade 三文档 approved, T-118..T-122 已入 S4 任务表(tdd-engine 调度注意: T-118 contracts 咽喉先行串行, 余卡按依赖序), 旧卡 T-030(composeCopy postPaste 真值=deferred(3))照常. 框架反馈在途: #253/#254/#255 + 历史 #234/#235/#236(#236 警示: 勿用0.8.0发布版重跑 kg init --force)
+- 上次完成: **framework-update 0.11.0→0.11.1 + C-→UC- 实体迁移收口**: 升级 cataforge 包至 0.11.1(uv tool; pip 因 pytest-logging 旧依赖构建失败)/刷新 scaffold(doc-gen/doc-nav/doc-review/doc-consistency/self-update 五 skill 并入统一 context)/重部署 IDE 产物/恢复 deploy 版本盖戳归一化误删的 §执行环境技术栈块. **KG 实体读取链(#253)落地**: 根因=Component(C-) 默认 authoritative doc_type 为 arch 而本项目在 ui-spec 定义→不抽取; 实测 context.kg_definition_authority 项目覆盖在 0.11.1 损坏(import 认/reconcile/repair 用默认不认→制造 ghost); 改用语义正确的 UIComponent(UC-) 全量重命名(460 处跨 prd/arch/ui-spec/dev-plan + apps/editor 源码测试), KG 重建 reconcile=0/doctor 全绿/23 C- WARN 消除. doc_id ui-spec-*-c001-c014→uc001-uc014 重命名 + review 文档历史引用同步(EVENT-LOG/快照/feedback 作审计保留). KG store 改为 git 跟踪(kg-first 源真, 运行态 LOG/LOCK/IDENTITY 仍忽略). 上游新增反馈包 docs/feedback/fb-framework-update-0_11_1(实体读取链/部署归一化/pip 依赖三问题). **运行学习(保留+新增)**: ①子代理事故处置 ②contracts 串行 ③IDE诊断以CLI为准 ④接线类AC须行为级测试 ⑤user_facing_critical_path validation 不可省 ⑥preview MCP resize/preview_eval ⑦grep 对账搜变体写法 ⑧amendment 收口三件套=docs index+context ingest+kg reconcile(repair 不修 ghost_section 须 kg delete) ⑨**KG 实体 authority=class→默认 doc_type(Component→arch / UIComponent→ui-spec / Page→ui-spec); kg_definition_authority 项目覆盖 0.11.1 仅 import 生效→reconcile/repair 用默认制造 ghost, 跨 doc_type 定义须改实体前缀而非配置覆盖** ⑩**重命名实体/doc_id 后 import 写新留旧 ghost section 须 repair 清; doc_id 改名=frontmatter id+全引用替换+context index 重建+KG re-import**
+- 下一步行动: **Sprint 4(输出能力+MCP server) 待用户指令启动** — 启动前置已全部就绪: L3 cascade 三文档 approved, T-118..T-122 已入 S4 任务表(tdd-engine 调度注意: T-118 contracts 咽喉先行串行, 余卡按依赖序), 旧卡 T-030(composeCopy postPaste 真值=deferred(3))照常. 框架已升级 0.11.1(current). 上游反馈: #253(已以 UC- 重命名工作绕过, 根因待上游修 reconcile/repair 的 authority 解析)/#254/#255 + fb-framework-update-0_11_1 待提交 CataForge; 历史 #234/#235/#236(#236 警示: 勿用0.8.0发布版重跑 kg init --force)
 - 已完成阶段: [requirements, architecture, ui_design, dev_planning, cross_doc_amendment_r2, arch_special_review_css_inlining, dev_plan_amendment_custom_styles]
 - 当前Sprint: **Sprint 3 已关闭(sprint-review approved_with_notes, 4 notes全闭环 d1e282b)**. 本地merge模式(无GitHub remote). (Sprint 1/2/3 已关闭已合main)
 - 待办(deferred, 跨 Sprint): (2) LOW 历史卷描述过时(知会不改: s1 T-002 AC-003 juice 旧配置描述 + s0 T-004 AC-006 计数 23; tool-count 测试更新已锚 T-118 AC-005); (3) MEDIUM [T-011 R-005] postPaste true端真值路径(composeCopy stage5后调simulatePaste置true)待 Sprint 4 T-030(schema已严格化z.boolean()必填+true穿透测试已锚定, 仅剩composeCopy实现本体); (4) MEDIUM [T-010 R-001] iframe sandbox XSS阻断 happy-dom 假绿→Playwright E2E(T-058); (6) ✓已清=T-121 补卡(REVIEW-dev-plan-r6 approved); (7) ✓已清=本轮 dev-plan amendment(24 字面全卷一致, s0 历史卷除外)
@@ -92,26 +96,7 @@
   - `features` — 功能注册表。升级时全量覆盖
   - `migration_checks` — 迁移检查声明。升级时全量覆盖
 
-## 执行环境 (Bootstrap 时由 `cataforge setup --emit-env-block` 填入)
-<!-- 本节在 Bootstrap 步骤中生成。每次会话都会作为项目指令加载，
-     权重高于 hook 注入的 additionalContext。项目生命周期内保持稳定。 -->
-{执行环境检测结果 — 未填入时 orchestrator 应在 Bootstrap 时调用:
- cataforge setup --emit-env-block}
- 
-
 ## 工具使用规范
 - 优先使用 LSP 工具（go_to_definition, find_references, hover）查找符号定义和引用
 - 避免用 grep/ripgrep 搜索代码符号，除非是搜索字符串字面量
-
-## 执行环境
-<!-- 本节在 Bootstrap 步骤中生成。每次会话都会作为项目指令加载，
-     权重高于 hook 注入的 additionalContext。项目生命周期内保持稳定。
-     cataforge 0.4.1 已移除 setup --emit-env-block，本节由 orchestrator 手动填入，
-     具体命令在 architect / tech-lead 阶段确定后由 amendment 更新。 -->
-- 包管理器: pnpm@9.15.9（monorepo workspace，见 pnpm-workspace.yaml）
-- 运行时: Node.js ≥ 22（package.json engines）
-- 类型检查: TypeScript 5.7（`pnpm typecheck` = turbo per-package `tsc --noEmit` + `tsc -p tests/tsconfig.json`）
-- 测试框架: vitest 2.1（`pnpm vitest run`）
-- Lint/Format: biome 1.9（`pnpm biome check .`）
-- 构建/任务编排: Turborepo 2.3（`turbo build`）；apps/editor 用 Vite 6
 

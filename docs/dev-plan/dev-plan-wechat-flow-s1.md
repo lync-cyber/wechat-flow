@@ -4,7 +4,7 @@ version: "0.4.1"
 doc_type: dev-plan
 author: tech-lead
 status: approved
-deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "ui-spec-wechat-flow", "ui-spec-wechat-flow-c001-c014", "ui-spec-wechat-flow-p001-p005"]
+deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "ui-spec-wechat-flow", "ui-spec-wechat-flow-uc001-uc014", "ui-spec-wechat-flow-p001-p005"]
 consumers: [developer, qa-engineer]
 volume: sprint
 volume_type: sprint
@@ -51,7 +51,7 @@ required_sections:
 
 ---
 
-### T-097: [DESIGN] Penpot — C-001/C-002/C-004/C-005 核心组件视觉稿
+### T-097: [DESIGN] Penpot — UC-001/UC-002/UC-004/UC-005 核心组件视觉稿
 
 - **目标**: 在 Penpot 中产出 TopBar、Splitter、SourcePane、PreviewPane 四个核心组件的视觉稿（含所有状态变体），作为 T-008/T-009/T-010 实现的像素级参照
 - **task_kind**: design
@@ -63,18 +63,18 @@ required_sections:
 - **tdd_skip_reason**: "Penpot 设计稿，由用户视觉验证 sign-off"
 - **dependencies**: [T-095]
 - **acceptance_criteria**:
-  - [ ] AC-001: C-001 TopBar 视觉稿覆盖 `default`、`document-unsaved`、`syncing`、`offline`、`conflict`、`focus-mode` 6 个状态，与 `ui-spec-wechat-flow-c001-c014#§2.C-001` 一致
-  - [ ] AC-002: C-002 Splitter 视觉稿覆盖 `idle`、`hover`、`dragging`、`disabled` 4 个状态
-  - [ ] AC-003: C-004 SourcePane 视觉稿覆盖语法高亮 Token 样板（标题/粗体/行内代码/Directive/Frontmatter 各一例），使用 §1 Token 变量（非硬编码色值）
-  - [ ] AC-004: C-005 PreviewPane 视觉稿覆盖 `loading`、`populated`、`error` 状态，含视口切换工具栏（375/768/auto 三个按钮）
-  - [ ] AC-005: 通过 Penpot MCP `find_shape` 可检索到 `C-001`、`C-004`、`C-005` 组件
+  - [ ] AC-001: UC-001 TopBar 视觉稿覆盖 `default`、`document-unsaved`、`syncing`、`offline`、`conflict`、`focus-mode` 6 个状态，与 `ui-spec-wechat-flow-uc001-uc014#§2.UC-001` 一致
+  - [ ] AC-002: UC-002 Splitter 视觉稿覆盖 `idle`、`hover`、`dragging`、`disabled` 4 个状态
+  - [ ] AC-003: UC-004 SourcePane 视觉稿覆盖语法高亮 Token 样板（标题/粗体/行内代码/Directive/Frontmatter 各一例），使用 §1 Token 变量（非硬编码色值）
+  - [ ] AC-004: UC-005 PreviewPane 视觉稿覆盖 `loading`、`populated`、`error` 状态，含视口切换工具栏（375/768/auto 三个按钮）
+  - [ ] AC-005: 通过 Penpot MCP `find_shape` 可检索到 `UC-001`、`UC-004`、`UC-005` 组件
 - **deliverables**:
-  - [ ] Penpot 项目：C-001, C-002, C-004, C-005 组件视觉稿页面
-- **relates_to**: [ui-spec-wechat-flow-c001-c014#§2.C-001, §2.C-002, §2.C-004, §2.C-005]
+  - [ ] Penpot 项目：UC-001, UC-002, UC-004, UC-005 组件视觉稿页面
+- **relates_to**: [ui-spec-wechat-flow-uc001-uc014#§2.UC-001, §2.UC-002, §2.UC-004, §2.UC-005]
 - **context_load**:
-  - ui-spec-wechat-flow-c001-c014#§2.C-001
-  - ui-spec-wechat-flow-c001-c014#§2.C-004
-  - ui-spec-wechat-flow-c001-c014#§2.C-005
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-001
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-004
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-005
 
 ---
 
@@ -175,9 +175,9 @@ required_sections:
 
 ---
 
-### T-008: M-001 EditorShell 三栏布局（C-001 TopBar + C-002 Splitter）
+### T-008: M-001 EditorShell 三栏布局（UC-001 TopBar + UC-002 Splitter）
 
-- **目标**: 实现编辑器三栏布局骨架（EditorShell.vue）：C-001 TopBar、C-002 ResizableSplitter（含拖拽调宽）、三栏背景色梯度，以及专注模式（F11）
+- **目标**: 实现编辑器三栏布局骨架（EditorShell.vue）：UC-001 TopBar、UC-002 ResizableSplitter（含拖拽调宽）、三栏背景色梯度，以及专注模式（F11）
 - **模块**: M-001 (编辑器 UI)
 - **task_kind**: feature
 - **priority**: P0
@@ -190,20 +190,20 @@ required_sections:
 - **dependencies**: [T-005, T-097]
 - **acceptance_criteria**:
   - [ ] AC-001: Given 打开 `http://localhost:5173`，When 页面加载完成，Then 可见三栏布局：左栏背景 `#F4F1EC`（暖灰）、中栏背景 `#FAF8F5`（暖白）、右栏背景 `#F7F7F7`（微冷白），符合 `ui-spec-wechat-flow#§0.2` 层次原则
-  - [ ] AC-002: Given 桌面档（≥1280px），When 拖拽左栏/中栏之间的 Splitter，Then 左栏宽度在 `[160px, 320px]` 范围内实时更新，拖拽结束后宽度值可从 IndexedDB 读回（持久化验证）[ui-spec-wechat-flow-c001-c014#§2.C-002]
+  - [ ] AC-002: Given 桌面档（≥1280px），When 拖拽左栏/中栏之间的 Splitter，Then 左栏宽度在 `[160px, 320px]` 范围内实时更新，拖拽结束后宽度值可从 IndexedDB 读回（持久化验证）[ui-spec-wechat-flow-uc001-uc014#§2.UC-002]
   - [ ] AC-003: Given 桌面档，When 按 F11 键，Then 左栏和右栏隐藏（`display: none`），顶栏工具栏按钮组隐藏，编辑区铺满页面宽度；再次按 F11 恢复
   - [ ] AC-004: Given vw < 1280px（平板档），When 页面加载，Then 左侧面板收为抽屉（默认隐藏），TopBar 左端出现☰ 触发按钮；点击 ☰，抽屉从左侧滑入（宽 280px）并有半透明 Overlay（`rgba(28,25,23,0.3)`）[ui-spec-wechat-flow#§5.2]
-  - [ ] AC-005: C-001 TopBar 组件 Props `isFocusMode`、`hasUnsavedChanges`、`syncState` 可正确驱动文档名后的 `·` 标记和 `focus-mode` 状态，符合 `ui-spec-wechat-flow-c001-c014#§2.C-001` 状态表
+  - [ ] AC-005: UC-001 TopBar 组件 Props `isFocusMode`、`hasUnsavedChanges`、`syncState` 可正确驱动文档名后的 `·` 标记和 `focus-mode` 状态，符合 `ui-spec-wechat-flow-uc001-uc014#§2.UC-001` 状态表
 - **deliverables**:
   - [ ] `apps/editor/src/components/layout/EditorShell.vue` — 三栏布局骨架
-  - [ ] `apps/editor/src/components/layout/TopBar.vue` — C-001 TopBar 实现（Props 按 ui-spec C-001 定义）
-  - [ ] `apps/editor/src/components/layout/ResizableSplitter.vue` — C-002 Splitter 实现（含拖拽 + 宽度持久化钩子）
+  - [ ] `apps/editor/src/components/layout/TopBar.vue` — UC-001 TopBar 实现（Props 按 ui-spec UC-001 定义）
+  - [ ] `apps/editor/src/components/layout/ResizableSplitter.vue` — UC-002 Splitter 实现（含拖拽 + 宽度持久化钩子）
   - [ ] `apps/editor/src/composables/use-splitter-width.ts` — Splitter 宽度 IndexedDB 持久化 composable
-- **relates_to**: [F-001, M-001, C-001, C-002, P-001]
+- **relates_to**: [F-001, M-001, UC-001, UC-002, P-001]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-001
-  - ui-spec-wechat-flow-c001-c014#§2.C-001
-  - ui-spec-wechat-flow-c001-c014#§2.C-002
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-001
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-002
   - ui-spec-wechat-flow-p001-p005#§3.P-001
   - ui-spec-wechat-flow#§5
 
@@ -211,7 +211,7 @@ required_sections:
 
 ### T-009: M-001 SourcePane（CodeMirror 6 + Markdown 高亮）
 
-- **目标**: 实现 SourcePane（C-004）：CodeMirror 6 编辑器接入 Vue，Markdown 语法高亮（含 directive 语法），输入时触发渲染管线 debounce 300ms
+- **目标**: 实现 SourcePane（UC-004）：CodeMirror 6 编辑器接入 Vue，Markdown 语法高亮（含 directive 语法），输入时触发渲染管线 debounce 300ms
 - **模块**: M-001 (编辑器 UI)
 - **task_kind**: feature
 - **priority**: P0
@@ -223,26 +223,26 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-008]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given SourcePane 渲染，When 用户输入 `# Hello`，Then 编辑器内 `#` 和 `Hello` 以 `--color-brand`（墨绿）颜色高亮，字重 `--font-weight-semibold`，符合 `ui-spec-wechat-flow-c001-c014#§2.C-004.1`
+  - [ ] AC-001: Given SourcePane 渲染，When 用户输入 `# Hello`，Then 编辑器内 `#` 和 `Hello` 以 `--color-brand`（墨绿）颜色高亮，字重 `--font-weight-semibold`，符合 `ui-spec-wechat-flow-uc001-uc014#§2.UC-004.1`
   - [ ] AC-002: Given 用户输入 `::: card\ncontent\n:::`，When 高亮生效，Then `:::` 和 `card` 以 `--color-accent`（赤陶）显示，`--font-weight-medium` + `--font-mono`
   - [ ] AC-003: Given 用户连续输入，When 停止输入后 300ms（PREVIEW_DEBOUNCE_MS 常量），Then `onValueChange` 回调被调用一次（debounce 验证，不多次触发）
   - [ ] AC-004: Given SourcePane Props `readonly: true`，When 渲染，Then 编辑区背景变 `--color-surface-elevated`，光标变 `default`，顶部出现只读 Banner（橙黄色，28px 高）
 - **deliverables**:
-  - [ ] `apps/editor/src/components/editor/SourcePane.vue` — C-004 实现（Props 按 ui-spec 定义）
+  - [ ] `apps/editor/src/components/editor/SourcePane.vue` — UC-004 实现（Props 按 ui-spec 定义）
   - [ ] `apps/editor/src/composables/use-codemirror.ts` — CodeMirror 6 实例管理 composable
-  - [ ] `apps/editor/src/lib/cm-theme.ts` — 自定义 CodeMirror 主题（`--font-serif` + 暖白高亮配色，引用 ui-spec C-004.1 Token 映射）
+  - [ ] `apps/editor/src/lib/cm-theme.ts` — 自定义 CodeMirror 主题（`--font-serif` + 暖白高亮配色，引用 ui-spec UC-004.1 Token 映射）
   - [ ] `apps/editor/src/lib/cm-markdown-lang.ts` — Markdown + remark-directive 语法扩展
-- **relates_to**: [F-001, M-001, C-004]
+- **relates_to**: [F-001, M-001, UC-004]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-001
-  - ui-spec-wechat-flow-c001-c014#§2.C-004
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-004
   - prd-wechat-flow-f001-f014#§2.F-001
 
 ---
 
 ### T-010: M-001 PreviewPane（iframe 沙箱 + 视口切换）
 
-- **目标**: 实现 PreviewPane（C-005）：iframe 沙箱（`sandbox=""` + CSP `default-src 'none'`）、三档视口切换（375/768/auto）、同步状态指示器（C-005.1）、复制按钮悬浮层
+- **目标**: 实现 PreviewPane（UC-005）：iframe 沙箱（`sandbox=""` + CSP `default-src 'none'`）、三档视口切换（375/768/auto）、同步状态指示器（UC-005.1）、复制按钮悬浮层
 - **模块**: M-001 (编辑器 UI)
 - **task_kind**: feature
 - **priority**: P0
@@ -254,18 +254,18 @@ required_sections:
 - **security_sensitive**: true
 - **dependencies**: [T-008, T-097]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given PreviewPane 渲染，When 检查 iframe 元素属性，Then `iframe.getAttribute('sandbox') === ''`（空值，最严格沙箱），CSP 响应头或 meta 标签含 `default-src 'none'; style-src 'unsafe-inline'` [ARCH#§2.M-001, ui-spec-wechat-flow-c001-c014#§2.C-005]
+  - [ ] AC-001: Given PreviewPane 渲染，When 检查 iframe 元素属性，Then `iframe.getAttribute('sandbox') === ''`（空值，最严格沙箱），CSP 响应头或 meta 标签含 `default-src 'none'; style-src 'unsafe-inline'` [ARCH#§2.M-001, ui-spec-wechat-flow-uc001-uc014#§2.UC-005]
   - [ ] AC-002: Given `htmlContent` Prop 更新，When 通过 `iframe.contentDocument.open/write/close` 写入内容，Then iframe 内显示更新后的 HTML，无 JS 执行（验证：DevTools 控制台无脚本执行记录）
   - [ ] AC-003: Given 视口切换工具栏，When 点击 `375` 按钮，Then `iframe` 的 `width` CSS 设置为 `375px`，按钮背景变 `--color-brand-subtle`（激活态）
-  - [ ] AC-004: Given `syncState: 'syncing'`，When PreviewPane 渲染，Then 右下角 SyncStateIndicator 显示墨绿色点（`--color-brand`）+ 快速 pulse（0.8s 周期），符合 `ui-spec-wechat-flow-c001-c014#§2.C-005.1`
+  - [ ] AC-004: Given `syncState: 'syncing'`，When PreviewPane 渲染，Then 右下角 SyncStateIndicator 显示墨绿色点（`--color-brand`）+ 快速 pulse（0.8s 周期），符合 `ui-spec-wechat-flow-uc001-uc014#§2.UC-005.1`
   - [ ] AC-005（production path）: `apps/editor/src/components/editor/PreviewPane.vue` 在 `EditorShell.vue` 中通过 `<PreviewPane :html-content="previewHtml" ... />` 直接挂载，且 `EditorShell.vue` 的 `script setup` 内含 `import PreviewPane from '../editor/PreviewPane.vue'`
 - **deliverables**:
-  - [ ] `apps/editor/src/components/editor/PreviewPane.vue` — C-005 实现（Props 按 ui-spec 定义）
-  - [ ] `apps/editor/src/components/editor/SyncStateIndicator.vue` — C-005.1 同步状态指示器
-- **relates_to**: [F-002, M-001, C-005]
+  - [ ] `apps/editor/src/components/editor/PreviewPane.vue` — UC-005 实现（Props 按 ui-spec 定义）
+  - [ ] `apps/editor/src/components/editor/SyncStateIndicator.vue` — UC-005.1 同步状态指示器
+- **relates_to**: [F-002, M-001, UC-005]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-001
-  - ui-spec-wechat-flow-c001-c014#§2.C-005
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-005
 
 ---
 
@@ -340,7 +340,7 @@ required_sections:
 - **dependencies**: [T-096, T-097]
 - **acceptance_criteria**:
   - [ ] AC-001: 目视对照 Penpot P-001-Desktop 线框稿与 `localhost:5173` 实际渲染，三栏宽度、背景色梯度、TopBar 高度无明显偏差（允许 ±4px）
-  - [ ] AC-002: 目视对照 Penpot C-004 SourcePane 视觉稿与实际 CodeMirror 高亮，标题色、行内代码色与 Token 定义一致
+  - [ ] AC-002: 目视对照 Penpot UC-004 SourcePane 视觉稿与实际 CodeMirror 高亮，标题色、行内代码色与 Token 定义一致
   - [ ] AC-003: 签字记录写入 `docs/EVENT-LOG.jsonl`（`event=design_signoff, phase=development, ref=T-098`）
 - **deliverables**:
   - [ ] `docs/EVENT-LOG.jsonl` — design_signoff 事件（T-098）

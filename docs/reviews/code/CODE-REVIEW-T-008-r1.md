@@ -61,12 +61,12 @@ Layer 1 delegated to hook（settings.json 已配置 PostToolUse Edit → lint_fo
 
 ---
 
-### [R-002] MEDIUM: tokens.css 缺失 `--font-size-xs`，但 ui-spec 已在 C-001 conflict Tag 引用
+### [R-002] MEDIUM: tokens.css 缺失 `--font-size-xs`，但 ui-spec 已在 UC-001 conflict Tag 引用
 
 - **category**: consistency
 - **root_cause**: self-caused
-- **描述**: ui-spec-wechat-flow-c001-c014 §2.C-001 conflict 状态描述中明确使用 `--font-size-xs`（conflict Tag 文字），但 tokens.css 中无此 Token。T-008 本身暂未渲染 conflict 态，但此缺口会在 T-009/T-010 阶段引发硬编码或 undefined 引用。
-- **建议**: 在 tokens.css 补录 `--font-size-xs: 11px`（与 `--font-size-sm: 13px` 对应的更小档位，参考 ui-spec C-001 状态表上下文）。此条与 R-001 合并修复。
+- **描述**: ui-spec-wechat-flow-uc001-uc014 §2.UC-001 conflict 状态描述中明确使用 `--font-size-xs`（conflict Tag 文字），但 tokens.css 中无此 Token。T-008 本身暂未渲染 conflict 态，但此缺口会在 T-009/T-010 阶段引发硬编码或 undefined 引用。
+- **建议**: 在 tokens.css 补录 `--font-size-xs: 11px`（与 `--font-size-sm: 13px` 对应的更小档位，参考 ui-spec UC-001 状态表上下文）。此条与 R-001 合并修复。
 
 ---
 
@@ -125,11 +125,11 @@ Layer 1 delegated to hook（settings.json 已配置 PostToolUse Edit → lint_fo
 
 ---
 
-### [R-007] LOW: ResizableSplitter hover 态视觉规格与 ui-spec C-002 状态描述有轻微差异
+### [R-007] LOW: ResizableSplitter hover 态视觉规格与 ui-spec UC-002 状态描述有轻微差异
 
 - **category**: consistency
 - **root_cause**: self-caused
-- **描述**: ui-spec-wechat-flow-c001-c014 §2.C-002 描述 `hover` 态"线宽扩展为 `3px`"，`idle` 态为 `4px`。但 ResizableSplitter.vue CSS（第 97-100 行）中 `.splitter--hover { width: 3px; }` 确实是 3px，而 `.splitter { width: 4px; }` 为 4px。宽度数值符合 ui-spec。
+- **描述**: ui-spec-wechat-flow-uc001-uc014 §2.UC-002 描述 `hover` 态"线宽扩展为 `3px`"，`idle` 态为 `4px`。但 ResizableSplitter.vue CSS（第 97-100 行）中 `.splitter--hover { width: 3px; }` 确实是 3px，而 `.splitter { width: 4px; }` 为 4px。宽度数值符合 ui-spec。
 
   然而，ui-spec 描述 `idle` 态命中区为 `8px`（"透明命中区扩展为 `8px`"），实现使用 `padding: 0 2px; box-sizing: content-box`（4px 宽 + 2px×2 padding = 8px 总命中区），这是正确的。
 
@@ -143,10 +143,10 @@ Layer 1 delegated to hook（settings.json 已配置 PostToolUse Edit → lint_fo
 
 - **category**: completeness
 - **root_cause**: self-caused
-- **描述**: ui-spec-wechat-flow-c001-c014 §2.C-001 明确规定"文档名区右侧紧邻「撤销 / 重做」按钮组（C-003 ghost variant），含 `disabled` 状态"。TopBar.vue 仅在 Props 中接受 `canUndo`/`canRedo`/`onUndo`/`onRedo`，但模板中未渲染对应按钮（第 18-68 行模板中无任何撤销/重做 UI）。
+- **描述**: ui-spec-wechat-flow-uc001-uc014 §2.UC-001 明确规定"文档名区右侧紧邻「撤销 / 重做」按钮组（UC-003 ghost variant），含 `disabled` 状态"。TopBar.vue 仅在 Props 中接受 `canUndo`/`canRedo`/`onUndo`/`onRedo`，但模板中未渲染对应按钮（第 18-68 行模板中无任何撤销/重做 UI）。
 
-  C-003 ToolbarButton 本身是 T-008 之外的任务（其 deliverables 中未列出 C-003），因此缺失按钮 UI 在 T-008 边界内可能属预期范围。但 TopBar 接受了这些 Props 却完全不使用（也无 `// cataforge: wiring-placeholder` 注释），形成了 dead-code（接受参数但无作用）。
-- **建议**: 确认 C-003 ToolbarButton 在哪个任务落地（T-008 还是后续任务）。若后续任务实现，建议在撤销/重做预留位添加 `<!-- C-003 undo/redo placeholder (T-XXX) -->` 注释，并在 TopBar 的 canUndo/canRedo Props 注释中标注 `// wiring-placeholder`，避免被 dead-code 扫描误报。
+  UC-003 ToolbarButton 本身是 T-008 之外的任务（其 deliverables 中未列出 UC-003），因此缺失按钮 UI 在 T-008 边界内可能属预期范围。但 TopBar 接受了这些 Props 却完全不使用（也无 `// cataforge: wiring-placeholder` 注释），形成了 dead-code（接受参数但无作用）。
+- **建议**: 确认 UC-003 ToolbarButton 在哪个任务落地（T-008 还是后续任务）。若后续任务实现，建议在撤销/重做预留位添加 `<!-- UC-003 undo/redo placeholder (T-XXX) -->` 注释，并在 TopBar 的 canUndo/canRedo Props 注释中标注 `// wiring-placeholder`，避免被 dead-code 扫描误报。
 
 ---
 

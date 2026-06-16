@@ -4,7 +4,7 @@ version: "0.5.0"
 doc_type: dev-plan
 author: tech-lead
 status: approved
-deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "arch-wechat-flow-api", "arch-wechat-flow-data", "ui-spec-wechat-flow", "ui-spec-wechat-flow-c001-c014", "ui-spec-wechat-flow-p001-p005"]
+deps: ["arch-wechat-flow", "arch-wechat-flow-modules", "arch-wechat-flow-api", "arch-wechat-flow-data", "ui-spec-wechat-flow", "ui-spec-wechat-flow-uc001-uc014", "ui-spec-wechat-flow-p001-p005"]
 consumers: [developer, qa-engineer]
 volume: sprint
 volume_type: sprint
@@ -25,7 +25,7 @@ required_sections:
 
 ## 3. 任务卡详细
 
-### T-102: [DESIGN] Penpot — C-014 JobProgressBar + P-003 主题市场 + P-004 设置页视觉稿
+### T-102: [DESIGN] Penpot — UC-014 JobProgressBar + P-003 主题市场 + P-004 设置页视觉稿
 
 - **目标**: 产出 JobProgressBar、主题市场页、设置页的视觉稿
 - **task_kind**: design
@@ -37,15 +37,15 @@ required_sections:
 - **tdd_skip_reason**: "Penpot 设计稿，由用户视觉验证 sign-off"
 - **dependencies**: [T-095]
 - **acceptance_criteria**:
-  - [ ] AC-001: C-014 JobProgressBar 视觉稿覆盖 `queued`/`running`/`completed`/`failed` 4 个状态，含进度轨道 + 进度填充 + 文字描述行
+  - [ ] AC-001: UC-014 JobProgressBar 视觉稿覆盖 `queued`/`running`/`completed`/`failed` 4 个状态，含进度轨道 + 进度填充 + 文字描述行
   - [ ] AC-002: P-003 主题市场初版视觉稿含桌面档 4 列卡片网格布局 + 筛选栏（含 (主题, template) 组合卡片布局占位，完整三档视觉稿由 T-105 交付）
   - [ ] AC-003: P-004 设置页视觉稿含左侧导航栏 + 右侧内容区，图床配置折叠卡片展开态可见
-  - [ ] AC-004: 通过 Penpot MCP `find_shape` 可检索到 `C-014`、`P-003`、`P-004`
+  - [ ] AC-004: 通过 Penpot MCP `find_shape` 可检索到 `UC-014`、`P-003`、`P-004`
 - **deliverables**:
-  - [ ] Penpot 项目：C-014, P-003, P-004 视觉稿页面
-- **relates_to**: [ui-spec-wechat-flow-c001-c014#§2.C-014, ui-spec-wechat-flow-p001-p005#§3.P-003, §3.P-004]
+  - [ ] Penpot 项目：UC-014, P-003, P-004 视觉稿页面
+- **relates_to**: [ui-spec-wechat-flow-uc001-uc014#§2.UC-014, ui-spec-wechat-flow-p001-p005#§3.P-003, §3.P-004]
 - **context_load**:
-  - ui-spec-wechat-flow-c001-c014#§2.C-014
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-014
   - ui-spec-wechat-flow-p001-p005#§3.P-003
   - ui-spec-wechat-flow-p001-p005#§3.P-004
 
@@ -67,7 +67,7 @@ required_sections:
 - **acceptance_criteria**:
   - [ ] AC-001: Given `composeCopy({ markdown: '# Hello', themeId: 'default' })` 在 HTTPS + 用户手势上下文中调用，When 执行，Then `navigator.clipboard.write` 被调用，payload 含 `text/html` ClipboardItem（值为 inline-styled HTML）和 `text/plain` ClipboardItem [F-004 AC-001]
   - [ ] AC-002: Given 产出的 `text/html` 内容，When 检查，Then 无 `<style>` 标签，无 CSS 变量（`var(--`），所有样式在 `style` 属性内联 [F-004 AC-003]
-  - [ ] AC-003: Given composeCopy 成功执行，When 完成，Then 触发 C-011 Toast（`type: 'success'`，消息「已复制到剪贴板」）[F-004 AC-001]
+  - [ ] AC-003: Given composeCopy 成功执行，When 完成，Then 触发 UC-011 Toast（`type: 'success'`，消息「已复制到剪贴板」）[F-004 AC-001]
   - [ ] AC-004（production path）: `apps/editor/src/components/layout/TopBar.vue` 或 `ContextMenu.vue` 内含字面 `onCopyHtml()` 处理函数，调用 `composeCopy`，文件路径和函数名可在代码中直接检索到
   - [ ] AC-005: Given composeCopy 内部 pipeline，When 执行，Then 调用顺序为 composeRender → simulatePaste → buildDualMimePayload；剪贴板写入前必经 simulatePaste 节点 [F-004 AC-004]
 - **deliverables**:
@@ -360,9 +360,9 @@ required_sections:
 
 ---
 
-### T-040: M-001 C-014 JobProgressBar + Toast（C-011）接线 SSE 进度
+### T-040: M-001 UC-014 JobProgressBar + Toast（UC-011）接线 SSE 进度
 
-- **目标**: 实现 JobProgressBar（C-014）和 Toast（C-011），接线 SSE 事件流展示长任务进度
+- **目标**: 实现 JobProgressBar（UC-014）和 Toast（UC-011），接线 SSE 事件流展示长任务进度
 - **模块**: M-001 (编辑器 UI)
 - **task_kind**: feature
 - **priority**: P0
@@ -374,18 +374,18 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-034, T-102]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given job 处于 `running` 状态，When SSE 推送 `{ percent: 45 }`，Then JobProgressBar 进度填充宽度变为 45%，文字显示「正在导出 45%」[ui-spec-wechat-flow-c001-c014#§2.C-014]
+  - [ ] AC-001: Given job 处于 `running` 状态，When SSE 推送 `{ percent: 45 }`，Then JobProgressBar 进度填充宽度变为 45%，文字显示「正在导出 45%」[ui-spec-wechat-flow-uc001-uc014#§2.UC-014]
   - [ ] AC-002: Given job 完成（`succeeded`），When SSE 推送完成事件，Then 进度条填充色变 `--color-success`，文字显示「导出成功」，含下载链接
-  - [ ] AC-003: Given Toast 组件，When `type: 'success'`，Then 背景 `--color-success-subtle`，左边框 `3px solid --color-success`，3000ms 后自动消失 [ui-spec-wechat-flow-c001-c014#§2.C-011]
-  - [ ] AC-004: Given Toast `type: 'error'`，When 渲染，Then 不自动消失（需用户手动关闭）[ui-spec-wechat-flow-c001-c014#§2.C-011]
+  - [ ] AC-003: Given Toast 组件，When `type: 'success'`，Then 背景 `--color-success-subtle`，左边框 `3px solid --color-success`，3000ms 后自动消失 [ui-spec-wechat-flow-uc001-uc014#§2.UC-011]
+  - [ ] AC-004: Given Toast `type: 'error'`，When 渲染，Then 不自动消失（需用户手动关闭）[ui-spec-wechat-flow-uc001-uc014#§2.UC-011]
 - **deliverables**:
-  - [ ] `apps/editor/src/components/common/JobProgressBar.vue` — C-014 实现
-  - [ ] `apps/editor/src/components/common/Toast.vue` — C-011 实现
+  - [ ] `apps/editor/src/components/common/JobProgressBar.vue` — UC-014 实现
+  - [ ] `apps/editor/src/components/common/Toast.vue` — UC-011 实现
   - [ ] `apps/editor/src/composables/use-sse-job.ts` — SSE 事件流订阅 composable（连接 relay SSE 端点）
-- **relates_to**: [F-005, M-001, C-011, C-014]
+- **relates_to**: [F-005, M-001, UC-011, UC-014]
 - **context_load**:
-  - ui-spec-wechat-flow-c001-c014#§2.C-011
-  - ui-spec-wechat-flow-c001-c014#§2.C-014
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-011
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-014
 
 ---
 
@@ -403,13 +403,13 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-022, T-005, T-092, T-102]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given 访问 `/themes`，When 页面加载，Then 显示 ≥ 5 张 C-022 TemplateThemeCard（含主题缩略图 + template 选择器），以 `(themeId, templateId)` 为组合展示，使用 `listThemeTemplates(themeId)` 动态获取可用 template 列表 [F-003 AC-003 + ui-spec-wechat-flow-p001-p005#§3.P-003]
+  - [ ] AC-001: Given 访问 `/themes`，When 页面加载，Then 显示 ≥ 5 张 UC-022 TemplateThemeCard（含主题缩略图 + template 选择器），以 `(themeId, templateId)` 为组合展示，使用 `listThemeTemplates(themeId)` 动态获取可用 template 列表 [F-003 AC-003 + ui-spec-wechat-flow-p001-p005#§3.P-003]
   - [ ] AC-002: Given 当前已应用的主题，When 在 P-003 页面，Then 对应卡片显示「正在使用」徽章（`--color-brand-subtle` 背景）
   - [ ] AC-003: Given 点击某主题「使用此主题」按钮，When 点击，Then 主题切换，Toast（success）提示「已切换到 XX 主题」，TopBar 主题指示器更新
   - [ ] AC-004: Given 某主题 T-092 预填 template 已就绪，When 用户在卡片上选择 template，Then 编辑器内容替换为该 template 的 Markdown 内容（调用 `describeTemplate(themeId, templateId).markdown`）[ARCH#§2.M-005]
 - **deliverables**:
   - [ ] 更新 `apps/editor/src/pages/ThemesPage.vue` — P-003 完整实现（含网格布局 + 筛选 + 社区占位卡片 + template 选择器）
-  - [ ] `apps/editor/src/components/themes/TemplateThemeCard.vue` — C-022 实现（(主题, template) 组合卡，含缩略图 + template 下拉选择）
+  - [ ] `apps/editor/src/components/themes/TemplateThemeCard.vue` — UC-022 实现（(主题, template) 组合卡，含缩略图 + template 下拉选择）
 - **relates_to**: [F-003, F-008, P-003]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-005
@@ -481,7 +481,7 @@ required_sections:
 
 ---
 
-### T-093: C-018 编辑器内上传 UI 接线（拖拽/粘贴/进度/重试）
+### T-093: UC-018 编辑器内上传 UI 接线（拖拽/粘贴/进度/重试）
 
 - **目标**: 落地 F-006 AC-004 的编辑器内上传 UI：SourcePane 拖拽/粘贴触发上传、占位节点、进度反馈与失败重试，接线 T-033 relay 上传与 T-091 session JWT。
 - **模块**: M-001 (编辑器 UI), M-008 (应用层 use case)
@@ -495,19 +495,19 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-033, T-091, T-106]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given 用户将图片拖拽到 SourcePane，When drop，Then 显示 C-018 `uploading` 状态并插入 `<img data-uploading="true">` 占位节点；上传成功后原子替换为最终 URL [F-006 AC-004]
+  - [ ] AC-001: Given 用户将图片拖拽到 SourcePane，When drop，Then 显示 UC-018 `uploading` 状态并插入 `<img data-uploading="true">` 占位节点；上传成功后原子替换为最终 URL [F-006 AC-004]
   - [ ] AC-002: Given 用户在编辑器粘贴图片（clipboard item 含 image/*），When paste，Then 触发同一上传流程（复用 T-033 API）并显示进度百分比 [F-006 AC-004]
-  - [ ] AC-003: Given 上传失败，When C-018 进入 `error` 状态，Then 点击「重试」可重入上传流程；点击「取消」删除占位节点并关闭浮层 [F-006 AC-004]
+  - [ ] AC-003: Given 上传失败，When UC-018 进入 `error` 状态，Then 点击「重试」可重入上传流程；点击「取消」删除占位节点并关闭浮层 [F-006 AC-004]
   - [ ] AC-004（production path）: `SourcePane.vue` 中可检索到 `onDropImage` 与 `onPasteImage` 处理函数，且调用 `composeUploadImage` / relay 上传接口并透传 Editor session JWT
 - **deliverables**:
-  - [ ] `apps/editor/src/components/upload/ImageUploadOverlay.vue` — C-018 实现
+  - [ ] `apps/editor/src/components/upload/ImageUploadOverlay.vue` — UC-018 实现
   - [ ] 更新 `apps/editor/src/components/editor/SourcePane.vue` — 拖拽/粘贴接线
   - [ ] `apps/editor/src/composables/use-image-upload.ts` — 上传状态机（idle/dragging/uploading/success/error）
   - [ ] `tests/editor/image-upload-overlay.test.ts` — AC-001..AC-004 单元测试
-- **relates_to**: [F-006, M-001, M-008, C-018]
+- **relates_to**: [F-006, M-001, M-008, UC-018]
 - **context_load**:
   - prd-wechat-flow-f001-f014#§2.F-006
-  - ui-spec-wechat-flow-c001-c014#§2.C-018
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-018
   - arch-wechat-flow-modules#§2.M-010
 
 ---
@@ -591,21 +591,21 @@ required_sections:
 - **tdd_skip_reason**: "Penpot 设计稿，由用户视觉验证 sign-off"
 - **dependencies**: [T-095]
 - **acceptance_criteria**:
-  - [ ] AC-001: Penpot 中绘制 P-003 主题模板市场页面视觉稿（桌面/平板/移动三档），网格布局使用 C-022 TemplateThemeCard 组件，与 `ui-spec-wechat-flow-p001-p005#§3.P-003` 对齐
-  - [ ] AC-002: 绘制 ≥ 5 张 (主题, template) 组合卡片缩略图，各对应 5 内置主题（default / magazine / literary / business / tech）的默认 template，缩略图尺寸与 C-022 规格一致
-  - [ ] AC-003: 同步到 Penpot Design System 库，提供组件 ID 引用清单，通过 Penpot MCP `find_shape` 可检索到 `P-003`、`C-022`
+  - [ ] AC-001: Penpot 中绘制 P-003 主题模板市场页面视觉稿（桌面/平板/移动三档），网格布局使用 UC-022 TemplateThemeCard 组件，与 `ui-spec-wechat-flow-p001-p005#§3.P-003` 对齐
+  - [ ] AC-002: 绘制 ≥ 5 张 (主题, template) 组合卡片缩略图，各对应 5 内置主题（default / magazine / literary / business / tech）的默认 template，缩略图尺寸与 UC-022 规格一致
+  - [ ] AC-003: 同步到 Penpot Design System 库，提供组件 ID 引用清单，通过 Penpot MCP `find_shape` 可检索到 `P-003`、`UC-022`
   - [ ] AC-004: 签字记录写入 `docs/EVENT-LOG.jsonl`（`phase=development, event=design_signoff`）
 - **deliverables**:
   - [ ] Penpot 项目：P-003 主题模板市场页面视觉稿（三档） + ≥ 5 张 (主题, template) 组合卡片缩略图
-- **relates_to**: [F-003, F-008, P-003, C-022]
+- **relates_to**: [F-003, F-008, P-003, UC-022]
 - **context_load**:
   - ui-spec-wechat-flow-p001-p005#§3.P-003
 
 ---
 
-### T-106: [DESIGN] 6 个新组件 Penpot 设计（C-017 ~ C-022）
+### T-106: [DESIGN] 6 个新组件 Penpot 设计（UC-017 ~ UC-022）
 
-- **目标**: 产出 C-017 ~ C-022 共 6 个新组件的 Penpot 视觉规格，涵盖状态变体与 Design Token 接线
+- **目标**: 产出 UC-017 ~ UC-022 共 6 个新组件的 Penpot 视觉规格，涵盖状态变体与 Design Token 接线
 - **task_kind**: design
 - **tdd_acceptance**: skip
 - **priority**: P1
@@ -616,25 +616,25 @@ required_sections:
 - **dependencies**: [T-095]
 - **acceptance_criteria**:
   - [ ] AC-001: 在 Penpot 中绘制 6 个新组件视觉规格，每个组件含 default / hover / active（或 disabled）至少 2 个状态变体：
-    - C-017 ZhTypoReviseDialog — 双栏 diff Modal，左栏原文 / 右栏改后 + rule 计数 + undo 按钮
-    - C-018 ImageUploadOverlay — 编辑器内浮层，含 drop zone / 上传进度条 / 重试按钮 / 占位符
-    - C-019 PaintDrawer — 右侧抽屉（宽 280px），含 color picker + frontmatter 绑定字段
-    - C-020 BaseColorDeriveModal — 居中 Modal + 色块矩阵（派生色预览）
-    - C-021 DirectiveAutocompletePopover — 光标下浮层 + 二级 Block/Mark variant 选择列表
-    - C-022 TemplateThemeCard — (主题, template) 组合卡片，含缩略图 + template 下拉选择器
-  - [ ] AC-002: 每个组件 Penpot 命名遵循 `C-{NNN}` 模式，与 `ui-spec-wechat-flow-c001-c014` 对应章节对齐
-  - [ ] AC-003: 组件挂接到 Penpot Design System Token，通过 Penpot MCP `find_shape` 可检索到 C-017 ~ C-022
+    - UC-017 ZhTypoReviseDialog — 双栏 diff Modal，左栏原文 / 右栏改后 + rule 计数 + undo 按钮
+    - UC-018 ImageUploadOverlay — 编辑器内浮层，含 drop zone / 上传进度条 / 重试按钮 / 占位符
+    - UC-019 PaintDrawer — 右侧抽屉（宽 280px），含 color picker + frontmatter 绑定字段
+    - UC-020 BaseColorDeriveModal — 居中 Modal + 色块矩阵（派生色预览）
+    - UC-021 DirectiveAutocompletePopover — 光标下浮层 + 二级 Block/Mark variant 选择列表
+    - UC-022 TemplateThemeCard — (主题, template) 组合卡片，含缩略图 + template 下拉选择器
+  - [ ] AC-002: 每个组件 Penpot 命名遵循 `C-{NNN}` 模式，与 `ui-spec-wechat-flow-uc001-uc014` 对应章节对齐
+  - [ ] AC-003: 组件挂接到 Penpot Design System Token，通过 Penpot MCP `find_shape` 可检索到 UC-017 ~ UC-022
   - [ ] AC-004: 签字记录写入 `docs/EVENT-LOG.jsonl`（`phase=development, event=design_signoff`）
 - **deliverables**:
-  - [ ] Penpot 项目：C-017 ~ C-022 共 6 个组件视觉规格页面
-- **relates_to**: [C-017, C-018, C-019, C-020, C-021, C-022]
+  - [ ] Penpot 项目：UC-017 ~ UC-022 共 6 个组件视觉规格页面
+- **relates_to**: [UC-017, UC-018, UC-019, UC-020, UC-021, UC-022]
 - **context_load**:
-  - ui-spec-wechat-flow-c001-c014#§2.C-017
-  - ui-spec-wechat-flow-c001-c014#§2.C-018
-  - ui-spec-wechat-flow-c001-c014#§2.C-019
-  - ui-spec-wechat-flow-c001-c014#§2.C-020
-  - ui-spec-wechat-flow-c001-c014#§2.C-021
-  - ui-spec-wechat-flow-c001-c014#§2.C-022
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-017
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-018
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-019
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-020
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-021
+  - ui-spec-wechat-flow-uc001-uc014#§2.UC-022
 
 ---
 
