@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { BlockDefinition } from "@wechat-flow/core/src/registry/block.ts";
+import type { BlockDefinition } from "@wechat-flow/core";
 
 const props = defineProps<{
   block: BlockDefinition;

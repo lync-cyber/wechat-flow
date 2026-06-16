@@ -1,7 +1,7 @@
 import type { Extension } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
-import type { BlockDefinition } from "@wechat-flow/core/src/registry/block.ts";
-import type { MarkDefinition } from "@wechat-flow/core/src/registry/mark.ts";
+import type { BlockDefinition } from "@wechat-flow/core";
+import type { MarkDefinition } from "@wechat-flow/core";
 
 export interface TriggerResult {
   triggerType: "block" | "inline";

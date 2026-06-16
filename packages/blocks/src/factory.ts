@@ -1,4 +1,4 @@
-import type { BlockDefinition, BlockVariant } from "@wechat-flow/core/src/registry/block.ts";
+import type { BlockDefinition, BlockVariant } from "@wechat-flow/core";
 import type { ZodType } from "zod";
 
 export function defineBlock(

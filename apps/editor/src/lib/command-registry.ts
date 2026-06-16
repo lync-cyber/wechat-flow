@@ -1,4 +1,4 @@
-import { listThemes } from "@wechat-flow/core/src/registry/theme.ts";
+import { listThemes } from "@wechat-flow/core";
 
 export interface CommandDefinition {
   id: string;

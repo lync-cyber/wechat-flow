@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { BlockDefinition } from "@wechat-flow/core/src/registry/block.ts";
-import { listBlocks } from "@wechat-flow/core/src/registry/block.ts";
+import type { BlockDefinition } from "@wechat-flow/core";
+import { listBlocks } from "@wechat-flow/core";
 import { computed, ref } from "vue";
 import BlockLibItem from "./BlockLibItem.vue";
 

@@ -21,3 +21,26 @@ export { simulatePaste } from "./simulate-paste.ts";
 export type { SimulatePasteResult } from "./simulate-paste.ts";
 export type { NodeDiff } from "./diff/per-node-diff.ts";
 export type { DroppedAttr } from "./simulator/strip-attrs.ts";
+export {
+  registerBlock,
+  listBlocks,
+  describeBlock,
+  onRegistryReset,
+  resetBlockRegistry,
+} from "./registry/block.ts";
+export type { BlockDefinition, BlockVariant } from "./registry/block.ts";
+export {
+  registerMark,
+  listMarks,
+  describeMark,
+  onMarkRegistryReset,
+  resetMarkRegistry,
+} from "./registry/mark.ts";
+export type { MarkDefinition } from "./registry/mark.ts";
+export {
+  registerTheme,
+  listThemes,
+  describeTheme,
+  resetThemeRegistry,
+} from "./registry/theme.ts";
+export type { ThemeDefinition, ThemeListEntry } from "@wechat-flow/contracts";

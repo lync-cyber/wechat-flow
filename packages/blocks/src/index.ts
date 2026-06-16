@@ -1,4 +1,4 @@
-import { onRegistryReset, registerBlock } from "@wechat-flow/core/src/registry/block.ts";
+import { onRegistryReset, registerBlock } from "@wechat-flow/core";
 import { announcement } from "./blocks/announcement.ts";
 import { audio } from "./blocks/audio.ts";
 import { callout } from "./blocks/callout.ts";

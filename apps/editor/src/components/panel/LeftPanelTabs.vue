@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { listBlocks } from "@wechat-flow/core/src/registry/block.ts";
-import { listThemes } from "@wechat-flow/core/src/registry/theme.ts";
+import { listBlocks } from "@wechat-flow/core";
+import { listThemes } from "@wechat-flow/core";
 import { computed, ref } from "vue";
 import BlockLibItem from "./BlockLibItem.vue";
 import ThemeCard from "./ThemeCard.vue";

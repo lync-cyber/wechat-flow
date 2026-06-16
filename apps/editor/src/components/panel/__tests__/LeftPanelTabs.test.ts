@@ -1,8 +1,8 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { mount } from "@vue/test-utils";
-import { registerBlock, resetBlockRegistry } from "@wechat-flow/core/src/registry/block.ts";
-import { registerTheme, resetThemeRegistry } from "@wechat-flow/core/src/registry/theme.ts";
+import { registerBlock, resetBlockRegistry } from "@wechat-flow/core";
+import { registerTheme, resetThemeRegistry } from "@wechat-flow/core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
 import { createRouter, createWebHistory } from "vue-router";

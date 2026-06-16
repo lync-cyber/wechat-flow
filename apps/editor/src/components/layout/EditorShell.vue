@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DiagnosticReport } from "@wechat-flow/contracts";
-import { describeTheme, listThemes, registerTheme } from "@wechat-flow/core/src/registry/theme.ts";
+import { describeTheme, listThemes, registerTheme } from "@wechat-flow/core";
 import { type ComponentPublicInstance, computed, onMounted, onUnmounted, ref } from "vue";
 import { useBidirectionalHighlight } from "../../composables/use-bidirectional-highlight.ts";
 import { useSplitterWidth } from "../../composables/use-splitter-width";

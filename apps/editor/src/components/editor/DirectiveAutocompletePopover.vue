@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { BlockDefinition } from "@wechat-flow/core/src/registry/block.ts";
-import type { MarkDefinition } from "@wechat-flow/core/src/registry/mark.ts";
+import type { BlockDefinition } from "@wechat-flow/core";
+import type { MarkDefinition } from "@wechat-flow/core";
 import { computed, ref, watch } from "vue";
 import { buildCandidates } from "../../editor/extensions/directive-completion.ts";
 
