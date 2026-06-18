@@ -6,7 +6,7 @@ export { inlineStyle } from "./pipeline/inline-style.ts";
 export { filterCssAttrs } from "./pipeline/css-attr-filter.ts";
 export { coreVersion } from "./version/triple.ts";
 export type { RenderResult, RenderOptions } from "./types.ts";
-export type { TokenDictionary } from "./pipeline/inline-style.ts";
+export type { BlockStyleTable } from "./pipeline/inline-style.ts";
 export {
   sortedKeys,
   sortedEntries,
