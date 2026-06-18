@@ -5,7 +5,8 @@ export function defineBlock(
   id: string,
   name: string,
   attrsSchema: ZodType,
-  variants: BlockVariant[]
+  variants: BlockVariant[],
+  baseStyle?: Record<string, Record<string, string>>
 ): BlockDefinition {
-  return { id, name, attrsSchema, variants };
+  return { id, name, attrsSchema, variants, baseStyle };
 }

@@ -44,3 +44,15 @@ export {
   resetThemeRegistry,
 } from "./registry/theme.ts";
 export type { ThemeDefinition, ThemeListEntry } from "@wechat-flow/contracts";
+export {
+  registerVariant,
+  listBlockVariants,
+  describeVariant,
+  getBlockBaseStyle,
+  resetVariantRegistry,
+} from "./registry/variant.ts";
+export type { VariantDefinition, RejectedDeclaration } from "./registry/variant.ts";
+export {
+  CSS_SAFE_PROPERTIES,
+  isWhitelistedProperty,
+} from "./registry/css-property-whitelist.ts";

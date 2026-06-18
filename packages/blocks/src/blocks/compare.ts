@@ -18,5 +18,13 @@ export const compare = defineBlock(
     { id: "default", label: "标准对比" },
     { id: "highlight-right", label: "突出右侧" },
     { id: "table-style", label: "表格对比" },
-  ]
+  ],
+  {
+    root: {
+      display: "table",
+      width: "100%",
+      "border-collapse": "collapse",
+      margin: "16px 0",
+    },
+  }
 );

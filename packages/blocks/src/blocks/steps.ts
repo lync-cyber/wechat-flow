@@ -16,5 +16,11 @@ export const steps = defineBlock(
     { id: "default", label: "竖排步骤" },
     { id: "horizontal", label: "横排步骤" },
     { id: "numbered", label: "编号步骤" },
-  ]
+  ],
+  {
+    root: {
+      margin: "16px 0",
+      padding: "0",
+    },
+  }
 );
