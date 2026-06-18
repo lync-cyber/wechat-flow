@@ -1,5 +1,5 @@
 import type { ThemeDefinition } from "@wechat-flow/contracts";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { parseFrontmatter } from "../../packages/core/src/pipeline/frontmatter.ts";
 import { registerTheme, resetThemeRegistry } from "../../packages/core/src/registry/theme.ts";
 import { renderMarkdown } from "../../packages/core/src/render.ts";
@@ -37,35 +37,43 @@ const techLikeTheme: ThemeDefinition = {
   },
   blocks: {
     pre: {
-      "font-family": "SF Mono, JetBrains Mono, Menlo, Consolas, monospace",
-      "background-color": "#1A1A2E",
-      color: "#E6EDF3",
-      padding: "12px 16px",
-      "border-radius": "6px",
-      "font-size": "13px",
-      "line-height": "1.6",
-      margin: "0 0 12px",
+      default: {
+        "font-family": "SF Mono, JetBrains Mono, Menlo, Consolas, monospace",
+        "background-color": "#1A1A2E",
+        color: "#E6EDF3",
+        padding: "12px 16px",
+        "border-radius": "6px",
+        "font-size": "13px",
+        "line-height": "1.6",
+        margin: "0 0 12px",
+      },
     },
     code: {
-      "font-family": "SF Mono, JetBrains Mono, Menlo, Consolas, monospace",
-      background: "#1A1A2E",
-      color: "#E6EDF3",
-      padding: "2px 4px",
-      "border-radius": "4px",
-      "font-size": "13px",
+      default: {
+        "font-family": "SF Mono, JetBrains Mono, Menlo, Consolas, monospace",
+        background: "#1A1A2E",
+        color: "#E6EDF3",
+        padding: "2px 4px",
+        "border-radius": "4px",
+        "font-size": "13px",
+      },
     },
     p: {
-      "font-size": "15px",
-      color: "#E6EDF3",
-      "line-height": "1.8",
-      margin: "0 0 12px",
+      default: {
+        "font-size": "15px",
+        color: "#E6EDF3",
+        "line-height": "1.8",
+        margin: "0 0 12px",
+      },
     },
     h1: {
-      "font-size": "24px",
-      "font-weight": "600",
-      color: "#E6EDF3",
-      "line-height": "1.4",
-      margin: "0 0 16px",
+      default: {
+        "font-size": "24px",
+        "font-weight": "600",
+        color: "#E6EDF3",
+        "line-height": "1.4",
+        margin: "0 0 16px",
+      },
     },
   },
   paintable: ["--color-brand"],
@@ -192,7 +200,7 @@ describe("AC-002: paint 覆盖 --color-brand", () => {
       name: "Brand Test",
       tokens: { "--color-brand": "#0000ff" },
       blocks: {
-        p: { color: "#0000ff", "font-size": "15px" },
+        p: { default: { color: "#0000ff", "font-size": "15px" } },
       },
       paintable: ["--color-brand"],
       assets: {},
@@ -239,7 +247,7 @@ describe("AC-003: base-color 派生整套配色", () => {
       name: "Derive Test",
       tokens: { "--color-brand": "#58A6FF", "--color-surface": "#161B22" },
       blocks: {
-        p: { color: "#58A6FF", "font-size": "15px" },
+        p: { default: { color: "#58A6FF", "font-size": "15px" } },
       },
       paintable: ["--color-brand"],
       assets: {},
@@ -332,11 +340,13 @@ describe("options.themeId 经注册中心解析主题", () => {
       tokens: { "--color-brand": "#AABBCC" },
       blocks: {
         pre: {
-          "background-color": "#FFFFFF",
-          "font-family": "Arial, sans-serif",
-          color: "#000000",
-          padding: "4px",
-          "font-size": "14px",
+          default: {
+            "background-color": "#FFFFFF",
+            "font-family": "Arial, sans-serif",
+            color: "#000000",
+            padding: "4px",
+            "font-size": "14px",
+          },
         },
       },
       paintable: [],
@@ -377,11 +387,13 @@ describe("优先级: 显式 options.theme 优先于 frontmatter", () => {
       tokens: { "--color-brand": "#AABBCC" },
       blocks: {
         pre: {
-          "background-color": "#FFFFFF",
-          "font-family": "Arial, sans-serif",
-          color: "#000000",
-          padding: "4px",
-          "font-size": "14px",
+          default: {
+            "background-color": "#FFFFFF",
+            "font-family": "Arial, sans-serif",
+            color: "#000000",
+            padding: "4px",
+            "font-size": "14px",
+          },
         },
       },
       paintable: [],

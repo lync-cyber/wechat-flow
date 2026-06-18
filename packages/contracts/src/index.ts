@@ -1,4 +1,5 @@
 export * from "./mcp/tool-contracts.ts";
+export * from "./mcp/register-variant.ts";
 export * from "./palette/token-dictionary.ts";
 export * from "./utils/to-json.ts";
 export * from "./sanitize/extend-schema.ts";

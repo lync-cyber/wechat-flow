@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { registerVariantRequestSchema } from "./register-variant.ts";
 
 // ---- render_markdown (API-001) ----
 export const renderMarkdownRequestSchema = z.object({
@@ -7,6 +8,7 @@ export const renderMarkdownRequestSchema = z.object({
   rulesetVersion: z.string().optional(),
   paint: z.record(z.string(), z.string()).optional(),
   baseColor: z.string().optional(),
+  customCss: z.string().optional(),
 });
 
 export const renderMarkdownResponseSchema = z.object({
@@ -106,11 +108,11 @@ export const describeTemplateRequestSchema = z.looseObject({});
 export const describeTemplateResponseSchema = z.looseObject({});
 
 /**
- * Registry of all 23 Tool request schemas (19 sync + 4 async).
- * Used by AC-006 count verification.
+ * Registry of all 24 Tool request schemas (20 sync + 4 async).
+ * Used by AC-005 count verification.
  */
 export const ALL_TOOL_SCHEMAS = {
-  // sync (19)
+  // sync (20)
   render_markdown: renderMarkdownRequestSchema,
   lint_markdown: lintMarkdownRequestSchema,
   list_themes: listThemesRequestSchema,
@@ -130,6 +132,7 @@ export const ALL_TOOL_SCHEMAS = {
   get_job: getJobRequestSchema,
   get_ruleset_version: getRulesetVersionRequestSchema,
   describe_template: describeTemplateRequestSchema,
+  register_variant: registerVariantRequestSchema,
   // async (4)
   upload_image: uploadImageRequestSchema,
   upload_to_wechat_asset: uploadToWechatAssetRequestSchema,
@@ -137,6 +140,6 @@ export const ALL_TOOL_SCHEMAS = {
   export_cover: exportCoverRequestSchema,
 } as const;
 
-export const SYNC_TOOL_COUNT = 19;
+export const SYNC_TOOL_COUNT = 20;
 export const ASYNC_TOOL_COUNT = 4;
 export const TOTAL_TOOL_COUNT = SYNC_TOOL_COUNT + ASYNC_TOOL_COUNT;

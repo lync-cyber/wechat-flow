@@ -3,56 +3,72 @@ import { sortedEntries } from "../utils/deterministic.ts";
 import { filterCssAttrs } from "./css-attr-filter.ts";
 
 export interface TokenDictionary {
-  [selector: string]: Record<string, string>;
+  [selector: string]: Record<string, Record<string, string>>;
 }
 
 const DEFAULT_TOKENS: TokenDictionary = {
   h1: {
-    "font-size": "22px",
-    "font-weight": "bold",
-    color: "#1a1a1a",
-    "line-height": "1.4",
-    margin: "0 0 16px",
+    default: {
+      "font-size": "22px",
+      "font-weight": "bold",
+      color: "#1a1a1a",
+      "line-height": "1.4",
+      margin: "0 0 16px",
+    },
   },
   h2: {
-    "font-size": "18px",
-    "font-weight": "bold",
-    color: "#1a1a1a",
-    "line-height": "1.4",
-    margin: "0 0 12px",
+    default: {
+      "font-size": "18px",
+      "font-weight": "bold",
+      color: "#1a1a1a",
+      "line-height": "1.4",
+      margin: "0 0 12px",
+    },
   },
   h3: {
-    "font-size": "16px",
-    "font-weight": "bold",
-    color: "#1a1a1a",
-    "line-height": "1.4",
-    margin: "0 0 10px",
+    default: {
+      "font-size": "16px",
+      "font-weight": "bold",
+      color: "#1a1a1a",
+      "line-height": "1.4",
+      margin: "0 0 10px",
+    },
   },
   p: {
-    "font-size": "15px",
-    color: "#333333",
-    "line-height": "1.75",
-    margin: "0 0 12px",
+    default: {
+      "font-size": "15px",
+      color: "#333333",
+      "line-height": "1.75",
+      margin: "0 0 12px",
+    },
   },
   strong: {
-    "font-weight": "bold",
-    color: "#111111",
+    default: {
+      "font-weight": "bold",
+      color: "#111111",
+    },
   },
   em: {
-    "font-style": "italic",
+    default: {
+      "font-style": "italic",
+    },
   },
   code: {
-    "font-family": "monospace",
-    background: "#f5f5f5",
-    padding: "2px 4px",
-    "border-radius": "3px",
-    "font-size": "13px",
+    default: {
+      "font-family": "monospace",
+      background: "#f5f5f5",
+      padding: "2px 4px",
+      "border-radius": "3px",
+      "font-size": "13px",
+    },
   },
   blockquote: {
-    "border-left": "4px solid #e0e0e0",
-    padding: "8px 12px",
-    margin: "0 0 12px",
-    color: "#666666",
+    default: {
+      "border-left": "4px solid #e0e0e0",
+      padding: "8px 12px",
+      margin: "0 0 12px",
+      color: "#666666",
+    },
   },
 };
 
@@ -115,7 +131,9 @@ function applyInlineStyles(
 
 function buildStyleMap(tokens: TokenDictionary): Map<string, string> {
   const styleMap = new Map<string, string>();
-  for (const [selector, props] of sortedEntries(tokens)) {
+  for (const [selector, variants] of sortedEntries(tokens)) {
+    const props = variants.default;
+    if (!props) continue;
     const declarations = sortedEntries(props)
       .map(([prop, val]) => `${prop}: ${val}`)
       .join("; ");

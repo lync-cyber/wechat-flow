@@ -45,12 +45,16 @@ export function applyPaintToBlocks(
   }
 
   const newBlocks: ThemeBlocks = {};
-  for (const [selector, props] of Object.entries(theme.blocks)) {
-    const newProps: Record<string, string> = {};
-    for (const [cssProp, cssValue] of Object.entries(props)) {
-      newProps[cssProp] = valueReplacement.get(cssValue) ?? cssValue;
+  for (const [selector, variants] of Object.entries(theme.blocks)) {
+    const newVariants: Record<string, Record<string, string>> = {};
+    for (const [variantId, props] of Object.entries(variants)) {
+      const newProps: Record<string, string> = {};
+      for (const [cssProp, cssValue] of Object.entries(props)) {
+        newProps[cssProp] = valueReplacement.get(cssValue) ?? cssValue;
+      }
+      newVariants[variantId] = newProps;
     }
-    newBlocks[selector] = newProps;
+    newBlocks[selector] = newVariants;
   }
 
   return { blocks: newBlocks, warnDiagnostics };
@@ -75,12 +79,16 @@ export function applyBaseColorToBlocks(
   if (valueReplacement.size === 0) return theme.blocks;
 
   const newBlocks: ThemeBlocks = {};
-  for (const [selector, props] of Object.entries(theme.blocks)) {
-    const newProps: Record<string, string> = {};
-    for (const [cssProp, cssValue] of Object.entries(props)) {
-      newProps[cssProp] = valueReplacement.get(cssValue) ?? cssValue;
+  for (const [selector, variants] of Object.entries(theme.blocks)) {
+    const newVariants: Record<string, Record<string, string>> = {};
+    for (const [variantId, props] of Object.entries(variants)) {
+      const newProps: Record<string, string> = {};
+      for (const [cssProp, cssValue] of Object.entries(props)) {
+        newProps[cssProp] = valueReplacement.get(cssValue) ?? cssValue;
+      }
+      newVariants[variantId] = newProps;
     }
-    newBlocks[selector] = newProps;
+    newBlocks[selector] = newVariants;
   }
 
   return newBlocks;
