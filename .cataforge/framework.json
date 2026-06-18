@@ -1,5 +1,5 @@
 {
-  "version": "0.11.2",
+  "version": "0.12.0",
   "runtime_api_version": "1.0",
   "runtime": {
     "platform": "claude-code"
@@ -13,9 +13,9 @@
       "token_env": "GITHUB_TOKEN"
     },
     "state": {
-      "last_commit": "85a5c83",
-      "last_version": "0.11.2",
-      "last_upgrade_date": "2026-06-16"
+      "last_commit": "pypi-0.12.0",
+      "last_version": "0.12.0",
+      "last_upgrade_date": "2026-06-18"
     }
   },
   "feedback": {
