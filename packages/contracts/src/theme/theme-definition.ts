@@ -13,7 +13,10 @@ export const themeMetaSchema = z.object({
   wcagContrast: wcagContrastMetaSchema.optional(),
 });
 
-export const themeBlocksSchema = z.record(z.string(), z.record(z.string(), z.string()));
+export const themeBlocksSchema = z.record(
+  z.string(),
+  z.record(z.string(), z.record(z.string(), z.string()))
+);
 
 // paintable: list of CSS custom property names that paint overrides may target;
 // empty array (or empty object for legacy compat) means no properties are paintable.

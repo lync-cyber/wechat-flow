@@ -24,36 +24,41 @@ import {
   listMarksResponseSchema,
   listThemesResponseSchema,
   listTokensResponseSchema,
+  registerVariantResponseSchema,
   renderMarkdownResponseSchema,
   simulatePasteResponseSchema,
   uploadImageResponseSchema,
   uploadToWechatAssetResponseSchema,
 } from "../../packages/contracts/src/index.ts";
 
-describe("AC-006: Tool schema count = 23 (19 sync + 4 async)", () => {
-  it("ALL_TOOL_SCHEMAS registry has exactly 23 entries", () => {
+describe("AC-005: Tool schema count = 24 (20 sync + 4 async)", () => {
+  it("ALL_TOOL_SCHEMAS registry has exactly 24 entries", () => {
     const count = Object.keys(ALL_TOOL_SCHEMAS).length;
-    expect(count).toBe(23);
+    expect(count, `Expected 24 tool schemas, got ${count}`).toBe(24);
   });
 
-  it("SYNC_TOOL_COUNT is 19", () => {
-    expect(SYNC_TOOL_COUNT).toBe(19);
+  it("SYNC_TOOL_COUNT is 20", () => {
+    expect(SYNC_TOOL_COUNT).toBe(20);
   });
 
   it("ASYNC_TOOL_COUNT is 4", () => {
     expect(ASYNC_TOOL_COUNT).toBe(4);
   });
 
-  it("TOTAL_TOOL_COUNT equals 23", () => {
-    expect(TOTAL_TOOL_COUNT).toBe(23);
+  it("TOTAL_TOOL_COUNT equals 24", () => {
+    expect(TOTAL_TOOL_COUNT).toBe(24);
   });
 
   it("TOTAL_TOOL_COUNT matches ALL_TOOL_SCHEMAS key count", () => {
     expect(Object.keys(ALL_TOOL_SCHEMAS).length).toBe(TOTAL_TOOL_COUNT);
   });
+
+  it("ALL_TOOL_SCHEMAS contains register_variant key", () => {
+    expect(Object.keys(ALL_TOOL_SCHEMAS)).toContain("register_variant");
+  });
 });
 
-describe("AC-006 response schema exports: all 23 response schemas are exported from @wechat-flow/contracts", () => {
+describe("AC-005 response schema exports: all 24 response schemas are exported from @wechat-flow/contracts", () => {
   const ALL_RESPONSE_SCHEMAS: [string, ZodType][] = [
     ["renderMarkdownResponseSchema", renderMarkdownResponseSchema],
     ["lintMarkdownResponseSchema", lintMarkdownResponseSchema],
@@ -78,10 +83,11 @@ describe("AC-006 response schema exports: all 23 response schemas are exported f
     ["uploadToWechatAssetResponseSchema", uploadToWechatAssetResponseSchema],
     ["exportLongImageResponseSchema", exportLongImageResponseSchema],
     ["exportCoverResponseSchema", exportCoverResponseSchema],
+    ["registerVariantResponseSchema", registerVariantResponseSchema],
   ];
 
-  it("exports exactly 23 response schemas", () => {
-    expect(ALL_RESPONSE_SCHEMAS.length).toBe(23);
+  it("exports exactly 24 response schemas", () => {
+    expect(ALL_RESPONSE_SCHEMAS.length).toBe(24);
   });
 
   it("every response schema is a ZodType with a safeParse method", () => {
@@ -92,7 +98,8 @@ describe("AC-006 response schema exports: all 23 response schemas are exported f
 
   it("placeholder response schemas (passthrough) accept empty object", () => {
     const placeholders: [string, ZodType][] = ALL_RESPONSE_SCHEMAS.filter(
-      ([name]) => name !== "renderMarkdownResponseSchema"
+      ([name]) =>
+        name !== "renderMarkdownResponseSchema" && name !== "registerVariantResponseSchema"
     );
     for (const [name, schema] of placeholders) {
       const result = schema.safeParse({});

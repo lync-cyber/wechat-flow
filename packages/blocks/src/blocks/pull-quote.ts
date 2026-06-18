@@ -12,5 +12,13 @@ export const pullQuote = defineBlock(
     { id: "default", label: "标准摘引" },
     { id: "large", label: "大字摘引" },
     { id: "decorated", label: "装饰摘引" },
-  ]
+  ],
+  {
+    root: {
+      "text-align": "center",
+      padding: "24px 16px",
+      margin: "24px 0",
+      "font-size": "1.25em",
+    },
+  }
 );

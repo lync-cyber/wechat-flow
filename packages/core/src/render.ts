@@ -1,5 +1,6 @@
 import type { Diagnostic, ThemeDefinition } from "@wechat-flow/contracts";
 import { applyRuleset, builtinRules, getRulesetVersion } from "@wechat-flow/ruleset";
+import { applyCustomCss } from "./pipeline/custom-css.ts";
 import { parseFrontmatter } from "./pipeline/frontmatter.ts";
 import { inlineStyle } from "./pipeline/inline-style.ts";
 import { injectNodeIds } from "./pipeline/node-id-injector.ts";
@@ -52,7 +53,8 @@ export async function renderMarkdown(
   }
 
   const mdast = parseMarkdown(content);
-  let hast = transformToHast(mdast, { ...options, theme: effectiveTheme });
+  const transformDiagnostics: Diagnostic[] = [];
+  let hast = transformToHast(mdast, { ...options, theme: effectiveTheme }, transformDiagnostics);
   hast = sanitizeHast(hast, wechatFlowSanitizeSchema);
 
   const rules = options?.rules !== undefined ? options.rules : builtinRules;
@@ -67,11 +69,18 @@ export async function renderMarkdown(
   const styledHast = inlineStyle(hast, themeTokens);
   const html = serializeHast(styledHast);
 
-  // Merge paint diagnostics into report diagnostics
-  const allDiagnostics = [...paintDiagnostics, ...report.diagnostics];
+  const allDiagnostics = [...paintDiagnostics, ...transformDiagnostics, ...report.diagnostics];
+
+  let finalHtml = html;
+  const customCss = options?.customCss;
+  if (typeof customCss === "string" && customCss.trim() !== "") {
+    const ccDiagnostics: Diagnostic[] = [];
+    finalHtml = applyCustomCss(html, customCss, ccDiagnostics);
+    allDiagnostics.push(...ccDiagnostics);
+  }
 
   return {
-    html,
+    html: finalHtml,
     diagnostics: allDiagnostics,
     rulesetVersion: getRulesetVersion(),
     themeVersion: effectiveTheme?.meta?.version ?? "0.0.0",

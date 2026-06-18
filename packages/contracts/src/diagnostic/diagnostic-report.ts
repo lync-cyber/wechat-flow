@@ -27,6 +27,7 @@ export const nightRiskEntrySchema = z.object({
 export const diagnosticSchema = z.object({
   severity: z.enum(["error", "warning", "info"]),
   ruleId: z.string(),
+  source: z.string().optional(),
   message: z.string(),
   nodeRef: z.string().optional(),
 });

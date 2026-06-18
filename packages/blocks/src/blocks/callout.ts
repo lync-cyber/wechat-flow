@@ -13,5 +13,14 @@ export const callout = defineBlock(
     { id: "default", label: "默认提示" },
     { id: "filled", label: "填充提示" },
     { id: "minimal", label: "简约提示" },
-  ]
+  ],
+  {
+    root: {
+      "border-left": "4px solid #4a90e2",
+      padding: "12px 16px",
+      "border-radius": "4px",
+      margin: "16px 0",
+      "background-color": "#f0f7ff",
+    },
+  }
 );

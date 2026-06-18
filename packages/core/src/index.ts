@@ -6,7 +6,7 @@ export { inlineStyle } from "./pipeline/inline-style.ts";
 export { filterCssAttrs } from "./pipeline/css-attr-filter.ts";
 export { coreVersion } from "./version/triple.ts";
 export type { RenderResult, RenderOptions } from "./types.ts";
-export type { TokenDictionary } from "./pipeline/inline-style.ts";
+export type { BlockStyleTable } from "./pipeline/inline-style.ts";
 export {
   sortedKeys,
   sortedEntries,
@@ -44,3 +44,15 @@ export {
   resetThemeRegistry,
 } from "./registry/theme.ts";
 export type { ThemeDefinition, ThemeListEntry } from "@wechat-flow/contracts";
+export {
+  registerVariant,
+  listBlockVariants,
+  describeVariant,
+  getBlockBaseStyle,
+  resetVariantRegistry,
+} from "./registry/variant.ts";
+export type { VariantDefinition, RejectedDeclaration } from "./registry/variant.ts";
+export {
+  CSS_SAFE_PROPERTIES,
+  isWhitelistedProperty,
+} from "./registry/css-property-whitelist.ts";
