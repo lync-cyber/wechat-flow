@@ -7,6 +7,7 @@ import { useSplitterWidth } from "../../composables/use-splitter-width";
 import type { CommandDefinition } from "../../lib/command-registry.ts";
 import { buildEditorCommands } from "../../lib/command-registry.ts";
 import { useEditorStore } from "../../stores/editor.ts";
+import { composeCopy } from "../../use-cases/copy.ts";
 import CommandPalette from "../command/CommandPalette.vue";
 import CompatibilityDiffView from "../diagnostics/CompatibilityDiffView.vue";
 import DiagnosticsPanel from "../diagnostics/DiagnosticsPanel.vue";
@@ -168,6 +169,14 @@ function onContextMenuCommand(commandId: string): void {
   cmd?.run();
 }
 
+function onCopyHtml(): void {
+  composeCopy({
+    markdown: editorStore.content,
+    themeId: editorStore.currentTheme,
+    notify: () => {},
+  });
+}
+
 onMounted(() => {
   window.addEventListener("keydown", onKeyDown);
   window.addEventListener("resize", onResize);
@@ -187,7 +196,7 @@ onUnmounted(() => {
 <template>
   <div class="editor-shell" :class="{ 'editor-shell--focus': isFocusMode }" data-testid="editor-shell">
     <!-- TopBar -->
-    <!-- cataforge: wiring-placeholder — onUndo/onRedo/onCopy 接线延后至对应功能任务 -->
+    <!-- cataforge: wiring-placeholder — onUndo/onRedo 接线延后至对应功能任务 -->
     <TopBar
       doc-title="Untitled"
       :theme-name="currentThemeName"
@@ -199,7 +208,7 @@ onUnmounted(() => {
       :can-redo="false"
       :on-undo="() => {}"
       :on-redo="() => {}"
-      :on-copy="() => {}"
+      :on-copy="onCopyHtml"
       :on-insert="() => { isInsertDrawerOpen = true; }"
       :on-more="() => { isContextMenuOpen = !isContextMenuOpen; }"
     />
