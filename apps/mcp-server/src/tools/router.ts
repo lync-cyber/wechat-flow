@@ -1,10 +1,15 @@
-// cataforge: wiring-placeholder — remaining Tool handlers (non-render) 占位返回 E_NOT_IMPLEMENTED，见 T-038/T-039/T-122
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { ALL_TOOL_SCHEMAS } from "@wechat-flow/contracts";
 import type { ApiKeyRecord } from "../auth/api-key.ts";
 import { type AuthError, guardUserScope } from "../auth/scope-guard.ts";
+import { describeBlockTool } from "./describe-block.ts";
+import { describeMarkTool } from "./describe-mark.ts";
+import { describeThemeTool } from "./describe-theme.ts";
 import { getRulesetVersionTool } from "./get-ruleset-version.ts";
 import { lintMarkdownTool } from "./lint-markdown.ts";
+import { listBlocksTool } from "./list-blocks.ts";
+import { listMarksTool } from "./list-marks.ts";
+import { listThemesTool } from "./list-themes.ts";
 import { renderMarkdownTool } from "./render-markdown.ts";
 
 type ToolHandler = (args: Record<string, unknown>) => Promise<unknown> | unknown;
@@ -13,6 +18,12 @@ const HANDLERS: Record<string, ToolHandler> = {
   render_markdown: renderMarkdownTool,
   lint_markdown: lintMarkdownTool,
   get_ruleset_version: getRulesetVersionTool,
+  list_themes: listThemesTool,
+  describe_theme: describeThemeTool,
+  list_blocks: listBlocksTool,
+  describe_block: describeBlockTool,
+  list_marks: listMarksTool,
+  describe_mark: describeMarkTool,
 };
 
 function isErrorResult(result: unknown): boolean {

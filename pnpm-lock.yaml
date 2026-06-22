@@ -154,12 +154,36 @@ importers:
       '@modelcontextprotocol/sdk':
         specifier: ^1.29.0
         version: 1.29.0(zod@4.4.3)
+      '@wechat-flow/blocks':
+        specifier: workspace:^
+        version: link:../../packages/blocks
       '@wechat-flow/contracts':
         specifier: workspace:^
         version: link:../../packages/contracts
       '@wechat-flow/core':
         specifier: workspace:^
         version: link:../../packages/core
+      '@wechat-flow/marks':
+        specifier: workspace:^
+        version: link:../../packages/marks
+      '@wechat-flow/theme-business':
+        specifier: workspace:^
+        version: link:../../packages/themes/business
+      '@wechat-flow/theme-default':
+        specifier: workspace:^
+        version: link:../../packages/themes/default
+      '@wechat-flow/theme-literary':
+        specifier: workspace:^
+        version: link:../../packages/themes/literary
+      '@wechat-flow/theme-magazine':
+        specifier: workspace:^
+        version: link:../../packages/themes/magazine
+      '@wechat-flow/theme-tech':
+        specifier: workspace:^
+        version: link:../../packages/themes/tech
+      zod:
+        specifier: ^4.0.0
+        version: 4.4.3
 
   apps/relay: {}
 
