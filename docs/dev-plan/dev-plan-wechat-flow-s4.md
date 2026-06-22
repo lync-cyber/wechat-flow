@@ -1,6 +1,6 @@
 ---
 id: "dev-plan-wechat-flow-s4"
-version: "0.5.0"
+version: "0.5.1"
 doc_type: dev-plan
 author: tech-lead
 status: approved
@@ -71,8 +71,8 @@ required_sections:
   - [ ] AC-004（production path）: `apps/editor/src/components/layout/TopBar.vue` 或 `ContextMenu.vue` 内含字面 `onCopyHtml()` 处理函数，调用 `composeCopy`，文件路径和函数名可在代码中直接检索到
   - [ ] AC-005: Given composeCopy 内部 pipeline，When 执行，Then 调用顺序为 composeRender → simulatePaste → buildDualMimePayload；剪贴板写入前必经 simulatePaste 节点 [F-004 AC-004]
 - **deliverables**:
-  - [ ] `packages/core/src/composers/copy.ts` — `composeCopy(input: ComposeCopyInput) → Promise<void>` (import simulatePaste from M-004)
-  - [ ] `packages/core/src/clipboard/dual-mime-payload.ts` — `buildDualMimePayload(html: string, text: string) → ClipboardItem[]` [ARCH#§2.M-008]
+  - [ ] `apps/editor/src/use-cases/copy.ts` — `composeCopy(input: ComposeCopyInput) → Promise<void>` (import simulatePaste from M-004)
+  - [ ] `apps/editor/src/use-cases/dual-mime-payload.ts` — `buildDualMimePayload(html: string, text: string) → ClipboardItem[]` [ARCH#§2.M-008]
   - [ ] `tests/app-layer/compose-copy.test.ts` — AC-001..AC-005（使用 happy-dom 或 vitest browser 模拟 Clipboard API）
 - **relates_to**: [F-004, M-008]
 - **context_load**:
@@ -98,7 +98,7 @@ required_sections:
   - [ ] AC-001: Given `composeExportHtml({ markdown: '# Hello', themeId: 'default' })`，When 调用，Then 返回完整 HTML 字符串，含 `<!DOCTYPE html>`、`<html>`、`<body>` 结构，body 内为 inline-styled 内容
   - [ ] AC-002: Given 导出的 HTML 文件，When 在浏览器中直接打开，Then 内容正常显示（无依赖外部 CSS 文件），字体 fallback 到系统字体正常渲染
 - **deliverables**:
-  - [ ] `packages/core/src/composers/export-html.ts` — `composeExportHtml(input) → string` [ARCH#§2.M-008]
+  - [ ] `apps/editor/src/use-cases/export-html.ts` — `composeExportHtml(input) → string` [ARCH#§2.M-008]
   - [ ] `tests/app-layer/compose-export-html.test.ts` — AC-001 单元测试
 - **relates_to**: [F-004, M-008]
 - **context_load**:
