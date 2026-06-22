@@ -1,10 +1,10 @@
 {
-  "version": "0.13.0",
+  "version": "0.13.1",
   "runtime_api_version": "1.0",
   "runtime": {
     "platform": "claude-code"
   },
-  "description": "CataForge 统一框架配置。version 字段在 cataforge setup / upgrade apply 写盘时由 scaffold._stamp_framework_version 戳入实际包版本（cataforge.__version__）。upgrade apply 的 preserve 字段：runtime.platform、upgrade.state、context.kg_active_doc_types、project.languages；其余字段（version、constants、features、migration_checks、upgrade.source 与 description 自身）均被最新 scaffold 全量覆盖。详见 docs/reference/configuration.md §framework.json。",
+  "description": "CataForge 统一框架配置。version 字段在 cataforge setup / upgrade apply 写盘时由 scaffold._stamp_framework_version 戳入实际包版本（cataforge.__version__）。upgrade apply 的 preserve：runtime.platform、upgrade.state，以及 context 与 project 两个块整体（块内 existing key 保留、新 scaffold key 补充——含 context.kg_active_doc_types / kg_definition_authority / mode 与 project.languages / design_tool）；其余字段（version、constants、features、migration_checks、upgrade.source 与 description 自身）均被最新 scaffold 全量覆盖。详见 docs/reference/configuration.md §framework.json。",
   "upgrade": {
     "source": {
       "type": "github",
@@ -13,8 +13,8 @@
       "token_env": "GITHUB_TOKEN"
     },
     "state": {
-      "last_commit": "pypi-0.13.0",
-      "last_version": "0.13.0",
+      "last_commit": "pypi-0.13.1",
+      "last_version": "0.13.1",
       "last_upgrade_date": "2026-06-22"
     }
   },
@@ -53,7 +53,7 @@
   },
   "project": {
     "languages": [],
-    "design_tool": "none"
+    "design_tool": "penpot"
   },
   "claude_md_limits": {
     "max_bytes": 30000,
