@@ -51,20 +51,20 @@ describe("guardUserScope", () => {
 });
 
 describe("dispatchTool — AC-002: no valid key → E_AUTH_REQUIRED", () => {
-  it("returns E_AUTH_REQUIRED when keyRecord is null", () => {
-    const result = dispatchTool("render_markdown", {}, null);
+  it("returns E_AUTH_REQUIRED when keyRecord is null", async () => {
+    const result = await dispatchTool("render_markdown", {}, null);
     expect(result).toHaveProperty("code", "E_AUTH_REQUIRED");
   });
 });
 
 describe("dispatchTool — AC-003: admin scope → E_PERMISSION_DENIED", () => {
-  it("returns E_PERMISSION_DENIED when scope is admin", () => {
-    const result = dispatchTool("render_markdown", {}, { scope: "admin" });
+  it("returns E_PERMISSION_DENIED when scope is admin", async () => {
+    const result = await dispatchTool("render_markdown", {}, { scope: "admin" });
     expect(result).toHaveProperty("code", "E_PERMISSION_DENIED");
   });
 
-  it("returns E_NOT_IMPLEMENTED (not auth error) when scope is user", () => {
-    const result = dispatchTool("render_markdown", {}, { scope: "user" });
+  it("returns E_NOT_IMPLEMENTED (not auth error) for unimplemented tool when scope is user", async () => {
+    const result = await dispatchTool("derive_palette", {}, { scope: "user" });
     expect(result).toHaveProperty("code", "E_NOT_IMPLEMENTED");
   });
 });

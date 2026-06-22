@@ -44,7 +44,7 @@ async function callToolWithServer(
 
 describe("AC-002: end-to-end — no key → E_AUTH_REQUIRED", () => {
   it("createServer() with no key store → callTool returns E_AUTH_REQUIRED", async () => {
-    const code = await callToolWithServer(undefined, "lint_markdown");
+    const code = await callToolWithServer(undefined, "derive_palette");
     expect(code).toBe("E_AUTH_REQUIRED");
   });
 });
@@ -53,7 +53,7 @@ describe("AC-003: end-to-end — admin key → E_PERMISSION_DENIED", () => {
   it("createServer() with admin key → callTool returns E_PERMISSION_DENIED", async () => {
     const raw = "admin-key";
     const apiKeyStore = new Map([[hashApiKey(raw), { scope: "admin" as const }]]);
-    const code = await callToolWithServer({ apiKeyStore, rawApiKey: raw }, "lint_markdown");
+    const code = await callToolWithServer({ apiKeyStore, rawApiKey: raw }, "derive_palette");
     expect(code).toBe("E_PERMISSION_DENIED");
   });
 });
@@ -62,7 +62,7 @@ describe("AC-002/AC-003: end-to-end — valid user key → E_NOT_IMPLEMENTED (au
   it("createServer() with valid user key → callTool returns E_NOT_IMPLEMENTED", async () => {
     const raw = "user-key";
     const apiKeyStore = new Map([[hashApiKey(raw), { scope: "user" as const }]]);
-    const code = await callToolWithServer({ apiKeyStore, rawApiKey: raw }, "lint_markdown");
+    const code = await callToolWithServer({ apiKeyStore, rawApiKey: raw }, "derive_palette");
     expect(code).toBe("E_NOT_IMPLEMENTED");
   });
 });
