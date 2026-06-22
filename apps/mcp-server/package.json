@@ -9,5 +9,10 @@
     "test": "vitest run --passWithNoTests",
     "lint": "biome check .",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@wechat-flow/contracts": "workspace:^",
+    "@wechat-flow/core": "workspace:^"
   }
 }
