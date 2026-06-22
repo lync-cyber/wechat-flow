@@ -433,3 +433,4 @@
 {"ts": "2026-06-22T07:20:26+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-036 MCP server stdio transport + 鉴权骨架"}
 {"ts": "2026-06-22T07:49:36+00:00", "event": "review_verdict", "phase": "development", "detail": "T-036 code-review r1: needs_revision → revision 修复 R-001..R-006"}
 {"ts": "2026-06-22T07:54:15+00:00", "event": "review_verdict", "phase": "development", "detail": "T-036 code-review r2: approved（R-001 HIGH 消除，0 新问题）"}
+{"ts": "2026-06-22T08:02:24+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-037 render_markdown/lint_markdown/get_ruleset_version Tool"}
