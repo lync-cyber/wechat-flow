@@ -434,3 +434,6 @@
 {"ts": "2026-06-22T07:49:36+00:00", "event": "review_verdict", "phase": "development", "detail": "T-036 code-review r1: needs_revision → revision 修复 R-001..R-006"}
 {"ts": "2026-06-22T07:54:15+00:00", "event": "review_verdict", "phase": "development", "detail": "T-036 code-review r2: approved（R-001 HIGH 消除，0 新问题）"}
 {"ts": "2026-06-22T08:02:24+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-037 render_markdown/lint_markdown/get_ruleset_version Tool"}
+{"ts": "2026-06-22T08:13:51+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-038 list/describe themes/blocks/marks Tool + registerBuiltins bootstrap"}
+{"ts": "2026-06-22T08:26:04+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-122 register_variant Tool（Tool 侧 E_SCHEMA/E_BLOCK_NOT_FOUND/E_SLOT_UNKNOWN 校验 + core registerVariant 映射）"}
+{"ts": "2026-06-22T08:54:40+00:00", "event": "tdd_phase", "phase": "development", "detail": "T-122 done: 校验下沉 core registerVariant（E_SCHEMA/E_BLOCK_NOT_FOUND/E_SLOT_UNKNOWN）+ BlockDefinition.slots 显式槽位模型（defineBlock 缺省派生 baseStyle 键）+ Tool thin-wrapper；全量 709 tests green，typecheck/biome 干净"}
