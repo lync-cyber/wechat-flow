@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-06-22T04:54:16.582160+00:00",
+  "generated_at": "2026-06-22T07:54:19.503697+00:00",
   "documents": {
     "arch-wechat-flow-api": {
       "file_path": "docs/arch/arch-wechat-flow-api.md",
@@ -1224,14 +1224,14 @@
       "volume": "sprint",
       "status": "approved",
       "total_lines": 798,
-      "est_tokens": 15332,
-      "content_hash": "1d471843",
+      "est_tokens": 15330,
+      "content_hash": "0b225777",
       "sections": {
         "3": {
           "heading": "## 3. 任务卡详细",
           "line_start": 26,
           "line_end": 798,
-          "est_tokens": 15082,
+          "est_tokens": 15080,
           "deps": [],
           "level": 2,
           "items": {
@@ -1246,7 +1246,7 @@
               "heading": "### T-030: M-008 composeCopy（dual-MIME clipboard payload）",
               "line_start": 54,
               "line_end": 83,
-              "est_tokens": 609,
+              "est_tokens": 608,
               "deps": []
             },
             "T-031": {
@@ -2477,6 +2477,32 @@
         "T-016"
       ]
     },
+    "code-review-T-036-r1": {
+      "file_path": "docs/reviews/code/CODE-REVIEW-T-036-r1.md",
+      "doc_type": "code-review",
+      "volume": "main",
+      "status": "approved",
+      "total_lines": 100,
+      "est_tokens": 1761,
+      "content_hash": "c3b71783",
+      "sections": {},
+      "deps": [
+        "T-036"
+      ]
+    },
+    "code-review-T-036-r2": {
+      "file_path": "docs/reviews/code/CODE-REVIEW-T-036-r2.md",
+      "doc_type": "code-review",
+      "volume": "main",
+      "status": "approved",
+      "total_lines": 153,
+      "est_tokens": 2026,
+      "content_hash": "22af490c",
+      "sections": {},
+      "deps": [
+        "T-036"
+      ]
+    },
     "code-review-T-094-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-094-r1.md",
       "doc_type": "code-review",
@@ -2703,7 +2729,7 @@
         "dev-plan-wechat-flow-s1": "286d8c6d",
         "dev-plan-wechat-flow-s2": "a1376c27",
         "dev-plan-wechat-flow-s3": "da417397",
-        "dev-plan-wechat-flow-s4": "1d471843",
+        "dev-plan-wechat-flow-s4": "0b225777",
         "dev-plan-wechat-flow-s5": "017fcd45",
         "dev-plan-wechat-flow-s6": "dddbed09"
       }
@@ -2733,7 +2759,7 @@
         "dev-plan-wechat-flow-s1": "286d8c6d",
         "dev-plan-wechat-flow-s2": "a1376c27",
         "dev-plan-wechat-flow-s3": "da417397",
-        "dev-plan-wechat-flow-s4": "1d471843",
+        "dev-plan-wechat-flow-s4": "0b225777",
         "dev-plan-wechat-flow-s5": "017fcd45",
         "dev-plan-wechat-flow-s6": "dddbed09"
       }
@@ -2765,7 +2791,7 @@
         "dev-plan-wechat-flow-s1": "286d8c6d",
         "dev-plan-wechat-flow-s2": "a1376c27",
         "dev-plan-wechat-flow-s3": "da417397",
-        "dev-plan-wechat-flow-s4": "1d471843",
+        "dev-plan-wechat-flow-s4": "0b225777",
         "dev-plan-wechat-flow-s5": "017fcd45",
         "dev-plan-wechat-flow-s6": "dddbed09",
         "prd-wechat-flow": "0e15bcb3",
@@ -2800,7 +2826,7 @@
         "dev-plan-wechat-flow-s1": "286d8c6d",
         "dev-plan-wechat-flow-s2": "a1376c27",
         "dev-plan-wechat-flow-s3": "da417397",
-        "dev-plan-wechat-flow-s4": "1d471843",
+        "dev-plan-wechat-flow-s4": "0b225777",
         "dev-plan-wechat-flow-s5": "017fcd45",
         "dev-plan-wechat-flow-s6": "dddbed09",
         "prd-wechat-flow": "0e15bcb3",

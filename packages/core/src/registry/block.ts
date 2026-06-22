@@ -11,6 +11,7 @@ export interface BlockDefinition {
   attrsSchema: ZodType;
   variants: BlockVariant[];
   baseStyle?: Record<string, Record<string, string>>;
+  slots: string[];
 }
 
 const store = new Map<string, BlockDefinition>();
@@ -20,6 +21,13 @@ export function registerBlock(definition: BlockDefinition): void {
   if (definition.baseStyle !== undefined && !("root" in definition.baseStyle)) {
     const err = Object.assign(
       new Error(`registerBlock: baseStyle for block "${definition.id}" must contain a "root" slot`),
+      { slot: "root", key: "root" }
+    );
+    throw err;
+  }
+  if (!definition.slots.includes("root")) {
+    const err = Object.assign(
+      new Error(`registerBlock: slots for block "${definition.id}" must include "root"`),
       { slot: "root", key: "root" }
     );
     throw err;

@@ -19,6 +19,7 @@ const makeBlocks = () => {
       title: z.string().optional(),
     }),
     variants: [{ id: "default", label: "默认提示" }],
+    slots: ["root"],
   });
   registerBlock({
     id: "heading",
@@ -28,6 +29,7 @@ const makeBlocks = () => {
       text: z.string(),
     }),
     variants: [],
+    slots: ["root"],
   });
 };
 

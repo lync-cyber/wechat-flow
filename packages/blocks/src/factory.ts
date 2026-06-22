@@ -6,7 +6,9 @@ export function defineBlock(
   name: string,
   attrsSchema: ZodType,
   variants: BlockVariant[],
-  baseStyle?: Record<string, Record<string, string>>
+  baseStyle?: Record<string, Record<string, string>>,
+  slots?: string[]
 ): BlockDefinition {
-  return { id, name, attrsSchema, variants, baseStyle };
+  const resolvedSlots = slots ?? Array.from(new Set(["root", ...Object.keys(baseStyle ?? {})]));
+  return { id, name, attrsSchema, variants, baseStyle, slots: resolvedSlots };
 }

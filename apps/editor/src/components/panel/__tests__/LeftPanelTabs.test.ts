@@ -209,7 +209,13 @@ describe("AC-003: ThemeCard placeholder 态", () => {
 
 describe("AC-004: BlockLibItem onInsert 回调", () => {
   it("点击 BlockLibItem 时 onInsert 以 BlockDefinition 参数调用", async () => {
-    const block = { id: "heading", name: "标题", attrsSchema: z.object({}), variants: [] };
+    const block = {
+      id: "heading",
+      name: "标题",
+      attrsSchema: z.object({}),
+      variants: [],
+      slots: ["root"],
+    };
     const onInsert = vi.fn();
     const wrapper = mount(BlockLibItem, {
       props: { block, onInsert },
@@ -232,6 +238,7 @@ describe("AC-004: BlockLibItem onInsert 回调", () => {
         { id: "v1", label: "皮肤1" },
         { id: "v2", label: "皮肤2" },
       ],
+      slots: ["root"],
     };
     const onInsert = vi.fn();
     const wrapper = mount(BlockLibItem, {
@@ -249,6 +256,7 @@ describe("AC-004: BlockLibItem onInsert 回调", () => {
       name: "标题",
       attrsSchema: z.object({}),
       variants: [{ id: "v1" }, { id: "v2" }, { id: "v3" }],
+      slots: ["root"],
     };
     const onInsert = vi.fn();
     const wrapper = mount(BlockLibItem, {
@@ -265,7 +273,13 @@ describe("AC-004: BlockLibItem onInsert 回调", () => {
 describe("AC-004: LeftPanelTabs 内 BlockLibItem 插入接线", () => {
   beforeEach(() => {
     resetBlockRegistry();
-    registerBlock({ id: "heading", name: "标题", attrsSchema: z.object({}), variants: [] });
+    registerBlock({
+      id: "heading",
+      name: "标题",
+      attrsSchema: z.object({}),
+      variants: [],
+      slots: ["root"],
+    });
   });
 
   it("组件 Tab 中点击 BlockLibItem 时 onInsertBlock 收到该 block 的 directive 片段", async () => {

@@ -1,7 +1,12 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { beforeEach, describe, expect, it } from "vitest";
-import { resetBlockRegistry } from "../../../packages/core/src/registry/block.ts";
+import { z } from "zod";
+import {
+  describeBlock,
+  registerBlock,
+  resetBlockRegistry,
+} from "../../../packages/core/src/registry/block.ts";
 import {
   describeVariant,
   getBlockBaseStyle,
@@ -9,6 +14,9 @@ import {
   registerVariant,
   resetVariantRegistry,
 } from "../../../packages/core/src/registry/variant.ts";
+// Side-effect import registers all built-in blocks (incl. callout) and an onRegistryReset
+// hook, so resetBlockRegistry() in beforeEach re-registers them for every test.
+import "../../../packages/blocks/src/index.ts";
 
 beforeEach(() => {
   resetVariantRegistry();
@@ -42,8 +50,15 @@ describe("AC-001: registerVariant 注册后 listBlockVariants 和 getBlockBaseSt
   });
 
   it("getBlockBaseStyle 仅返回 root 槽位声明，不含其他槽", () => {
+    registerBlock({
+      id: "multi-slot-test",
+      name: "多槽测试",
+      attrsSchema: z.object({}),
+      variants: [],
+      slots: ["root", "icon"],
+    });
     registerVariant({
-      blockId: "callout",
+      blockId: "multi-slot-test",
       id: "my:dark",
       label: "Dark",
       style: {
@@ -51,7 +66,7 @@ describe("AC-001: registerVariant 注册后 listBlockVariants 和 getBlockBaseSt
         icon: { color: "#fff" },
       },
     });
-    const base = getBlockBaseStyle("callout", "my:dark");
+    const base = getBlockBaseStyle("multi-slot-test", "my:dark");
     expect(base["background-color"]).toBe("#1a1a1a");
     expect(Object.keys(base)).not.toContain("icon");
   });
@@ -310,6 +325,120 @@ describe("AC-005: defineBlock baseStyle 缺 root 槽位时注册抛结构化错�
     }
     const def = describeBlock("test-no-root-c");
     expect(def).toBeUndefined();
+  });
+});
+
+function caughtCode(fn: () => void): string | undefined {
+  try {
+    fn();
+  } catch (e) {
+    return (e as { code?: string }).code;
+  }
+  return undefined;
+}
+
+// T-122 core: registerVariant 的扩展校验链（E_SCHEMA / E_BLOCK_NOT_FOUND / E_SLOT_UNKNOWN）
+describe("T-122-core: registerVariant 扩展校验抛带 code 的结构化错误", () => {
+  it("blockId 不在注册中心时抛 E_BLOCK_NOT_FOUND", () => {
+    const code = caughtCode(() =>
+      registerVariant({
+        blockId: "no-such-block",
+        id: "my:dark",
+        label: "Dark",
+        style: { root: { color: "#000" } },
+      })
+    );
+    expect(code).toBe("E_BLOCK_NOT_FOUND");
+  });
+
+  it("style 含 Block 未声明的槽位键时抛 E_SLOT_UNKNOWN", () => {
+    const code = caughtCode(() =>
+      registerVariant({
+        blockId: "callout",
+        id: "my:dark",
+        label: "Dark",
+        style: { "unknown-slot": { color: "#000" } },
+      })
+    );
+    expect(code).toBe("E_SLOT_UNKNOWN");
+  });
+
+  it("blockId / variantId / label 为空字符串时抛 E_SCHEMA", () => {
+    expect(
+      caughtCode(() =>
+        registerVariant({ blockId: "", id: "x", label: "X", style: { root: { color: "#000" } } })
+      )
+    ).toBe("E_SCHEMA");
+    expect(
+      caughtCode(() =>
+        registerVariant({
+          blockId: "callout",
+          id: "",
+          label: "X",
+          style: { root: { color: "#000" } },
+        })
+      )
+    ).toBe("E_SCHEMA");
+    expect(
+      caughtCode(() =>
+        registerVariant({
+          blockId: "callout",
+          id: "x",
+          label: "",
+          style: { root: { color: "#000" } },
+        })
+      )
+    ).toBe("E_SCHEMA");
+  });
+
+  it("style 为空 map 时抛 E_SCHEMA", () => {
+    const code = caughtCode(() =>
+      registerVariant({ blockId: "callout", id: "my:dark", label: "Dark", style: {} })
+    );
+    expect(code).toBe("E_SCHEMA");
+  });
+
+  it("style 槽位值非对象（声明 map 不是 Record）时抛 E_SCHEMA", () => {
+    const code = caughtCode(() =>
+      registerVariant({
+        blockId: "callout",
+        id: "my:dark",
+        label: "Dark",
+        style: { root: "not-an-object" as unknown as Record<string, string> },
+      })
+    );
+    expect(code).toBe("E_SCHEMA");
+  });
+
+  it("registerBlock: slots 缺 root → 抛错且不注册", () => {
+    let thrown: unknown;
+    try {
+      registerBlock({
+        id: "no-root-slot",
+        name: "无 root 槽",
+        attrsSchema: z.object({}),
+        variants: [],
+        baseStyle: { root: { color: "#000000" } },
+        slots: ["title"],
+      });
+    } catch (e) {
+      thrown = e;
+    }
+    expect(thrown).toBeDefined();
+    expect((thrown as { message?: string }).message?.toLowerCase()).toContain("root");
+    expect(describeBlock("no-root-slot")).toBeUndefined();
+  });
+
+  it("variantId 命中 Block 内置 variant 时抛 E_VARIANT_CONFLICT", () => {
+    const code = caughtCode(() =>
+      registerVariant({
+        blockId: "callout",
+        id: "filled",
+        label: "Filled",
+        style: { root: { "background-color": "#000" } },
+      })
+    );
+    expect(code).toBe("E_VARIANT_CONFLICT");
   });
 });
 
