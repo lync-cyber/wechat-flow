@@ -2,7 +2,11 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { beforeEach, describe, expect, it } from "vitest";
 import { z } from "zod";
-import { registerBlock, resetBlockRegistry } from "../../../packages/core/src/registry/block.ts";
+import {
+  describeBlock,
+  registerBlock,
+  resetBlockRegistry,
+} from "../../../packages/core/src/registry/block.ts";
 import {
   describeVariant,
   getBlockBaseStyle,
@@ -392,6 +396,37 @@ describe("T-122-core: registerVariant 扩展校验抛带 code 的结构化错误
       registerVariant({ blockId: "callout", id: "my:dark", label: "Dark", style: {} })
     );
     expect(code).toBe("E_SCHEMA");
+  });
+
+  it("style 槽位值非对象（声明 map 不是 Record）时抛 E_SCHEMA", () => {
+    const code = caughtCode(() =>
+      registerVariant({
+        blockId: "callout",
+        id: "my:dark",
+        label: "Dark",
+        style: { root: "not-an-object" as unknown as Record<string, string> },
+      })
+    );
+    expect(code).toBe("E_SCHEMA");
+  });
+
+  it("registerBlock: slots 缺 root → 抛错且不注册", () => {
+    let thrown: unknown;
+    try {
+      registerBlock({
+        id: "no-root-slot",
+        name: "无 root 槽",
+        attrsSchema: z.object({}),
+        variants: [],
+        baseStyle: { root: { color: "#000000" } },
+        slots: ["title"],
+      });
+    } catch (e) {
+      thrown = e;
+    }
+    expect(thrown).toBeDefined();
+    expect((thrown as { message?: string }).message?.toLowerCase()).toContain("root");
+    expect(describeBlock("no-root-slot")).toBeUndefined();
   });
 
   it("variantId 命中 Block 内置 variant 时抛 E_VARIANT_CONFLICT", () => {

@@ -6,6 +6,7 @@ import { registerBuiltins } from "../../../apps/mcp-server/src/bootstrap.ts";
 import { describeBlockTool } from "../../../apps/mcp-server/src/tools/describe-block.ts";
 import { describeMarkTool } from "../../../apps/mcp-server/src/tools/describe-mark.ts";
 import { describeThemeTool } from "../../../apps/mcp-server/src/tools/describe-theme.ts";
+import { lintMarkdownTool } from "../../../apps/mcp-server/src/tools/lint-markdown.ts";
 import { listBlocksTool } from "../../../apps/mcp-server/src/tools/list-blocks.ts";
 import { listMarksTool } from "../../../apps/mcp-server/src/tools/list-marks.ts";
 import { listThemesTool } from "../../../apps/mcp-server/src/tools/list-themes.ts";
@@ -88,6 +89,27 @@ describe("AC-006: describe_mark(badge) returns attrsSchema as JSON Schema", () =
     const schema = result.attrsSchema as Record<string, unknown>;
     expect(schema.type).toBe("object");
     expect(typeof schema.properties).toBe("object");
+  });
+});
+
+// ---- 错误/默认路径分支：describe_mark 未命中、lint_markdown 缺省入参 ----
+
+describe("describe_mark / lint_markdown 边界路径", () => {
+  it("describe_mark 未知 markId → { code: 'E_NOT_FOUND' }", () => {
+    const result = describeMarkTool({ markId: "no-such-mark" }) as Record<string, unknown>;
+    expect(result.code).toBe("E_NOT_FOUND");
+    expect(result.markId).toBe("no-such-mark");
+  });
+
+  it("describe_mark 缺省 markId（args 无 markId）→ markId 落空串后 E_NOT_FOUND", () => {
+    const result = describeMarkTool({}) as Record<string, unknown>;
+    expect(result.code).toBe("E_NOT_FOUND");
+    expect(result.markId).toBe("");
+  });
+
+  it("lint_markdown 缺省 markdown/themeId/customCss → 返回 diagnostics 数组", async () => {
+    const result = (await lintMarkdownTool({})) as { diagnostics: unknown };
+    expect(Array.isArray(result.diagnostics)).toBe(true);
   });
 });
 
