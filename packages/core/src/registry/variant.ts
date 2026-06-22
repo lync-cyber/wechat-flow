@@ -52,7 +52,51 @@ function validateStyle(style: Record<string, Record<string, string>>): RejectedD
   return rejected;
 }
 
+function schemaError(message: string): Error {
+  return Object.assign(new Error(`E_SCHEMA: ${message}`), { code: "E_SCHEMA" });
+}
+
+function assertValidInput(input: VariantRegistrationInput): void {
+  if (input.blockId.trim() === "") throw schemaError("blockId must be a non-empty string");
+  if (input.id.trim() === "") throw schemaError("variantId must be a non-empty string");
+  if (input.label.trim() === "") throw schemaError("label must be a non-empty string");
+  if (
+    input.style === null ||
+    typeof input.style !== "object" ||
+    Object.keys(input.style).length === 0
+  ) {
+    throw schemaError("style must be a non-empty map of slot to declarations");
+  }
+  for (const [slot, declarations] of Object.entries(input.style)) {
+    if (declarations === null || typeof declarations !== "object") {
+      throw schemaError(`style slot "${slot}" must map to a declaration record`);
+    }
+  }
+}
+
 export function registerVariant(input: VariantRegistrationInput): void {
+  assertValidInput(input);
+
+  const blockDef = describeBlock(input.blockId);
+  if (!blockDef) {
+    throw Object.assign(
+      new Error(`E_BLOCK_NOT_FOUND: block "${input.blockId}" is not registered`),
+      {
+        code: "E_BLOCK_NOT_FOUND",
+      }
+    );
+  }
+
+  const unknownSlots = Object.keys(input.style).filter((slot) => !blockDef.slots.includes(slot));
+  if (unknownSlots.length > 0) {
+    throw Object.assign(
+      new Error(
+        `E_SLOT_UNKNOWN: block "${input.blockId}" does not declare slot(s): ${unknownSlots.join(", ")}`
+      ),
+      { code: "E_SLOT_UNKNOWN", unknownSlots }
+    );
+  }
+
   const rejectedDeclarations = validateStyle(input.style);
   if (rejectedDeclarations.length > 0) {
     const err = Object.assign(
@@ -63,7 +107,8 @@ export function registerVariant(input: VariantRegistrationInput): void {
   }
 
   const key = `${input.blockId}::${input.id}`;
-  if (store.has(key)) {
+  const conflictsWithBuiltin = blockDef.variants.some((v) => v.id === input.id);
+  if (conflictsWithBuiltin || store.has(key)) {
     const err = Object.assign(
       new Error(
         `E_VARIANT_CONFLICT: variant "${input.id}" is already registered for block "${input.blockId}"`

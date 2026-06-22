@@ -11,6 +11,9 @@ import {
   resetBlockRegistry,
   resetVariantRegistry,
 } from "../../../packages/core/src/index.ts";
+// Side-effect import registers all built-in blocks (incl. callout) and an onRegistryReset
+// hook, so resetBlockRegistry() in beforeEach re-registers them for every test.
+import "../../../packages/blocks/src/index.ts";
 
 beforeEach(() => {
   resetVariantRegistry();
@@ -45,6 +48,7 @@ describe("M-005 注册守护边界", () => {
         attrsSchema: z.object({}),
         variants: [{ id: "default" }],
         baseStyle: { title: { color: "#000000" } },
+        slots: ["root"],
       })
     ).toThrow(/root/);
     expect(describeBlock("edge-block")).toBeUndefined();
@@ -89,6 +93,7 @@ describe("inline-style 容器路径边界", () => {
       attrsSchema: z.object({}),
       variants: [{ id: "default" }],
       baseStyle: { root: { color: "#abcdef" } },
+      slots: ["root"],
     });
     const hast = {
       type: "root",
@@ -108,6 +113,7 @@ describe("inline-style 容器路径边界", () => {
       attrsSchema: z.object({}),
       variants: [{ id: "default" }],
       baseStyle: { root: { color: "#111111", padding: "8px" } },
+      slots: ["root"],
     });
     const hast = {
       type: "root",

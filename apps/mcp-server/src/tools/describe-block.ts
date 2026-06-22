@@ -11,5 +11,6 @@ export function describeBlockTool(args: Record<string, unknown>) {
     attrsSchema: z.toJSONSchema(block.attrsSchema),
     variants: block.variants,
     baseStyle: block.baseStyle,
+    slots: block.slots,
   };
 }

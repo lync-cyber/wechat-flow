@@ -10,6 +10,7 @@ import { lintMarkdownTool } from "./lint-markdown.ts";
 import { listBlocksTool } from "./list-blocks.ts";
 import { listMarksTool } from "./list-marks.ts";
 import { listThemesTool } from "./list-themes.ts";
+import { registerVariantTool } from "./register-variant.ts";
 import { renderMarkdownTool } from "./render-markdown.ts";
 
 type ToolHandler = (args: Record<string, unknown>) => Promise<unknown> | unknown;
@@ -24,6 +25,7 @@ const HANDLERS: Record<string, ToolHandler> = {
   describe_block: describeBlockTool,
   list_marks: listMarksTool,
   describe_mark: describeMarkTool,
+  register_variant: registerVariantTool,
 };
 
 function isErrorResult(result: unknown): boolean {
