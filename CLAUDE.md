@@ -6,7 +6,7 @@
 
 - 技术栈: Node.js + TypeScript（具体框架待 architect 决定）
 - 运行时: claude-code
-- 框架版本: 0.12.0
+- 框架版本: 0.13.0
   <!-- 由 cataforge deploy 自动盖入已安装包版本。SemVer: MAJOR=不兼容变更, MINOR=新功能, PATCH=修复 -->
 - 语言定位: 中文框架（提示词/文档/交互用中文；代码/变量/CLI参数用英文）
 - 执行模式: standard
@@ -34,11 +34,11 @@
 
 ## 项目状态 (orchestrator专属写入区，其他Agent禁止修改)
 - 当前阶段: development
-- 上次完成: 输出能力切片 **T-030+T-031 done，已开 PR #8**（分支 feature/sprint-4-output-capability）。T-030 composeCopy（composeRender→simulatePaste→buildDualMimePayload→clipboard.write + Toast 回调 + AC-004 接线 EditorShell→TopBar `:on-copy`）/ T-031 composeExportHtml（standalone HTML）。落点 `apps/editor/src/use-cases/`（用户确认；dev-plan 的 composers/ 已漂移，待 sprint-review amendment）。前序：L3 cascade T-118→T-121 合 main（PR #6）/ framework 0.12.0（PR #7）。运行学习：①接线类 AC 须行为级测试 ②standard 跨包卡子代理易 truncation→主线程接管 ③并行子代理勿各自跑 git stash（竞态污染工作树/诊断），不轻信自报告、主线程取地面真值复核 ④白名单 SSOT=packages/core/src/registry/css-property-whitelist.ts。
-- 下一步行动: PR #8 待审/合 main，合入后 sprint-review 补 dev-plan amendment（T-030/031 落点）。后续切片（用户选）：MCP server(T-036→T-037/038→T-122)、relay 后端(T-032..035/091)、主题 template T-092、DESIGN(T-102/105/106)、编辑器 UI(T-040/041/042/093)、VALIDATION T-111。
+- 上次完成: framework scaffold 同步 0.12.0→**0.13.0**（本会话 /framework-update；包已 0.13.0，刷 150 文件+1 新增 runtime-flow-map.md，doctor 全绿）。前序开发：输出能力切片 **T-030+T-031 done，PR #8 已合 main**。T-030 composeCopy（composeRender→simulatePaste→buildDualMimePayload→clipboard.write + Toast 回调 + AC-004 接线 EditorShell→TopBar `:on-copy`）/ T-031 composeExportHtml（standalone HTML）。落点 `apps/editor/src/use-cases/`（用户确认；dev-plan 的 composers/ 已漂移，待 sprint-review amendment）。前序：L3 cascade T-118→T-121 合 main（PR #6）/ framework 0.12.0（PR #7）。运行学习：①接线类 AC 须行为级测试 ②standard 跨包卡子代理易 truncation→主线程接管 ③并行子代理勿各自跑 git stash（竞态污染工作树/诊断），不轻信自报告、主线程取地面真值复核 ④白名单 SSOT=packages/core/src/registry/css-property-whitelist.ts ⑤`cataforge deploy --rebuild` 会删 CLAUDE.md 致 §项目状态 静默 wipe；刷产物用普通 deploy，误删则 git restore + 普通 deploy 恢复。
+- 下一步行动: sprint-review 补 dev-plan amendment（T-030/031 落点 use-cases/）。后续切片（用户选）：MCP server(T-036→T-037/038→T-122)、relay 后端(T-032..035/091)、主题 template T-092、DESIGN(T-102/105/106)、编辑器 UI(T-040/041/042/093)、VALIDATION T-111。
 - 已完成阶段: [requirements, architecture, ui_design, dev_planning, cross_doc_amendment_r2, arch_special_review_css_inlining, dev_plan_amendment_custom_styles]
-- 当前Sprint: Sprint 4 进行中 — L3 cascade 切片已合 main（PR #6）；输出能力切片在 **PR #8** 待审。Sprint 0-3 已关闭合 main（PR #1/#2/#6/#7 均已合）。
-- 待办(deferred): iframe sandbox XSS 阻断在 happy-dom 假绿 → Playwright E2E(T-058)；juice/client 跨运行时 bundle(bundler-alias)；AC-T121-003 偏弱 + transformToHast.options 占位；T-122 register_variant 随 T-036(MCP stdio) defer；LOW 历史卷描述过时(s1 T-002 / s0 T-004 计数，知会不改)；上游反馈 #254/#255 + fb-framework-update-0_11_1 待提交 CataForge。
+- 当前Sprint: Sprint 4 进行中 — 输出能力切片 **PR #8 已合 main**；L3 cascade 切片已合 main（PR #6）。Sprint 0-3 已关闭合 main（PR #1/#2/#6/#7 均已合）。
+- 待办(deferred): iframe sandbox XSS 阻断在 happy-dom 假绿 → Playwright E2E(T-058)；juice/client 跨运行时 bundle(bundler-alias)；AC-T121-003 偏弱 + transformToHast.options 占位；T-122 register_variant 随 T-036(MCP stdio) defer；LOW 历史卷描述过时(s1 T-002 / s0 T-004 计数，知会不改)；上游反馈 #254/#255 + fb-framework-update-0_11_1 待提交 CataForge；0.13.0 deploy --rebuild wipe CLAUDE.md 已开 CataForge#340。
 - 文档状态:
   - prd: approved
   - arch: approved
