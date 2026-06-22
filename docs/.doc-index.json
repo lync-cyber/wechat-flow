@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-06-22T07:01:59.435742+00:00",
+  "generated_at": "2026-06-22T07:54:19.503697+00:00",
   "documents": {
     "arch-wechat-flow-api": {
       "file_path": "docs/arch/arch-wechat-flow-api.md",
@@ -2475,6 +2475,32 @@
       "sections": {},
       "deps": [
         "T-016"
+      ]
+    },
+    "code-review-T-036-r1": {
+      "file_path": "docs/reviews/code/CODE-REVIEW-T-036-r1.md",
+      "doc_type": "code-review",
+      "volume": "main",
+      "status": "approved",
+      "total_lines": 100,
+      "est_tokens": 1761,
+      "content_hash": "c3b71783",
+      "sections": {},
+      "deps": [
+        "T-036"
+      ]
+    },
+    "code-review-T-036-r2": {
+      "file_path": "docs/reviews/code/CODE-REVIEW-T-036-r2.md",
+      "doc_type": "code-review",
+      "volume": "main",
+      "status": "approved",
+      "total_lines": 153,
+      "est_tokens": 2026,
+      "content_hash": "22af490c",
+      "sections": {},
+      "deps": [
+        "T-036"
       ]
     },
     "code-review-T-094-r1": {
