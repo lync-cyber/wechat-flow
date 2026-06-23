@@ -719,3 +719,132 @@ describe("AC-005: JWT placement — token in Authorization header accepted; in U
     expect(resolved.valid).toBe(true);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Branch coverage: token-resolver uncovered paths
+// ---------------------------------------------------------------------------
+
+describe("resolveBearer: branch coverage — non-editor iss and revoked session", () => {
+  it("returns valid=false with iss='other' when JWT has iss other than 'editor'", async () => {
+    const otherIssJwt = await new SignJWT({ sub: "user:x", scope: "user" })
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuer("other")
+      .setExpirationTime(Math.floor(Date.now() / 1000) + 3600)
+      .sign(TEST_SECRET_BYTES);
+
+    const resolved = await resolveBearer(otherIssJwt, {
+      secret: TEST_SECRET_BYTES,
+      sessionStore: makeMemorySessionStore(),
+      clock: () => Date.now(),
+    });
+
+    expect(resolved.valid).toBe(false);
+    expect(resolved.iss).toBe("other");
+  });
+
+  it("returns valid=false with iss='editor' when sessionId has been revoked", async () => {
+    const store = makeMemorySessionStore();
+    const sid = "revoked-session-id";
+    await store.save(sid);
+
+    const revokedJwt = await new SignJWT({
+      sub: "user:y",
+      scope: "user,render,upload",
+      sessionId: sid,
+    })
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuer("editor")
+      .setExpirationTime(Math.floor(Date.now() / 1000) + 3600)
+      .sign(TEST_SECRET_BYTES);
+
+    await store.revoke(sid);
+
+    const resolved = await resolveBearer(revokedJwt, {
+      secret: TEST_SECRET_BYTES,
+      sessionStore: store,
+      clock: () => Date.now(),
+    });
+
+    expect(resolved.valid).toBe(false);
+    expect(resolved.iss).toBe("editor");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Branch coverage: refreshEditorSession uncovered paths
+// ---------------------------------------------------------------------------
+
+describe("refreshEditorSession: branch coverage — non-editor iss and missing sessionId", () => {
+  it("throws when token has iss other than 'editor'", async () => {
+    const deps = makeDefaultDeps();
+    const nonEditorJwt = await new SignJWT({ sub: "user:z", scope: "user" })
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuer("other")
+      .setExpirationTime(Math.floor(Date.now() / 1000) + 3600)
+      .sign(TEST_SECRET_BYTES);
+
+    await expect(refreshEditorSession(nonEditorJwt, deps)).rejects.toThrow();
+  });
+
+  it("throws when token has iss='editor' but no sessionId claim", async () => {
+    const deps = makeDefaultDeps();
+    const noSessionIdJwt = await new SignJWT({ sub: "user:z", scope: "user,render,upload" })
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuer("editor")
+      .setExpirationTime(Math.floor(Date.now() / 1000) + 3600)
+      .sign(TEST_SECRET_BYTES);
+
+    await expect(refreshEditorSession(noSessionIdJwt, deps)).rejects.toThrow();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Branch coverage: route endpoints without Authorization header
+// ---------------------------------------------------------------------------
+
+describe("routes: 401 when Authorization header is missing", () => {
+  it("POST /api/v1/editor/session/refresh without Authorization returns 401", async () => {
+    const deps = makeDefaultDeps();
+    const app = createEditorSessionApp(deps);
+
+    const res = await app.request("/api/v1/editor/session/refresh", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-editor-origin": "https://editor.example.com",
+      },
+    });
+
+    expect(res.status).toBe(401);
+  });
+
+  it("POST /api/v1/images/upload without Authorization returns 401", async () => {
+    const deps = makeDefaultDeps();
+    const app = createEditorSessionApp(deps);
+
+    const res = await app.request("/api/v1/images/upload", {
+      method: "POST",
+      headers: {
+        "x-editor-origin": "https://editor.example.com",
+      },
+    });
+
+    expect(res.status).toBe(401);
+  });
+
+  it("POST /api/v1/admin/api-keys without Authorization returns 401", async () => {
+    const deps = makeDefaultDeps();
+    const app = createEditorSessionApp(deps);
+
+    const res = await app.request("/api/v1/admin/api-keys", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-editor-origin": "https://editor.example.com",
+      },
+      body: JSON.stringify({}),
+    });
+
+    expect(res.status).toBe(401);
+  });
+});

@@ -104,4 +104,16 @@ describe("createQiniuAdapter: upload token format", () => {
       adapter.upload(new Uint8Array([1, 2, 3]), { filename: "x.jpg", contentType: "image/jpeg" })
     ).rejects.toThrow();
   });
+
+  it("upload with empty filename falls back to sha256 hex key (non-empty, no leading slash)", async () => {
+    const { httpPost, calls } = makeHttpPost();
+    const adapter = createQiniuAdapter(testConfig, { httpPost });
+
+    const data = new Uint8Array([10, 20, 30, 40]);
+    await adapter.upload(data, { filename: "", contentType: "image/jpeg" });
+
+    const key = calls[0]?.formData.get("key") as string;
+    expect(key).toBeTruthy();
+    expect(key).toMatch(/^[0-9a-f]{64}$/);
+  });
 });

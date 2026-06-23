@@ -269,4 +269,252 @@ describe("createAdapterFromConfig: builds the adapter selected by config.kind", 
     });
     expect(adapter.name).toBe("custom");
   });
+
+  it("oss adapter with domain set produces a non-empty name via createAdapterFromConfig", () => {
+    const adapter = createAdapterFromConfig({
+      kind: "oss",
+      credentials: {
+        accessKeyId: "ak",
+        accessKeySecret: "sk",
+        bucket: "b",
+        region: "oss-cn-hangzhou",
+        domain: "https://cdn.mysite.com",
+      },
+    });
+    expect(adapter.name).toBe("oss");
+  });
+
+  it("cos adapter with domain set produces a non-empty name via createAdapterFromConfig", () => {
+    const adapter = createAdapterFromConfig({
+      kind: "cos",
+      credentials: {
+        secretId: "sid",
+        secretKey: "sk",
+        bucket: "b-1250000000",
+        region: "ap-guangzhou",
+        domain: "https://cdn.mysite.com",
+      },
+    });
+    expect(adapter.name).toBe("cos");
+  });
+
+  it("custom adapter with token set produces name='custom'", () => {
+    const adapter = createAdapterFromConfig({
+      kind: "custom",
+      credentials: { endpoint: "https://upload.example.com", token: "tok-123" },
+    });
+    expect(adapter.name).toBe("custom");
+  });
+
+  it("throws for an unknown kind", () => {
+    expect(() =>
+      createAdapterFromConfig({
+        kind: "unknown" as "local",
+        credentials: {},
+      })
+    ).toThrow();
+  });
+
+  it("local adapter without baseDir/publicBaseUrl falls back to empty strings (name is 'local')", () => {
+    const adapter = createAdapterFromConfig({
+      kind: "local",
+      credentials: {},
+    });
+    expect(adapter.name).toBe("local");
+  });
+
+  it("qiniu adapter without credential fields falls back to empty strings (name is 'qiniu')", () => {
+    const adapter = createAdapterFromConfig({
+      kind: "qiniu",
+      credentials: {},
+    });
+    expect(adapter.name).toBe("qiniu");
+  });
+
+  it("oss adapter without credential fields falls back to empty strings (name is 'oss')", () => {
+    const adapter = createAdapterFromConfig({
+      kind: "oss",
+      credentials: {},
+    });
+    expect(adapter.name).toBe("oss");
+  });
+
+  it("cos adapter without credential fields falls back to empty strings (name is 'cos')", () => {
+    const adapter = createAdapterFromConfig({
+      kind: "cos",
+      credentials: {},
+    });
+    expect(adapter.name).toBe("cos");
+  });
+
+  it("smms adapter without token field falls back to empty string (name is 'smms')", () => {
+    const adapter = createAdapterFromConfig({
+      kind: "smms",
+      credentials: {},
+    });
+    expect(adapter.name).toBe("smms");
+  });
+
+  it("custom adapter without endpoint/token falls back to empty strings (name is 'custom')", () => {
+    const adapter = createAdapterFromConfig({
+      kind: "custom",
+      credentials: {},
+    });
+    expect(adapter.name).toBe("custom");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// loadImageHostConfig: branch coverage — custom without optional fields, domain absence, unknown kind
+// ---------------------------------------------------------------------------
+
+describe("loadImageHostConfig: branch coverage", () => {
+  it("custom without token/responseUrlField — credentials has only endpoint", () => {
+    const config = loadImageHostConfig({
+      IMAGE_HOST: "custom",
+      CUSTOM_UPLOAD_ENDPOINT: "https://upload.example.com",
+    });
+
+    expect(config.kind).toBe("custom");
+    expect(config.credentials.endpoint).toBe("https://upload.example.com");
+    expect(config.credentials.token).toBeUndefined();
+    expect(config.credentials.responseUrlField).toBeUndefined();
+  });
+
+  it("oss without OSS_DOMAIN — credentials has no domain key", () => {
+    const config = loadImageHostConfig({
+      IMAGE_HOST: "oss",
+      OSS_ACCESS_KEY_ID: "ak",
+      OSS_ACCESS_KEY_SECRET: "sk",
+      OSS_BUCKET: "b",
+      OSS_REGION: "oss-cn-hangzhou",
+    });
+
+    expect(config.credentials.domain).toBeUndefined();
+  });
+
+  it("cos without COS_DOMAIN — credentials has no domain key", () => {
+    const config = loadImageHostConfig({
+      IMAGE_HOST: "cos",
+      COS_SECRET_ID: "sid",
+      COS_SECRET_KEY: "sk",
+      COS_BUCKET: "b-1250000000",
+      COS_REGION: "ap-guangzhou",
+    });
+
+    expect(config.credentials.domain).toBeUndefined();
+  });
+
+  it("throws for an unknown IMAGE_HOST kind", () => {
+    expect(() => loadImageHostConfig({ IMAGE_HOST: "unknown" })).toThrow();
+  });
+
+  it("qiniu with no credential env vars falls back to empty strings", () => {
+    const config = loadImageHostConfig({ IMAGE_HOST: "qiniu" });
+    expect(config.kind).toBe("qiniu");
+    expect(config.credentials.accessKey).toBe("");
+    expect(config.credentials.secretKey).toBe("");
+    expect(config.credentials.bucket).toBe("");
+    expect(config.credentials.domain).toBe("");
+  });
+
+  it("oss with no credential env vars falls back to empty strings", () => {
+    const config = loadImageHostConfig({ IMAGE_HOST: "oss" });
+    expect(config.kind).toBe("oss");
+    expect(config.credentials.accessKeyId).toBe("");
+    expect(config.credentials.region).toBe("");
+  });
+
+  it("cos with no credential env vars falls back to empty strings", () => {
+    const config = loadImageHostConfig({ IMAGE_HOST: "cos" });
+    expect(config.kind).toBe("cos");
+    expect(config.credentials.secretId).toBe("");
+    expect(config.credentials.region).toBe("");
+  });
+
+  it("smms with no credential env vars falls back to empty string token", () => {
+    const config = loadImageHostConfig({ IMAGE_HOST: "smms" });
+    expect(config.kind).toBe("smms");
+    expect(config.credentials.token).toBe("");
+  });
+
+  it("custom with no credential env vars falls back to empty string endpoint", () => {
+    const config = loadImageHostConfig({ IMAGE_HOST: "custom" });
+    expect(config.kind).toBe("custom");
+    expect(config.credentials.endpoint).toBe("");
+  });
+
+  it("oss with OSS_DOMAIN set includes domain in credentials", () => {
+    const config = loadImageHostConfig({
+      IMAGE_HOST: "oss",
+      OSS_DOMAIN: "https://cdn.mysite.com",
+    });
+    expect(config.credentials.domain).toBe("https://cdn.mysite.com");
+  });
+
+  it("cos with COS_DOMAIN set includes domain in credentials", () => {
+    const config = loadImageHostConfig({
+      IMAGE_HOST: "cos",
+      COS_DOMAIN: "https://cdn.mysite.com",
+    });
+    expect(config.credentials.domain).toBe("https://cdn.mysite.com");
+  });
+
+  it("custom with token and responseUrlField set includes both in credentials", () => {
+    const config = loadImageHostConfig({
+      IMAGE_HOST: "custom",
+      CUSTOM_UPLOAD_ENDPOINT: "https://upload.example.com",
+      CUSTOM_UPLOAD_TOKEN: "tok",
+      CUSTOM_RESPONSE_URL_FIELD: "url",
+    });
+    expect(config.credentials.token).toBe("tok");
+    expect(config.credentials.responseUrlField).toBe("url");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// local adapter: branch coverage — contentType not in MIME map, filename ext handling
+// ---------------------------------------------------------------------------
+
+describe("createLocalAdapter: branch coverage — extension derivation", () => {
+  let tmpDir: string;
+
+  beforeEach(() => {
+    tmpDir = join(tmpdir(), `wf-local-ext-test-${Date.now()}`);
+    mkdirSync(tmpDir, { recursive: true });
+  });
+
+  afterEach(() => {
+    rmSync(tmpDir, { recursive: true, force: true });
+  });
+
+  it("unknown contentType but filename has allowed ext (.png) — result filename ends with .png", async () => {
+    const adapter = createLocalAdapter({
+      baseDir: tmpDir,
+      publicBaseUrl: "https://cdn.example.com/images",
+    });
+
+    const data = new Uint8Array([0x01, 0x02]);
+    const result = await adapter.upload(data, {
+      filename: "photo.png",
+      contentType: "application/octet-stream",
+    });
+
+    expect(result.url).toMatch(/\.png$/);
+  });
+
+  it("unknown contentType and filename ext not in allowlist (.exe) — result filename ends with .bin", async () => {
+    const adapter = createLocalAdapter({
+      baseDir: tmpDir,
+      publicBaseUrl: "https://cdn.example.com/images",
+    });
+
+    const data = new Uint8Array([0x01, 0x02]);
+    const result = await adapter.upload(data, {
+      filename: "malware.exe",
+      contentType: "application/octet-stream",
+    });
+
+    expect(result.url).toMatch(/\.bin$/);
+  });
 });

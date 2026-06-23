@@ -127,4 +127,29 @@ describe("createOssAdapter", () => {
     const adapter = createOssAdapter(testConfig);
     expect(adapter.name).toBe("oss");
   });
+
+  it("upload with empty filename falls back to upload_<timestamp> key (non-empty)", async () => {
+    const { httpRequest, calls } = makeHttpRequest();
+    const adapter = createOssAdapter(testConfig, { httpRequest });
+    await adapter.upload(new Uint8Array([1, 2, 3]), {
+      filename: "",
+      contentType: "image/jpeg",
+    });
+    const urlPath = new URL(calls[0]?.url ?? "").pathname;
+    expect(urlPath.length).toBeGreaterThan(1);
+    expect(urlPath).toMatch(/^\/upload_\d+$/);
+  });
+
+  it("upload with domain config uses domain in returned URL", async () => {
+    const { httpRequest } = makeHttpRequest();
+    const adapter = createOssAdapter(
+      { ...testConfig, domain: "https://cdn.custom.com" },
+      { httpRequest }
+    );
+    const result = await adapter.upload(new Uint8Array([1, 2, 3]), {
+      filename: "img.jpg",
+      contentType: "image/jpeg",
+    });
+    expect(result.url.startsWith("https://cdn.custom.com/")).toBe(true);
+  });
 });
