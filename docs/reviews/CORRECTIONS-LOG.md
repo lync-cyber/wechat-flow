@@ -58,3 +58,17 @@ deps: []
 - 基线/推荐: arch M-002 管线序列含 stage 4 ruleset(applyRuleset)，应有任务卡承载 renderMarkdown 接线
 - 实际/选择: 无任务卡承载该接线；T-019 以占位空 DiagnosticReport 满足字面 AC；orchestrator 以 T-019 continuation 补真实接线后再进 T-109
 - 偏差类型: upstream-gap (dev-plan 任务分解遗漏 M-002↔M-003 集成点)
+
+### 2026-06-23 | tech-lead | development
+- 触发信号: review-flag
+- 问题/假设: dev-plan T-091 AC 是否完整覆盖 arch#§3.6 API-032 契约定义的全部响应/安全路径?
+- 基线/推荐: ARCH API-032 契约定义 401 E_AUTH(oauth token 验证失败) + 403 E_PERMISSION_DENIED(X-Editor-Origin 白名单/IP 反滥用) 安全路径
+- 实际/选择: dev-plan T-091 AC-001..005 未覆盖 oauth 验签与 origin 白名单两条安全路径; 仅在 GREEN 后 code-review 由 reviewer 标 HIGH(R-001/R-002) 才补实现
+- 偏差类型: upstream-gap
+
+### 2026-06-23 | tech-lead | development
+- 触发信号: review-flag
+- 问题/假设: dev-plan T-119 AC 是否覆盖 arch#API-034 registerVariant 的完整错误码?
+- 基线/推荐: ARCH API-034 定义 E_SCHEMA/E_BLOCK_NOT_FOUND/E_SLOT_UNKNOWN 三错误码 + slots 校验
+- 实际/选择: dev-plan T-119 AC 仅含 whitelist+conflict, 缺三错误码与显式 slots 模型; T-122 切片补齐
+- 偏差类型: upstream-gap
