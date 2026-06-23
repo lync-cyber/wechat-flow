@@ -41,6 +41,7 @@
     "happy-dom": "^20.10.2",
     "hast-util-from-html": "^2.0.3",
     "hast-util-to-html": "^9.0.5",
+    "hono": "^4.9.0",
     "lefthook": "^2.1.9",
     "secretlint": "^13.0.2",
     "turbo": "^2.3.3",
