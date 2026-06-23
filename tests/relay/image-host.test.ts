@@ -144,6 +144,54 @@ describe("loadImageHostConfig: reads kind and credentials exclusively from env",
     expect(config.credentials.secretKey).toBe("sk-abc");
   });
 
+  it("oss credentials read accessKeyId/secret/bucket/region from env", () => {
+    const config = loadImageHostConfig({
+      IMAGE_HOST: "oss",
+      OSS_ACCESS_KEY_ID: "oss-id",
+      OSS_ACCESS_KEY_SECRET: "oss-sec",
+      OSS_BUCKET: "oss-bucket",
+      OSS_REGION: "oss-cn-hangzhou",
+    });
+
+    expect(config.kind).toBe("oss");
+    expect(config.credentials.accessKeyId).toBe("oss-id");
+    expect(config.credentials.accessKeySecret).toBe("oss-sec");
+    expect(config.credentials.region).toBe("oss-cn-hangzhou");
+  });
+
+  it("cos credentials read secretId/secretKey/bucket/region from env", () => {
+    const config = loadImageHostConfig({
+      IMAGE_HOST: "cos",
+      COS_SECRET_ID: "cos-sid",
+      COS_SECRET_KEY: "cos-sk",
+      COS_BUCKET: "cos-b-1250000000",
+      COS_REGION: "ap-guangzhou",
+    });
+
+    expect(config.kind).toBe("cos");
+    expect(config.credentials.secretId).toBe("cos-sid");
+    expect(config.credentials.region).toBe("ap-guangzhou");
+  });
+
+  it("smms credentials read token from env", () => {
+    const config = loadImageHostConfig({ IMAGE_HOST: "smms", SMMS_TOKEN: "smms-tok" });
+
+    expect(config.kind).toBe("smms");
+    expect(config.credentials.token).toBe("smms-tok");
+  });
+
+  it("custom credentials read endpoint/token from env", () => {
+    const config = loadImageHostConfig({
+      IMAGE_HOST: "custom",
+      CUSTOM_UPLOAD_ENDPOINT: "https://upload.example.com",
+      CUSTOM_UPLOAD_TOKEN: "custom-tok",
+    });
+
+    expect(config.kind).toBe("custom");
+    expect(config.credentials.endpoint).toBe("https://upload.example.com");
+    expect(config.credentials.token).toBe("custom-tok");
+  });
+
   it("throws (or returns error-state config) when IMAGE_HOST env var is missing", () => {
     // Credentials must not bleed in from some other source; missing config should error
     expect(() =>
@@ -180,7 +228,45 @@ describe("createAdapterFromConfig: builds the adapter selected by config.kind", 
     expect(adapter.name).toBe("qiniu");
   });
 
-  it("throws for an unsupported kind", () => {
-    expect(() => createAdapterFromConfig({ kind: "oss", credentials: {} })).toThrow();
+  it("returns an oss adapter for kind='oss'", () => {
+    const adapter = createAdapterFromConfig({
+      kind: "oss",
+      credentials: {
+        accessKeyId: "ak",
+        accessKeySecret: "sk",
+        bucket: "b",
+        region: "oss-cn-hangzhou",
+      },
+    });
+    expect(adapter.name).toBe("oss");
+  });
+
+  it("returns a cos adapter for kind='cos'", () => {
+    const adapter = createAdapterFromConfig({
+      kind: "cos",
+      credentials: {
+        secretId: "sid",
+        secretKey: "sk",
+        bucket: "b-1250000000",
+        region: "ap-guangzhou",
+      },
+    });
+    expect(adapter.name).toBe("cos");
+  });
+
+  it("returns a smms adapter for kind='smms'", () => {
+    const adapter = createAdapterFromConfig({
+      kind: "smms",
+      credentials: { token: "tok" },
+    });
+    expect(adapter.name).toBe("smms");
+  });
+
+  it("returns a custom adapter for kind='custom'", () => {
+    const adapter = createAdapterFromConfig({
+      kind: "custom",
+      credentials: { endpoint: "https://upload.example.com" },
+    });
+    expect(adapter.name).toBe("custom");
   });
 });

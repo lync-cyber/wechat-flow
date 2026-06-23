@@ -445,3 +445,4 @@
 {"ts": "2026-06-23T03:10:15+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD GREEN: T-033 图片 proxy core + qiniu（oss/cos/smms/custom deferred）"}
 {"ts": "2026-06-23T03:32:51+00:00", "event": "review_verdict", "phase": "development", "detail": "T-033 code-review r1: 3 HIGH (R-001 未挂载 index/R-002 扩展名 CWE-434/R-003 upload 无 try-catch) + 4 MEDIUM + 2 LOW", "agent": "reviewer", "status": "needs_revision"}
 {"ts": "2026-06-23T03:32:52+00:00", "event": "revision_start", "phase": "development", "detail": "T-033 修复 R-001/002/003 HIGH + R-004/R-005 + R-006 测试；R-007/8/9 deferred", "agent": "implementer"}
+{"ts": "2026-06-23T03:51:31+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-033 云适配器补齐 oss/cos/smms/custom"}

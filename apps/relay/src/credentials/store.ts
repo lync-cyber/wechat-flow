@@ -33,5 +33,53 @@ export function loadImageHostConfig(env: Record<string, string | undefined>): Im
     };
   }
 
+  if (kind === "oss") {
+    return {
+      kind: "oss",
+      credentials: {
+        accessKeyId: env.OSS_ACCESS_KEY_ID ?? "",
+        accessKeySecret: env.OSS_ACCESS_KEY_SECRET ?? "",
+        bucket: env.OSS_BUCKET ?? "",
+        region: env.OSS_REGION ?? "",
+        ...(env.OSS_DOMAIN ? { domain: env.OSS_DOMAIN } : {}),
+      },
+    };
+  }
+
+  if (kind === "cos") {
+    return {
+      kind: "cos",
+      credentials: {
+        secretId: env.COS_SECRET_ID ?? "",
+        secretKey: env.COS_SECRET_KEY ?? "",
+        bucket: env.COS_BUCKET ?? "",
+        region: env.COS_REGION ?? "",
+        ...(env.COS_DOMAIN ? { domain: env.COS_DOMAIN } : {}),
+      },
+    };
+  }
+
+  if (kind === "smms") {
+    return {
+      kind: "smms",
+      credentials: {
+        token: env.SMMS_TOKEN ?? "",
+      },
+    };
+  }
+
+  if (kind === "custom") {
+    return {
+      kind: "custom",
+      credentials: {
+        endpoint: env.CUSTOM_UPLOAD_ENDPOINT ?? "",
+        ...(env.CUSTOM_UPLOAD_TOKEN ? { token: env.CUSTOM_UPLOAD_TOKEN } : {}),
+        ...(env.CUSTOM_RESPONSE_URL_FIELD
+          ? { responseUrlField: env.CUSTOM_RESPONSE_URL_FIELD }
+          : {}),
+      },
+    };
+  }
+
   throw new Error(`Unsupported IMAGE_HOST kind: ${kind}`);
 }
