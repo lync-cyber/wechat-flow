@@ -1,5 +1,10 @@
 import { serve } from "@hono/node-server";
-import { app } from "./index.ts";
+import { loadImageHostConfig } from "./credentials/store.ts";
+import { createAdapterFromConfig } from "./image-host/factory.ts";
+import { createApp } from "./index.ts";
+
+const imagesAdapter = createAdapterFromConfig(loadImageHostConfig(process.env));
+const app = createApp({ imagesAdapter });
 
 const port = Number(process.env.PORT ?? 3000);
 
