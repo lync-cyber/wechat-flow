@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-06-22T14:27:23.688470+00:00",
+  "generated_at": "2026-06-23T14:10:56.325655+00:00",
   "documents": {
     "arch-wechat-flow-api": {
       "file_path": "docs/arch/arch-wechat-flow-api.md",
@@ -1956,6 +1956,16 @@
       "content_hash": "d3232d2a",
       "sections": {}
     },
+    "feedback-bug-feedback-aggregator-cataforge-core-feedback-feedback_corre": {
+      "file_path": "docs/feedback/bug-feedback-aggregator-paren-20260623.md",
+      "doc_type": "framework-feedback",
+      "volume": "main",
+      "status": "approved",
+      "total_lines": 203,
+      "est_tokens": 3183,
+      "content_hash": "fa18ea11",
+      "sections": {}
+    },
     "feedback-bug-kg-迁移三个正交-bug-在-0-8-0-main-1c7bbca-仍未修复-修复曾落在-cataforge-本地": {
       "file_path": "docs/feedback/bug-kg-migration-three-bugs-20260611.md",
       "doc_type": "framework-feedback",
@@ -2034,6 +2044,16 @@
       "total_lines": 27,
       "est_tokens": 423,
       "content_hash": "8366fe2c",
+      "sections": {}
+    },
+    "feedback-correction-export-2-upstream-gap-signals": {
+      "file_path": "docs/feedback/upstream-gap-20260623.md",
+      "doc_type": "framework-feedback",
+      "volume": "main",
+      "status": "approved",
+      "total_lines": 38,
+      "est_tokens": 629,
+      "content_hash": "171e5eb4",
       "sections": {}
     },
     "prd-wechat-flow-f001-f014": {
@@ -2381,9 +2401,9 @@
       "doc_type": "correction-log",
       "volume": "main",
       "status": "approved",
-      "total_lines": 60,
-      "est_tokens": 646,
-      "content_hash": "f2edd0fa",
+      "total_lines": 74,
+      "est_tokens": 882,
+      "content_hash": "5cac97b2",
       "sections": {}
     },
     "code-review-T-008-r1": {
@@ -2477,6 +2497,45 @@
         "T-016"
       ]
     },
+    "code-review-t-033-adapters-r1": {
+      "file_path": "docs/reviews/code/CODE-REVIEW-T-033-adapters-r1.md",
+      "doc_type": "code-review",
+      "volume": "main",
+      "status": "approved",
+      "total_lines": 116,
+      "est_tokens": 1595,
+      "content_hash": "f10e0bdd",
+      "sections": {},
+      "deps": [
+        "T-033"
+      ]
+    },
+    "code-review-t-033-r1": {
+      "file_path": "docs/reviews/code/CODE-REVIEW-T-033-r1.md",
+      "doc_type": "code-review",
+      "volume": "main",
+      "status": "approved",
+      "total_lines": 138,
+      "est_tokens": 2483,
+      "content_hash": "f22f62c3",
+      "sections": {},
+      "deps": [
+        "T-033"
+      ]
+    },
+    "code-review-t-033-r2": {
+      "file_path": "docs/reviews/code/CODE-REVIEW-T-033-r2.md",
+      "doc_type": "code-review",
+      "volume": "main",
+      "status": "approved",
+      "total_lines": 125,
+      "est_tokens": 1544,
+      "content_hash": "a1ae80a8",
+      "sections": {},
+      "deps": [
+        "T-033"
+      ]
+    },
     "code-review-T-036-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-036-r1.md",
       "doc_type": "code-review",
@@ -2501,6 +2560,32 @@
       "sections": {},
       "deps": [
         "T-036"
+      ]
+    },
+    "code-review-t-091-r1": {
+      "file_path": "docs/reviews/code/CODE-REVIEW-T-091-r1.md",
+      "doc_type": "code-review",
+      "volume": "main",
+      "status": "approved",
+      "total_lines": 129,
+      "est_tokens": 2172,
+      "content_hash": "83fd0538",
+      "sections": {},
+      "deps": [
+        "T-091"
+      ]
+    },
+    "code-review-t-091-r2": {
+      "file_path": "docs/reviews/code/CODE-REVIEW-T-091-r2.md",
+      "doc_type": "code-review",
+      "volume": "main",
+      "status": "approved",
+      "total_lines": 146,
+      "est_tokens": 2000,
+      "content_hash": "cbc86c96",
+      "sections": {},
+      "deps": [
+        "T-091"
       ]
     },
     "code-review-T-094-r1": {
