@@ -5,10 +5,13 @@ title = "wechat-flow gitleaks 配置"
 useDefault = true
 
 [allowlist]
-description = "全局忽略路径：锁文件 / 变异测试沙盒 / 文档 / 二进制资产"
+description = "全局忽略路径：锁文件 / 变异测试沙盒 / 文档 / 二进制资产；及 relay 单测确定性伪凭据夹具"
 paths = [
   '''pnpm-lock\.yaml''',
   '''\.stryker-tmp/''',
   '''docs/.*\.md$''',
   '''.*\.(png|jpe?g|gif|svg|ico|woff2?)$''',
+]
+regexes = [
+  '''wf_sk_aaaabbbbccccdddd1111222233334444''',
 ]
