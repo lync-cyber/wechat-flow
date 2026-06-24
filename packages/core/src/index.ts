@@ -56,3 +56,15 @@ export {
   CSS_SAFE_PROPERTIES,
   isWhitelistedProperty,
 } from "./registry/css-property-whitelist.ts";
+export {
+  defineTemplate,
+  listThemeTemplates,
+  describeTemplate,
+  resetTemplateRegistry,
+} from "./registry/template.ts";
+export type { TemplateMeta, CoverageReport } from "./registry/template.ts";
+export {
+  validateTemplateCoverage,
+  validateThemeTemplates,
+} from "./theme-guard/template-coverage.ts";
+export type { ThemeTemplateValidationResult } from "./theme-guard/template-coverage.ts";

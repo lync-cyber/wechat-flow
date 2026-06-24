@@ -4,6 +4,7 @@ import { dividerBlocks } from "./blocks/divider.ts";
 import { headingBlocks } from "./blocks/heading.ts";
 import { paragraphBlocks } from "./blocks/paragraph.ts";
 import { quoteBlocks } from "./blocks/quote.ts";
+import { templates } from "./templates/index.ts";
 import { tokens } from "./tokens.ts";
 
 const literaryTheme: ThemeDefinition = {
@@ -27,6 +28,7 @@ const literaryTheme: ThemeDefinition = {
       minRatio: 6.8,
     },
   },
+  templates,
 };
 
 export default literaryTheme;

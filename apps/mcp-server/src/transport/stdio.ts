@@ -2,6 +2,8 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { type ApiKeyStore, verifyApiKey } from "../auth/api-key.ts";
 import { registerBuiltins } from "../bootstrap.ts";
+import type { JobsClient } from "../jobs/client.ts";
+import { makeNotImplementedJobsClient } from "../jobs/client.ts";
 import { registerAllTools } from "../tools/router.ts";
 
 export interface ServerDeps {
@@ -9,6 +11,7 @@ export interface ServerDeps {
   version?: string;
   apiKeyStore?: ApiKeyStore;
   rawApiKey?: string;
+  jobsClient?: JobsClient;
 }
 
 export function createServer(deps?: ServerDeps): McpServer {
@@ -19,7 +22,8 @@ export function createServer(deps?: ServerDeps): McpServer {
   });
   const store: ApiKeyStore = deps?.apiKeyStore ?? new Map();
   const keyRecord = verifyApiKey(deps?.rawApiKey, store);
-  registerAllTools(server, keyRecord);
+  const jobsClient = deps?.jobsClient ?? makeNotImplementedJobsClient();
+  registerAllTools(server, keyRecord, jobsClient);
   return server;
 }
 

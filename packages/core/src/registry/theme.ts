@@ -1,4 +1,5 @@
 import type { ThemeDefinition, ThemeListEntry } from "@wechat-flow/contracts";
+import { defineTemplate } from "./template.ts";
 
 const store = new Map<string, ThemeDefinition>();
 
@@ -8,6 +9,14 @@ export function registerTheme(definition: ThemeDefinition): void {
     assets: {},
     ...definition,
   });
+  for (const tpl of definition.templates ?? []) {
+    defineTemplate({
+      themeId: definition.id,
+      templateId: tpl.templateId,
+      markdown: tpl.markdown ?? "",
+      metadata: tpl.metadata ?? {},
+    });
+  }
 }
 
 export function listThemes(): ThemeListEntry[] {

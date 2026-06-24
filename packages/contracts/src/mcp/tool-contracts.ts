@@ -104,8 +104,17 @@ export const getRulesetVersionRequestSchema = z.looseObject({});
 export const getRulesetVersionResponseSchema = z.looseObject({});
 
 // ---- describe_template (API-033) ----
-export const describeTemplateRequestSchema = z.looseObject({});
-export const describeTemplateResponseSchema = z.looseObject({});
+export const describeTemplateRequestSchema = z.object({
+  themeId: z.string(),
+  templateId: z.string(),
+});
+export const describeTemplateResponseSchema = z.object({
+  themeId: z.string().optional(),
+  templateId: z.string().optional(),
+  markdown: z.string().optional(),
+  metadata: z.object({ description: z.string().optional() }).optional(),
+  code: z.string().optional(),
+});
 
 /**
  * Registry of all 24 Tool request schemas (20 sync + 4 async).
