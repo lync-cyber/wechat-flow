@@ -4,6 +4,7 @@ import { dividerBlocks } from "./blocks/divider.ts";
 import { headingBlocks } from "./blocks/heading.ts";
 import { paragraphBlocks } from "./blocks/paragraph.ts";
 import { quoteBlocks } from "./blocks/quote.ts";
+import { templates } from "./templates/index.ts";
 import { tokens } from "./tokens.ts";
 
 const techTheme: ThemeDefinition = {
@@ -27,6 +28,7 @@ const techTheme: ThemeDefinition = {
       minRatio: 8.2,
     },
   },
+  templates,
 };
 
 export default techTheme;

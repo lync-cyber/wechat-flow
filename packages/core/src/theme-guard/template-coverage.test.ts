@@ -6,6 +6,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { beforeEach, describe, expect, it } from "vitest";
 import { defineTemplate, resetTemplateRegistry } from "../registry/template.ts";
+import { registerTheme } from "../registry/theme.ts";
 import { validateTemplateCoverage, validateThemeTemplates } from "./template-coverage.ts";
 
 const THEMES_DIR = join(process.cwd(), "packages/themes");
@@ -429,13 +430,8 @@ describe("AC-005: each built-in theme ≥1 template passes coverage guard (real 
     });
 
     it(`theme '${themeId}': at least one template passes validateThemeTemplates after package load`, async () => {
-      try {
-        await import(`../../../../packages/themes/${themeId}/src/templates/index.ts`);
-      } catch {
-        throw new Error(
-          `packages/themes/${themeId}/src/templates/index.ts not found — GREEN must create it`
-        );
-      }
+      const theme = (await import(`../../../../packages/themes/${themeId}/src/index.ts`)).default;
+      registerTheme(theme);
 
       const result = validateThemeTemplates(themeId);
       const anyPassing = result.templates.some((t) => t.coverage.pass);

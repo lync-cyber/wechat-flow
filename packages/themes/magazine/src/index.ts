@@ -4,6 +4,7 @@ import { dividerBlocks } from "./blocks/divider.ts";
 import { headingBlocks } from "./blocks/heading.ts";
 import { paragraphBlocks } from "./blocks/paragraph.ts";
 import { quoteBlocks } from "./blocks/quote.ts";
+import { templates } from "./templates/index.ts";
 import { tokens } from "./tokens.ts";
 
 const magazineTheme: ThemeDefinition = {
@@ -27,6 +28,7 @@ const magazineTheme: ThemeDefinition = {
       minRatio: 5.2,
     },
   },
+  templates,
 };
 
 export default magazineTheme;

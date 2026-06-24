@@ -10,6 +10,7 @@ import {
   listThemeTemplates,
   resetTemplateRegistry,
 } from "../../../packages/core/src/registry/template.ts";
+import { registerTheme } from "../../../packages/core/src/registry/theme.ts";
 
 beforeEach(() => {
   resetTemplateRegistry();
@@ -116,8 +117,9 @@ describe("AC-002: each built-in theme has ≥1 template entry after package load
 
   for (const themeId of BUILTIN_THEMES) {
     it(`listThemeTemplates('${themeId}') returns ≥1 template`, async () => {
-      // Side-effect import triggers template registration for the theme package
-      await import(`../../../packages/themes/${themeId}/src/templates/index.ts`);
+      // Theme package exposes templates as data; registerTheme persists them
+      const theme = (await import(`../../../packages/themes/${themeId}/src/index.ts`)).default;
+      registerTheme(theme);
       const list = listThemeTemplates(themeId);
       expect(list.length).toBeGreaterThanOrEqual(1);
       // Each entry must have templateId and description (not just existence)

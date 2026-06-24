@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { templateDefinitionSchema } from "./template-definition.ts";
 
 export const themeTokensSchema = z.record(z.string(), z.string());
 
@@ -30,6 +31,7 @@ export const themeDefinitionSchema = z.object({
   paintable: paintableSchema.optional(),
   assets: z.record(z.string(), z.unknown()).optional(),
   meta: themeMetaSchema.optional(),
+  templates: z.array(templateDefinitionSchema).optional(),
 });
 
 export const themeListEntrySchema = z.object({

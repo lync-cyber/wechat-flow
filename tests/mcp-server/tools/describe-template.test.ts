@@ -2,9 +2,8 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { registerBuiltins } from "../../../apps/mcp-server/src/bootstrap.ts";
 import { describeTemplateTool } from "../../../apps/mcp-server/src/tools/describe-template.ts";
 
-beforeAll(async () => {
+beforeAll(() => {
   registerBuiltins();
-  await import("../../../packages/themes/default/src/templates/index.ts");
 });
 
 // ---- AC-006: describe_template(default, starter) → themeId / templateId / markdown / metadata ----
