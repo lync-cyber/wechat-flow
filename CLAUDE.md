@@ -39,7 +39,7 @@
   - 修复(5 debugger 并行按包): 3 HIGH(SR-A-002 onCopyHtml→use-toast 队列·SR-A-001 真实 simulatePaste 集成测试·SR-C-001 describe-theme→listThemeTemplates) + ~17 MEDIUM/LOW(SSE 泄漏·POST 校验·pool 并发单例·not-implemented 错误码·死参移除·错误分类内聚·schema discriminatedUnion) + dev-plan s4 校正(AC-004 error→warning + 3 路径, v0.5.2) + template-coverage 测试改 fs 读 fixture(去 core→themes 反向依赖)。
   - 前序合 main: T-039+T-092([PR #16](https://github.com/lync-cyber/wechat-flow/pull/16) merge 13fdebe)·relay-jobs(PR #15)·relay-backend+6图床(PR #12)·MCP 24Tool(PR #10)·L3 cascade(PR #6)·输出 T-030/031(PR #8)·framework 0.14.0(PR #14)。
   - 运行学习(①-⑰)见 [.cataforge/learnings/registry-archive.md](.cataforge/learnings/registry-archive.md)。
-- 下一步行动: **提交 fix 分支 + 开 PR（sprint-review 修复）+ framework-feedback 上报本轮发现**。其后 Sprint 4 余下全部 DESIGN 门禁 —— T-102/105/106 [DESIGN] Penpot 视觉稿需用户 sign-off 解锁 UI 页 T-040/041/042/093 + T-111 [VALIDATION]；无 DESIGN 推进则 feature 侧到此。housekeeping: 5 陈旧本地分支已清理(仅剩 main)。
+- 下一步行动: **fix 分支已提交(b38964a 代码 + a912b5c 文档 + feedback bundle)，开 PR 待 CI/review/merge**。framework-feedback 本轮 4 项已上报 [CataForge#374](https://github.com/lync-cyber/CataForge/issues/374)。其后 Sprint 4 余下全部 DESIGN 门禁 —— T-102/105/106 [DESIGN] Penpot 视觉稿需用户 sign-off 解锁 UI 页 T-040/041/042/093 + T-111 [VALIDATION]；无 DESIGN 推进则 feature 侧到此。housekeeping: 5 陈旧本地分支已清理(仅剩 main)。
 - 已完成阶段: [requirements, architecture, ui_design, dev_planning, cross_doc_amendment_r2, arch_special_review_css_inlining, dev_plan_amendment_custom_styles]
 - 当前Sprint: Sprint 4（收尾）— feature 侧全完成并合 main（PR #6/#8/#10/#12/#14/#15/#16），sprint-review 修复待 PR。余全部 DESIGN 门禁：T-040/041/042/093（待 T-102/105/106 Penpot sign-off）+ T-111（VALIDATION）。Sprint 0-3(PR #1/#2/#6/#7)。
 - 待办(deferred):
@@ -47,7 +47,7 @@
   - **T-033**: editor-session/images 路由整合(待 auth 中间件)·qiniu 缺凭据静默回退·PNG/WebP EXIF 测试·AC-002b 2.5MB 压缩未追求(仅 10MB 硬限)；云适配器: COS Content-Type 签名·OSS auth 断言·oss/cos/smms/custom env-gated 集成测试缺。
   - **T-092**: AC-006 富响应(coveredElements/mdastSummary/dependencies)延后；card AC-004 字段名 vs ARCH ThemeTemplateValidationResult(以 ARCH 为准, accepted)。
   - **sprint-review s4 余项**: SR-B-003 jobs 鉴权(并入 auth 中间件)·iframe sandbox XSS happy-dom 假绿→Playwright E2E(T-058)·juice/client 跨运行时 bundle。
-  - **upstream/CataForge**: T-119/T-091 AC 欠拟合 arch#API→[#357](https://github.com/lync-cyber/CataForge/issues/357)·feedback aggregator 解析脆弱→[#358](https://github.com/lync-cyber/CataForge/issues/358)·deploy --rebuild wipe([#340](https://github.com/lync-cyber/CataForge/issues/340))·design_tool 重置([#350](https://github.com/lync-cyber/CataForge/issues/350))·#254/#255+fb-0.11.1 待提交·本轮新发现(超长行/scoped-test gap/动态 import 绕守卫)经 framework-feedback 上报。
+  - **upstream/CataForge**: T-119/T-091 AC 欠拟合 arch#API→[#357](https://github.com/lync-cyber/CataForge/issues/357)·feedback aggregator 解析脆弱→[#358](https://github.com/lync-cyber/CataForge/issues/358)·deploy --rebuild wipe([#340](https://github.com/lync-cyber/CataForge/issues/340))·design_tool 重置([#350](https://github.com/lync-cyber/CataForge/issues/350))·#254/#255+fb-0.11.1 待提交·本轮新发现(超长行/scoped-test gap/动态 import 绕守卫/sprint-review L1 噪声)已上报 [#374](https://github.com/lync-cyber/CataForge/issues/374)。
 - 文档状态:
   - prd: approved
   - arch: approved
