@@ -10,12 +10,18 @@ export function createPlaywrightPool(opts?: { size?: number }): PlaywrightPool {
   const size = opts?.size ?? 1;
   const browsers: Browser[] = [];
   let nextIndex = 0;
+  let initPromise: Promise<void> | null = null;
 
-  async function ensureBrowsers(): Promise<void> {
-    while (browsers.length < size) {
-      const browser = await chromium.launch({ headless: true, channel: "chromium" });
-      browsers.push(browser);
+  function ensureBrowsers(): Promise<void> {
+    if (!initPromise) {
+      initPromise = (async () => {
+        while (browsers.length < size) {
+          const browser = await chromium.launch({ headless: true, channel: "chromium" });
+          browsers.push(browser);
+        }
+      })();
     }
+    return initPromise;
   }
 
   async function withPage<T>(fn: (page: Page) => Promise<T>): Promise<T> {
@@ -33,6 +39,7 @@ export function createPlaywrightPool(opts?: { size?: number }): PlaywrightPool {
   async function close(): Promise<void> {
     await Promise.all(browsers.map((b) => b.close()));
     browsers.length = 0;
+    initPromise = null;
   }
 
   return { withPage, close };

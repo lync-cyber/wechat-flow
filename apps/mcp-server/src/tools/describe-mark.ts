@@ -1,6 +1,6 @@
 import { describeMark } from "@wechat-flow/core";
 
-const MARK_ATTRS_SCHEMA = { type: "object", properties: {} } as const;
+const EMPTY_ATTRS_SCHEMA = { type: "object", properties: {} } as const;
 
 export function describeMarkTool(args: Record<string, unknown>) {
   const markId = String(args.markId ?? "");
@@ -10,6 +10,6 @@ export function describeMarkTool(args: Record<string, unknown>) {
     id: mark.id,
     name: mark.name,
     style: mark.style,
-    attrsSchema: MARK_ATTRS_SCHEMA,
+    attrsSchema: EMPTY_ATTRS_SCHEMA,
   };
 }

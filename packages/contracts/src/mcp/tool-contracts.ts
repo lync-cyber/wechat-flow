@@ -108,13 +108,15 @@ export const describeTemplateRequestSchema = z.object({
   themeId: z.string(),
   templateId: z.string(),
 });
-export const describeTemplateResponseSchema = z.object({
-  themeId: z.string().optional(),
-  templateId: z.string().optional(),
-  markdown: z.string().optional(),
-  metadata: z.object({ description: z.string().optional() }).optional(),
-  code: z.string().optional(),
-});
+export const describeTemplateResponseSchema = z.union([
+  z.object({
+    themeId: z.string(),
+    templateId: z.string(),
+    markdown: z.string(),
+    metadata: z.object({ description: z.string().optional() }),
+  }),
+  z.object({ code: z.string() }),
+]);
 
 /**
  * Registry of all 24 Tool request schemas (20 sync + 4 async).

@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { beforeEach, describe, expect, it } from "vitest";
@@ -158,5 +160,12 @@ describe("AC-006: 入参 schema 校验失败返回 E_SCHEMA", () => {
       style: {},
     });
     expect(res.code).toBe("E_SCHEMA");
+  });
+});
+
+describe("AC-007: production path — register_variant 已挂载到 router", () => {
+  it("apps/mcp-server/src/tools/router.ts 含 register_variant 注册语句", () => {
+    const src = readFileSync(join(process.cwd(), "apps/mcp-server/src/tools/router.ts"), "utf-8");
+    expect(src).toMatch(/register_variant/);
   });
 });

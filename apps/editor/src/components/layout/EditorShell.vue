@@ -4,6 +4,7 @@ import { describeTheme, listThemes, registerTheme } from "@wechat-flow/core";
 import { type ComponentPublicInstance, computed, onMounted, onUnmounted, ref } from "vue";
 import { useBidirectionalHighlight } from "../../composables/use-bidirectional-highlight.ts";
 import { useSplitterWidth } from "../../composables/use-splitter-width";
+import { useToast } from "../../composables/use-toast.ts";
 import type { CommandDefinition } from "../../lib/command-registry.ts";
 import { buildEditorCommands } from "../../lib/command-registry.ts";
 import { useEditorStore } from "../../stores/editor.ts";
@@ -21,6 +22,7 @@ import StatusBar from "./StatusBar.vue";
 import TopBar from "./TopBar.vue";
 
 const editorStore = useEditorStore();
+const { pushToast } = useToast();
 
 // Component refs for bidirectional highlight wiring
 const previewPaneRef = ref<
@@ -173,7 +175,7 @@ function onCopyHtml(): void {
   composeCopy({
     markdown: editorStore.content,
     themeId: editorStore.currentTheme,
-    notify: () => {},
+    notify: pushToast,
   });
 }
 

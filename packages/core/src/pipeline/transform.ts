@@ -5,7 +5,6 @@ import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 import { describeBlock } from "../registry/block.ts";
 import { describeMark } from "../registry/mark.ts";
-import type { RenderOptions } from "../types.ts";
 
 interface DirectiveNode extends Node {
   type: "textDirective" | "containerDirective" | "leafDirective";
@@ -78,11 +77,7 @@ function visitContainerDirectives(tree: MdastRoot, diagnostics: Diagnostic[] | u
   walk(tree);
 }
 
-export function transformToHast(
-  mdast: MdastRoot,
-  options?: RenderOptions,
-  diagnostics?: Diagnostic[]
-): HastRoot {
+export function transformToHast(mdast: MdastRoot, diagnostics?: Diagnostic[]): HastRoot {
   visitTextDirectives(mdast);
   visitContainerDirectives(mdast, diagnostics);
   const processor = unified().use(remarkRehype, { allowDangerousHtml: false });

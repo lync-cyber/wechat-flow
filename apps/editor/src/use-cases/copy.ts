@@ -13,6 +13,10 @@ export async function composeCopy(input: ComposeCopyInput): Promise<void> {
   const { filteredHtml } = simulatePaste(rendered.html);
   const plainText = rendered.html.replace(/<[^>]+>/g, "");
   const payload = buildDualMimePayload(filteredHtml, plainText);
-  await navigator.clipboard.write(payload);
-  input.notify?.({ type: "success", message: "已复制到剪贴板" });
+  try {
+    await navigator.clipboard.write(payload);
+    input.notify?.({ type: "success", message: "已复制到剪贴板" });
+  } catch {
+    input.notify?.({ type: "error", message: "复制失败" });
+  }
 }

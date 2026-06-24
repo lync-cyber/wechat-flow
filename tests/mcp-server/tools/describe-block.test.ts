@@ -69,14 +69,21 @@ describe("AC-004: list_blocks returns ≥25 blocks", () => {
   });
 });
 
-// ---- AC-005/007: describe_theme('default') → paintable 存在 + templates 是数组 ----
+// ---- AC-005/007: describe_theme('default') → paintable 存在 + templates 含已注册 template ----
 
 describe("AC-005/007: describe_theme(default) has paintable field and templates array", () => {
-  it("describeThemeTool({ id: 'default' }) has paintable field and templates is an array", () => {
+  it("describeThemeTool({ id: 'default' }) has paintable field and templates with at least one entry", () => {
     const result = describeThemeTool({ id: "default" }) as Record<string, unknown>;
     expect(result).toHaveProperty("paintable");
     expect(result).toHaveProperty("templates");
     expect(Array.isArray(result.templates)).toBe(true);
+    const templates = result.templates as Array<{
+      templateId: string;
+      description: string | undefined;
+    }>;
+    expect(templates.length).toBeGreaterThanOrEqual(1);
+    expect(typeof templates[0].templateId).toBe("string");
+    expect(templates[0].templateId.length).toBeGreaterThan(0);
   });
 });
 

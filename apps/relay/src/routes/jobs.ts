@@ -21,6 +21,17 @@ export function createJobsApp(deps: JobsAppDeps): Hono {
     }
 
     const { kind, input, apiKeyId } = body;
+
+    if (typeof kind !== "string" || kind.length === 0) {
+      return c.json({ error: { code: "E_INVALID_REQUEST", message: "kind is required" } }, 400);
+    }
+    if (input === undefined) {
+      return c.json({ error: { code: "E_INVALID_REQUEST", message: "input is required" } }, 400);
+    }
+    if (typeof apiKeyId !== "string" || apiKeyId.length === 0) {
+      return c.json({ error: { code: "E_INVALID_REQUEST", message: "apiKeyId is required" } }, 400);
+    }
+
     const idempotencyKeyHeader = c.req.header("idempotency-key");
 
     if (idempotencyKeyHeader && idemStore) {
@@ -74,11 +85,20 @@ export function createJobsApp(deps: JobsAppDeps): Hono {
 
     return streamSSE(c, async (stream) => {
       await new Promise<void>((resolve) => {
+        let detached = false;
+        const safeDetach = () => {
+          if (!detached) {
+            detached = true;
+            bridge.detach();
+          }
+        };
+
         const bridge = createSseBridge({
           emitter: emitter ?? ({ on: () => {}, off: () => {}, emit: () => false } as never),
           onEvent: (event, data) => {
             stream.writeSSE({ event, data: JSON.stringify(data) }).catch(() => {});
             if (event === "succeeded" || event === "failed") {
+              safeDetach();
               resolve();
             }
           },
@@ -87,7 +107,7 @@ export function createJobsApp(deps: JobsAppDeps): Hono {
         bridge.attach(jobId);
 
         stream.onAbort(() => {
-          bridge.detach();
+          safeDetach();
           resolve();
         });
       });

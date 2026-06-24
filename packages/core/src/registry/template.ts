@@ -14,6 +14,7 @@ export type CoverageReport = {
 };
 
 const store = new Map<string, Map<string, TemplateDefinition>>();
+const knownThemeIds = new Set<string>();
 
 export function defineTemplate(input: {
   themeId: string;
@@ -22,6 +23,7 @@ export function defineTemplate(input: {
   metadata: { description?: string };
 }): void {
   const { themeId, templateId, markdown, metadata } = input;
+  knownThemeIds.add(themeId);
   if (!store.has(themeId)) {
     store.set(themeId, new Map());
   }
@@ -41,13 +43,14 @@ export function listThemeTemplates(themeId: string): TemplateMeta[] {
 }
 
 export function describeTemplate(themeId: string, templateId: string): TemplateDefinition {
+  if (!knownThemeIds.has(themeId)) throw new Error("E_THEME_NOT_FOUND");
   const themeMap = store.get(themeId);
-  if (!themeMap) throw new Error("E_TEMPLATE_NOT_FOUND");
-  const def = themeMap.get(templateId);
+  const def = themeMap?.get(templateId);
   if (!def) throw new Error("E_TEMPLATE_NOT_FOUND");
   return def;
 }
 
 export function resetTemplateRegistry(): void {
   store.clear();
+  knownThemeIds.clear();
 }

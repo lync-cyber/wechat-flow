@@ -40,7 +40,7 @@ export interface JobStateMachine {
   ): JobRecord;
 }
 
-export interface SseBridgeDeps {
+export interface CreateSseBridgeOpts {
   emitter: import("node:events").EventEmitter;
   onEvent: (event: string, data: unknown) => void;
   initialRecord?: JobRecord;

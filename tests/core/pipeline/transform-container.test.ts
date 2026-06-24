@@ -47,21 +47,24 @@ describe("AC-T121-002: 注册 my-variant 后渲染 callout 容器 style 含 vari
   });
 });
 
-// AC-T121-003: transformToHast options 被消费（不再是 _options 未读）
-describe("AC-T121-003: transformToHast options 被消费（不再是 _options 未读）", () => {
-  it("callout 容器展开时 options 被内部读取：HTML 含 data-block 且 themeId='magazine' 不产生 undefined 内容", async () => {
-    // The current _options parameter is unused — container directives are not expanded.
-    // GREEN must rename _options → options and use it inside the directive expansion path.
-    // This test verifies the container directive is expanded (data-block attribute present),
-    // which requires the transform to consume the options for context.
-    // If options is still unused (_options), containers won't be expanded → no data-block → FAIL.
-    const result = await renderMarkdown(":::callout\nx\n:::", { themeId: "magazine" });
+// AC-T121-003: container directive 渲染为正确的 data-block 容器结构
+describe("AC-T121-003: container directive 渲染为正确的 data-block 容器结构", () => {
+  it("callout 容器指令 → 含 data-block 和 data-variant 属性，嵌套内容完整", async () => {
+    const result = await renderMarkdown(":::callout{.warning}\n内容段落\n:::", {
+      themeId: "magazine",
+    });
 
-    // Container must be expanded with data-block attribute — requires options-aware transform
     expect(result.html).toMatch(/data-block="callout"/);
-
-    // No literal "undefined" strings should appear (options.themeId must be read, not treated as undefined)
+    expect(result.html).toMatch(/data-variant="warning"/);
+    expect(result.html).toMatch(/内容段落/);
     expect(result.html).not.toContain("undefined");
+  });
+
+  it("无 class 属性的 callout 指令 → data-variant='default'", async () => {
+    const result = await renderMarkdown(":::callout\nx\n:::", { themeId: "default" });
+
+    expect(result.html).toMatch(/data-block="callout"/);
+    expect(result.html).toMatch(/data-variant="default"/);
   });
 });
 

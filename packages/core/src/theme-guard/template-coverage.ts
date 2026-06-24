@@ -10,7 +10,8 @@ export type ThemeTemplateValidationResult = {
   failingTemplates: string[];
 };
 
-const NINE_REQUIRED = [
+// 9 structural categories (heading counts as 1); h1-h6 are individual detection targets.
+const REQUIRED_ELEMENTS = [
   "h1",
   "h2",
   "h3",
@@ -79,8 +80,8 @@ export function validateTemplateCoverage(
     }
   }
 
-  const coveredElements = NINE_REQUIRED.filter((e) => coveredElementSet.has(e));
-  const missingElements = NINE_REQUIRED.filter((e) => !coveredElementSet.has(e));
+  const coveredElements = REQUIRED_ELEMENTS.filter((e) => coveredElementSet.has(e));
+  const missingElements = REQUIRED_ELEMENTS.filter((e) => !coveredElementSet.has(e));
   const coveredBlocks = (CORE_BLOCKS as readonly string[]).filter((b) => coveredBlockSet.has(b));
   const missingBlocks = (CORE_BLOCKS as readonly string[]).filter((b) => !coveredBlockSet.has(b));
 

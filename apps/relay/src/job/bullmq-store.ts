@@ -13,8 +13,6 @@ interface JobMeta {
 
 const META_TTL = 86400;
 const metaKey = (jobId: string) => `jobmeta:${jobId}`;
-const idemIndexKey = (apiKeyId: string, idempotencyKey: string) =>
-  `jobidem:${apiKeyId}:${idempotencyKey}`;
 
 export interface BullmqJobStoreDeps {
   redis: Redis;
@@ -74,22 +72,13 @@ export function createBullmqJobStore(deps: BullmqJobStoreDeps): JobStore {
       createdAt: record.createdAt,
     };
     await redis.set(metaKey(record.jobId), JSON.stringify(meta), "EX", META_TTL);
-    if (record.idempotencyKey) {
-      await redis.set(
-        idemIndexKey(record.apiKeyId, record.idempotencyKey),
-        record.jobId,
-        "EX",
-        META_TTL
-      );
-    }
   }
 
   async function findByIdempotency(
-    apiKeyId: string,
-    idempotencyKey: string
+    _apiKeyId: string,
+    _idempotencyKey: string
   ): Promise<JobRecord | null> {
-    const jobId = await redis.get(idemIndexKey(apiKeyId, idempotencyKey));
-    return jobId ? get(jobId) : null;
+    return null;
   }
 
   return { get, upsert, findByIdempotency };

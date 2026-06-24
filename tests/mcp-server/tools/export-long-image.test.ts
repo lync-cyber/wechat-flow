@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { JobsClient } from "../../../apps/mcp-server/src/jobs/client.ts";
+import { makeNotImplementedJobsClient } from "../../../apps/mcp-server/src/jobs/client.ts";
 import { exportCoverTool } from "../../../apps/mcp-server/src/tools/export-cover.ts";
 import { exportLongImageTool } from "../../../apps/mcp-server/src/tools/export-long-image.ts";
 import { getJobTool } from "../../../apps/mcp-server/src/tools/get-job.ts";
@@ -170,5 +171,42 @@ describe("upload_image: enqueues image upload job and returns jobId", () => {
     const second = (await uploadImageTool(client)(args)) as Record<string, unknown>;
 
     expect(second.jobId).toBe(first.jobId);
+  });
+});
+
+// ---- SR-C-003/SR-C-005: makeNotImplementedJobsClient 默认路径 ----
+
+describe("SR-C-003/SR-C-005: makeNotImplementedJobsClient default path returns error code", () => {
+  it("exportLongImageTool with not-implemented client returns E_NOT_IMPLEMENTED", async () => {
+    const client = makeNotImplementedJobsClient();
+    const result = (await exportLongImageTool(client)({
+      markdown: "# Test",
+      themeId: "default",
+    })) as Record<string, unknown>;
+    expect(result.code).toBe("E_NOT_IMPLEMENTED");
+    expect(result.jobId).toBeUndefined();
+  });
+
+  it("getJobTool with not-implemented client returns failed status with E_NOT_IMPLEMENTED error", async () => {
+    const client = makeNotImplementedJobsClient();
+    const result = (await getJobTool(client)({ jobId: "any-id" })) as Record<string, unknown>;
+    expect(result.status).toBe("failed");
+    expect(result.error).toBe("E_NOT_IMPLEMENTED");
+  });
+});
+
+// ---- SR-C-004: get-job jobId 守卫 ----
+
+describe("SR-C-004: getJobTool validates jobId presence", () => {
+  it("returns E_INVALID_INPUT when jobId is missing", async () => {
+    const client = makeNotImplementedJobsClient();
+    const result = (await getJobTool(client)({})) as Record<string, unknown>;
+    expect(result.code).toBe("E_INVALID_INPUT");
+  });
+
+  it("returns E_INVALID_INPUT when jobId is null", async () => {
+    const client = makeNotImplementedJobsClient();
+    const result = (await getJobTool(client)({ jobId: null })) as Record<string, unknown>;
+    expect(result.code).toBe("E_INVALID_INPUT");
   });
 });

@@ -1,6 +1,6 @@
-import type { SseBridge, SseBridgeDeps } from "./types.ts";
+import type { CreateSseBridgeOpts, SseBridge } from "./types.ts";
 
-export function createSseBridge(deps: SseBridgeDeps): SseBridge {
+export function createSseBridge(deps: CreateSseBridgeOpts): SseBridge {
   const { emitter, onEvent, initialRecord } = deps;
   let attachedJobId: string | null = null;
 
