@@ -806,3 +806,320 @@ describe("AC-001 wiring: jobs routes are reachable through createApp app tree", 
     expect(res.status).toBe(404);
   });
 });
+
+// ---------------------------------------------------------------------------
+// SR-B-001: SSE terminal state detaches listeners (no leak)
+// ---------------------------------------------------------------------------
+
+describe("SR-B-001 (sse-bridge pure): bridge.detach() removes all listeners from emitter", () => {
+  it("emitter has no listeners for job events after explicit bridge.detach()", () => {
+    const emitter = new EventEmitter();
+
+    const bridge = createSseBridge({
+      emitter,
+      onEvent: () => {},
+    });
+    bridge.attach("job-listener-count-001");
+
+    expect(emitter.listenerCount("completed")).toBeGreaterThan(0);
+
+    bridge.detach();
+
+    expect(emitter.listenerCount("active")).toBe(0);
+    expect(emitter.listenerCount("progress")).toBe(0);
+    expect(emitter.listenerCount("completed")).toBe(0);
+    expect(emitter.listenerCount("failed")).toBe(0);
+  });
+
+  it("calling detach() twice does not throw (idempotent)", () => {
+    const emitter = new EventEmitter();
+    const bridge = createSseBridge({ emitter, onEvent: () => {} });
+    bridge.attach("job-detach-twice");
+    expect(() => {
+      bridge.detach();
+      bridge.detach();
+    }).not.toThrow();
+  });
+});
+
+describe("SR-B-001 (routes fake): terminal event via safeDetach guard does not double-detach", () => {
+  it("GET /events for already-succeeded job completes and emitter has zero listeners", async () => {
+    const emitter = new EventEmitter();
+    const store = makeMemoryJobStore();
+    const succeededRecord = makeJobRecord({
+      jobId: "sse-done-001",
+      state: "succeeded",
+      result: { url: "done.png" },
+    });
+    await store.upsert(succeededRecord);
+
+    const app = createJobsApp({
+      store,
+      enqueue: async () => "sse-done-001",
+      sseEmitter: emitter,
+    });
+
+    const res = await app.request("/api/v1/jobs/sse-done-001/events");
+    expect(res.status).toBe(200);
+    expect(res.headers.get("content-type")).toContain("text/event-stream");
+
+    expect(emitter.listenerCount("active")).toBe(0);
+    expect(emitter.listenerCount("progress")).toBe(0);
+    expect(emitter.listenerCount("completed")).toBe(0);
+    expect(emitter.listenerCount("failed")).toBe(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SR-B-002: POST /jobs field validation returns 400
+// ---------------------------------------------------------------------------
+
+describe("SR-B-002 (routes fake): POST /api/v1/jobs validates required fields", () => {
+  function makePostApp() {
+    const store = makeMemoryJobStore();
+    return createJobsApp({
+      store,
+      enqueue: async (kind, _input, apiKeyId) => {
+        const record = makeJobRecord({ kind, apiKeyId, state: "pending" });
+        await store.upsert(record);
+        return record.jobId;
+      },
+    });
+  }
+
+  it("missing 'kind' returns 400 E_INVALID_REQUEST", async () => {
+    const app = makePostApp();
+    const res = await app.request("/api/v1/jobs", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ input: { x: 1 }, apiKeyId: "k1" }),
+    });
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as { error: { code: string } };
+    expect(body.error.code).toBe("E_INVALID_REQUEST");
+  });
+
+  it("missing 'apiKeyId' returns 400 E_INVALID_REQUEST", async () => {
+    const app = makePostApp();
+    const res = await app.request("/api/v1/jobs", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ kind: "long-image-render", input: { x: 1 } }),
+    });
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as { error: { code: string } };
+    expect(body.error.code).toBe("E_INVALID_REQUEST");
+  });
+
+  it("missing 'input' field returns 400 E_INVALID_REQUEST", async () => {
+    const app = makePostApp();
+    const res = await app.request("/api/v1/jobs", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ kind: "long-image-render", apiKeyId: "k1" }),
+    });
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as { error: { code: string } };
+    expect(body.error.code).toBe("E_INVALID_REQUEST");
+  });
+
+  it("empty string 'kind' returns 400 E_INVALID_REQUEST", async () => {
+    const app = makePostApp();
+    const res = await app.request("/api/v1/jobs", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ kind: "", input: {}, apiKeyId: "k1" }),
+    });
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as { error: { code: string } };
+    expect(body.error.code).toBe("E_INVALID_REQUEST");
+  });
+
+  it("empty string 'apiKeyId' returns 400 E_INVALID_REQUEST", async () => {
+    const app = makePostApp();
+    const res = await app.request("/api/v1/jobs", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ kind: "long-image-render", input: {}, apiKeyId: "" }),
+    });
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as { error: { code: string } };
+    expect(body.error.code).toBe("E_INVALID_REQUEST");
+  });
+
+  it("valid all fields passes validation and returns 200 with jobId", async () => {
+    const app = makePostApp();
+    const res = await app.request("/api/v1/jobs", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        kind: "long-image-render",
+        input: { articleId: "art-1" },
+        apiKeyId: "k1",
+      }),
+    });
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { jobId: string };
+    expect(typeof body.jobId).toBe("string");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SR-B-004 (routes fake): POST success → GET asserts state='pending'
+// ---------------------------------------------------------------------------
+
+describe("SR-B-004 (routes fake): POST /jobs then GET /jobs/:jobId returns state=pending", () => {
+  it("newly created job via POST is retrievable with state='pending' via GET", async () => {
+    const store = makeMemoryJobStore();
+    const app = createJobsApp({
+      store,
+      enqueue: async (kind, _input, apiKeyId) => {
+        const record = makeJobRecord({ kind, apiKeyId, state: "pending", jobId: "sr-b-004-job" });
+        await store.upsert(record);
+        return record.jobId;
+      },
+    });
+
+    const postRes = await app.request("/api/v1/jobs", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        kind: "long-image-render",
+        input: { articleId: "art-sr-b-004" },
+        apiKeyId: "k-sr-b-004",
+      }),
+    });
+    expect(postRes.status).toBe(200);
+    const { jobId } = (await postRes.json()) as { jobId: string };
+    expect(typeof jobId).toBe("string");
+
+    const getRes = await app.request(`/api/v1/jobs/${jobId}`);
+    expect(getRes.status).toBe(200);
+    const getBody = (await getRes.json()) as { jobId: string; state: string };
+    expect(getBody.jobId).toBe(jobId);
+    expect(getBody.state).toBe("pending");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SR-B-005: playwright-pool concurrent withPage calls do not exceed size launches
+// ---------------------------------------------------------------------------
+
+describe("SR-B-005 (playwright-pool pure): concurrent withPage calls do not exceed pool size launches", () => {
+  it("concurrent withPage calls on size=1 pool trigger only 1 browser launch", async () => {
+    let launchCount = 0;
+    const pages: Array<{ close: () => Promise<void> }> = [];
+    const fakePage = { close: async () => {} };
+
+    const fakeBrowser = {
+      newPage: async () => fakePage,
+      close: async () => {},
+    };
+
+    const fakeChromium = {
+      launch: async (_opts: unknown) => {
+        launchCount++;
+        return fakeBrowser;
+      },
+    };
+
+    const { createPlaywrightPool: createPool } = await import(
+      "../../apps/relay/src/headless/playwright-pool.ts"
+    );
+
+    const pool = createPool({ size: 1 });
+
+    const origChromium = await import("playwright");
+    const origLaunch = origChromium.chromium.launch.bind(origChromium.chromium);
+
+    let mockLaunchCount = 0;
+    origChromium.chromium.launch = async (_opts: unknown) => {
+      mockLaunchCount++;
+      return fakeBrowser as never;
+    };
+
+    try {
+      const results = await Promise.all([
+        pool.withPage(async (_page) => "a"),
+        pool.withPage(async (_page) => "b"),
+        pool.withPage(async (_page) => "c"),
+      ]);
+      expect(results).toEqual(["a", "b", "c"]);
+      expect(mockLaunchCount).toBe(1);
+    } finally {
+      origChromium.chromium.launch = origLaunch;
+      await pool.close();
+    }
+  });
+
+  it("pool size=2 launches exactly 2 browsers for concurrent calls", async () => {
+    const { createPlaywrightPool: createPool } = await import(
+      "../../apps/relay/src/headless/playwright-pool.ts"
+    );
+
+    const pool = createPool({ size: 2 });
+
+    const fakePage = { close: async () => {} };
+    const fakeBrowser = {
+      newPage: async () => fakePage,
+      close: async () => {},
+    };
+
+    const origChromium = await import("playwright");
+    const origLaunch = origChromium.chromium.launch.bind(origChromium.chromium);
+
+    let mockLaunchCount = 0;
+    origChromium.chromium.launch = async (_opts: unknown) => {
+      mockLaunchCount++;
+      return fakeBrowser as never;
+    };
+
+    try {
+      await Promise.all([
+        pool.withPage(async (_page) => "x"),
+        pool.withPage(async (_page) => "y"),
+        pool.withPage(async (_page) => "z"),
+      ]);
+      expect(mockLaunchCount).toBe(2);
+    } finally {
+      origChromium.chromium.launch = origLaunch;
+      await pool.close();
+    }
+  });
+
+  it("close() followed by a new withPage re-initializes the pool (initPromise reset)", async () => {
+    const { createPlaywrightPool: createPool } = await import(
+      "../../apps/relay/src/headless/playwright-pool.ts"
+    );
+
+    const pool = createPool({ size: 1 });
+
+    const fakePage = { close: async () => {} };
+    const fakeBrowser = {
+      newPage: async () => fakePage,
+      close: async () => {},
+    };
+
+    const origChromium = await import("playwright");
+    const origLaunch = origChromium.chromium.launch.bind(origChromium.chromium);
+
+    let mockLaunchCount = 0;
+    origChromium.chromium.launch = async (_opts: unknown) => {
+      mockLaunchCount++;
+      return fakeBrowser as never;
+    };
+
+    try {
+      await pool.withPage(async (_page) => "first");
+      expect(mockLaunchCount).toBe(1);
+
+      await pool.close();
+
+      await pool.withPage(async (_page) => "second");
+      expect(mockLaunchCount).toBe(2);
+    } finally {
+      origChromium.chromium.launch = origLaunch;
+      await pool.close();
+    }
+  });
+});

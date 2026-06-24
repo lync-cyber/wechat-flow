@@ -54,7 +54,7 @@ export async function renderMarkdown(
 
   const mdast = parseMarkdown(content);
   const transformDiagnostics: Diagnostic[] = [];
-  let hast = transformToHast(mdast, { ...options, theme: effectiveTheme }, transformDiagnostics);
+  let hast = transformToHast(mdast, transformDiagnostics);
   hast = sanitizeHast(hast, wechatFlowSanitizeSchema);
 
   const rules = options?.rules !== undefined ? options.rules : builtinRules;

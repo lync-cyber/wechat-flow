@@ -1,6 +1,6 @@
 ---
 id: "dev-plan-wechat-flow-s4"
-version: "0.5.1"
+version: "0.5.2"
 doc_type: dev-plan
 author: tech-lead
 status: approved
@@ -280,7 +280,7 @@ required_sections:
   - [ ] AC-001: Given 通过 stdio transport 调用 `render_markdown({ markdown: '# Hello', themeId: 'default' })`，When 执行，Then 返回 `{ html: '<...>', diagnostics: [...], rulesetVersion: '...', themeVersion: '...' }` [F-013 AC-002 + ARCH#§2.M-009]
   - [ ] AC-002: Given 相同 Markdown + 相同 `themeId`，When 两次调用 `render_markdown`，Then 两次返回的 `html` 字段 `sha256` 完全相同（确定性渲染）[F-013 AC-001]
   - [ ] AC-003: Given 调用 `get_ruleset_version`，When 执行，Then 返回 `{ coreVersion: '...', themeVersion: '...', rulesetVersion: '...' }` 三元组 [F-013 AC-002 + ARCH#§2.M-009]
-  - [ ] AC-004: Given 调用 `lint_markdown({ markdown: '...' })`（含 `position:fixed` 样式），When 执行，Then 返回 `{ diagnostics: [{ level: 'error', ... }] }`，不返回 `html` 字段
+  - [ ] AC-004: Given 调用 `lint_markdown({ markdown: '...' })`（含 `position:fixed` 样式），When 执行，Then 返回 `{ diagnostics: [{ level: 'warning', ... }] }`（custom-css strip-position 路径：被拒声明静默 strip，渲染不中断，warning 语义），不返回 `html` 字段
 - **deliverables**:
   - [ ] `apps/mcp-server/src/tools/render-markdown.ts` — `render_markdown` Tool 实现
   - [ ] `apps/mcp-server/src/tools/lint-markdown.ts` — `lint_markdown` Tool
@@ -562,11 +562,11 @@ required_sections:
   - [ ] `packages/themes/literary/templates/starter.md` — literary 主题预填 Markdown
   - [ ] `packages/themes/business/templates/starter.md` — business 主题预填 Markdown
   - [ ] `packages/themes/tech/templates/starter.md` — tech 主题预填 Markdown
-  - [ ] `packages/core/src/theme/template-registry.ts` — `defineTemplate` / `listThemeTemplates` / `describeTemplate` 实现（M-005 接口扩展）
+  - [ ] `packages/core/src/registry/template.ts` — `defineTemplate` / `listThemeTemplates` / `describeTemplate` 实现（M-005 接口扩展）
   - [ ] `packages/core/src/theme-guard/template-coverage.ts` — `validateThemeTemplates` 第 9 维守护实现（M-005 扩展（`packages/core/src/theme-guard/template-coverage.ts`））
   - [ ] `packages/core/src/theme-guard/template-coverage.test.ts` — 单元测试（AC-005）
   - [ ] `apps/mcp-server/src/tools/describe-template.ts` — API-033 `describe_template` Tool 实现
-  - [ ] `apps/mcp-server/src/tools/mcp/tool-contracts.ts` — 更新，追加 `describe_template` Tool schema
+  - [ ] `packages/contracts/src/mcp/tool-contracts.ts` — 更新，追加 `describe_template` Tool schema
   - [ ] 更新 `apps/mcp-server/src/tools/router.ts` — 注册 `describe_template` Tool
   - [ ] `tests/mcp-server/tools/describe-template.test.ts` — AC-006 集成测试
 - **relates_to**: [F-003, F-008, F-011, M-005, M-006, M-009]
@@ -692,7 +692,7 @@ required_sections:
   - [ ] AC-005: Given `defineBlock` 携带的 `baseStyle` 缺 `root` 槽位键，或缺 `default` variant 条目，When 注册执行，Then 抛结构化错误并拒绝注册（`default` 键守护在 M-005 注册时执行，schema 层不约束——对账 T-118 AC-004）[ARCH#§8.2.Q3.15]
   - [ ] AC-006（production path）: `packages/blocks/src/factory.ts` 中可检索到 `baseStyle` 字段的接收与传递，`registerVariant` 调用出现在 `packages/core/src/theme/variant-registry.ts` 或 `registry/variant.ts` 中并可被直接检索到
 - **deliverables**:
-  - [ ] `packages/core/src/theme/registry/variant.ts` — `registerVariant(opts)` 实现（校验 + 存储，进程内 Map）
+  - [ ] `packages/core/src/registry/variant.ts` — `registerVariant(opts)` 实现（校验 + 存储，进程内 Map）
   - [ ] 更新 `packages/core/src/theme/registry/block.ts` — `defineBlock` 签名扩展 `baseStyle?: Record<string, Record<string, string>>`，注册时存入 `default` variant
   - [ ] 更新 `packages/core/src/theme/index.ts` — 导出 `registerVariant`、`getBlockBaseStyle`
   - [ ] 更新 `packages/blocks/src/blocks/*.ts` — 至少 callout / card / steps / quote / pull-quote / compare 携带 `baseStyle`（root 槽必含）

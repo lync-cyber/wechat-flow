@@ -99,7 +99,9 @@ describe("AC-005 response schema exports: all 24 response schemas are exported f
   it("placeholder response schemas (passthrough) accept empty object", () => {
     const placeholders: [string, ZodType][] = ALL_RESPONSE_SCHEMAS.filter(
       ([name]) =>
-        name !== "renderMarkdownResponseSchema" && name !== "registerVariantResponseSchema"
+        name !== "renderMarkdownResponseSchema" &&
+        name !== "registerVariantResponseSchema" &&
+        name !== "describeTemplateResponseSchema"
     );
     for (const [name, schema] of placeholders) {
       const result = schema.safeParse({});
@@ -119,5 +121,20 @@ describe("AC-005 response schema exports: all 24 response schemas are exported f
       postPaste: false,
     });
     expect(valid.success).toBe(true);
+  });
+
+  it("describeTemplateResponseSchema rejects empty object and accepts success/error payloads", () => {
+    expect(describeTemplateResponseSchema.safeParse({}).success).toBe(false);
+
+    const success = describeTemplateResponseSchema.safeParse({
+      themeId: "default",
+      templateId: "starter",
+      markdown: "# x",
+      metadata: { description: "d" },
+    });
+    expect(success.success).toBe(true);
+
+    const error = describeTemplateResponseSchema.safeParse({ code: "E_TEMPLATE_NOT_FOUND" });
+    expect(error.success).toBe(true);
   });
 });

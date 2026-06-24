@@ -1,5 +1,4 @@
-// API-033 rich fields (coveredElements / mdastSummary / dependencies) are deferred to a future sprint.
-import { describeTemplate, describeTheme } from "@wechat-flow/core";
+import { describeTemplate } from "@wechat-flow/core";
 
 export function describeTemplateTool(args: Record<string, unknown>) {
   const themeId = String(args.themeId ?? "");
@@ -14,9 +13,8 @@ export function describeTemplateTool(args: Record<string, unknown>) {
     };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    if (msg === "E_TEMPLATE_NOT_FOUND") {
-      if (!describeTheme(themeId)) return { code: "E_THEME_NOT_FOUND" };
-      return { code: "E_TEMPLATE_NOT_FOUND" };
+    if (msg === "E_THEME_NOT_FOUND" || msg === "E_TEMPLATE_NOT_FOUND") {
+      return { code: msg };
     }
     throw err;
   }

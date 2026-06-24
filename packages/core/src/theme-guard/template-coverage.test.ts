@@ -6,7 +6,6 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { beforeEach, describe, expect, it } from "vitest";
 import { defineTemplate, resetTemplateRegistry } from "../registry/template.ts";
-import { registerTheme } from "../registry/theme.ts";
 import { validateTemplateCoverage, validateThemeTemplates } from "./template-coverage.ts";
 
 const THEMES_DIR = join(process.cwd(), "packages/themes");
@@ -429,9 +428,12 @@ describe("AC-005: each built-in theme ≥1 template passes coverage guard (real 
       expect(content.length).toBeGreaterThan(0);
     });
 
-    it(`theme '${themeId}': at least one template passes validateThemeTemplates after package load`, async () => {
-      const theme = (await import(`../../../../packages/themes/${themeId}/src/index.ts`)).default;
-      registerTheme(theme);
+    it(`theme '${themeId}': at least one template passes validateThemeTemplates from real fixture content`, () => {
+      const templatesDir = join(THEMES_DIR, themeId, "templates");
+      for (const file of readdirSync(templatesDir).filter((f) => f.endsWith(".md"))) {
+        const markdown = readFileSync(join(templatesDir, file), "utf-8");
+        defineTemplate({ themeId, templateId: file.replace(/\.md$/, ""), markdown, metadata: {} });
+      }
 
       const result = validateThemeTemplates(themeId);
       const anyPassing = result.templates.some((t) => t.coverage.pass);

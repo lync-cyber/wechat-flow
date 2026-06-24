@@ -46,6 +46,8 @@ describe("AC-002: exported HTML is self-contained (no external CSS dependencies)
   });
 
   it("body content does not use CSS custom properties (no var(--)", async () => {
+    // Constraint: the real render pipeline (default theme) must fully inline styles before export;
+    // CSS variables surviving into the body would break rendering outside WeChat's CSS scope.
     const result = await composeExportHtml({ markdown: "# Hello", themeId: "default" });
     const bodyMatch = result.match(/<body[^>]*>([\s\S]*)<\/body>/);
     expect(bodyMatch).not.toBeNull();

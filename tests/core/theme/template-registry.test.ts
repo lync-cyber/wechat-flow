@@ -11,6 +11,19 @@ import {
   resetTemplateRegistry,
 } from "../../../packages/core/src/registry/template.ts";
 import { registerTheme } from "../../../packages/core/src/registry/theme.ts";
+import businessTheme from "../../../packages/themes/business/src/index.ts";
+import defaultTheme from "../../../packages/themes/default/src/index.ts";
+import literaryTheme from "../../../packages/themes/literary/src/index.ts";
+import magazineTheme from "../../../packages/themes/magazine/src/index.ts";
+import techTheme from "../../../packages/themes/tech/src/index.ts";
+
+const THEME_MODULES: Record<string, typeof defaultTheme> = {
+  default: defaultTheme,
+  magazine: magazineTheme,
+  literary: literaryTheme,
+  business: businessTheme,
+  tech: techTheme,
+};
 
 beforeEach(() => {
   resetTemplateRegistry();
@@ -72,8 +85,8 @@ describe("AC-001: defineTemplate registers; listThemeTemplates returns TemplateM
     expect(() => describeTemplate("default", "does-not-exist")).toThrow("E_TEMPLATE_NOT_FOUND");
   });
 
-  it("describeTemplate throws E_TEMPLATE_NOT_FOUND when themeId does not exist", () => {
-    expect(() => describeTemplate("no-such-theme", "any-template")).toThrow("E_TEMPLATE_NOT_FOUND");
+  it("describeTemplate throws E_THEME_NOT_FOUND when themeId does not exist", () => {
+    expect(() => describeTemplate("no-such-theme", "any-template")).toThrow("E_THEME_NOT_FOUND");
   });
 
   it("listThemeTemplates returns multiple entries for multiple registered templates", () => {
@@ -116,9 +129,8 @@ describe("AC-002: each built-in theme has ≥1 template entry after package load
   const BUILTIN_THEMES = ["default", "magazine", "literary", "business", "tech"] as const;
 
   for (const themeId of BUILTIN_THEMES) {
-    it(`listThemeTemplates('${themeId}') returns ≥1 template`, async () => {
-      // Theme package exposes templates as data; registerTheme persists them
-      const theme = (await import(`../../../packages/themes/${themeId}/src/index.ts`)).default;
+    it(`listThemeTemplates('${themeId}') returns ≥1 template`, () => {
+      const theme = THEME_MODULES[themeId];
       registerTheme(theme);
       const list = listThemeTemplates(themeId);
       expect(list.length).toBeGreaterThanOrEqual(1);

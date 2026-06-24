@@ -124,21 +124,13 @@ describe("AC-001: composeCopy writes dual-MIME ClipboardItem to clipboard", () =
 // AC-002: text/html 内容无 <style> 标签、无 CSS 变量 var(--)
 // ─────────────────────────────────────────────────────────────
 describe("AC-002: text/html payload has no <style> tags and no CSS variables", () => {
-  it("simulatePaste-filtered HTML has no <style> tags", () => {
-    expect(SAMPLE_FILTERED_HTML).not.toMatch(/<style[\s>]/i);
-  });
-
-  it("simulatePaste-filtered HTML has no CSS variables", () => {
-    expect(SAMPLE_FILTERED_HTML).not.toContain("var(--");
-  });
-
   it("composeCopy ClipboardItem text/html blob content has no <style> tags", async () => {
     await composeCopy({ markdown: "# Hello", themeId: "default" });
 
     const htmlItem = capturedItems.find((i) => i.types.includes("text/html"));
-    expect(htmlItem).toBeDefined();
-    const blob = await htmlItem?.getType("text/html");
-    const text = await blob?.text();
+    if (!htmlItem) throw new Error("text/html ClipboardItem not found");
+    const blob = await htmlItem.getType("text/html");
+    const text = await blob.text();
     expect(text).not.toMatch(/<style[\s>]/i);
     expect(text).not.toContain("var(--");
   });
@@ -235,9 +227,9 @@ describe("AC-005: pipeline order: composeRender → simulatePaste → clipboard.
     await composeCopy({ markdown: "# Hello", themeId: "default" });
 
     const htmlItem = capturedItems.find((i) => i.types.includes("text/html"));
-    expect(htmlItem).toBeDefined();
-    const blob = await htmlItem?.getType("text/html");
-    const text = await blob?.text();
+    if (!htmlItem) throw new Error("text/html ClipboardItem not found");
+    const blob = await htmlItem.getType("text/html");
+    const text = await blob.text();
     expect(text).toBe(SAMPLE_FILTERED_HTML);
     expect(text).not.toBe(SAMPLE_RAW_HTML);
   });
