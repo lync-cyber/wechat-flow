@@ -6,6 +6,7 @@ export const templateDefinitionSchema = z.object({
   name: z.string().optional(),
   description: z.string().optional(),
   markdown: z.string().optional(),
+  metadata: z.object({ description: z.string().optional() }).optional(),
 });
 
 export type TemplateDefinition = z.infer<typeof templateDefinitionSchema>;

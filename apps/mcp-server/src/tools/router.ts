@@ -6,6 +6,7 @@ import type { JobsClient } from "../jobs/client.ts";
 import { makeNotImplementedJobsClient } from "../jobs/client.ts";
 import { describeBlockTool } from "./describe-block.ts";
 import { describeMarkTool } from "./describe-mark.ts";
+import { describeTemplateTool } from "./describe-template.ts";
 import { describeThemeTool } from "./describe-theme.ts";
 import { exportCoverTool } from "./export-cover.ts";
 import { exportLongImageTool } from "./export-long-image.ts";
@@ -32,6 +33,7 @@ function buildHandlers(jobsClient: JobsClient): Record<string, ToolHandler> {
     describe_block: describeBlockTool,
     list_marks: listMarksTool,
     describe_mark: describeMarkTool,
+    describe_template: describeTemplateTool,
     register_variant: registerVariantTool,
     export_long_image: exportLongImageTool(jobsClient),
     export_cover: exportCoverTool(jobsClient),

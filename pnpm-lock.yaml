@@ -376,30 +376,45 @@ importers:
       '@wechat-flow/contracts':
         specifier: workspace:*
         version: link:../../contracts
+      '@wechat-flow/core':
+        specifier: workspace:*
+        version: link:../../core
 
   packages/themes/default:
     dependencies:
       '@wechat-flow/contracts':
         specifier: workspace:*
         version: link:../../contracts
+      '@wechat-flow/core':
+        specifier: workspace:*
+        version: link:../../core
 
   packages/themes/literary:
     dependencies:
       '@wechat-flow/contracts':
         specifier: workspace:*
         version: link:../../contracts
+      '@wechat-flow/core':
+        specifier: workspace:*
+        version: link:../../core
 
   packages/themes/magazine:
     dependencies:
       '@wechat-flow/contracts':
         specifier: workspace:*
         version: link:../../contracts
+      '@wechat-flow/core':
+        specifier: workspace:*
+        version: link:../../core
 
   packages/themes/tech:
     dependencies:
       '@wechat-flow/contracts':
         specifier: workspace:*
         version: link:../../contracts
+      '@wechat-flow/core':
+        specifier: workspace:*
+        version: link:../../core
 
   packages/zh-typo: {}
 
