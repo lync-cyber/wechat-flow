@@ -21,6 +21,13 @@ export default defineConfig({
         "apps/*/src/main.ts",
         "apps/editor/src/router/**",
         "apps/editor/src/pages/**",
+        // 浏览器/Redis 集成代码：仅 chromium/Redis 可达时由 gated 集成测试覆盖，CI 无基础设施时排除以免误判
+        "apps/relay/src/headless/playwright-pool.ts",
+        "apps/relay/src/headless/render-long-image.ts",
+        "apps/relay/src/headless/render-cover.ts",
+        "apps/relay/src/job/queue.ts",
+        "apps/relay/src/job/bullmq-store.ts",
+        "apps/relay/src/job/runtime.ts",
         "scripts/**",
         "**/*.mjs",
       ],

@@ -40,6 +40,9 @@ test-results/
 .stryker-tmp/
 reports/mutation/
 
+# Headless render output (runtime / test exports)
+public/exports/
+
 # CataForge upgrade rollback backups (local-only)
 .cataforge/.backups/
 
