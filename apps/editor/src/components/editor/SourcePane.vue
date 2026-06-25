@@ -185,6 +185,7 @@ function handleDragEnter(e: DragEvent): void {
   if (Array.from(types).includes("Files")) {
     e.preventDefault();
     imageUpload.startDrag();
+    showOverlay.value = true;
   }
 }
 
@@ -195,13 +196,25 @@ function handleDragOver(e: DragEvent): void {
   }
 }
 
-function handleDragLeave(): void {
+function handleDragLeave(e: DragEvent): void {
+  // Only hide the overlay when the cursor has left the pane entirely.
+  // relatedTarget is null when leaving the browser window or the pane's
+  // bounding element; when moving between child elements it points to a
+  // child node still inside the pane — in that case we keep the overlay.
+  const related = e.relatedTarget as Node | null;
+  if (editorContainer.value?.parentElement?.contains(related)) return;
   imageUpload.endDrag();
+  if (imageUpload.state.value === "idle") {
+    showOverlay.value = false;
+  }
 }
 
 function handleDrop(e: DragEvent): void {
   e.preventDefault();
   imageUpload.endDrag();
+  if (imageUpload.state.value === "idle") {
+    showOverlay.value = false;
+  }
   onDropImage(e);
 }
 
