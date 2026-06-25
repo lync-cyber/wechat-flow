@@ -17,6 +17,7 @@
     "typecheck": "turbo run typecheck && tsc --noEmit -p tests/tsconfig.json",
     "typecheck:affected": "turbo run typecheck --affected",
     "kg:restore": "node scripts/kg-restore.mjs",
+    "gen:templates": "node scripts/gen-theme-templates.mjs",
     "prepare": "lefthook install",
     "guard": "pnpm guard:arch && pnpm guard:boundaries",
     "guard:arch": "depcruise --config .dependency-cruiser.cjs apps packages",

@@ -30,6 +30,10 @@ pre-commit:
 pre-push:
   parallel: false
   commands:
+    # 主题 starter 模板生成物新鲜度：.md 为单源，跨运行时 .ts 由 gen:templates 派生。
+    # 改了 .md 却未重生成则在此拦截（push 前），避免生成物与源漂移。
+    gen-templates-fresh:
+      run: pnpm gen:templates && git diff --exit-code -- "packages/themes/*/src/templates/*.generated.ts"
     typecheck:
       run: pnpm typecheck:affected
     arch-guard:

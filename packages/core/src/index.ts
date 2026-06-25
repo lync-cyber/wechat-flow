@@ -15,6 +15,12 @@ export {
 } from "./utils/deterministic.ts";
 export { saveDraft, loadDocument, listDocuments, deleteDocument } from "./documents/manager.ts";
 export { saveSplitterWidth, loadSplitterWidth } from "./storage/preferences.ts";
+export {
+  saveCredential,
+  loadCredential,
+  loadCredentialGroup,
+  clearCredential,
+} from "./storage/credentials.ts";
 export { closeDb } from "./storage/indexeddb-adapter.ts";
 export type { DocumentRecord, DocumentMeta } from "./storage/indexeddb-adapter.ts";
 export { simulatePaste } from "./simulate-paste.ts";

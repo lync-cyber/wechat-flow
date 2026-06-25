@@ -14,7 +14,8 @@
       "**/coverage/**",
       "**/.cataforge/**",
       "**/pnpm-lock.yaml",
-      "docs/.doc-index.json"
+      "docs/.doc-index.json",
+      "**/*.generated.ts"
     ]
   },
   "formatter": {
