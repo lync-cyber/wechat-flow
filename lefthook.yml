@@ -23,9 +23,10 @@ pre-commit:
       glob: "*.{ts,tsx,mts,cts,vue}"
       run: node scripts/check-module-boundaries.mjs {staged_files}
 
-# push 前的中间层：仅对变更影响的包做类型检查（turbo --affected，默认对比 main）
-# + 全图架构守卫。比 pre-commit 重，但比 CI 早一步兜住会挂 CI 的问题。
-# CI 仍跑全量 typecheck（含 tests/tsconfig），此处只做快速 pre-flight。
+# push 前的中间层：变更影响包的类型检查（turbo --affected，默认对比 main）
+# + 全图架构守卫 + 全量测试覆盖率门禁。比 pre-commit 重，比 CI 早一步兜住会挂 CI 的问题。
+# coverage 跑全量 vitest --coverage，低于 vitest.config.ts thresholds 则阻止 push。
+# CI 仍跑全量 typecheck（含 tests/tsconfig）。
 pre-push:
   parallel: false
   commands:
@@ -33,3 +34,5 @@ pre-push:
       run: pnpm typecheck:affected
     arch-guard:
       run: pnpm guard:arch
+    coverage:
+      run: pnpm test:coverage
