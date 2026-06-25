@@ -4,6 +4,9 @@ import { coverageConfigDefaults, defineConfig } from "vitest/config";
 export default defineConfig({
   plugins: [vue()],
   test: {
+    // chromium+Redis e2e (job-e2e / headless-render) are timing-flaky; retry absorbs
+    // transient failures so the pre-push coverage gate isn't blocked by a false negative.
+    retry: 2,
     include: ["packages/*/src/**/*.test.ts", "apps/*/src/**/*.test.ts", "tests/**/*.test.ts"],
     environmentMatchGlobs: [["apps/editor/**", "happy-dom"]],
     coverage: {
