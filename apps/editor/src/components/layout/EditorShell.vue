@@ -9,6 +9,7 @@ import type { CommandDefinition } from "../../lib/command-registry.ts";
 import { buildEditorCommands } from "../../lib/command-registry.ts";
 import { useEditorStore } from "../../stores/editor.ts";
 import { composeCopy } from "../../use-cases/copy.ts";
+import { composeExportHtml } from "../../use-cases/export-html.ts";
 import CommandPalette from "../command/CommandPalette.vue";
 import CompatibilityDiffView from "../diagnostics/CompatibilityDiffView.vue";
 import DiagnosticsPanel from "../diagnostics/DiagnosticsPanel.vue";
@@ -166,7 +167,7 @@ function onInsertDirective(directive: string): void {
 }
 
 function onContextMenuCommand(commandId: string): void {
-  const cmds = buildEditorCommands({ switchTheme });
+  const cmds = buildEditorCommands({ switchTheme, downloadHtml: onDownloadHtml });
   const cmd = cmds.find((c) => c.id === commandId);
   cmd?.run();
 }
@@ -177,6 +178,20 @@ function onCopyHtml(): void {
     themeId: editorStore.currentTheme,
     notify: pushToast,
   });
+}
+
+async function onDownloadHtml(): Promise<void> {
+  const html = await composeExportHtml({
+    markdown: editorStore.content,
+    themeId: editorStore.currentTheme,
+  });
+  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = "wechat-flow.html";
+  anchor.click();
+  URL.revokeObjectURL(url);
 }
 
 onMounted(() => {

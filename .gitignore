@@ -43,6 +43,9 @@ reports/mutation/
 # Headless render output (runtime / test exports)
 public/exports/
 
+# Editor local image-host uploads (runtime artifacts)
+apps/editor/public/uploads/
+
 # CataForge upgrade rollback backups (local-only)
 .cataforge/.backups/
 
