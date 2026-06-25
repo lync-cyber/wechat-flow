@@ -27,6 +27,49 @@ describe("AC-006: describeTemplateTool returns themeId, templateId, markdown, me
   });
 });
 
+// ---- AC-006 (rich response): coveredElements / coveredBlocks / mdastSummary / dependencies ----
+
+describe("AC-006 (rich response): describeTemplateTool returns coverage, mdast summary and dependencies", () => {
+  it("default/starter exposes non-empty coveredElements, mdastSummary and dependencies", () => {
+    const result = describeTemplateTool({
+      themeId: "default",
+      templateId: "starter",
+    }) as Record<string, unknown>;
+
+    const coveredElements = result.coveredElements as string[];
+    expect(Array.isArray(coveredElements)).toBe(true);
+    expect(coveredElements.length).toBeGreaterThan(0);
+
+    const coveredBlocks = result.coveredBlocks as string[];
+    expect(Array.isArray(coveredBlocks)).toBe(true);
+
+    const mdastSummary = result.mdastSummary as {
+      totalNodes: number;
+      nodeCounts: Record<string, number>;
+    };
+    expect(typeof mdastSummary).toBe("object");
+    expect(mdastSummary.totalNodes).toBeGreaterThan(0);
+    expect(typeof mdastSummary.nodeCounts).toBe("object");
+
+    const dependencies = result.dependencies as string[];
+    expect(Array.isArray(dependencies)).toBe(true);
+  });
+
+  it("not-found responses do not carry rich fields", () => {
+    const result = describeTemplateTool({
+      themeId: "no-such-theme",
+      templateId: "starter",
+    }) as Record<string, unknown>;
+    expect(result.code).toBe("E_THEME_NOT_FOUND");
+    expect(result.coveredElements).toBeUndefined();
+  });
+
+  it("missing args default to empty strings and resolve to E_THEME_NOT_FOUND", () => {
+    const result = describeTemplateTool({}) as Record<string, unknown>;
+    expect(result.code).toBe("E_THEME_NOT_FOUND");
+  });
+});
+
 // ---- not-found: themeId 不存在 → { code: 'E_THEME_NOT_FOUND' } ----
 
 describe("not-found: unknown themeId returns E_THEME_NOT_FOUND", () => {

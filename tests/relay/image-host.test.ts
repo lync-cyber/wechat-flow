@@ -323,44 +323,49 @@ describe("createAdapterFromConfig: builds the adapter selected by config.kind", 
     expect(adapter.name).toBe("local");
   });
 
-  it("qiniu adapter without credential fields falls back to empty strings (name is 'qiniu')", () => {
-    const adapter = createAdapterFromConfig({
-      kind: "qiniu",
-      credentials: {},
-    });
-    expect(adapter.name).toBe("qiniu");
+  it("qiniu adapter without credential fields throws (fail-fast on missing credentials)", () => {
+    expect(() => createAdapterFromConfig({ kind: "qiniu", credentials: {} })).toThrow(
+      /missing required credentials/
+    );
   });
 
-  it("oss adapter without credential fields falls back to empty strings (name is 'oss')", () => {
-    const adapter = createAdapterFromConfig({
-      kind: "oss",
-      credentials: {},
-    });
-    expect(adapter.name).toBe("oss");
+  it("oss adapter without credential fields throws (fail-fast on missing credentials)", () => {
+    expect(() => createAdapterFromConfig({ kind: "oss", credentials: {} })).toThrow(
+      /missing required credentials/
+    );
   });
 
-  it("cos adapter without credential fields falls back to empty strings (name is 'cos')", () => {
-    const adapter = createAdapterFromConfig({
-      kind: "cos",
-      credentials: {},
-    });
-    expect(adapter.name).toBe("cos");
+  it("cos adapter without credential fields throws (fail-fast on missing credentials)", () => {
+    expect(() => createAdapterFromConfig({ kind: "cos", credentials: {} })).toThrow(
+      /missing required credentials/
+    );
   });
 
-  it("smms adapter without token field falls back to empty string (name is 'smms')", () => {
-    const adapter = createAdapterFromConfig({
-      kind: "smms",
-      credentials: {},
-    });
-    expect(adapter.name).toBe("smms");
+  it("smms adapter without token field throws (fail-fast on missing credentials)", () => {
+    expect(() => createAdapterFromConfig({ kind: "smms", credentials: {} })).toThrow(
+      /missing required credentials/
+    );
   });
 
-  it("custom adapter without endpoint/token falls back to empty strings (name is 'custom')", () => {
-    const adapter = createAdapterFromConfig({
-      kind: "custom",
-      credentials: {},
-    });
-    expect(adapter.name).toBe("custom");
+  it("custom adapter without endpoint field throws (fail-fast on missing credentials)", () => {
+    expect(() => createAdapterFromConfig({ kind: "custom", credentials: {} })).toThrow(
+      /missing required credentials/
+    );
+  });
+
+  it("error message names the specific missing credential field", () => {
+    expect(() =>
+      createAdapterFromConfig({ kind: "qiniu", credentials: { accessKey: "ak" } })
+    ).toThrow(/secretKey/);
+  });
+
+  it("treats an empty-string credential as missing (fail-fast)", () => {
+    expect(() =>
+      createAdapterFromConfig({
+        kind: "qiniu",
+        credentials: { accessKey: "", secretKey: "sk", bucket: "b", domain: "https://d.test" },
+      })
+    ).toThrow(/missing required credentials/);
   });
 });
 

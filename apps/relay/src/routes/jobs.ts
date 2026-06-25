@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { streamSSE } from "hono/streaming";
+import { errorResponse } from "../http/error.ts";
 import {
   checkIdempotency,
   computeIdempotencyKey,
@@ -7,29 +8,39 @@ import {
 } from "../job/idempotency.ts";
 import { createSseBridge } from "../job/sse-bridge.ts";
 import type { JobKind, JobsAppDeps } from "../job/types.ts";
+import type { AuthInfo, AuthVariables } from "../middleware/auth.ts";
 
-export function createJobsApp(deps: JobsAppDeps): Hono {
+export function createJobsApp(deps: JobsAppDeps): Hono<{ Variables: AuthVariables }> {
   const { store, enqueue, idemStore, sseEmitter } = deps;
-  const app = new Hono();
+  const app = new Hono<{ Variables: AuthVariables }>();
 
   app.post("/api/v1/jobs", async (c) => {
-    let body: { kind: JobKind; input: unknown; apiKeyId: string };
+    let body: { kind: JobKind; input: unknown; apiKeyId?: string };
     try {
       body = await c.req.json();
     } catch {
-      return c.json({ error: { code: "E_INVALID_JSON", message: "invalid json" } }, 400);
+      return errorResponse(c, 400, "E_INVALID_JSON", "request body is not valid JSON");
     }
 
-    const { kind, input, apiKeyId } = body;
+    const { kind, input } = body;
 
     if (typeof kind !== "string" || kind.length === 0) {
-      return c.json({ error: { code: "E_INVALID_REQUEST", message: "kind is required" } }, 400);
+      return errorResponse(c, 400, "E_INVALID_REQUEST", "kind is required");
     }
     if (input === undefined) {
-      return c.json({ error: { code: "E_INVALID_REQUEST", message: "input is required" } }, 400);
+      return errorResponse(c, 400, "E_INVALID_REQUEST", "input is required");
     }
-    if (typeof apiKeyId !== "string" || apiKeyId.length === 0) {
-      return c.json({ error: { code: "E_INVALID_REQUEST", message: "apiKeyId is required" } }, 400);
+
+    const auth = c.get("auth") as AuthInfo | undefined;
+    let apiKeyId: string;
+    if (auth?.sub) {
+      apiKeyId = auth.sub;
+    } else {
+      const bodyKey = body.apiKeyId;
+      if (typeof bodyKey !== "string" || bodyKey.length === 0) {
+        return errorResponse(c, 400, "E_INVALID_REQUEST", "apiKeyId is required");
+      }
+      apiKeyId = bodyKey;
     }
 
     const idempotencyKeyHeader = c.req.header("idempotency-key");
@@ -57,7 +68,7 @@ export function createJobsApp(deps: JobsAppDeps): Hono {
     const { jobId } = c.req.param();
     const record = await store.get(jobId);
     if (!record) {
-      return c.json({ error: { code: "E_NOT_FOUND", message: "job not found" } }, 404);
+      return errorResponse(c, 404, "E_NOT_FOUND", "job not found");
     }
     return c.json(
       {
@@ -78,7 +89,7 @@ export function createJobsApp(deps: JobsAppDeps): Hono {
     const { jobId } = c.req.param();
     const record = await store.get(jobId);
     if (!record) {
-      return c.json({ error: { code: "E_NOT_FOUND", message: "job not found" } }, 404);
+      return errorResponse(c, 404, "E_NOT_FOUND", "job not found");
     }
 
     const emitter = sseEmitter;

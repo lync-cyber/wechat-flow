@@ -44,6 +44,7 @@ export interface EditorSessionResult {
 
 const SCOPE = "user,render,upload";
 const SESSION_DURATION_MS = 15 * 60 * 1000;
+const REFRESH_WINDOW_MS = 60 * 1000;
 
 async function resolveSubject(
   input: IssueEditorSessionInput,
@@ -107,7 +108,7 @@ export async function refreshEditorSession(
 ): Promise<EditorSessionResult> {
   const nowMs = deps.clock();
 
-  let payload: { iss?: string; sub?: string; sessionId?: unknown };
+  let payload: { iss?: string; sub?: string; sessionId?: unknown; exp?: number };
   try {
     const result = await jwtVerify(token, deps.secret, {
       currentDate: new Date(nowMs),
@@ -129,6 +130,14 @@ export async function refreshEditorSession(
   const revoked = await deps.sessionStore.isRevoked(sessionId);
   if (revoked) {
     throw new Error("Session has been revoked.");
+  }
+
+  const currentExpMs = typeof payload.exp === "number" ? payload.exp * 1000 : undefined;
+  if (currentExpMs === undefined) {
+    throw new Error("Missing exp claim in token.");
+  }
+  if (currentExpMs - nowMs > REFRESH_WINDOW_MS) {
+    throw new Error("Refresh is only permitted within the refresh window before expiry.");
   }
 
   const sub = payload.sub ?? "unknown";

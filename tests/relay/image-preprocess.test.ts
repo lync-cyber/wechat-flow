@@ -105,6 +105,36 @@ describe("AC-001: preprocessImage strips GPS EXIF and reduces file size", () => 
 });
 
 // ---------------------------------------------------------------------------
+// AC-001 (cross-format): EXIF stripping for WebP and PNG inputs
+// ---------------------------------------------------------------------------
+
+async function buildImageWithExif(format: "webp" | "png"): Promise<Uint8Array> {
+  const pipeline = sharp({
+    create: { width: 1200, height: 800, channels: 3, background: { r: 10, g: 20, b: 30 } },
+  }).withExif({ IFD0: { ImageDescription: "wf-exif-marker" } });
+  const buf =
+    format === "webp" ? await pipeline.webp().toBuffer() : await pipeline.png().toBuffer();
+  return Uint8Array.from(buf);
+}
+
+describe("AC-001 (cross-format): preprocessImage strips EXIF from WebP and PNG inputs", () => {
+  for (const format of ["webp", "png"] as const) {
+    it(`${format} input carrying EXIF has no EXIF metadata after processing`, async () => {
+      const input = await buildImageWithExif(format);
+
+      // Fixture validity: the input must actually carry EXIF for the test to be meaningful
+      const inputMeta = await sharp(input).metadata();
+      expect(inputMeta.exif).toBeDefined();
+
+      const result = await preprocessImage(input);
+
+      const outputMeta = await sharp(result.data).metadata();
+      expect(outputMeta.exif).toBeUndefined();
+    });
+  }
+});
+
+// ---------------------------------------------------------------------------
 // AC-002: Width resize — ≤ 1080px; no upscaling for small images
 // ---------------------------------------------------------------------------
 

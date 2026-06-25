@@ -34,19 +34,19 @@
 
 ## 项目状态 (orchestrator专属写入区，其他Agent禁止修改)
 - 当前阶段: development
-- 上次完成: **Sprint 4 feature 侧 sprint-review（[SPRINT-REVIEW-s4-r1.md](docs/reviews/sprint/SPRINT-REVIEW-s4-r1.md)，verdict needs_revision）+ 全部修复**，分支 `fix/sprint4-review-followups`；坐实 typecheck 48/48 + 全量 vitest 1029 passed/1 skip + biome 0 error/warning。
-  - 审查: 5 reviewer 并行批审 T-030/031·T-034/035·T-037/038/039·T-118~122·T-092；per-task 报告落 docs/reviews/code/CODE-REVIEW-{T034-T035,T-118-T-122,T-092}-r1。
-  - 修复(5 debugger 并行按包): 3 HIGH(SR-A-002 onCopyHtml→use-toast 队列·SR-A-001 真实 simulatePaste 集成测试·SR-C-001 describe-theme→listThemeTemplates) + ~17 MEDIUM/LOW(SSE 泄漏·POST 校验·pool 并发单例·not-implemented 错误码·死参移除·错误分类内聚·schema discriminatedUnion) + dev-plan s4 校正(AC-004 error→warning + 3 路径, v0.5.2) + template-coverage 测试改 fs 读 fixture(去 core→themes 反向依赖)。
-  - 前序合 main: T-039+T-092([PR #16](https://github.com/lync-cyber/wechat-flow/pull/16) merge 13fdebe)·relay-jobs(PR #15)·relay-backend+6图床(PR #12)·MCP 24Tool(PR #10)·L3 cascade(PR #6)·输出 T-030/031(PR #8)·framework 0.14.0(PR #14)。
-  - 运行学习(①-⑰)见 [.cataforge/learnings/registry-archive.md](.cataforge/learnings/registry-archive.md)。
-- 下一步行动: **sprint-review 修复 → [PR #17](https://github.com/lync-cyber/wechat-flow/pull/17) open（fix/sprint4-review-followups→main，3 commit），待 CI/review/merge**。framework-feedback 本轮 4 项已上报 [CataForge#374](https://github.com/lync-cyber/CataForge/issues/374)。其后 Sprint 4 余下全部 DESIGN 门禁 —— T-102/105/106 [DESIGN] Penpot 视觉稿需用户 sign-off 解锁 UI 页 T-040/041/042/093 + T-111 [VALIDATION]；无 DESIGN 推进则 feature 侧到此。housekeeping: 5 陈旧本地分支已清理(仅剩 main)。
+- 上次完成: **deferred 技术债 backlog 4 簇落地 → [PR #18](https://github.com/lync-cyber/wechat-flow/pull/18) open（fix/deferred-backlog-relay-auth→main，commit a6d301e，29 文件 +946/−213）** —— typecheck 48/48 + 全量 vitest 1055 passed/1 skip + biome 0 error。
+  - 簇 A relay auth spine: 新增 `middleware/auth.ts`(resolveBearer+scope 守卫+统一信封) + `http/error.ts`(ErrorResponse{code,message,requestId}=R-003)；images 真路由接 upload-scope 鉴权、jobs 从 token 取身份(SR-B-003 不再信 body apiKeyId)、editor-session 占位 /images/upload+/admin handler 删除并 issue/refresh 挂进 createApp、main.ts 接线(Redis session-store + 内存 rate-limiter + fail-closed oauth)；R-005 refresh 1min 窗口 + R-008 deviceFingerprint min16/max128。新增 4 测试文件(auth-middleware/app-auth-integration/auth-rate-limiter/auth-session-store)。
+  - 簇 C 图床(T-033): qiniu/oss/cos/smms/custom 缺凭据 fail-fast(对齐 AC-005)、WebP/PNG EXIF 剥离测试、OSS 确定性 auth 断言(oss.ts 注入 now)。
+  - 簇 D(T-092 AC-006): describe_template 富响应 = core `describeTemplateDetailed`(coveredElements/coveredBlocks/mdastSummary/dependencies) + contracts schema 扩展 + tool 接线。
+  - 前序合 main: **sprint-review 修复 [PR #17](https://github.com/lync-cyber/wechat-flow/pull/17) merge(d1c457e, 2026-06-24)** —— Sprint 4 feature 侧全部合 main；更早 T-039+T-092(PR #16)·relay-jobs(#15)·relay-backend+6图床(#12)·MCP 24Tool(#10)·L3 cascade(#6)·T-030/031(#8)·framework 0.14.0(#14)。运行学习见 [.cataforge/learnings/registry-archive.md](.cataforge/learnings/registry-archive.md)。
+- 下一步行动: **[PR #18](https://github.com/lync-cyber/wechat-flow/pull/18) 待 CI/review/merge**。merge 后 Sprint 4 余下全部卡 DESIGN 门禁等用户决策：T-102/105/106 [DESIGN] Penpot 视觉稿 sign-off → 解锁 UI 页 T-040/041/042/093 → T-111 [VALIDATION]。framework-feedback 本轮 4 项已上报 [CataForge#374](https://github.com/lync-cyber/CataForge/issues/374)。housekeeping: 本地 main + fix/deferred-backlog-relay-auth；origin 残留 chore/relay-post-merge-reconcile + feature/relay-backend（已合并，待清）。
 - 已完成阶段: [requirements, architecture, ui_design, dev_planning, cross_doc_amendment_r2, arch_special_review_css_inlining, dev_plan_amendment_custom_styles]
-- 当前Sprint: Sprint 4（收尾）— feature 侧全完成并合 main（PR #6/#8/#10/#12/#14/#15/#16），sprint-review 修复 [PR #17](https://github.com/lync-cyber/wechat-flow/pull/17) open。余全部 DESIGN 门禁：T-040/041/042/093（待 T-102/105/106 Penpot sign-off）+ T-111（VALIDATION）。Sprint 0-3(PR #1/#2/#6/#7)。
-- 待办(deferred):
-  - **T-091**: R-003 错误信封统一 ErrorResponse{code,message,requestId}(跨切 relay, 独立 error-envelope 任务)·R-005 refresh exp-1min·R-007 API key 哈希(属 E-010)·R-008 deviceFingerprint min16/max128·R-006/009/010 LOW。
-  - **T-033**: editor-session/images 路由整合(待 auth 中间件)·qiniu 缺凭据静默回退·PNG/WebP EXIF 测试·AC-002b 2.5MB 压缩未追求(仅 10MB 硬限)；云适配器: COS Content-Type 签名·OSS auth 断言·oss/cos/smms/custom env-gated 集成测试缺。
-  - **T-092**: AC-006 富响应(coveredElements/mdastSummary/dependencies)延后；card AC-004 字段名 vs ARCH ThemeTemplateValidationResult(以 ARCH 为准, accepted)。
-  - **sprint-review s4 余项**: SR-B-003 jobs 鉴权(并入 auth 中间件)·iframe sandbox XSS happy-dom 假绿→Playwright E2E(T-058)·juice/client 跨运行时 bundle。
+- 当前Sprint: Sprint 4（收尾）— feature 侧全完成并合 main（PR #6/#8/#10/#12/#14/#15/#16 + sprint-review 修复 [PR #17](https://github.com/lync-cyber/wechat-flow/pull/17) merged）。余全部 DESIGN 门禁：T-040/041/042/093（待 T-102/105/106 Penpot sign-off）+ T-111（VALIDATION）。Sprint 0-3(PR #1/#2/#6/#7)。
+- 待办(deferred)（✅=本轮 deferred backlog 已解决，working tree）:
+  - **T-091**: ✅R-003 错误信封·✅R-005 refresh 1min 窗口·✅R-008 deviceFingerprint min16/max128·✅editor-session/images/jobs 路由整合(并入簇 A)。剩: R-007 API key 哈希(属 E-010, 无 admin 存储无落点)·R-006/009/010 LOW。
+  - **T-033**: ✅qiniu(+oss/cos/smms/custom) 缺凭据 fail-fast·✅PNG/WebP EXIF 测试·✅OSS auth 断言。剩: COS Content-Type 签名(需真实 COS 端点验证 canonical 化/小写方法/百分号编码, 沙盒无法验证, 不盲改)·oss/cos/smms/custom env-gated 集成测试(需真实云凭据)·AC-002b 2.5MB 压缩未追求(仅 10MB 硬限)。
+  - **T-092**: ✅AC-006 富响应(coveredElements/coveredBlocks/mdastSummary/dependencies)。剩: card AC-004 字段名 vs ARCH ThemeTemplateValidationResult(以 ARCH 为准, accepted)。
+  - **sprint-review s4 余项**: ✅SR-B-003 jobs 鉴权(并入簇 A)。剩: iframe sandbox XSS happy-dom 假绿→Playwright E2E(T-058)·juice/client 跨运行时 bundle。
   - **upstream/CataForge**: T-119/T-091 AC 欠拟合 arch#API→[#357](https://github.com/lync-cyber/CataForge/issues/357)·feedback aggregator 解析脆弱→[#358](https://github.com/lync-cyber/CataForge/issues/358)·deploy --rebuild wipe([#340](https://github.com/lync-cyber/CataForge/issues/340))·design_tool 重置([#350](https://github.com/lync-cyber/CataForge/issues/350))·#254/#255+fb-0.11.1 待提交·本轮新发现(超长行/scoped-test gap/动态 import 绕守卫/sprint-review L1 噪声)已上报 [#374](https://github.com/lync-cyber/CataForge/issues/374)。
 - 文档状态:
   - prd: approved

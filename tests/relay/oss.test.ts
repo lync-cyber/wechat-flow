@@ -1,5 +1,7 @@
+import { createHmac } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import type { HttpRequest, HttpRequestInit } from "../../apps/relay/src/image-host/http.ts";
+import { sanitizeObjectKey } from "../../apps/relay/src/image-host/keys.ts";
 import { createOssAdapter } from "../../apps/relay/src/image-host/oss.ts";
 
 const testConfig = {
@@ -87,6 +89,34 @@ describe("createOssAdapter", () => {
       contentType: "image/jpeg",
     });
     expect(calls[0]?.init.headers?.Date).toBeDefined();
+  });
+
+  it("Authorization is a correct OSS signature over method, content-type, date and resource", async () => {
+    const { httpRequest, calls } = makeHttpRequest();
+    const fixedDate = new Date("2026-01-02T03:04:05Z");
+    const adapter = createOssAdapter(testConfig, { httpRequest, now: () => fixedDate });
+    await adapter.upload(new Uint8Array([1, 2, 3]), {
+      filename: "photo.jpg",
+      contentType: "image/jpeg",
+    });
+
+    const key = sanitizeObjectKey("photo.jpg");
+    const stringToSign = `PUT\n\nimage/jpeg\n${fixedDate.toUTCString()}\n/${testConfig.bucket}/${key}`;
+    const expectedSig = createHmac("sha1", testConfig.accessKeySecret)
+      .update(stringToSign)
+      .digest("base64");
+    expect(calls[0]?.init.headers?.Authorization).toBe(
+      `OSS ${testConfig.accessKeyId}:${expectedSig}`
+    );
+  });
+
+  it("signature changes when content-type changes (content-type is part of the signature)", async () => {
+    const { httpRequest, calls } = makeHttpRequest();
+    const fixedDate = new Date("2026-01-02T03:04:05Z");
+    const adapter = createOssAdapter(testConfig, { httpRequest, now: () => fixedDate });
+    await adapter.upload(new Uint8Array([1]), { filename: "a.jpg", contentType: "image/jpeg" });
+    await adapter.upload(new Uint8Array([1]), { filename: "a.jpg", contentType: "image/png" });
+    expect(calls[0]?.init.headers?.Authorization).not.toBe(calls[1]?.init.headers?.Authorization);
   });
 
   it("returned url uses default aliyuncs domain when no custom domain is set", async () => {
