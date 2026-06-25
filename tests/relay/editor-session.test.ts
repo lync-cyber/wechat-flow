@@ -769,6 +769,19 @@ describe("refreshEditorSession: branch coverage — non-editor iss and missing s
 
     await expect(refreshEditorSession(noSessionIdJwt, deps)).rejects.toThrow();
   });
+
+  it("throws when token has a valid editor session but no exp claim", async () => {
+    const deps = makeDefaultDeps();
+    const sid = "no-exp-session";
+    await deps.sessionStore.save(sid);
+    const noExpJwt = await new SignJWT({ scope: "user,render,upload", sessionId: sid })
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuer("editor")
+      .setSubject("user:no-exp")
+      .sign(TEST_SECRET_BYTES);
+
+    await expect(refreshEditorSession(noExpJwt, deps)).rejects.toThrow();
+  });
 });
 
 // ---------------------------------------------------------------------------

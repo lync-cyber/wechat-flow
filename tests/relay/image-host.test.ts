@@ -358,6 +358,15 @@ describe("createAdapterFromConfig: builds the adapter selected by config.kind", 
       createAdapterFromConfig({ kind: "qiniu", credentials: { accessKey: "ak" } })
     ).toThrow(/secretKey/);
   });
+
+  it("treats an empty-string credential as missing (fail-fast)", () => {
+    expect(() =>
+      createAdapterFromConfig({
+        kind: "qiniu",
+        credentials: { accessKey: "", secretKey: "sk", bucket: "b", domain: "https://d.test" },
+      })
+    ).toThrow(/missing required credentials/);
+  });
 });
 
 // ---------------------------------------------------------------------------

@@ -63,6 +63,11 @@ describe("AC-006 (rich response): describeTemplateTool returns coverage, mdast s
     expect(result.code).toBe("E_THEME_NOT_FOUND");
     expect(result.coveredElements).toBeUndefined();
   });
+
+  it("missing args default to empty strings and resolve to E_THEME_NOT_FOUND", () => {
+    const result = describeTemplateTool({}) as Record<string, unknown>;
+    expect(result.code).toBe("E_THEME_NOT_FOUND");
+  });
 });
 
 // ---- not-found: themeId 不存在 → { code: 'E_THEME_NOT_FOUND' } ----
