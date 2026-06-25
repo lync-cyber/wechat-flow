@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { CommandDefinition } from "../command-registry.ts";
 import { buildEditorCommands, filterCommands } from "../command-registry.ts";
 
@@ -74,10 +74,20 @@ describe("command-registry: buildEditorCommands", () => {
     }
   });
 
-  it("空实现命令显式标记 placeholder: true，switch-theme 系列为真实实现无标记", () => {
+  it("export-download-html.run() 调用 downloadHtml 回调", () => {
+    const downloadHtml = vi.fn();
+    const cmds = buildEditorCommands({ switchTheme: vi.fn(), downloadHtml });
+    const cmd = cmds.find((c) => c.id === "export-download-html");
+    if (!cmd) throw new Error("export-download-html not found");
+    cmd.run();
+    expect(downloadHtml).toHaveBeenCalledOnce();
+  });
+
+  it("空实现命令显式标记 placeholder: true，switch-theme 与 export-download-html 为真实实现无标记", () => {
     const cmds = buildEditorCommands({ switchTheme: vi.fn() });
+    const realImplIds = new Set(["export-download-html"]);
     for (const cmd of cmds) {
-      if (cmd.id.startsWith("switch-theme-")) {
+      if (cmd.id.startsWith("switch-theme-") || realImplIds.has(cmd.id)) {
         expect(cmd.placeholder, `command ${cmd.id} has real run impl`).toBeUndefined();
       } else {
         expect(cmd.placeholder, `command ${cmd.id} is a stub and must declare placeholder`).toBe(

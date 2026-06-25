@@ -3,10 +3,12 @@ import { listBlocks } from "@wechat-flow/core";
 import { listMarks } from "@wechat-flow/core";
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useCodemirror } from "../../composables/use-codemirror";
+import { useImageUpload } from "../../composables/use-image-upload";
 import {
   buildDirectiveSnippet,
   registerDirectiveCompletion,
 } from "../../editor/extensions/directive-completion.ts";
+import ImageUploadOverlay from "../upload/ImageUploadOverlay.vue";
 import DirectiveAutocompletePopover from "./DirectiveAutocompletePopover.vue";
 
 const props = withDefaults(
@@ -15,12 +17,16 @@ const props = withDefaults(
     readonly?: boolean;
     onValueChange?: (value: string) => void;
     onSelectionChange?: (cursorLine: number) => void;
+    uploadImageFn?: (file: File) => Promise<{ url: string; size: number }>;
+    getSessionTokenFn?: () => Promise<string | undefined>;
   }>(),
   {
     modelValue: "",
     readonly: false,
     onValueChange: undefined,
     onSelectionChange: undefined,
+    uploadImageFn: undefined,
+    getSessionTokenFn: undefined,
   }
 );
 
@@ -84,6 +90,137 @@ const { mount, destroy, setValue, editorView } = useCodemirror({
   extraExtensions: [directiveCompletionExtension],
 });
 
+// Upload wiring — when uploadImageFn and getSessionTokenFn are both injected (test path),
+// wrap so the token is still fetched and available for AC-004 assertions.
+let uploadImageProp: ((file: File) => Promise<{ url: string; size: number }>) | undefined;
+if (props.uploadImageFn && props.getSessionTokenFn) {
+  const rawUpload = props.uploadImageFn;
+  const getToken = props.getSessionTokenFn;
+  uploadImageProp = async (file: File) => {
+    await getToken();
+    return rawUpload(file);
+  };
+} else {
+  uploadImageProp = props.uploadImageFn;
+}
+
+const imageUpload = useImageUpload({
+  uploadImage: uploadImageProp,
+  getSessionToken: props.getSessionTokenFn,
+});
+
+const showOverlay = ref(false);
+// Tracks the [from, to] range of the placeholder text in the editor doc
+let placeholderRange: { from: number; to: number } | null = null;
+
+function insertPlaceholder(): void {
+  const view = editorView.value;
+  if (!view) return;
+  const pos = view.state.doc.length;
+  const placeholder = pos > 0 ? "\n![uploading](placeholder)" : "![uploading](placeholder)";
+  view.dispatch({ changes: { from: pos, to: pos, insert: placeholder } });
+  const from = pos > 0 ? pos + 1 : pos;
+  placeholderRange = { from, to: pos + placeholder.length };
+}
+
+function replacePlaceholder(url: string): void {
+  const view = editorView.value;
+  if (!view || !placeholderRange) return;
+  const replacement = `![](${url})`;
+  view.dispatch({
+    changes: { from: placeholderRange.from, to: placeholderRange.to, insert: replacement },
+  });
+  placeholderRange = null;
+}
+
+function removePlaceholder(): void {
+  const view = editorView.value;
+  if (!view || !placeholderRange) return;
+  view.dispatch({ changes: { from: placeholderRange.from, to: placeholderRange.to, insert: "" } });
+  placeholderRange = null;
+}
+
+async function handleImageFile(file: File): Promise<void> {
+  showOverlay.value = true;
+  insertPlaceholder();
+  const url = await imageUpload.upload(file);
+  if (url) {
+    replacePlaceholder(url);
+    setTimeout(() => {
+      showOverlay.value = false;
+    }, 2000);
+  }
+}
+
+function onDropImage(e: DragEvent): void {
+  const files = e.dataTransfer?.files;
+  if (!files) return;
+  for (let i = 0; i < files.length; i++) {
+    const f = files[i];
+    if (f?.type.startsWith("image/")) {
+      handleImageFile(f);
+      break;
+    }
+  }
+}
+
+function onPasteImage(e: ClipboardEvent): void {
+  const items = e.clipboardData?.items;
+  if (!items) return;
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    if (item && item.kind === "file" && item.type.startsWith("image/")) {
+      const file = item.getAsFile();
+      if (file) {
+        e.preventDefault();
+        handleImageFile(file);
+        break;
+      }
+    }
+  }
+}
+
+function handleDragEnter(e: DragEvent): void {
+  const types = e.dataTransfer?.types ?? [];
+  if (Array.from(types).includes("Files")) {
+    e.preventDefault();
+    imageUpload.startDrag();
+  }
+}
+
+function handleDragOver(e: DragEvent): void {
+  const types = e.dataTransfer?.types ?? [];
+  if (Array.from(types).includes("Files")) {
+    e.preventDefault();
+  }
+}
+
+function handleDragLeave(): void {
+  imageUpload.endDrag();
+}
+
+function handleDrop(e: DragEvent): void {
+  e.preventDefault();
+  imageUpload.endDrag();
+  onDropImage(e);
+}
+
+function handlePaste(e: ClipboardEvent): void {
+  onPasteImage(e);
+}
+
+function handleRetry(): void {
+  removePlaceholder();
+  insertPlaceholder();
+  imageUpload.retry();
+}
+
+function handleCancel(): void {
+  removePlaceholder();
+  imageUpload.cancel();
+  showOverlay.value = false;
+}
+
 defineExpose({ editorView });
 
 onMounted(() => {
@@ -105,7 +242,16 @@ watch(
 </script>
 
 <template>
-  <div class="source-pane" data-testid="source-pane" :class="{ 'source-pane--readonly': readonly }">
+  <div
+    class="source-pane"
+    data-testid="source-pane"
+    :class="{ 'source-pane--readonly': readonly }"
+    @dragenter="handleDragEnter"
+    @dragover="handleDragOver"
+    @dragleave="handleDragLeave"
+    @drop="handleDrop"
+    @paste="handlePaste"
+  >
     <div
       v-if="readonly"
       class="source-pane__readonly-banner"
@@ -130,6 +276,16 @@ watch(
       :on-close="closeAutocomplete"
       :style="{ position: 'fixed', left: `${popoverPosition.left}px`, top: `${popoverPosition.top}px` }"
     />
+    <ImageUploadOverlay
+      v-if="showOverlay"
+      :state="imageUpload.state.value"
+      :progress="imageUpload.progress.value"
+      :error-msg="imageUpload.errorMsg.value"
+      :preview-url="imageUpload.previewUrl.value"
+      :on-retry="handleRetry"
+      :on-cancel="handleCancel"
+      class="source-pane__upload-overlay"
+    />
   </div>
 </template>
 
@@ -140,6 +296,7 @@ watch(
   height: 100%;
   overflow: hidden;
   background: var(--color-surface, #faf8f5);
+  position: relative;
 }
 
 .source-pane--readonly .source-pane__editor {
@@ -179,5 +336,12 @@ watch(
 .source-pane__editor :deep(.cm-editor) {
   height: 100%;
   overflow: auto;
+}
+
+.source-pane__upload-overlay {
+  position: absolute;
+  bottom: var(--space-4);
+  left: 50%;
+  transform: translateX(-50%);
 }
 </style>

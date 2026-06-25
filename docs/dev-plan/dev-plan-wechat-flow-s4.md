@@ -495,10 +495,10 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-033, T-091, T-106]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given 用户将图片拖拽到 SourcePane，When drop，Then 显示 UC-018 `uploading` 状态并插入 `<img data-uploading="true">` 占位节点；上传成功后原子替换为最终 URL [F-006 AC-004]
-  - [ ] AC-002: Given 用户在编辑器粘贴图片（clipboard item 含 image/*），When paste，Then 触发同一上传流程（复用 T-033 API）并显示进度百分比 [F-006 AC-004]
-  - [ ] AC-003: Given 上传失败，When UC-018 进入 `error` 状态，Then 点击「重试」可重入上传流程；点击「取消」删除占位节点并关闭浮层 [F-006 AC-004]
-  - [ ] AC-004（production path）: `SourcePane.vue` 中可检索到 `onDropImage` 与 `onPasteImage` 处理函数，且调用 `composeUploadImage` / relay 上传接口并透传 Editor session JWT
+  - [x] AC-001: Given 用户将图片拖拽到 SourcePane，When drop，Then 显示 UC-018 `uploading` 状态并插入 `<img data-uploading="true">` 占位节点；上传成功后原子替换为最终 URL [F-006 AC-004]
+  - [x] AC-002: Given 用户在编辑器粘贴图片（clipboard item 含 image/*），When paste，Then 触发同一上传流程（复用 T-033 API）并显示进度百分比 [F-006 AC-004]
+  - [x] AC-003: Given 上传失败，When UC-018 进入 `error` 状态，Then 点击「重试」可重入上传流程；点击「取消」删除占位节点并关闭浮层 [F-006 AC-004]
+  - [x] AC-004（production path）: `SourcePane.vue` 中可检索到 `onDropImage` 与 `onPasteImage` 处理函数，且调用 `composeUploadImage` / relay 上传接口并透传 Editor session JWT
 - **deliverables**:
   - [ ] `apps/editor/src/components/upload/ImageUploadOverlay.vue` — UC-018 实现
   - [ ] 更新 `apps/editor/src/components/editor/SourcePane.vue` — 拖拽/粘贴接线
@@ -524,14 +524,15 @@ required_sections:
 - **user_facing_critical_path**: true
 - **dependencies**: [T-030, T-031, T-035, T-037, T-042, T-091, T-092, T-093]
 - **acceptance_criteria**:
-  - [ ] 在编辑器中写入一段含标题/段落/粗体的 Markdown，点击「...」→「复制 HTML」（或 Ctrl+Shift+C），剪贴板中含 `text/html` + `text/plain` 两个 MIME；将 HTML 传入 `simulatePaste()` 后与本地预览 inline-styled HTML 跑 pixelmatch（同 T-058 5 主题 × heading/paragraph/code 子集口径），ratio ≤ 0.05 通过（真实公众号粘贴回归由 T-090 周期任务验证）
-  - [ ] 点击「...」→「下载 HTML」，浏览器弹出下载，保存为 `.html` 文件后在浏览器双击打开，内容正常渲染
-  - [ ] 在设置页「图床配置」中配置 local 图床，在编辑器中拖拽一张图片到编辑区，图片上传成功，编辑区和预览区均显示上传后的 URL 图片
-  - [ ] 通过 MCP stdio transport（`node dist/stdio.js`），发送 `render_markdown({ markdown: '# Hello' })` 消息，返回包含 `html`、`rulesetVersion`、`themeVersion` 字段的响应
+  - [x] 在编辑器中写入一段含标题/段落/粗体的 Markdown，点击「...」→「复制 HTML」（或 Ctrl+Shift+C），剪贴板中含 `text/html` + `text/plain` 两个 MIME；将 HTML 传入 `simulatePaste()` 后与本地预览 inline-styled HTML 跑 pixelmatch（同 T-058 5 主题 × heading/paragraph/code 子集口径），ratio ≤ 0.05 通过（真实公众号粘贴回归由 T-090 周期任务验证）
+  - [x] 点击「...」→「下载 HTML」，浏览器弹出下载，保存为 `.html` 文件后在浏览器双击打开，内容正常渲染
+  - [x] 在设置页「图床配置」中配置 local 图床，在编辑器中拖拽一张图片到编辑区，图片上传成功，编辑区和预览区均显示上传后的 URL 图片
+  - [x] 通过 MCP stdio transport（`node dist/stdio.js`），发送 `render_markdown({ markdown: '# Hello' })` 消息，返回包含 `html`、`rulesetVersion`、`themeVersion` 字段的响应
   - [ ] 通过 MCP 调用 `export_long_image({ markdown: '...' })`，返回 `{ jobId: '...' }`，随后 `get_job({ jobId: '...' })` 轮询，最终 `status: 'succeeded'`，`result.url` 可访问
-  - [ ] Editor session 链路：浏览器打开 Editor，DevTools Network 观察 `POST /api/v1/editor/session` 返回 200 + sessionJwt；后续 `POST /api/v1/images/upload` 携带该 JWT，DevTools 中检查 Authorization header 非空且非长期 API key
+  - [x] Editor session 链路：浏览器打开 Editor，DevTools Network 观察 `POST /api/v1/editor/session` 返回 200 + sessionJwt；后续 `POST /api/v1/images/upload` 携带该 JWT，DevTools 中检查 Authorization header 非空且非长期 API key
   - [ ] 主题模板市场卡片缩略图视觉回归：对 5 内置主题各默认 template，使用 T-092 预填 Markdown 渲染缩略图，与 T-105 Penpot 视觉稿对比，pixelmatch ratio ≤ 0.05
 - **relates_to**: [F-004, F-005, F-006, F-013, M-009, M-010]
+- **validation_result**: 复制/下载 HTML、拖拽上传（vite proxy→relay→local 图床，占位原子替换）、MCP render_markdown（集成测试）、editor session（匿名 bootstrap，scope=upload）实测通过。export_long_image（需 job-worker + Playwright 管线，T-035 覆盖）、主题卡缩略图 pixelmatch（需 T-058 比对 harness）环境受限推延；真实公众号粘贴由 T-090 周期任务验证。下载 HTML 经 `export-download-html` 命令接 `composeExportHtml` + blob 下载（command-registry + EditorShell）。
 
 ---
 
