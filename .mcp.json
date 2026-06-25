@@ -2,7 +2,7 @@
   "mcpServers": {
     "penpot": {
       "type": "http",
-      "url": "http://localhost:${PENPOT_MCP_SERVER_PORT:-4401}/mcp"
+      "url": "http://localhost:9001/mcp/stream"
     }
   }
 }
