@@ -431,15 +431,15 @@ required_sections:
 - **security_sensitive**: true
 - **dependencies**: [T-005, T-033, T-102]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given 访问 `/settings`，When 页面加载，Then 显示左侧导航（编辑器/主题与品牌/同步与协作/图床配置/API密钥/关于），默认选中「编辑器」分组 [ui-spec-wechat-flow-p001-p005#§3.P-004]
-  - [ ] AC-002: Given 「图床配置」导航项，When 点击，Then 右侧显示 6 个图床折叠卡片；展开「七牛云」卡片，可填写 AccessKey/SecretKey（密码框，不明文显示）
-  - [ ] AC-003: Given 填写图床配置后点击「保存」，When 保存，Then 凭据写入 IndexedDB（`preferences` store，key 加密处理），Toast 提示「设置已保存」，刷新页面后配置恢复 [A-001 假设 + F-006]
-  - [ ] AC-004: Given 「API 密钥」分组，When 展示 AppSecret 输入框，Then 默认密码框形式（不明文），hover 显示「眼睛」图标可切换明/暗
+  - [x] AC-001: Given 访问 `/settings`，When 页面加载，Then 显示左侧导航（编辑器/主题与品牌/同步与协作/图床配置/API密钥/关于），默认选中「编辑器」分组 [ui-spec-wechat-flow-p001-p005#§3.P-004]
+  - [x] AC-002: Given 「图床配置」导航项，When 点击，Then 右侧显示 6 个图床折叠卡片；展开「七牛云」卡片，可填写 AccessKey/SecretKey（密码框，不明文显示）
+  - [x] AC-003: Given 填写图床配置后点击「保存」，When 保存，Then 凭据写入 IndexedDB（`preferences` store，key 加密处理），Toast 提示「设置已保存」，刷新页面后配置恢复 [A-001 假设 + F-006]
+  - [x] AC-004: Given 「API 密钥」分组，When 展示 AppSecret 输入框，Then 默认密码框形式（不明文），hover 显示「眼睛」图标可切换明/暗
 - **deliverables**:
-  - [ ] 更新 `apps/editor/src/pages/SettingsPage.vue` — P-004 完整实现
-  - [ ] `apps/editor/src/components/settings/ImageHostConfig.vue` — 图床配置折叠卡片组
-  - [ ] `apps/editor/src/components/settings/ApiKeyConfig.vue` — API 密钥配置分组
-  - [ ] `packages/core/src/storage/credentials.ts` — 凭据本地加密存储（使用 Web Crypto API）
+  - [x] 更新 `apps/editor/src/pages/SettingsPage.vue` — P-004 完整实现
+  - [x] `apps/editor/src/components/settings/ImageHostConfig.vue` — 图床配置折叠卡片组
+  - [x] `apps/editor/src/components/settings/ApiKeyConfig.vue` — API 密钥配置分组
+  - [x] `packages/core/src/storage/credentials.ts` — 凭据本地加密存储（使用 Web Crypto API）
 - **relates_to**: [F-006, M-001, M-013, P-004]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-013
