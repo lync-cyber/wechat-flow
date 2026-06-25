@@ -6,7 +6,7 @@ import {
   issueEditorSession,
   refreshEditorSession,
 } from "../auth/editor-session.ts";
-import { resolveBearer } from "../auth/token-resolver.ts";
+import { errorResponse } from "../http/error.ts";
 
 const issueBodySchema = z.discriminatedUnion("bootstrap", [
   z.object({
@@ -16,7 +16,7 @@ const issueBodySchema = z.discriminatedUnion("bootstrap", [
   }),
   z.object({
     bootstrap: z.literal("anonymous"),
-    deviceFingerprint: z.string().min(1),
+    deviceFingerprint: z.string().min(16).max(128),
     captchaToken: z.string().optional(),
   }),
 ]);
@@ -36,19 +36,19 @@ export function createEditorSessionApp(deps: EditorSessionDeps): Hono {
   app.post("/api/v1/editor/session", async (c) => {
     const origin = c.req.header("x-editor-origin");
     if (!origin || !deps.allowedOrigins.includes(origin)) {
-      return c.json({ error: "E_PERMISSION_DENIED" }, 403);
+      return errorResponse(c, 403, "E_PERMISSION_DENIED", "origin is not allowlisted");
     }
 
     let body: unknown;
     try {
       body = await c.req.json();
     } catch {
-      return c.json({ error: "invalid_json" }, 400);
+      return errorResponse(c, 400, "E_INVALID_JSON", "request body is not valid JSON");
     }
 
     const parsed = issueBodySchema.safeParse(body);
     if (!parsed.success) {
-      return c.json({ error: "validation_error", issues: parsed.error.issues }, 400);
+      return errorResponse(c, 400, "E_VALIDATION", "request body failed schema validation");
     }
 
     const input = parsed.data;
@@ -57,7 +57,7 @@ export function createEditorSessionApp(deps: EditorSessionDeps): Hono {
     const clientIp = forwarded.split(",")[0].trim();
     const { allowed } = deps.rateLimiter.check(clientIp, deps.clock());
     if (!allowed) {
-      return c.json({ error: "E_QUOTA_EXCEEDED" }, 429);
+      return errorResponse(c, 429, "E_QUOTA_EXCEEDED", "too many session requests");
     }
 
     try {
@@ -65,7 +65,7 @@ export function createEditorSessionApp(deps: EditorSessionDeps): Hono {
       return c.json(result, 200);
     } catch (e) {
       if (e instanceof EditorAuthError) {
-        return c.json({ error: "E_AUTH" }, 401);
+        return errorResponse(c, 401, "E_AUTH", "authentication failed");
       }
       throw e;
     }
@@ -74,63 +74,15 @@ export function createEditorSessionApp(deps: EditorSessionDeps): Hono {
   app.post("/api/v1/editor/session/refresh", async (c) => {
     const token = extractBearer(c.req.header("authorization"));
     if (!token) {
-      return c.json({ error: "E_UNAUTHORIZED" }, 401);
+      return errorResponse(c, 401, "E_UNAUTHORIZED", "missing bearer token");
     }
 
     try {
       const result = await refreshEditorSession(token, deps);
       return c.json(result, 200);
     } catch {
-      return c.json({ error: "E_UNAUTHORIZED" }, 401);
+      return errorResponse(c, 401, "E_UNAUTHORIZED", "session refresh rejected");
     }
-  });
-
-  app.post("/api/v1/images/upload", async (c) => {
-    const token = extractBearer(c.req.header("authorization"));
-    if (!token) {
-      return c.json({ error: "E_UNAUTHORIZED" }, 401);
-    }
-
-    const resolved = await resolveBearer(token, {
-      secret: deps.secret,
-      sessionStore: deps.sessionStore,
-      clock: deps.clock,
-    });
-
-    if (!resolved.valid || resolved.iss !== "editor") {
-      return c.json({ error: "E_UNAUTHORIZED" }, 401);
-    }
-
-    const scopeParts = (resolved.scope ?? "").split(",").map((s) => s.trim());
-    if (!scopeParts.includes("upload")) {
-      return c.json({ error: "E_FORBIDDEN" }, 403);
-    }
-
-    return c.json({ status: "ok" }, 200);
-  });
-
-  app.post("/api/v1/admin/api-keys", async (c) => {
-    const token = extractBearer(c.req.header("authorization"));
-    if (!token) {
-      return c.json({ error: "E_UNAUTHORIZED" }, 401);
-    }
-
-    const resolved = await resolveBearer(token, {
-      secret: deps.secret,
-      sessionStore: deps.sessionStore,
-      clock: deps.clock,
-    });
-
-    if (!resolved.valid || resolved.iss !== "editor") {
-      return c.json({ error: "E_UNAUTHORIZED" }, 401);
-    }
-
-    const scopeParts = (resolved.scope ?? "").split(",").map((s) => s.trim());
-    if (!scopeParts.includes("admin")) {
-      return c.json({ error: "E_FORBIDDEN" }, 403);
-    }
-
-    return c.json({ status: "ok" }, 200);
   });
 
   return app;

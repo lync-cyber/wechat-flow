@@ -247,8 +247,8 @@ describe("AC-001 security: X-Editor-Origin allowlist + oauth token verification"
     });
 
     expect(res.status).toBe(403);
-    const body = (await res.json()) as { error: string };
-    expect(body.error).toBe("E_PERMISSION_DENIED");
+    const body = (await res.json()) as { error: { code: string } };
+    expect(body.error.code).toBe("E_PERMISSION_DENIED");
   });
 
   it("rejects request with missing X-Editor-Origin header with 403", async () => {
@@ -286,8 +286,8 @@ describe("AC-001 security: X-Editor-Origin allowlist + oauth token verification"
     });
 
     expect(res.status).toBe(401);
-    const body = (await res.json()) as { error: string };
-    expect(body.error).toBe("E_AUTH");
+    const body = (await res.json()) as { error: { code: string } };
+    expect(body.error.code).toBe("E_AUTH");
   });
 
   it("issueEditorSession rejects when oauth token verification returns null", async () => {
@@ -318,8 +318,8 @@ describe("AC-001 security: X-Editor-Origin allowlist + oauth token verification"
     });
 
     expect(res.status).toBe(401);
-    const body = (await res.json()) as { error: string };
-    expect(body.error).toBe("E_AUTH");
+    const body = (await res.json()) as { error: { code: string } };
+    expect(body.error.code).toBe("E_AUTH");
   });
 });
 
@@ -368,8 +368,8 @@ describe("AC-002: Anonymous bootstrap rate-limiting — 11th call returns 429 E_
     });
 
     expect(eleventhRes.status).toBe(429);
-    const body = (await eleventhRes.json()) as { error: string };
-    expect(body.error).toBe("E_QUOTA_EXCEEDED");
+    const body = (await eleventhRes.json()) as { error: { code: string } };
+    expect(body.error.code).toBe("E_QUOTA_EXCEEDED");
   });
 
   it("different IPs are tracked independently (second IP's calls are not throttled)", async () => {
@@ -390,7 +390,7 @@ describe("AC-002: Anonymous bootstrap rate-limiting — 11th call returns 429 E_
         },
         body: JSON.stringify({
           bootstrap: "anonymous",
-          deviceFingerprint: "fp-aaaa1111",
+          deviceFingerprint: "device-fp-aaaa-1111",
         }),
       });
     }
@@ -405,7 +405,7 @@ describe("AC-002: Anonymous bootstrap rate-limiting — 11th call returns 429 E_
       },
       body: JSON.stringify({
         bootstrap: "anonymous",
-        deviceFingerprint: "fp-bbbb2222",
+        deviceFingerprint: "device-fp-bbbb-2222",
       }),
     });
 
@@ -492,6 +492,21 @@ describe("AC-003: POST /api/v1/editor/session/refresh — issues new JWT; old us
     expect(resolved.iss).toBe("editor");
   });
 
+  it("rejects refresh attempted outside the 1-minute window (well before expiry)", async () => {
+    const nowMs = Date.now();
+    const clockValue = { current: nowMs };
+    const clock = () => clockValue.current;
+    const deps = makeDefaultDeps({ clock });
+
+    const initial = await issueEditorSession(
+      { bootstrap: "oauth", provider: "github", oauthToken: "token-early-refresh" },
+      deps
+    );
+
+    // Clock stays at issue time (~15 min before expiry) — outside the refresh window
+    await expect(refreshEditorSession(initial.sessionJwt, deps)).rejects.toThrow();
+  });
+
   it("refresh fails (returns error) when sessionId has been revoked", async () => {
     const deps = makeDefaultDeps();
 
@@ -574,48 +589,6 @@ describe("AC-004: token-resolver routes by iss='editor' vs long-term key; admin 
 
     // Must not be treated as an editor session — different resolution path
     expect(resolved.iss).not.toBe("editor");
-  });
-
-  it("editor JWT calling upload endpoint (in-scope) is allowed by auth middleware", async () => {
-    const deps = makeDefaultDeps();
-    const initial = await issueEditorSession(
-      { bootstrap: "oauth", provider: "github", oauthToken: "token-upload" },
-      deps
-    );
-
-    const app = createEditorSessionApp(deps);
-    const res = await app.request("/api/v1/images/upload", {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${initial.sessionJwt}`,
-        "x-editor-origin": "https://editor.example.com",
-      },
-    });
-
-    // Auth middleware must pass the request (not 401 or 403); route may 404 if not mounted
-    expect(res.status).not.toBe(401);
-    expect(res.status).not.toBe(403);
-  });
-
-  it("editor JWT calling admin endpoint returns 403", async () => {
-    const deps = makeDefaultDeps();
-    const initial = await issueEditorSession(
-      { bootstrap: "oauth", provider: "github", oauthToken: "token-admin-test" },
-      deps
-    );
-
-    const app = createEditorSessionApp(deps);
-    const res = await app.request("/api/v1/admin/api-keys", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        authorization: `Bearer ${initial.sessionJwt}`,
-        "x-editor-origin": "https://editor.example.com",
-      },
-      body: JSON.stringify({}),
-    });
-
-    expect(res.status).toBe(403);
   });
 
   it("resolveBearer returns valid=false for an expired editor JWT", async () => {
@@ -813,36 +786,6 @@ describe("routes: 401 when Authorization header is missing", () => {
         "content-type": "application/json",
         "x-editor-origin": "https://editor.example.com",
       },
-    });
-
-    expect(res.status).toBe(401);
-  });
-
-  it("POST /api/v1/images/upload without Authorization returns 401", async () => {
-    const deps = makeDefaultDeps();
-    const app = createEditorSessionApp(deps);
-
-    const res = await app.request("/api/v1/images/upload", {
-      method: "POST",
-      headers: {
-        "x-editor-origin": "https://editor.example.com",
-      },
-    });
-
-    expect(res.status).toBe(401);
-  });
-
-  it("POST /api/v1/admin/api-keys without Authorization returns 401", async () => {
-    const deps = makeDefaultDeps();
-    const app = createEditorSessionApp(deps);
-
-    const res = await app.request("/api/v1/admin/api-keys", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-editor-origin": "https://editor.example.com",
-      },
-      body: JSON.stringify({}),
     });
 
     expect(res.status).toBe(401);

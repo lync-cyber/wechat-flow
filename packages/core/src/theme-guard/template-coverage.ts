@@ -1,3 +1,4 @@
+import type { TemplateDefinition } from "@wechat-flow/contracts";
 import type { Node } from "mdast";
 import { parseMarkdown } from "../pipeline/parse.ts";
 import { describeTemplate, listThemeTemplates } from "../registry/template.ts";
@@ -9,6 +10,24 @@ export type ThemeTemplateValidationResult = {
   templates: { templateId: string; coverage: CoverageReport }[];
   failingTemplates: string[];
 };
+
+export type MdastSummary = {
+  totalNodes: number;
+  nodeCounts: Record<string, number>;
+};
+
+export type TemplateDetail = {
+  themeId: string;
+  templateId: string;
+  markdown: string;
+  metadata: NonNullable<TemplateDefinition["metadata"]>;
+  coveredElements: string[];
+  coveredBlocks: string[];
+  mdastSummary: MdastSummary;
+  dependencies: string[];
+};
+
+const DIRECTIVE_NODE_TYPES = new Set(["containerDirective", "leafDirective", "textDirective"]);
 
 // 9 structural categories (heading counts as 1); h1-h6 are individual detection targets.
 const REQUIRED_ELEMENTS = [
@@ -88,6 +107,35 @@ export function validateTemplateCoverage(
   const pass = missingElements.length === 0 && missingBlocks.length === 0;
 
   return { pass, coveredElements, missingElements, coveredBlocks, missingBlocks };
+}
+
+export function describeTemplateDetailed(themeId: string, templateId: string): TemplateDetail {
+  const def = describeTemplate(themeId, templateId);
+  const markdown = def.markdown ?? "";
+  const mdast = parseMarkdown(markdown);
+  const nodes = collectNodes(mdast);
+  const coverage = validateTemplateCoverage(themeId, templateId, markdown);
+
+  const nodeCounts: Record<string, number> = {};
+  const dependencies = new Set<string>();
+  for (const node of nodes) {
+    nodeCounts[node.type] = (nodeCounts[node.type] ?? 0) + 1;
+    if (DIRECTIVE_NODE_TYPES.has(node.type)) {
+      const { name } = node as unknown as { name?: string };
+      if (name) dependencies.add(name);
+    }
+  }
+
+  return {
+    themeId: def.themeId,
+    templateId: def.templateId,
+    markdown,
+    metadata: def.metadata ?? {},
+    coveredElements: coverage.coveredElements,
+    coveredBlocks: coverage.coveredBlocks,
+    mdastSummary: { totalNodes: nodes.length, nodeCounts },
+    dependencies: [...dependencies].sort(),
+  };
 }
 
 export function validateThemeTemplates(themeId: string): ThemeTemplateValidationResult {

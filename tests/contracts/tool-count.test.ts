@@ -131,6 +131,10 @@ describe("AC-005 response schema exports: all 24 response schemas are exported f
       templateId: "starter",
       markdown: "# x",
       metadata: { description: "d" },
+      coveredElements: ["h1"],
+      coveredBlocks: [],
+      mdastSummary: { totalNodes: 3, nodeCounts: { root: 1, heading: 1, text: 1 } },
+      dependencies: [],
     });
     expect(success.success).toBe(true);
 

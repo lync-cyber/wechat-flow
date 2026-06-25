@@ -22,9 +22,10 @@ function buildOssKey(meta: UploadMeta): string {
 
 export function createOssAdapter(
   config: OssConfig,
-  deps?: { httpRequest?: HttpRequest }
+  deps?: { httpRequest?: HttpRequest; now?: () => Date }
 ): ImageHostAdapter {
   const httpRequest = deps?.httpRequest ?? defaultHttpRequest;
+  const now = deps?.now ?? (() => new Date());
 
   return {
     name: "oss",
@@ -32,7 +33,7 @@ export function createOssAdapter(
       const key = buildOssKey(meta);
       const host = `${config.bucket}.${config.region}.aliyuncs.com`;
       const url = `https://${host}/${key}`;
-      const date = new Date().toUTCString();
+      const date = now().toUTCString();
       const contentType = meta.contentType;
 
       const stringToSign = `PUT\n\n${contentType}\n${date}\n/${config.bucket}/${key}`;

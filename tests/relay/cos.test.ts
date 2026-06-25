@@ -79,6 +79,16 @@ describe("createCosAdapter", () => {
     expect(calls[0]?.init.headers?.Authorization).toContain("q-signature=");
   });
 
+  it("sends the Content-Type header equal to the upload meta contentType", async () => {
+    const { httpRequest, calls } = makeHttpRequest();
+    const adapter = createCosAdapter(testConfig, { httpRequest });
+    await adapter.upload(new Uint8Array([1, 2, 3]), {
+      filename: "photo.jpg",
+      contentType: "image/png",
+    });
+    expect(calls[0]?.init.headers?.["Content-Type"]).toBe("image/png");
+  });
+
   it("returned url uses default myqcloud domain when no custom domain is set", async () => {
     const { httpRequest } = makeHttpRequest();
     const adapter = createCosAdapter(testConfig, { httpRequest });

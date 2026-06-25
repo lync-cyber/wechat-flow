@@ -114,6 +114,13 @@ export const describeTemplateResponseSchema = z.union([
     templateId: z.string(),
     markdown: z.string(),
     metadata: z.object({ description: z.string().optional() }),
+    coveredElements: z.array(z.string()),
+    coveredBlocks: z.array(z.string()),
+    mdastSummary: z.object({
+      totalNodes: z.number(),
+      nodeCounts: z.record(z.string(), z.number()),
+    }),
+    dependencies: z.array(z.string()),
   }),
   z.object({ code: z.string() }),
 ]);

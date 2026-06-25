@@ -64,7 +64,12 @@ export {
 } from "./registry/template.ts";
 export type { TemplateMeta, CoverageReport } from "./registry/template.ts";
 export {
+  describeTemplateDetailed,
   validateTemplateCoverage,
   validateThemeTemplates,
 } from "./theme-guard/template-coverage.ts";
-export type { ThemeTemplateValidationResult } from "./theme-guard/template-coverage.ts";
+export type {
+  MdastSummary,
+  TemplateDetail,
+  ThemeTemplateValidationResult,
+} from "./theme-guard/template-coverage.ts";

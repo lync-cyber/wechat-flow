@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { errorResponse } from "../http/error.ts";
 import type { ImageHostAdapter, UploadResult } from "../image-host/types.ts";
 import { preprocessImage } from "../image/preprocess.ts";
 
@@ -16,26 +17,31 @@ export function createImagesApp(deps: ImagesRouteDeps): Hono {
     try {
       formData = await c.req.formData();
     } catch {
-      return c.json({ error: "invalid body" }, 400);
+      return errorResponse(
+        c,
+        400,
+        "E_INVALID_BODY",
+        "request body is not valid multipart form data"
+      );
     }
 
     const file = formData.get("file");
     if (!file || typeof (file as Blob).arrayBuffer !== "function") {
-      return c.json({ error: "missing file field" }, 400);
+      return errorResponse(c, 400, "E_INVALID_REQUEST", "missing 'file' field");
     }
 
     const blob = file as Blob;
     const bytes = new Uint8Array(await blob.arrayBuffer());
 
     if (bytes.byteLength > maxBytes) {
-      return c.json({ error: "payload too large" }, 413);
+      return errorResponse(c, 413, "E_PAYLOAD_TOO_LARGE", "uploaded file exceeds the size limit");
     }
 
     let result: Awaited<ReturnType<typeof preprocessImage>>;
     try {
       result = await preprocessImage(bytes);
     } catch {
-      return c.json({ error: "invalid image" }, 400);
+      return errorResponse(c, 400, "E_INVALID_IMAGE", "uploaded file is not a decodable image");
     }
 
     const filename = (file as { name?: string }).name ?? "upload";
@@ -45,7 +51,7 @@ export function createImagesApp(deps: ImagesRouteDeps): Hono {
     try {
       uploadResult = await adapter.upload(result.data, { filename, contentType });
     } catch {
-      return c.json({ error: "upload failed" }, 502);
+      return errorResponse(c, 502, "E_UPLOAD_FAILED", "image host rejected the upload");
     }
 
     return c.json({ url: uploadResult.url, size: result.data.length }, 200);

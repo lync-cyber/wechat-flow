@@ -6,7 +6,11 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { beforeEach, describe, expect, it } from "vitest";
 import { defineTemplate, resetTemplateRegistry } from "../registry/template.ts";
-import { validateTemplateCoverage, validateThemeTemplates } from "./template-coverage.ts";
+import {
+  describeTemplateDetailed,
+  validateTemplateCoverage,
+  validateThemeTemplates,
+} from "./template-coverage.ts";
 
 const THEMES_DIR = join(process.cwd(), "packages/themes");
 const BUILTIN_THEMES = ["default", "magazine", "literary", "business", "tech"] as const;
@@ -405,6 +409,38 @@ x
     expect(result.pass).toBe(false);
     expect(result.failingTemplates).toContain("failing");
     expect(result.failingTemplates).not.toContain("passing");
+  });
+});
+
+// ──────────────────────────────────────────────────────────────────────────────
+// AC-006 (rich response): describeTemplateDetailed derives coverage + mdast + deps
+// ──────────────────────────────────────────────────────────────────────────────
+describe("describeTemplateDetailed: rich response derived from template markdown", () => {
+  it("returns coveredElements, coveredBlocks, dependencies and mdastSummary for a known template", () => {
+    defineTemplate({
+      themeId: "rich-theme",
+      templateId: "sample",
+      markdown: "# Title\n\nA paragraph with [a link](https://x.com).\n\n:::callout\nhi\n:::\n",
+      metadata: { description: "Sample" },
+    });
+
+    const detail = describeTemplateDetailed("rich-theme", "sample");
+    expect(detail.themeId).toBe("rich-theme");
+    expect(detail.templateId).toBe("sample");
+    expect(detail.metadata.description).toBe("Sample");
+    expect(detail.coveredElements).toContain("h1");
+    expect(detail.coveredElements).toContain("paragraph");
+    expect(detail.coveredElements).toContain("link");
+    expect(detail.coveredElements).not.toContain("table");
+    expect(detail.coveredBlocks).toEqual(["callout"]);
+    expect(detail.dependencies).toContain("callout");
+    expect(detail.mdastSummary.totalNodes).toBeGreaterThan(0);
+    expect(detail.mdastSummary.nodeCounts.heading).toBe(1);
+    expect(detail.mdastSummary.nodeCounts.containerDirective).toBe(1);
+  });
+
+  it("throws E_THEME_NOT_FOUND for an unknown theme", () => {
+    expect(() => describeTemplateDetailed("nope", "sample")).toThrow("E_THEME_NOT_FOUND");
   });
 });
 
