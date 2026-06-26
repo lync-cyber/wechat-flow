@@ -241,12 +241,12 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-020]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given `registerTheme({ id: 'org-theme', extends: 'default', delta: { tokens: { '--color-brand': '#003366' } } })`，When 应用 `org-theme`，Then 产出 HTML 中主题色为 `#003366`（delta 覆盖），其他 token 继承 default 主题 [F-009 AC-001]
-  - [ ] AC-002: Given 品牌包锁定了 `--color-brand` 和 `--color-accent`，When 写作者尝试通过 `paint` 覆盖 `--color-brand`，Then 该覆盖被忽略（品牌包优先），diagnostics 含 warn [F-009 AC-002]
+  - [x] AC-001: Given `registerTheme({ id: 'org-theme', extends: 'default', delta: { tokens: { '--color-brand': '#003366' } } })`，When 应用 `org-theme`，Then 产出 HTML 中主题色为 `#003366`（delta 覆盖），其他 token 继承 default 主题 [F-009 AC-001]
+  - [x] AC-002: Given 品牌包锁定了 `--color-brand` 和 `--color-accent`，When 写作者尝试通过 `paint` 覆盖 `--color-brand`，Then 该覆盖被忽略（品牌包优先），diagnostics 含 warn [F-009 AC-002]
 - **deliverables**:
-  - [ ] `packages/core/src/inheritance/delta-merge.ts` — 主题继承 delta 合并 [ARCH#§2.M-005]
-  - [ ] `packages/core/src/brand-pack/lock.ts` — 品牌包锁定逻辑
-  - [ ] `tests/core/theme-inheritance.test.ts` — AC-001..AC-002 单元测试
+  - [x] `packages/core/src/inheritance/delta-merge.ts` — 主题继承 delta 合并 [ARCH#§2.M-005]
+  - [x] `packages/core/src/brand-pack/lock.ts` — 品牌包锁定逻辑
+  - [x] `tests/core/theme-inheritance.test.ts` — AC-001..AC-002 单元测试
 - **relates_to**: [F-009, M-005]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-005
@@ -268,15 +268,15 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-047, T-048]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given `wechat-flow init my-pack --template plugin`，When 执行，Then 创建 `my-pack/` 目录，含 `manifest.json`、`src/index.ts`、`package.json` 骨架文件（plugin 模板）；`my-pack/` 目录在文件系统中存在可检索 [F-010 AC-003]
-  - [ ] AC-002: Given `wechat-flow validate ./my-pack`（合规 pack），When 执行，Then 退出码 0，stdout 含「通过：manifest ✓ schema ✓ 主题守护 ✓」[F-010 AC-005]
-  - [ ] AC-003: Given `wechat-flow validate ./broken-pack`（manifest 缺少 `name` 字段），When 执行，Then 退出码非 0，stderr 含 `E_MANIFEST_INVALID: missing required field 'name'`
-  - [ ] AC-004（production path）: `apps/cli/src/index.ts` 中可检索到 `.command('init')` 和 `.command('validate')` 的字面注册调用
+  - [x] AC-001: Given `wechat-flow init my-pack --template plugin`，When 执行，Then 创建 `my-pack/` 目录，含 `manifest.json`、`src/index.ts`、`package.json` 骨架文件（plugin 模板）；`my-pack/` 目录在文件系统中存在可检索 [F-010 AC-003]
+  - [x] AC-002: Given `wechat-flow validate ./my-pack`（合规 pack），When 执行，Then 退出码 0，stdout 含「通过：manifest ✓ schema ✓ 主题守护 ✓」[F-010 AC-005]
+  - [x] AC-003: Given `wechat-flow validate ./broken-pack`（manifest 缺少 `name` 字段），When 执行，Then 退出码非 0，stderr 含 `E_MANIFEST_INVALID: missing required field 'name'`
+  - [x] AC-004（production path）: `apps/cli/src/index.ts` 中可检索到 `.command('init')` 和 `.command('validate')` 的字面注册调用
 - **deliverables**:
-  - [ ] `apps/cli/src/commands/init.ts` — `--template plugin|theme` 两种骨架
-  - [ ] `apps/cli/src/commands/validate.ts` — manifest + schema + 主题守护 + variant 申报一致性
-  - [ ] `apps/cli/src/index.ts` — CLI 入口（使用 `commander` 或 `citty`）
-  - [ ] `tests/cli/validate.test.ts` — AC-002..AC-003 单元测试
+  - [x] `apps/cli/src/commands/init.ts` — `--template plugin|theme` 两种骨架
+  - [x] `apps/cli/src/commands/validate.ts` — manifest + schema + 主题守护 + variant 申报一致性
+  - [x] `apps/cli/src/index.ts` — CLI 入口（使用 `commander` 或 `citty`）
+  - [x] `tests/cli/validate.test.ts` — AC-002..AC-003 单元测试
 - **relates_to**: [F-010, M-011]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-011
@@ -298,18 +298,18 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-116, T-011, T-031, T-030]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given `wechat-flow dev ./my-pack`，When 执行，Then 启动 Vite dev 进程，stdout 含「Watching for changes...」[ARCH#§2.M-011]
-  - [ ] AC-002: Given 修改 pack 文件后，When HMR 触发，Then stdout 输出含 `[wechat-flow:hmr]` 前缀的刷新提示（≤2s 内输出）
-  - [ ] AC-003: Given `wechat-flow render --input article.md --theme default`，When 执行，Then stdout 输出 inline-styled HTML（不含 `<style>` 标签）
-  - [ ] AC-004: Given `wechat-flow publish ./my-pack`，When pack 文件 SHA256 与上次发布不同，Then stdout 输出 'new pack version detected' 提示；退出码 0
-  - [ ] AC-005: Given `wechat-flow export --input article.md --format html`，When 执行，Then 生成 standalone `.html` 文件
+  - [x] AC-001: Given `wechat-flow dev ./my-pack`，When 执行，Then 启动 Vite dev 进程，stdout 含「Watching for changes...」[ARCH#§2.M-011]
+  - [x] AC-002: Given 修改 pack 文件后，When HMR 触发，Then stdout 输出含 `[wechat-flow:hmr]` 前缀的刷新提示（≤2s 内输出）
+  - [x] AC-003: Given `wechat-flow render --input article.md --theme default`，When 执行，Then stdout 输出 inline-styled HTML（不含 `<style>` 标签）
+  - [x] AC-004: Given `wechat-flow publish ./my-pack`，When pack 文件 SHA256 与上次发布不同，Then stdout 输出 'new pack version detected' 提示；退出码 0
+  - [x] AC-005: Given `wechat-flow export --input article.md --format html`，When 执行，Then 生成 standalone `.html` 文件
 - **deliverables**:
-  - [ ] `apps/cli/src/commands/dev.ts` — Vite middleware + HMR + pack live-reload [ARCH#§2.M-011]
-  - [ ] `apps/cli/src/commands/publish.ts` — pack 打包骨架
-  - [ ] `apps/cli/src/commands/render.ts` — Tool 契约壳
-  - [ ] `apps/cli/src/commands/copy.ts` — Tool 契约壳
-  - [ ] `apps/cli/src/commands/export.ts` — Tool 契约壳
-  - [ ] 更新 `apps/cli/src/index.ts` — 注册以上 5 个子命令
+  - [x] `apps/cli/src/commands/dev.ts` — Vite middleware + HMR + pack live-reload [ARCH#§2.M-011]
+  - [x] `apps/cli/src/commands/publish.ts` — pack 打包骨架
+  - [x] `apps/cli/src/commands/render.ts` — Tool 契约壳
+  - [x] `apps/cli/src/commands/copy.ts` — Tool 契约壳
+  - [x] `apps/cli/src/commands/export.ts` — Tool 契约壳
+  - [x] 更新 `apps/cli/src/index.ts` — 注册以上 5 个子命令
 - **relates_to**: [F-010, M-011]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-011
@@ -542,13 +542,13 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-020, T-036, T-123]
 - **acceptance_criteria**:
-  - [ ] AC-001: list_tokens() 返回数组长度 ≥ 60（F-003 AC-004），每项含 id/category（color/spacing/font/decoration/alignment 之一）
-  - [ ] AC-002: describe_token('color.brand') 返回 `{ id, category, value, themeOverrides? }`
-  - [ ] AC-003: Tool 实现仅调用 M-005 注册中心 API，不含业务逻辑
+  - [x] AC-001: list_tokens() 返回数组长度 ≥ 60（F-003 AC-004），每项含 id/category（color/spacing/font/decoration/alignment 之一）
+  - [x] AC-002: describe_token('color.brand') 返回 `{ id, category, value, themeOverrides? }`
+  - [x] AC-003: Tool 实现仅调用 M-005 注册中心 API，不含业务逻辑
 - **deliverables**:
-  - [ ] `apps/mcp-server/src/tools/list-tokens.ts`
-  - [ ] `apps/mcp-server/src/tools/describe-token.ts`
-  - [ ] `tests/mcp-server/tools/list-tokens.test.ts`
+  - [x] `apps/mcp-server/src/tools/list-tokens.ts`
+  - [x] `apps/mcp-server/src/tools/describe-token.ts`
+  - [x] `tests/mcp-server/tools/list-tokens.test.ts`
 - **relates_to**: [F-013, M-009, M-005]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-005

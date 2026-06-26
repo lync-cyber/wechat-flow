@@ -1,5 +1,6 @@
 import type { Diagnostic, ThemeBlocks, ThemeDefinition } from "@wechat-flow/contracts";
 import { derivePalette } from "@wechat-flow/palette";
+import { applyBrandPackLock } from "../brand-pack/lock.ts";
 
 function getPaintableSet(paintable: ThemeDefinition["paintable"]): Set<string> {
   if (Array.isArray(paintable)) {
@@ -12,11 +13,15 @@ export function applyPaintToBlocks(
   theme: ThemeDefinition,
   paint: Record<string, string>
 ): { blocks: ThemeBlocks | undefined; warnDiagnostics: Diagnostic[] } {
-  const paintableSet = getPaintableSet(theme.paintable);
   const warnDiagnostics: Diagnostic[] = [];
 
+  const { allowed: brandAllowed, warnDiagnostics: brandWarn } = applyBrandPackLock(theme, paint);
+  warnDiagnostics.push(...brandWarn);
+
+  const paintableSet = getPaintableSet(theme.paintable);
+
   const allowed: Record<string, string> = {};
-  for (const [tokenPath, overrideValue] of Object.entries(paint)) {
+  for (const [tokenPath, overrideValue] of Object.entries(brandAllowed)) {
     if (paintableSet.has(tokenPath)) {
       allowed[tokenPath] = overrideValue;
     } else {

@@ -58,12 +58,22 @@ describe("AC-003: end-to-end — admin key → E_PERMISSION_DENIED", () => {
   });
 });
 
-describe("AC-002/AC-003: end-to-end — valid user key → E_NOT_IMPLEMENTED (auth passes)", () => {
-  it("createServer() with valid user key → callTool returns E_NOT_IMPLEMENTED", async () => {
+describe("AC-002/AC-003: end-to-end — valid user key → handler executes (auth passes)", () => {
+  it("createServer() with valid user key → callTool list_tokens returns tokens array (not an error code)", async () => {
     const raw = "user-key";
     const apiKeyStore = new Map([[hashApiKey(raw), { scope: "user" as const }]]);
-    const code = await callToolWithServer({ apiKeyStore, rawApiKey: raw }, "list_tokens");
-    expect(code).toBe("E_NOT_IMPLEMENTED");
+    const server = createServer({ apiKeyStore, rawApiKey: raw });
+    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+    await server.connect(serverTransport);
+    const client = new Client({ name: "test-client", version: "0.0.0" });
+    await client.connect(clientTransport);
+    const res = await client.callTool({ name: "list_tokens", arguments: {} });
+    await client.close();
+    const text = (res.content as Array<{ type: string; text: string }>)[0].text;
+    const payload = JSON.parse(text) as Record<string, unknown>;
+    expect(payload.code).toBeUndefined();
+    expect(Array.isArray(payload.tokens)).toBe(true);
+    expect((payload.tokens as unknown[]).length).toBeGreaterThanOrEqual(60);
   });
 });
 

@@ -4,10 +4,25 @@
   "private": true,
   "type": "module",
   "main": "src/index.ts",
+  "bin": {
+    "wechat-flow": "./src/index.ts"
+  },
   "scripts": {
     "build": "echo skip",
     "test": "vitest run --passWithNoTests",
     "lint": "biome check .",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "commander": "^12.0.0",
+    "@wechat-flow/core": "workspace:^",
+    "@wechat-flow/plugin-api": "workspace:^",
+    "@wechat-flow/blocks": "workspace:^",
+    "@wechat-flow/marks": "workspace:^",
+    "@wechat-flow/theme-default": "workspace:^",
+    "@wechat-flow/theme-business": "workspace:^",
+    "@wechat-flow/theme-literary": "workspace:^",
+    "@wechat-flow/theme-magazine": "workspace:^",
+    "@wechat-flow/theme-tech": "workspace:^"
   }
 }
