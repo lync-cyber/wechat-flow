@@ -5,6 +5,7 @@ import { type ComponentPublicInstance, computed, onMounted, onUnmounted, ref } f
 import { useBidirectionalHighlight } from "../../composables/use-bidirectional-highlight.ts";
 import { useSplitterWidth } from "../../composables/use-splitter-width";
 import { useToast } from "../../composables/use-toast.ts";
+import { useZhTypo } from "../../composables/use-zh-typo.ts";
 import type { CommandDefinition } from "../../lib/command-registry.ts";
 import { buildEditorCommands } from "../../lib/command-registry.ts";
 import { useEditorStore } from "../../stores/editor.ts";
@@ -18,12 +19,14 @@ import SourcePane from "../editor/SourcePane.vue";
 import ContextMenu from "../panel/ContextMenu.vue";
 import InsertDrawer from "../panel/InsertDrawer.vue";
 import LeftPanelTabs from "../panel/LeftPanelTabs.vue";
+import ZhTypoPreviewModal from "../zh-typo/ZhTypoPreviewModal.vue";
 import ResizableSplitter from "./ResizableSplitter.vue";
 import StatusBar from "./StatusBar.vue";
 import TopBar from "./TopBar.vue";
 
 const editorStore = useEditorStore();
 const { pushToast } = useToast();
+const zhTypo = useZhTypo();
 
 // Component refs for bidirectional highlight wiring
 const previewPaneRef = ref<
@@ -167,9 +170,18 @@ function onInsertDirective(directive: string): void {
 }
 
 function onContextMenuCommand(commandId: string): void {
+  if (commandId === "content-zh-typo") {
+    zhTypo.openZhTypoPreview(editorStore.content);
+    return;
+  }
   const cmds = buildEditorCommands({ switchTheme, downloadHtml: onDownloadHtml });
   const cmd = cmds.find((c) => c.id === commandId);
   cmd?.run();
+}
+
+async function onZhTypoConfirm(): Promise<void> {
+  const view = sourcePaneRef.value?.editorView ?? null;
+  await zhTypo.confirmRevision({ editorView: view });
 }
 
 function onCopyHtml(): void {
@@ -342,8 +354,19 @@ onUnmounted(() => {
     <ContextMenu
       :is-open="isContextMenuOpen"
       :is-content-empty="editorStore.content.trim() === ''"
+      :is-zh-typo-disabled="editorStore.content.trim() === '' || !zhTypo.hasZhTypoIssues(editorStore.content)"
       :on-close="() => { isContextMenuOpen = false; }"
       :on-command="onContextMenuCommand"
+    />
+
+    <!-- ZhTypo Preview Modal -->
+    <ZhTypoPreviewModal
+      :is-open="zhTypo.isPreviewOpen.value"
+      :diff="zhTypo.diff.value"
+      :per-rule="zhTypo.perRule.value"
+      :total-changes="zhTypo.totalChanges.value"
+      :on-confirm="onZhTypoConfirm"
+      :on-cancel="zhTypo.cancel"
     />
   </div>
 

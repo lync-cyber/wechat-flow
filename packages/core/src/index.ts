@@ -79,3 +79,5 @@ export type {
   TemplateDetail,
   ThemeTemplateValidationResult,
 } from "./theme-guard/template-coverage.ts";
+export { composeApplyZhTypo } from "./composers/apply-zh-typo.ts";
+export type { ZhTypoComposerResult, DiffEntry } from "./composers/apply-zh-typo.ts";

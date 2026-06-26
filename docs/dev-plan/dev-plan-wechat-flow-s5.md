@@ -62,18 +62,18 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-006]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given `applyZhTypo({ markdown: '这是GitHub的项目' })`，When 调用，Then 返回 `{ fixed: '这是 GitHub 的项目', perRule: { 'zh-en-space': 2 }, totalChanges: 2 }` [F-014 AC-001 + ARCH#§2.M-008]
-  - [ ] AC-002: Given Markdown 含代码块 ```` ```\ncall GitHub()\n``` ````，When `applyZhTypo`，Then 代码块内容不被修改（跳过代码区域）[F-014 AC-002]
-  - [ ] AC-003: Given `'这是"引用"内容'`，When `applyZhTypo`，Then 返回 `'这是“引用”内容'`（直引号 → 弯引号）[F-014 AC-001]
-  - [ ] AC-004: Given `'结尾...'`，When `applyZhTypo`，Then 返回 `'结尾……'`（3 点省略号 → 6 点中文省略号）[F-014 AC-001]
+  - [x] AC-001: Given `applyZhTypo({ markdown: '这是GitHub的项目' })`，When 调用，Then 返回 `{ fixed: '这是 GitHub 的项目', perRule: { 'zh-en-space': 2 }, totalChanges: 2 }` [F-014 AC-001 + ARCH#§2.M-008]
+  - [x] AC-002: Given Markdown 含代码块 ```` ```\ncall GitHub()\n``` ````，When `applyZhTypo`，Then 代码块内容不被修改（跳过代码区域）[F-014 AC-002]
+  - [x] AC-003: Given `'这是"引用"内容'`，When `applyZhTypo`，Then 返回 `'这是“引用”内容'`（直引号 → 弯引号）[F-014 AC-001]
+  - [x] AC-004: Given `'结尾...'`，When `applyZhTypo`，Then 返回 `'结尾……'`（3 点省略号 → 6 点中文省略号）[F-014 AC-001]
 - **deliverables**:
-  - [ ] `packages/zh-typo/src/rules/zh-en-space.ts`
-  - [ ] `packages/zh-typo/src/rules/fullwidth-punctuation.ts`
-  - [ ] `packages/zh-typo/src/rules/smart-quotes.ts`
-  - [ ] `packages/zh-typo/src/rules/ellipsis-dash.ts`
-  - [ ] `packages/zh-typo/src/apply.ts` — `applyZhTypo(input) → ZhTypoResult`（mdast 解析 → text 节点变换 → stringify）
-  - [ ] `packages/zh-typo/src/index.ts`
-  - [ ] `tests/zh-typo/apply.test.ts` — AC-001..AC-004 单元测试
+  - [x] `packages/zh-typo/src/rules/zh-en-space.ts`
+  - [x] `packages/zh-typo/src/rules/fullwidth-punctuation.ts`
+  - [x] `packages/zh-typo/src/rules/smart-quotes.ts`
+  - [x] `packages/zh-typo/src/rules/ellipsis-dash.ts`
+  - [x] `packages/zh-typo/src/apply.ts` — `applyZhTypo(input) → ZhTypoResult`（mdast 解析 → text 节点变换 → stringify）
+  - [x] `packages/zh-typo/src/index.ts`
+  - [x] `tests/zh-typo/apply.test.ts` — AC-001..AC-004 单元测试
 - **relates_to**: [F-014, M-008]
 - **context_load**:
   - prd-wechat-flow-f001-f014#§2.F-014
@@ -95,12 +95,12 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-043]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given `composeApplyZhTypo({ markdown: '...' })` 调用，When 执行，Then 返回 `{ fixed: '...', perRule: Record<string, number>, totalChanges: number, diff: DiffEntry[] }` [ARCH#§2.M-008]
-  - [ ] AC-002: Given `diff` 字段，When 检查，Then 每个 `DiffEntry` 含 `original`（修订前文本片段）、`revised`（修订后文本片段）、`ruleId` 字段，可用于 UI 高亮展示
-  - [ ] AC-003: Given `totalChanges === 0`（无需修订的文档），When `composeApplyZhTypo`，Then 返回 `{ fixed: 原始markdown, totalChanges: 0, diff: [] }`（不做不必要处理）
+  - [x] AC-001: Given `composeApplyZhTypo({ markdown: '...' })` 调用，When 执行，Then 返回 `{ fixed: '...', perRule: Record<string, number>, totalChanges: number, diff: DiffEntry[] }` [ARCH#§2.M-008]
+  - [x] AC-002: Given `diff` 字段，When 检查，Then 每个 `DiffEntry` 含 `original`（修订前文本片段）、`revised`（修订后文本片段）、`ruleId` 字段，可用于 UI 高亮展示
+  - [x] AC-003: Given `totalChanges === 0`（无需修订的文档），When `composeApplyZhTypo`，Then 返回 `{ fixed: 原始markdown, totalChanges: 0, diff: [] }`（不做不必要处理）
 - **deliverables**:
-  - [ ] `packages/core/src/composers/apply-zh-typo.ts` — `composeApplyZhTypo(input: { markdown: string }) → ZhTypoComposerResult` [ARCH#§2.M-008]
-  - [ ] `tests/app-layer/compose-apply-zh-typo.test.ts` — AC-001..AC-003 单元测试
+  - [x] `packages/core/src/composers/apply-zh-typo.ts` — `composeApplyZhTypo(input: { markdown: string }) → ZhTypoComposerResult` [ARCH#§2.M-008]
+  - [x] `tests/app-layer/compose-apply-zh-typo.test.ts` — AC-001..AC-003 单元测试
 - **relates_to**: [F-014, M-008]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-008
@@ -122,11 +122,11 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-036, T-044]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given 调用 `apply_zh_typo({ markdown: '这是GitHub的项目' })`，When 执行，Then 返回 `{ fixed: '这是 GitHub 的项目', perRule: {...}, totalChanges: N }` [F-013 AC-002 + F-014 AC-005]
+  - [x] AC-001: Given 调用 `apply_zh_typo({ markdown: '这是GitHub的项目' })`，When 执行，Then 返回 `{ fixed: '这是 GitHub 的项目', perRule: {...}, totalChanges: N }` [F-013 AC-002 + F-014 AC-005]
 - **deliverables**:
-  - [ ] `apps/mcp-server/src/tools/apply-zh-typo.ts` — `apply_zh_typo` Tool 实现
-  - [ ] 更新 `apps/mcp-server/src/tools/router.ts` — 注册 `apply_zh_typo`
-  - [ ] `tests/mcp-server/tools/apply-zh-typo.test.ts` — AC-001 单元测试
+  - [x] `apps/mcp-server/src/tools/apply-zh-typo.ts` — `apply_zh_typo` Tool 实现
+  - [x] 更新 `apps/mcp-server/src/tools/router.ts` — 注册 `apply_zh_typo`
+  - [x] `tests/mcp-server/tools/apply-zh-typo.test.ts` — AC-001 单元测试
 - **relates_to**: [F-013, F-014, M-009]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-009
@@ -148,14 +148,14 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-044, T-027]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given 点击 ContextMenu「中文排版修订」，When 触发，Then diff 预览 Modal（UC-012 form-variant）弹出，展示修订前/后对比和逐 rule 计数 [F-014 AC-003 + F-001 AC-008]
-  - [ ] AC-002: Given diff 预览 Modal，When 用户点击「确认修订」，Then 编辑器内容替换为 `fixed` 字符串，PreviewPane 刷新，Toast 提示「已修订 N 处」
-  - [ ] AC-003: Given 用户确认修订后，When 按 Ctrl+Z 撤销，Then 编辑器内容回到修订前的状态（修订操作纳入 CodeMirror undo 栈）[F-014 AC-004]
-  - [ ] AC-004: Given 编辑器内容为空或无排版问题，When 触发「中文排版修订」，Then ContextMenu 该菜单项处于 `item-disabled` 状态（灰色不可点击）[ui-spec-wechat-flow-uc001-uc014#§2.UC-016]
+  - [x] AC-001: Given 点击 ContextMenu「中文排版修订」，When 触发，Then diff 预览 Modal（UC-012 form-variant）弹出，展示修订前/后对比和逐 rule 计数 [F-014 AC-003 + F-001 AC-008]
+  - [x] AC-002: Given diff 预览 Modal，When 用户点击「确认修订」，Then 编辑器内容替换为 `fixed` 字符串，PreviewPane 刷新，Toast 提示「已修订 N 处」
+  - [x] AC-003: Given 用户确认修订后，When 按 Ctrl+Z 撤销，Then 编辑器内容回到修订前的状态（修订操作纳入 CodeMirror undo 栈）[F-014 AC-004]
+  - [x] AC-004: Given 编辑器内容为空或无排版问题，When 触发「中文排版修订」，Then ContextMenu 该菜单项处于 `item-disabled` 状态（灰色不可点击）[ui-spec-wechat-flow-uc001-uc014#§2.UC-016]
 - **deliverables**:
-  - [ ] `apps/editor/src/components/zh-typo/ZhTypoPreviewModal.vue` — diff 预览 Modal（包装 UC-012）
-  - [ ] 更新 `apps/editor/src/components/panel/ContextMenu.vue` — 接线「中文排版修订」菜单项
-  - [ ] `apps/editor/src/composables/use-zh-typo.ts` — 触发 → 预览 → 确认 → 写回 composable
+  - [x] `apps/editor/src/components/zh-typo/ZhTypoPreviewModal.vue` — diff 预览 Modal（包装 UC-012）
+  - [x] 更新 `apps/editor/src/components/panel/ContextMenu.vue` — 接线「中文排版修订」菜单项
+  - [x] `apps/editor/src/composables/use-zh-typo.ts` — 触发 → 预览 → 确认 → 写回 composable
 - **relates_to**: [F-014, M-001, UC-012, UC-016]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-001

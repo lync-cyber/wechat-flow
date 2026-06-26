@@ -3,19 +3,24 @@ import { computed } from "vue";
 import DropdownMenu from "../common/DropdownMenu.vue";
 import type { MenuItem } from "../common/DropdownMenu.vue";
 
-const props = defineProps<{
-  isOpen: boolean;
-  isContentEmpty: boolean;
-  onClose: () => void;
-  onCommand: (commandId: string) => void;
-}>();
+const props = withDefaults(
+  defineProps<{
+    isOpen: boolean;
+    isContentEmpty: boolean;
+    isZhTypoDisabled?: boolean | null;
+    onClose: () => void;
+    onCommand: (commandId: string) => void;
+  }>(),
+  { isZhTypoDisabled: null }
+);
 
 const menuItems = computed<MenuItem[]>(() => [
   { id: "doc-load-example", label: "载入示例文档" },
   {
     id: "content-zh-typo",
     label: "中文排版修订",
-    disabled: props.isContentEmpty,
+    disabled:
+      props.isZhTypoDisabled !== null ? (props.isZhTypoDisabled as boolean) : props.isContentEmpty,
   },
   { type: "separator" },
   { id: "export-copy-html", label: "复制 HTML", shortcut: "Ctrl+Shift+C" },
