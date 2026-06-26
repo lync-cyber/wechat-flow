@@ -56,4 +56,14 @@ describe("runCopy produces paste payload", () => {
     expect(result.exitCode).toBe(1);
     expect(result.stderr).toContain("Cannot read file");
   });
+
+  it("uses explicit theme when theme option is provided", async () => {
+    const inputPath = path.join(tmpDir, "article.md");
+    fs.writeFileSync(inputPath, "# Hello\n", "utf-8");
+
+    const result = await runCopy({ input: inputPath, theme: "default" });
+
+    expect(result.exitCode).toBe(0);
+    expect(result.payload).toBeDefined();
+  });
 });

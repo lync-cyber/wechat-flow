@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { renderMarkdown } from "../../packages/core/src/index.ts";
+import { mergeDelta } from "../../packages/core/src/inheritance/delta-merge.ts";
 import { registerTheme, resetThemeRegistry } from "../../packages/core/src/registry/theme.ts";
 
 beforeEach(() => {
@@ -71,6 +72,185 @@ describe("AC-001: delta-merge — extends + delta tokens 覆盖 blocks 中的颜
     const result = await renderMarkdown("# Test", { themeId: "standalone" });
     expect(result.html).toContain("aabbcc");
     expect(result.html).toContain("20px");
+  });
+});
+
+describe("mergeDelta — direct unit tests for uncovered branches", () => {
+  it("returns undefined when themeId is not found", () => {
+    const result = mergeDelta("nonexistent", () => undefined);
+    expect(result).toBeUndefined();
+  });
+
+  it("returns theme as-is when theme has no extends", () => {
+    const theme = {
+      id: "base",
+      name: "Base",
+      tokens: { "--color-brand": "#111111" },
+      blocks: { h1: { default: { color: "#111111" } } },
+    };
+    const result = mergeDelta("base", (id) => (id === "base" ? theme : undefined));
+    expect(result).toBe(theme);
+  });
+
+  it("returns child theme when parent lookup returns undefined", () => {
+    const child = {
+      id: "child",
+      name: "Child",
+      extends: "missing-parent",
+      tokens: { "--color-brand": "#222222" },
+      blocks: { h1: { default: { color: "#222222" } } },
+    };
+    const result = mergeDelta("child", (id) => (id === "child" ? child : undefined));
+    expect(result).toBe(child);
+  });
+
+  it("merges when token oldValue is undefined — no value replacement entry added", () => {
+    const parent = {
+      id: "parent",
+      name: "Parent",
+      tokens: { "--color-brand": "#0000ff" },
+      blocks: { h1: { default: { color: "#0000ff" } } },
+    };
+    const child = {
+      id: "child",
+      name: "Child",
+      extends: "parent",
+      tokens: {},
+      delta: {
+        tokens: { "--new-token": "#abcdef" },
+      },
+    };
+    const lookup = (id: string) => (id === "parent" ? parent : id === "child" ? child : undefined);
+    const result = mergeDelta("child", lookup);
+    expect(result).toBeDefined();
+    expect(result?.tokens["--new-token"]).toBe("#abcdef");
+    expect(result?.blocks?.h1?.default?.color).toBe("#0000ff");
+  });
+
+  it("skips value replacement when old token value equals new value (oldValue === newValue)", () => {
+    const parent = {
+      id: "parent",
+      name: "Parent",
+      tokens: { "--color-brand": "#003366" },
+      blocks: { h1: { default: { color: "#003366" } } },
+    };
+    const child = {
+      id: "child",
+      name: "Child",
+      extends: "parent",
+      tokens: {},
+      delta: {
+        tokens: { "--color-brand": "#003366" },
+      },
+    };
+    const lookup = (id: string) => (id === "parent" ? parent : id === "child" ? child : undefined);
+    const result = mergeDelta("child", lookup);
+    expect(result).toBeDefined();
+    expect(result?.blocks?.h1?.default?.color).toBe("#003366");
+  });
+
+  it("merges blocks from parent when child delta has no blocks", () => {
+    const parent = {
+      id: "parent",
+      name: "Parent",
+      tokens: { "--color-brand": "#0055aa" },
+      blocks: { p: { default: { color: "#0055aa" } } },
+    };
+    const child = {
+      id: "child",
+      name: "Child",
+      extends: "parent",
+      tokens: {},
+      delta: { tokens: { "--color-brand": "#ee4422" } },
+    };
+    const lookup = (id: string) => (id === "parent" ? parent : id === "child" ? child : undefined);
+    const result = mergeDelta("child", lookup);
+    expect(result).toBeDefined();
+    expect(result?.blocks?.p?.default?.color).toBe("#ee4422");
+  });
+
+  it("inherits parent.paintable when child delta has no paintable", () => {
+    const parent = {
+      id: "parent",
+      name: "Parent",
+      tokens: {},
+      paintable: ["--color-brand"],
+    };
+    const child = {
+      id: "child",
+      name: "Child",
+      extends: "parent",
+      tokens: {},
+      delta: { tokens: {} },
+    };
+    const lookup = (id: string) => (id === "parent" ? parent : id === "child" ? child : undefined);
+    const result = mergeDelta("child", lookup);
+    expect(result?.paintable).toEqual(["--color-brand"]);
+  });
+
+  it("uses child delta.paintable when provided, overriding parent paintable", () => {
+    const parent = {
+      id: "parent",
+      name: "Parent",
+      tokens: {},
+      paintable: ["--color-brand"],
+    };
+    const child = {
+      id: "child",
+      name: "Child",
+      extends: "parent",
+      tokens: {},
+      delta: { tokens: {}, paintable: ["--color-accent"] },
+    };
+    const lookup = (id: string) => (id === "parent" ? parent : id === "child" ? child : undefined);
+    const result = mergeDelta("child", lookup);
+    expect(result?.paintable).toEqual(["--color-accent"]);
+  });
+
+  it("merges when parent has no blocks — treats as empty blocks", () => {
+    const parent = {
+      id: "parent",
+      name: "Parent",
+      tokens: { "--color-brand": "#0055aa" },
+    };
+    const child = {
+      id: "child",
+      name: "Child",
+      extends: "parent",
+      tokens: {},
+      delta: {
+        tokens: {},
+        blocks: { h1: { default: { color: "#0055aa" } } },
+      },
+    };
+    const lookup = (id: string) => (id === "parent" ? parent : id === "child" ? child : undefined);
+    const result = mergeDelta("child", lookup);
+    expect(result).toBeDefined();
+    expect(result?.blocks?.h1?.default?.color).toBe("#0055aa");
+  });
+
+  it("merges valueReplacement across multiple blocks with matching CSS values", () => {
+    const parent = {
+      id: "parent",
+      name: "Parent",
+      tokens: { "--color-brand": "#aabbcc" },
+      blocks: {
+        h1: { default: { color: "#aabbcc", "font-size": "20px" } },
+        h2: { default: { color: "#aabbcc", "font-weight": "bold" } },
+      },
+    };
+    const child = {
+      id: "child",
+      name: "Child",
+      extends: "parent",
+      tokens: {},
+      delta: { tokens: { "--color-brand": "#112233" } },
+    };
+    const lookup = (id: string) => (id === "parent" ? parent : id === "child" ? child : undefined);
+    const result = mergeDelta("child", lookup);
+    expect(result?.blocks?.h1?.default?.color).toBe("#112233");
+    expect(result?.blocks?.h2?.default?.color).toBe("#112233");
+    expect(result?.blocks?.h1?.default?.["font-size"]).toBe("20px");
   });
 });
 

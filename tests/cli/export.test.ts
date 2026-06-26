@@ -79,4 +79,15 @@ describe("AC-005: runExport generates standalone HTML file", () => {
     expect(result.exitCode).toBe(1);
     expect(result.stderr).toContain("Cannot read file");
   });
+
+  it("returns exitCode 1 and stderr when output path is not writable", async () => {
+    const inputPath = path.join(tmpDir, "article.md");
+    fs.writeFileSync(inputPath, "# Hello\n", "utf-8");
+    const unwritableOutput = path.join(tmpDir, "nonexistent-dir", "deep", "out.html");
+
+    const result = await runExport({ input: inputPath, format: "html", output: unwritableOutput });
+
+    expect(result.exitCode).toBe(1);
+    expect(result.stderr).toContain("Cannot write file");
+  });
 });

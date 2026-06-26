@@ -534,3 +534,4 @@
 {"ts": "2026-06-26T13:14:30+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-116"}
 {"ts": "2026-06-26T13:31:18+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-117"}
 {"ts": "2026-06-26T13:45:30+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-049"}
+{"ts": "2026-06-26T14:14:14+00:00", "event": "tdd_phase", "phase": "development", "detail": "coverage 补齐: 就绪批新文件分支覆盖→全局 branches ≥90%"}
