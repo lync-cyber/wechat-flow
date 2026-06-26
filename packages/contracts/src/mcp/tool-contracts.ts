@@ -47,13 +47,22 @@ export const listMarksResponseSchema = z.looseObject({});
 export const describeMarkRequestSchema = z.looseObject({});
 export const describeMarkResponseSchema = z.looseObject({});
 
+const tokenEntrySchema = z.object({
+  id: z.string(),
+  category: z.enum(["color", "spacing", "font", "decoration", "alignment"]),
+  value: z.string(),
+  themeOverrides: z.record(z.string(), z.string()).optional(),
+});
+
 // ---- list_tokens (API-009a) ----
 export const listTokensRequestSchema = z.looseObject({});
-export const listTokensResponseSchema = z.looseObject({});
+export const listTokensResponseSchema = z.object({
+  tokens: z.array(tokenEntrySchema),
+});
 
 // ---- describe_token (API-009b) ----
 export const describeTokenRequestSchema = z.looseObject({});
-export const describeTokenResponseSchema = z.looseObject({});
+export const describeTokenResponseSchema = tokenEntrySchema;
 
 // ---- list_block_variants (API-010) ----
 export const listBlockVariantsRequestSchema = z.looseObject({});

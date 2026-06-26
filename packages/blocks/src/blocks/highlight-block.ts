@@ -12,5 +12,7 @@ export const highlightBlock = defineBlock(
     { id: "default", label: "默认高亮" },
     { id: "gradient", label: "渐变高亮" },
     { id: "bold", label: "粗体高亮" },
+    { id: "underline", label: "下划线高亮" },
+    { id: "background", label: "背景高亮" },
   ]
 );

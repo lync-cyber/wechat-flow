@@ -53,6 +53,7 @@ export type { ThemeDefinition, ThemeListEntry } from "@wechat-flow/contracts";
 export {
   registerVariant,
   listBlockVariants,
+  listAllVariants,
   describeVariant,
   getBlockBaseStyle,
   resetVariantRegistry,
@@ -81,3 +82,16 @@ export type {
 } from "./theme-guard/template-coverage.ts";
 export { composeApplyZhTypo } from "./composers/apply-zh-typo.ts";
 export type { ZhTypoComposerResult, DiffEntry } from "./composers/apply-zh-typo.ts";
+export {
+  composeUploadWechatAsset,
+  subscribeJob,
+  ValidationError,
+} from "./composers/upload-wechat-asset.ts";
+export type {
+  WechatAssetType,
+  JobHandle,
+  WechatAssetRelayClient,
+  EventSourceFactory,
+} from "./composers/upload-wechat-asset.ts";
+export { registerToken, listTokens, describeToken } from "./registry/token.ts";
+export type { TokenDefinition } from "./registry/token.ts";

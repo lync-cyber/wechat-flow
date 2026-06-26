@@ -14,6 +14,8 @@ export const card = defineBlock(
     { id: "default", label: "普通卡片" },
     { id: "elevated", label: "阴影卡片" },
     { id: "outlined", label: "描边卡片" },
+    { id: "horizontal", label: "横排卡片" },
+    { id: "minimal", label: "简约卡片" },
   ],
   {
     root: {
