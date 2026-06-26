@@ -203,6 +203,9 @@ importers:
       '@wechat-flow/marks':
         specifier: workspace:^
         version: link:../../packages/marks
+      '@wechat-flow/palette':
+        specifier: workspace:^
+        version: link:../../packages/palette
       '@wechat-flow/theme-business':
         specifier: workspace:^
         version: link:../../packages/themes/business
@@ -218,6 +221,9 @@ importers:
       '@wechat-flow/theme-tech':
         specifier: workspace:^
         version: link:../../packages/themes/tech
+      hono:
+        specifier: ^4.9.0
+        version: 4.12.26
       zod:
         specifier: ^4.0.0
         version: 4.4.3

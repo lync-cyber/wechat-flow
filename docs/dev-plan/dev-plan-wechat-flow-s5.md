@@ -540,7 +540,7 @@ required_sections:
 - **tdd_acceptance**: all
 - **tdd_refactor**: skip
 - **security_sensitive**: false
-- **dependencies**: [T-020, T-036]
+- **dependencies**: [T-020, T-036, T-123]
 - **acceptance_criteria**:
   - [ ] AC-001: list_tokens() 返回数组长度 ≥ 60（F-003 AC-004），每项含 id/category（color/spacing/font/decoration/alignment 之一）
   - [ ] AC-002: describe_token('color.brand') 返回 `{ id, category, value, themeOverrides? }`
@@ -717,3 +717,38 @@ required_sections:
   - [ ] 素材库上传 smoke test：mock 微信 API 返回 mediaId，接口返回 `{ jobId: uuid }`（T-077 验证）
   - [ ] Tool 全集 grep 验证：24 个 Tool 文件在 `apps/mcp-server/src/tools/` 下存在，包含 `describe_template`、`register_variant`
 - **relates_to**: [F-010, F-014, M-007, M-009, M-011]
+
+---
+
+### T-123: M-005 TokenDefinition 重塑 + 设计系统 token 目录 seed（≥60 token，五类覆盖）
+
+- **目标**: 将 `packages/core/src/registry/token.ts` 的 `TokenDefinition` 重塑为 `{ id, category, value, themeOverrides? }` shape；从 ui-spec §1 设计系统 token 表 seed ≥60 个 token（覆盖 color/font/spacing/decoration/alignment 五类）；从 `packages/core/src/index.ts` 导出 `registerToken`/`listTokens`/`describeToken`；更新 `packages/contracts` 中相关 schema；使 T-080（list_tokens / describe_token MCP Tool）的底层数据层就绪
+- **模块**: M-005
+- **task_kind**: feature
+- **priority**: P1
+- **complexity**: M
+- **sprint**: 5
+- **tdd_mode**: standard
+- **tdd_refactor**: auto
+- **security_sensitive**: false
+- **dependencies**: [T-020]
+- **relates_to**: [F-003, M-005, M-009, T-080]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given `TokenDefinition` 类型已更新，When 编译 `packages/core`，Then TypeScript 编译通过且 `TokenDefinition` 接口含必填字段 `id: string`、`category: 'color' | 'spacing' | 'font' | 'decoration' | 'alignment'`、`value: string` 以及可选字段 `themeOverrides?: Record<string, string>` [ARCH#§2.M-005]
+  - [ ] AC-002: Given token seed 模块在 `packages/core/src/registry/token-seed.ts` 中已注册全部内置 token，When 调用 `listTokens()`，Then 返回数组长度 ≥ 60，且包含 color/spacing/font/decoration/alignment 五类，每类 ≥ 2 项 [ARCH#§2.M-005, prd#§2.F-003.AC-004]
+  - [ ] AC-003: Given token seed 已加载，When 调用 `describeToken('color.brand')`，Then 返回对象字面匹配 `{ id: 'color.brand', category: 'color', value: '#2D5A4E', themeOverrides?: ... }` [ARCH#§2.M-005]
+  - [ ] AC-004: Given token seed 已加载，When 遍历 `listTokens()` 按 category 分组，Then color ≥ 20 项（ui-spec §1.1 全覆盖）、font ≥ 14 项（ui-spec §1.2 全覆盖）、spacing ≥ 8 项（ui-spec §1.3.1 全覆盖）、decoration ≥ 12 项（ui-spec §1.3.2 radius + §1.4 shadow/z-index 全覆盖） [prd#§2.F-003.AC-004]
+  - [ ] AC-005: [ASSUMPTION] alignment 类别映射至 ui-spec §1.6 断点 token（`--bp-tablet`/`--bp-desktop`）及任何声明了布局对齐语义的 token；若 architect 后续明确扩展 alignment 定义，seed 可增量追加而无需破坏现有注册表结构
+  - [ ] AC-006: Given `packages/core/src/index.ts` 已更新导出，When 从 `@wechat-flow/core` 导入 `{ registerToken, listTokens, describeToken }`，Then 三个函数在运行时均可正常调用（不抛 "not a function" 错误）；生产接线路径：`packages/core/src/index.ts` 中 `export { registerToken, listTokens, describeToken } from "./registry/token.ts"`
+  - [ ] AC-007: Given `packages/contracts/src/mcp/tool-contracts.ts` 已更新，When `listTokensResponseSchema` 验证 `{ tokens: [{ id: 'color.brand', category: 'color', value: '#2D5A4E' }] }`，Then zod 解析结果 `.success === true`（schema 已不再是空 passthrough）
+  - [ ] AC-008: Given 现有 token registry 测试套件（`tests/core/` 下相关文件）执行，When 运行 `pnpm vitest run`，Then 全部通过（无回归）；既有使用 `name` 字段的测试须迁移为 `id` 字段或保持兼容，不允许遗留破坏性不兼容
+- **deliverables**:
+  - [ ] `packages/core/src/registry/token.ts` — 重塑后的 `TokenDefinition` 接口 + 注册表函数
+  - [ ] `packages/core/src/registry/token-seed.ts` — ≥60 个内置设计系统 token 的 seed 注册调用（从 ui-spec §1 枚举，含 CSS 变量名作为 `id`）
+  - [ ] `packages/core/src/index.ts` — 新增 `registerToken`/`listTokens`/`describeToken` 导出
+  - [ ] `packages/contracts/src/mcp/tool-contracts.ts` — 更新 `listTokensResponseSchema`/`describeTokenResponseSchema` 为带结构 zod schema
+  - [ ] `tests/core/registry/token.test.ts` — 覆盖 AC-001..AC-005 的单元测试（含分类计数断言）
+- **context_load**:
+  - prd-wechat-flow-f001-f014#§2.F-003
+  - arch-wechat-flow-modules#§2.M-005
+  - ui-spec-wechat-flow#§1

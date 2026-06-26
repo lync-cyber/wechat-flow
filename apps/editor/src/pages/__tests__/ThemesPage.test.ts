@@ -183,3 +183,66 @@ describe("AC-004: 选择 template → setContent 以对应 markdown 调用", () 
     expect(setContentSpy).toHaveBeenCalledWith("# tpl-general template markdown");
   });
 });
+
+describe("AC-001: 筛选 — 按主题名关键词过滤卡片", () => {
+  it("搜索输入框存在于页面（data-testid=filter-input）", async () => {
+    const wrapper = mount(ThemesPage, {
+      global: { plugins: [createPinia()] },
+    });
+    await nextTick();
+    expect(wrapper.find('[data-testid="filter-input"]').exists()).toBe(true);
+  });
+
+  it("输入 '简约' 后仅显示主题名含 '简约' 的卡片", async () => {
+    const wrapper = mount(ThemesPage, {
+      global: { plugins: [createPinia()] },
+    });
+    await nextTick();
+    const input = wrapper.find('[data-testid="filter-input"]');
+    await input.setValue("简约");
+    await nextTick();
+    const cards = wrapper.findAll('[data-testid^="template-theme-card-"]');
+    expect(cards.length).toBeGreaterThanOrEqual(1);
+    for (const card of cards) {
+      expect(card.text()).toContain("简约");
+    }
+  });
+
+  it("输入无匹配词后显示空态提示（data-testid=empty-state）", async () => {
+    const wrapper = mount(ThemesPage, {
+      global: { plugins: [createPinia()] },
+    });
+    await nextTick();
+    const input = wrapper.find('[data-testid="filter-input"]');
+    await input.setValue("xyzxyzxyz不可能存在的关键词");
+    await nextTick();
+    expect(wrapper.findAll('[data-testid^="template-theme-card-"]').length).toBe(0);
+    expect(wrapper.find('[data-testid="empty-state"]').exists()).toBe(true);
+  });
+
+  it("清空输入后恢复显示全部卡片", async () => {
+    const wrapper = mount(ThemesPage, {
+      global: { plugins: [createPinia()] },
+    });
+    await nextTick();
+    const input = wrapper.find('[data-testid="filter-input"]');
+    await input.setValue("简约");
+    await nextTick();
+    await input.setValue("");
+    await nextTick();
+    const cards = wrapper.findAll('[data-testid^="template-theme-card-"]');
+    expect(cards.length).toBeGreaterThanOrEqual(5);
+  });
+
+  it("按 templateDescription 过滤：输入描述关键词也命中对应卡片", async () => {
+    const wrapper = mount(ThemesPage, {
+      global: { plugins: [createPinia()] },
+    });
+    await nextTick();
+    const input = wrapper.find('[data-testid="filter-input"]');
+    await input.setValue("通用文章");
+    await nextTick();
+    const cards = wrapper.findAll('[data-testid^="template-theme-card-"]');
+    expect(cards.length).toBeGreaterThanOrEqual(1);
+  });
+});
