@@ -542,13 +542,13 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-020, T-036, T-123]
 - **acceptance_criteria**:
-  - [ ] AC-001: list_tokens() 返回数组长度 ≥ 60（F-003 AC-004），每项含 id/category（color/spacing/font/decoration/alignment 之一）
-  - [ ] AC-002: describe_token('color.brand') 返回 `{ id, category, value, themeOverrides? }`
-  - [ ] AC-003: Tool 实现仅调用 M-005 注册中心 API，不含业务逻辑
+  - [x] AC-001: list_tokens() 返回数组长度 ≥ 60（F-003 AC-004），每项含 id/category（color/spacing/font/decoration/alignment 之一）
+  - [x] AC-002: describe_token('color.brand') 返回 `{ id, category, value, themeOverrides? }`
+  - [x] AC-003: Tool 实现仅调用 M-005 注册中心 API，不含业务逻辑
 - **deliverables**:
-  - [ ] `apps/mcp-server/src/tools/list-tokens.ts`
-  - [ ] `apps/mcp-server/src/tools/describe-token.ts`
-  - [ ] `tests/mcp-server/tools/list-tokens.test.ts`
+  - [x] `apps/mcp-server/src/tools/list-tokens.ts`
+  - [x] `apps/mcp-server/src/tools/describe-token.ts`
+  - [x] `tests/mcp-server/tools/list-tokens.test.ts`
 - **relates_to**: [F-013, M-009, M-005]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-005

@@ -10,6 +10,7 @@ import { describeBlockTool } from "./describe-block.ts";
 import { describeMarkTool } from "./describe-mark.ts";
 import { describeTemplateTool } from "./describe-template.ts";
 import { describeThemeTool } from "./describe-theme.ts";
+import { describeTokenTool } from "./describe-token.ts";
 import { describeVariantTool } from "./describe-variant.ts";
 import { exportClipboardPayloadTool } from "./export-clipboard-payload.ts";
 import { exportCoverTool } from "./export-cover.ts";
@@ -21,6 +22,7 @@ import { listBlockVariantsTool } from "./list-block-variants.ts";
 import { listBlocksTool } from "./list-blocks.ts";
 import { listMarksTool } from "./list-marks.ts";
 import { listThemesTool } from "./list-themes.ts";
+import { listTokensTool } from "./list-tokens.ts";
 import { registerVariantTool } from "./register-variant.ts";
 import { renderMarkdownTool } from "./render-markdown.ts";
 import { simulatePasteTool } from "./simulate-paste.ts";
@@ -53,6 +55,8 @@ function buildHandlers(jobsClient: JobsClient): Record<string, ToolHandler> {
     get_job: getJobTool(jobsClient),
     upload_image: uploadImageTool(jobsClient),
     upload_to_wechat_asset: uploadToWechatAssetTool(jobsClient),
+    list_tokens: listTokensTool,
+    describe_token: describeTokenTool,
   };
 }
 
