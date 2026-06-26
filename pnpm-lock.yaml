@@ -281,6 +281,9 @@ importers:
       '@wechat-flow/ruleset':
         specifier: workspace:*
         version: link:../ruleset
+      '@wechat-flow/zh-typo':
+        specifier: workspace:*
+        version: link:../zh-typo
       hast-util-from-html:
         specifier: ^2.0.3
         version: 2.0.3
@@ -416,7 +419,21 @@ importers:
         specifier: workspace:*
         version: link:../../core
 
-  packages/zh-typo: {}
+  packages/zh-typo:
+    dependencies:
+      mdast-util-from-markdown:
+        specifier: ^2.0.3
+        version: 2.0.3
+      mdast-util-to-markdown:
+        specifier: ^2.1.2
+        version: 2.1.2
+      unist-util-visit:
+        specifier: ^5.1.0
+        version: 5.1.0
+    devDependencies:
+      '@types/mdast':
+        specifier: ^4.0.4
+        version: 4.0.4
 
 packages:
 

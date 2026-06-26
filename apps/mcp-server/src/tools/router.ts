@@ -4,6 +4,7 @@ import type { ApiKeyRecord } from "../auth/api-key.ts";
 import { type AuthError, guardUserScope } from "../auth/scope-guard.ts";
 import type { JobsClient } from "../jobs/client.ts";
 import { makeNotImplementedJobsClient } from "../jobs/client.ts";
+import { applyZhTypoTool } from "./apply-zh-typo.ts";
 import { describeBlockTool } from "./describe-block.ts";
 import { describeMarkTool } from "./describe-mark.ts";
 import { describeTemplateTool } from "./describe-template.ts";
@@ -24,6 +25,7 @@ type ToolHandler = (args: Record<string, unknown>) => Promise<unknown> | unknown
 
 function buildHandlers(jobsClient: JobsClient): Record<string, ToolHandler> {
   return {
+    apply_zh_typo: applyZhTypoTool,
     render_markdown: renderMarkdownTool,
     lint_markdown: lintMarkdownTool,
     get_ruleset_version: getRulesetVersionTool,
