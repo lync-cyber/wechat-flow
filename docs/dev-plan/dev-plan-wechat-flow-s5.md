@@ -241,12 +241,12 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-020]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given `registerTheme({ id: 'org-theme', extends: 'default', delta: { tokens: { '--color-brand': '#003366' } } })`，When 应用 `org-theme`，Then 产出 HTML 中主题色为 `#003366`（delta 覆盖），其他 token 继承 default 主题 [F-009 AC-001]
-  - [ ] AC-002: Given 品牌包锁定了 `--color-brand` 和 `--color-accent`，When 写作者尝试通过 `paint` 覆盖 `--color-brand`，Then 该覆盖被忽略（品牌包优先），diagnostics 含 warn [F-009 AC-002]
+  - [x] AC-001: Given `registerTheme({ id: 'org-theme', extends: 'default', delta: { tokens: { '--color-brand': '#003366' } } })`，When 应用 `org-theme`，Then 产出 HTML 中主题色为 `#003366`（delta 覆盖），其他 token 继承 default 主题 [F-009 AC-001]
+  - [x] AC-002: Given 品牌包锁定了 `--color-brand` 和 `--color-accent`，When 写作者尝试通过 `paint` 覆盖 `--color-brand`，Then 该覆盖被忽略（品牌包优先），diagnostics 含 warn [F-009 AC-002]
 - **deliverables**:
-  - [ ] `packages/core/src/inheritance/delta-merge.ts` — 主题继承 delta 合并 [ARCH#§2.M-005]
-  - [ ] `packages/core/src/brand-pack/lock.ts` — 品牌包锁定逻辑
-  - [ ] `tests/core/theme-inheritance.test.ts` — AC-001..AC-002 单元测试
+  - [x] `packages/core/src/inheritance/delta-merge.ts` — 主题继承 delta 合并 [ARCH#§2.M-005]
+  - [x] `packages/core/src/brand-pack/lock.ts` — 品牌包锁定逻辑
+  - [x] `tests/core/theme-inheritance.test.ts` — AC-001..AC-002 单元测试
 - **relates_to**: [F-009, M-005]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-005

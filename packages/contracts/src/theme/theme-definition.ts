@@ -23,6 +23,18 @@ export const themeBlocksSchema = z.record(
 // empty array (or empty object for legacy compat) means no properties are paintable.
 export const paintableSchema = z.union([z.array(z.string()), z.record(z.string(), z.unknown())]);
 
+export const themeDeltaSchema = z.object({
+  tokens: themeTokensSchema.optional(),
+  blocks: themeBlocksSchema.optional(),
+  paintable: paintableSchema.optional(),
+  assets: z.record(z.string(), z.unknown()).optional(),
+});
+
+export const brandPackSchema = z.object({
+  lockedTokens: z.array(z.string()),
+  lockedBlocks: z.array(z.string()).optional(),
+});
+
 export const themeDefinitionSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -32,6 +44,9 @@ export const themeDefinitionSchema = z.object({
   assets: z.record(z.string(), z.unknown()).optional(),
   meta: themeMetaSchema.optional(),
   templates: z.array(templateDefinitionSchema).optional(),
+  extends: z.string().optional(),
+  delta: themeDeltaSchema.optional(),
+  brandPack: brandPackSchema.optional(),
 });
 
 export const themeListEntrySchema = z.object({
@@ -53,6 +68,8 @@ export const guardResultSchema = z.object({
 export type ThemeTokens = z.infer<typeof themeTokensSchema>;
 export type ThemeMeta = z.infer<typeof themeMetaSchema>;
 export type ThemeBlocks = z.infer<typeof themeBlocksSchema>;
+export type ThemeDelta = z.infer<typeof themeDeltaSchema>;
+export type BrandPack = z.infer<typeof brandPackSchema>;
 export type ThemeDefinition = z.infer<typeof themeDefinitionSchema>;
 export type ThemeListEntry = z.infer<typeof themeListEntrySchema>;
 export type GuardFailure = z.infer<typeof guardFailureSchema>;

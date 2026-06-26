@@ -1,7 +1,10 @@
 import type { ThemeDefinition, ThemeListEntry } from "@wechat-flow/contracts";
+import { mergeDelta } from "../inheritance/delta-merge.ts";
 import { defineTemplate } from "./template.ts";
 
 const store = new Map<string, ThemeDefinition>();
+
+const getRaw = (id: string): ThemeDefinition | undefined => store.get(id);
 
 export function registerTheme(definition: ThemeDefinition): void {
   store.set(definition.id, {
@@ -24,7 +27,7 @@ export function listThemes(): ThemeListEntry[] {
 }
 
 export function describeTheme(id: string): ThemeDefinition | undefined {
-  return store.get(id);
+  return mergeDelta(id, getRaw);
 }
 
 export function resetThemeRegistry(): void {
