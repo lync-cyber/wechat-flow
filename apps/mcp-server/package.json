@@ -22,6 +22,7 @@
     "@wechat-flow/theme-literary": "workspace:^",
     "@wechat-flow/theme-magazine": "workspace:^",
     "@wechat-flow/theme-tech": "workspace:^",
+    "hono": "^4.9.0",
     "zod": "^4.0.0"
   }
 }

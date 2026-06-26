@@ -62,3 +62,16 @@ export type { RenderJob, RenderJobData, RenderResult } from "./job/render-proces
 export { createJobsRuntime } from "./job/runtime.ts";
 export type { JobsRuntime } from "./job/runtime.ts";
 export type { JobKind } from "./job/types.ts";
+export { createWechatAssetsApp } from "./routes/wechat-assets.ts";
+export type { WechatAssetsAppDeps } from "./routes/wechat-assets.ts";
+export { loadWechatCredentials } from "./wechat-asset/credential-loader.ts";
+export type { WechatCredentials } from "./wechat-asset/credential-loader.ts";
+export { uploadWechatAsset } from "./wechat-asset/uploader.ts";
+export type {
+  WechatAssetUploadInput,
+  WechatUploadCredentials,
+  WechatUploaderDeps,
+  WechatUploadResult,
+} from "./wechat-asset/uploader.ts";
+export { createAdminApiKeysApp } from "./admin/api-keys.ts";
+export { createAdminGuard } from "./auth/admin-guard.ts";

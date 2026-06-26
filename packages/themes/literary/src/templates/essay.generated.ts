@@ -1,0 +1,2 @@
+// Generated from templates/essay.md by scripts/gen-theme-templates.mjs — do not edit.
+export const markdown = "---\ntheme: literary\ntemplate: essay\n---\n\n# 一个人的旅途\n\n## 出发\n\n旅途的意义不在终点，而在 [沿途的风景](https://example.com) 与内心的变化。\n\n- 清晨的第一缕阳光\n- 陌生城市的街道气息\n- 与素不相识的人短暂交汇\n\n> 旅行是一种暂时的失去，也是一种深刻的寻找。\n\n---\n\n![旅途](journey.png)\n\n| 目的地 | 季节 | 感悟 |\n|--------|------|------|\n| 山间小镇 | 深秋 | 宁静即力量 |\n| 海边渔村 | 盛夏 | 简单即幸福 |\n\n:::card\n**旅途笔记**\n\n把每一次旅途都当作与自己的约会，带上好奇心，放下日常的包袱。\n:::\n\n:::quote\n> 不是所有漂泊都是迷失，有些出发本身就是抵达。\n:::\n\n:::pull-quote\n在最远的地方，才能看清最近的自己。\n:::\n";
