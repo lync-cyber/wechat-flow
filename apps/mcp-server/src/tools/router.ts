@@ -5,20 +5,25 @@ import { type AuthError, guardUserScope } from "../auth/scope-guard.ts";
 import type { JobsClient } from "../jobs/client.ts";
 import { makeNotImplementedJobsClient } from "../jobs/client.ts";
 import { applyZhTypoTool } from "./apply-zh-typo.ts";
+import { derivePaletteTool } from "./derive-palette.ts";
 import { describeBlockTool } from "./describe-block.ts";
 import { describeMarkTool } from "./describe-mark.ts";
 import { describeTemplateTool } from "./describe-template.ts";
 import { describeThemeTool } from "./describe-theme.ts";
+import { describeVariantTool } from "./describe-variant.ts";
+import { exportClipboardPayloadTool } from "./export-clipboard-payload.ts";
 import { exportCoverTool } from "./export-cover.ts";
 import { exportLongImageTool } from "./export-long-image.ts";
 import { getJobTool } from "./get-job.ts";
 import { getRulesetVersionTool } from "./get-ruleset-version.ts";
 import { lintMarkdownTool } from "./lint-markdown.ts";
+import { listBlockVariantsTool } from "./list-block-variants.ts";
 import { listBlocksTool } from "./list-blocks.ts";
 import { listMarksTool } from "./list-marks.ts";
 import { listThemesTool } from "./list-themes.ts";
 import { registerVariantTool } from "./register-variant.ts";
 import { renderMarkdownTool } from "./render-markdown.ts";
+import { simulatePasteTool } from "./simulate-paste.ts";
 import { uploadImageTool } from "./upload-image.ts";
 
 type ToolHandler = (args: Record<string, unknown>) => Promise<unknown> | unknown;
@@ -33,10 +38,15 @@ function buildHandlers(jobsClient: JobsClient): Record<string, ToolHandler> {
     describe_theme: describeThemeTool,
     list_blocks: listBlocksTool,
     describe_block: describeBlockTool,
+    list_block_variants: listBlockVariantsTool,
+    describe_variant: describeVariantTool,
     list_marks: listMarksTool,
     describe_mark: describeMarkTool,
     describe_template: describeTemplateTool,
     register_variant: registerVariantTool,
+    derive_palette: derivePaletteTool,
+    simulate_paste: simulatePasteTool,
+    export_clipboard_payload: exportClipboardPayloadTool,
     export_long_image: exportLongImageTool(jobsClient),
     export_cover: exportCoverTool(jobsClient),
     get_job: getJobTool(jobsClient),

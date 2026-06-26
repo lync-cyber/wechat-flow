@@ -16,6 +16,7 @@
     "@wechat-flow/contracts": "workspace:^",
     "@wechat-flow/core": "workspace:^",
     "@wechat-flow/marks": "workspace:^",
+    "@wechat-flow/palette": "workspace:^",
     "@wechat-flow/theme-business": "workspace:^",
     "@wechat-flow/theme-default": "workspace:^",
     "@wechat-flow/theme-literary": "workspace:^",

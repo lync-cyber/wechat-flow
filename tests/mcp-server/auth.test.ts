@@ -64,7 +64,7 @@ describe("dispatchTool — AC-003: admin scope → E_PERMISSION_DENIED", () => {
   });
 
   it("returns E_NOT_IMPLEMENTED (not auth error) for unimplemented tool when scope is user", async () => {
-    const result = await dispatchTool("derive_palette", {}, { scope: "user" });
+    const result = await dispatchTool("list_tokens", {}, { scope: "user" });
     expect(result).toHaveProperty("code", "E_NOT_IMPLEMENTED");
   });
 });
