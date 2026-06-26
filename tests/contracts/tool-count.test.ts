@@ -101,7 +101,9 @@ describe("AC-005 response schema exports: all 24 response schemas are exported f
       ([name]) =>
         name !== "renderMarkdownResponseSchema" &&
         name !== "registerVariantResponseSchema" &&
-        name !== "describeTemplateResponseSchema"
+        name !== "describeTemplateResponseSchema" &&
+        name !== "listTokensResponseSchema" &&
+        name !== "describeTokenResponseSchema"
     );
     for (const [name, schema] of placeholders) {
       const result = schema.safeParse({});

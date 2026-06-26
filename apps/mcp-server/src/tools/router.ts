@@ -25,6 +25,7 @@ import { registerVariantTool } from "./register-variant.ts";
 import { renderMarkdownTool } from "./render-markdown.ts";
 import { simulatePasteTool } from "./simulate-paste.ts";
 import { uploadImageTool } from "./upload-image.ts";
+import { uploadToWechatAssetTool } from "./upload-to-wechat-asset.ts";
 
 type ToolHandler = (args: Record<string, unknown>) => Promise<unknown> | unknown;
 
@@ -51,6 +52,7 @@ function buildHandlers(jobsClient: JobsClient): Record<string, ToolHandler> {
     export_cover: exportCoverTool(jobsClient),
     get_job: getJobTool(jobsClient),
     upload_image: uploadImageTool(jobsClient),
+    upload_to_wechat_asset: uploadToWechatAssetTool(jobsClient),
   };
 }
 

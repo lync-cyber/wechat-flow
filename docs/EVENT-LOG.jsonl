@@ -523,3 +523,10 @@
 {"event": "state_change", "phase": "development", "detail": "T-051 revision 全 9 项闭环: admin-guard loopback 缺省白名单+Bearer scope(401/403)、HMAC+PEPPER、actor=apiKeyId、PATCH/DELETE 端点、XFF 右解析、空 body 测试、store wiring 标注；27 测试 PASS。orchestrator 修 http-sse TokenResolver scope 收窄(TS2322)", "ts": "2026-06-26T08:14:47+00:00"}
 {"event": "state_change", "phase": "development", "detail": "T-047/T-077 reviewer 派发本会话连接中断(infra)→orchestrator inline 复核 approved_with_notes(报告落盘 CODE-REVIEW-T-047-r1/T-077-r1)；T-073/T-074 非 security 延迟 sprint-review", "ts": "2026-06-26T08:14:47+00:00"}
 {"event": "state_change", "phase": "development", "detail": "并行实现批完成: 5 任务全绿(116 files/1379 passed/1 skip/0 fail, 全 typecheck 0, biome 0), feature 分支 feature/sprint5-impl-batch 待 PR；生产挂载登记 Sprint 5 wiring backlog", "ts": "2026-06-26T08:14:47+00:00"}
+{"ts": "2026-06-26T08:46:07+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-048"}
+{"ts": "2026-06-26T08:46:08+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-075"}
+{"ts": "2026-06-26T08:46:09+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD RED: T-123"}
+{"ts": "2026-06-26T09:11:26+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD GREEN: T-123"}
+{"ts": "2026-06-26T12:01:32+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-078"}
+{"ts": "2026-06-26T12:12:57+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-079"}
+{"ts": "2026-06-26T12:31:28+00:00", "event": "tdd_phase", "phase": "development", "detail": "本批完成 T-048/T-075/T-123/T-078/T-079 全绿 1542 passed；修 vitest.config 越权 alias 回归"}

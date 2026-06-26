@@ -12,6 +12,8 @@ export const pullQuote = defineBlock(
     { id: "default", label: "标准摘引" },
     { id: "large", label: "大字摘引" },
     { id: "decorated", label: "装饰摘引" },
+    { id: "minimal", label: "简约摘引" },
+    { id: "bordered", label: "边框摘引" },
   ],
   {
     root: {

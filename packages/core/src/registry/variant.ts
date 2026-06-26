@@ -1,5 +1,5 @@
 import { filterCssAttrs } from "../pipeline/css-attr-filter.ts";
-import { describeBlock } from "./block.ts";
+import { describeBlock, listBlocks } from "./block.ts";
 import { isWhitelistedProperty } from "./css-property-whitelist.ts";
 
 export interface RejectedDeclaration {
@@ -147,6 +147,19 @@ export function getBlockBaseStyle(blockId: string, variantId: string): Record<st
   const key = `${blockId}::${variantId}`;
   const entry = store.get(key);
   return entry?.style?.root ?? {};
+}
+
+export function listAllVariants(): Array<{ blockId: string; id: string; label?: string }> {
+  const result: Array<{ blockId: string; id: string; label?: string }> = [];
+  for (const block of listBlocks()) {
+    for (const v of block.variants) {
+      result.push({ blockId: block.id, id: v.id, label: v.label });
+    }
+  }
+  for (const v of store.values()) {
+    result.push({ blockId: v.blockId, id: v.id, label: v.label });
+  }
+  return result;
 }
 
 export function resetVariantRegistry(): void {

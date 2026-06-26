@@ -13,5 +13,7 @@ export const table = defineBlock(
     { id: "default", label: "标准表格" },
     { id: "striped", label: "条纹表格" },
     { id: "bordered", label: "全边框表格" },
+    { id: "compact", label: "紧凑表格" },
+    { id: "highlight-header", label: "高亮表头表格" },
   ]
 );
