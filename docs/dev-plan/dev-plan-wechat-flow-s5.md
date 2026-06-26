@@ -298,18 +298,18 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-116, T-011, T-031, T-030]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given `wechat-flow dev ./my-pack`，When 执行，Then 启动 Vite dev 进程，stdout 含「Watching for changes...」[ARCH#§2.M-011]
-  - [ ] AC-002: Given 修改 pack 文件后，When HMR 触发，Then stdout 输出含 `[wechat-flow:hmr]` 前缀的刷新提示（≤2s 内输出）
-  - [ ] AC-003: Given `wechat-flow render --input article.md --theme default`，When 执行，Then stdout 输出 inline-styled HTML（不含 `<style>` 标签）
-  - [ ] AC-004: Given `wechat-flow publish ./my-pack`，When pack 文件 SHA256 与上次发布不同，Then stdout 输出 'new pack version detected' 提示；退出码 0
-  - [ ] AC-005: Given `wechat-flow export --input article.md --format html`，When 执行，Then 生成 standalone `.html` 文件
+  - [x] AC-001: Given `wechat-flow dev ./my-pack`，When 执行，Then 启动 Vite dev 进程，stdout 含「Watching for changes...」[ARCH#§2.M-011]
+  - [x] AC-002: Given 修改 pack 文件后，When HMR 触发，Then stdout 输出含 `[wechat-flow:hmr]` 前缀的刷新提示（≤2s 内输出）
+  - [x] AC-003: Given `wechat-flow render --input article.md --theme default`，When 执行，Then stdout 输出 inline-styled HTML（不含 `<style>` 标签）
+  - [x] AC-004: Given `wechat-flow publish ./my-pack`，When pack 文件 SHA256 与上次发布不同，Then stdout 输出 'new pack version detected' 提示；退出码 0
+  - [x] AC-005: Given `wechat-flow export --input article.md --format html`，When 执行，Then 生成 standalone `.html` 文件
 - **deliverables**:
-  - [ ] `apps/cli/src/commands/dev.ts` — Vite middleware + HMR + pack live-reload [ARCH#§2.M-011]
-  - [ ] `apps/cli/src/commands/publish.ts` — pack 打包骨架
-  - [ ] `apps/cli/src/commands/render.ts` — Tool 契约壳
-  - [ ] `apps/cli/src/commands/copy.ts` — Tool 契约壳
-  - [ ] `apps/cli/src/commands/export.ts` — Tool 契约壳
-  - [ ] 更新 `apps/cli/src/index.ts` — 注册以上 5 个子命令
+  - [x] `apps/cli/src/commands/dev.ts` — Vite middleware + HMR + pack live-reload [ARCH#§2.M-011]
+  - [x] `apps/cli/src/commands/publish.ts` — pack 打包骨架
+  - [x] `apps/cli/src/commands/render.ts` — Tool 契约壳
+  - [x] `apps/cli/src/commands/copy.ts` — Tool 契约壳
+  - [x] `apps/cli/src/commands/export.ts` — Tool 契约壳
+  - [x] 更新 `apps/cli/src/index.ts` — 注册以上 5 个子命令
 - **relates_to**: [F-010, M-011]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-011

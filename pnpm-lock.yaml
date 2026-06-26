@@ -107,12 +107,33 @@ importers:
 
   apps/cli:
     dependencies:
+      '@wechat-flow/blocks':
+        specifier: workspace:^
+        version: link:../../packages/blocks
       '@wechat-flow/core':
         specifier: workspace:^
         version: link:../../packages/core
+      '@wechat-flow/marks':
+        specifier: workspace:^
+        version: link:../../packages/marks
       '@wechat-flow/plugin-api':
         specifier: workspace:^
         version: link:../../packages/plugin-api
+      '@wechat-flow/theme-business':
+        specifier: workspace:^
+        version: link:../../packages/themes/business
+      '@wechat-flow/theme-default':
+        specifier: workspace:^
+        version: link:../../packages/themes/default
+      '@wechat-flow/theme-literary':
+        specifier: workspace:^
+        version: link:../../packages/themes/literary
+      '@wechat-flow/theme-magazine':
+        specifier: workspace:^
+        version: link:../../packages/themes/magazine
+      '@wechat-flow/theme-tech':
+        specifier: workspace:^
+        version: link:../../packages/themes/tech
       commander:
         specifier: ^12.0.0
         version: 12.1.0
