@@ -105,7 +105,17 @@ importers:
         specifier: ^4.0.0
         version: 4.4.3
 
-  apps/cli: {}
+  apps/cli:
+    dependencies:
+      '@wechat-flow/core':
+        specifier: workspace:^
+        version: link:../../packages/core
+      '@wechat-flow/plugin-api':
+        specifier: workspace:^
+        version: link:../../packages/plugin-api
+      commander:
+        specifier: ^12.0.0
+        version: 12.1.0
 
   apps/editor:
     dependencies:
@@ -2021,6 +2031,10 @@ packages:
   commander@10.0.1:
     resolution: {integrity: sha512-y4Mg2tXshplEbSGzx7amzPwKKOCGuoSRP/CjEdwwk0FOGlUbq6lKuoyDZTNZkmxHdJtp54hdfY/JUrdL7Xfdug==}
     engines: {node: '>=14'}
+
+  commander@12.1.0:
+    resolution: {integrity: sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA==}
+    engines: {node: '>=18'}
 
   commander@14.0.3:
     resolution: {integrity: sha512-H+y0Jo/T1RZ9qPP4Eh1pkcQcLRglraJaSLoyOtHxu6AapkjWVCy2Sit1QQ4x3Dng8qDlSsZEet7g5Pq06MvTgw==}
@@ -5359,6 +5373,8 @@ snapshots:
   comma-separated-tokens@2.0.3: {}
 
   commander@10.0.1: {}
+
+  commander@12.1.0: {}
 
   commander@14.0.3: {}
 

@@ -268,15 +268,15 @@ required_sections:
 - **security_sensitive**: false
 - **dependencies**: [T-047, T-048]
 - **acceptance_criteria**:
-  - [ ] AC-001: Given `wechat-flow init my-pack --template plugin`，When 执行，Then 创建 `my-pack/` 目录，含 `manifest.json`、`src/index.ts`、`package.json` 骨架文件（plugin 模板）；`my-pack/` 目录在文件系统中存在可检索 [F-010 AC-003]
-  - [ ] AC-002: Given `wechat-flow validate ./my-pack`（合规 pack），When 执行，Then 退出码 0，stdout 含「通过：manifest ✓ schema ✓ 主题守护 ✓」[F-010 AC-005]
-  - [ ] AC-003: Given `wechat-flow validate ./broken-pack`（manifest 缺少 `name` 字段），When 执行，Then 退出码非 0，stderr 含 `E_MANIFEST_INVALID: missing required field 'name'`
-  - [ ] AC-004（production path）: `apps/cli/src/index.ts` 中可检索到 `.command('init')` 和 `.command('validate')` 的字面注册调用
+  - [x] AC-001: Given `wechat-flow init my-pack --template plugin`，When 执行，Then 创建 `my-pack/` 目录，含 `manifest.json`、`src/index.ts`、`package.json` 骨架文件（plugin 模板）；`my-pack/` 目录在文件系统中存在可检索 [F-010 AC-003]
+  - [x] AC-002: Given `wechat-flow validate ./my-pack`（合规 pack），When 执行，Then 退出码 0，stdout 含「通过：manifest ✓ schema ✓ 主题守护 ✓」[F-010 AC-005]
+  - [x] AC-003: Given `wechat-flow validate ./broken-pack`（manifest 缺少 `name` 字段），When 执行，Then 退出码非 0，stderr 含 `E_MANIFEST_INVALID: missing required field 'name'`
+  - [x] AC-004（production path）: `apps/cli/src/index.ts` 中可检索到 `.command('init')` 和 `.command('validate')` 的字面注册调用
 - **deliverables**:
-  - [ ] `apps/cli/src/commands/init.ts` — `--template plugin|theme` 两种骨架
-  - [ ] `apps/cli/src/commands/validate.ts` — manifest + schema + 主题守护 + variant 申报一致性
-  - [ ] `apps/cli/src/index.ts` — CLI 入口（使用 `commander` 或 `citty`）
-  - [ ] `tests/cli/validate.test.ts` — AC-002..AC-003 单元测试
+  - [x] `apps/cli/src/commands/init.ts` — `--template plugin|theme` 两种骨架
+  - [x] `apps/cli/src/commands/validate.ts` — manifest + schema + 主题守护 + variant 申报一致性
+  - [x] `apps/cli/src/index.ts` — CLI 入口（使用 `commander` 或 `citty`）
+  - [x] `tests/cli/validate.test.ts` — AC-002..AC-003 单元测试
 - **relates_to**: [F-010, M-011]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-011
