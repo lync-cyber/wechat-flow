@@ -710,12 +710,12 @@ required_sections:
 - **user_facing_critical_path**: true
 - **dependencies**: [T-044, T-046, T-116, T-117, T-051, T-073, T-074, T-075, T-077, T-079, T-080, T-081, T-082, T-083, T-084]
 - **acceptance_criteria**:
-  - [ ] 运行 `wechat-flow init my-test-pack --template plugin`，生成骨架目录；进入目录运行 `wechat-flow validate .`，输出退出码 0 + 通过信息
-  - [ ] 在编辑器中写入含中英文混排的 Markdown（如「这是GitHub的项目，包含react组件」），点击「...」→「中文排版修订」，diff 预览 Modal 弹出并展示变更（中英间加空格），点击「确认修订」，编辑器内容更新，按 Ctrl+Z 可撤销
-  - [ ] 通过 MCP HTTP transport（`POST /mcp/tools/apply_zh_typo`），发送含中英混排的 Markdown，返回 `{ fixed: '...', totalChanges: N }` 响应
-  - [ ] 点击模板卡片应用模板成功（T-073 模板市场验证）
-  - [ ] 素材库上传 smoke test：mock 微信 API 返回 mediaId，接口返回 `{ jobId: uuid }`（T-077 验证）
-  - [ ] Tool 全集 grep 验证：24 个 Tool 文件在 `apps/mcp-server/src/tools/` 下存在，包含 `describe_template`、`register_variant`
+  - [x] 运行 `wechat-flow init my-test-pack --template plugin`，生成骨架目录；进入目录运行 `wechat-flow validate .`，输出退出码 0 + 通过信息
+  - [x] 在编辑器中写入含中英文混排的 Markdown（如「这是GitHub的项目，包含react组件」），点击「...」→「中文排版修订」，diff 预览 Modal 弹出并展示变更（中英间加空格），点击「确认修订」，编辑器内容更新，按 Ctrl+Z 可撤销
+  - [x] 通过 MCP HTTP transport（`POST /mcp/tools/apply_zh_typo`），发送含中英混排的 Markdown，返回 `{ fixed: '...', totalChanges: N }` 响应
+  - [x] 点击模板卡片应用模板成功（T-073 模板市场验证）
+  - [x] 素材库上传 smoke test：mock 微信 API 返回 mediaId，接口返回 `{ jobId: uuid }`（T-077 验证）
+  - [x] Tool 全集 grep 验证：24 个 Tool 文件在 `apps/mcp-server/src/tools/` 下存在，包含 `describe_template`、`register_variant`
 - **relates_to**: [F-010, F-014, M-007, M-009, M-011]
 
 ---
