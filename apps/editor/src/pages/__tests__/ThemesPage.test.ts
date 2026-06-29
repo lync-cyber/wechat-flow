@@ -163,14 +163,19 @@ describe("AC-003: 点击「使用此主题」切换 currentTheme", () => {
   });
 });
 
-describe("AC-004: 选择 template → setContent 以对应 markdown 调用", () => {
-  it("点击某卡「使用此模板」按钮后 editorStore.setContent 以该 template markdown 调用", async () => {
+describe("AC-004: 选择 template → 创建新文档并应用模板内容", () => {
+  it("点击某卡「使用此模板」按钮后 createDoc 以该 template markdown 调用且 currentDocId 切换为新 id", async () => {
     const pinia = createPinia();
     setActivePinia(pinia);
     const { useEditorStore } = await import("../../stores/editor.ts");
     const store = useEditorStore();
     store.currentTheme = "default";
-    const setContentSpy = vi.spyOn(store, "setContent").mockResolvedValue(undefined);
+    const originalDocId = store.currentDocId;
+    const createDocSpy = vi.spyOn(store, "createDoc").mockImplementation(async (initialContent) => {
+      store.currentDocId = `draft-test-${Date.now()}`;
+      store.content = initialContent;
+      return store.currentDocId;
+    });
 
     const wrapper = mount(ThemesPage, {
       global: { plugins: [pinia] },
@@ -180,7 +185,9 @@ describe("AC-004: 选择 template → setContent 以对应 markdown 调用", () 
     await wrapper.find('[data-testid="btn-use-template-default-tpl-general"]').trigger("click");
     await nextTick();
 
-    expect(setContentSpy).toHaveBeenCalledWith("# tpl-general template markdown");
+    expect(createDocSpy).toHaveBeenCalledWith("# tpl-general template markdown");
+    expect(store.currentDocId).not.toBe(originalDocId);
+    expect(store.currentDocId).toMatch(/^draft-/);
   });
 });
 

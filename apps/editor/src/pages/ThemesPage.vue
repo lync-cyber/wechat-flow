@@ -54,11 +54,11 @@ function handleUseTheme(themeId: string, themeName: string): void {
   pushToast({ type: "success", message: `已切换到 ${themeName} 主题` });
 }
 
-function handleUseTemplate(themeId: string, templateId: string): void {
+async function handleUseTemplate(themeId: string, templateId: string): Promise<void> {
   try {
     const { markdown } = describeTemplate(themeId, templateId);
     if (markdown !== undefined) {
-      editorStore.setContent(markdown);
+      await editorStore.createDoc(markdown);
     }
   } catch {
     // template not found — no-op

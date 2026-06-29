@@ -33,6 +33,13 @@ describe("AC-001: list_block_variants(callout) returns ≥3 variants each with i
     expect(ids).toContain("filled");
     expect(ids).toContain("minimal");
   });
+
+  it("SR-006: each item exposes render metadata field (undefined when M-005 has no render model)", () => {
+    const result = listBlockVariantsTool({ blockId: "callout" }) as Array<Record<string, unknown>>;
+    for (const item of result) {
+      expect("render" in item).toBe(true);
+    }
+  });
 });
 
 // ---- AC-002: describe_variant('callout','filled') 返回 attrsSchema + style ----
@@ -69,6 +76,15 @@ describe("AC-002: describe_variant(callout, filled) returns attrsSchema as JSON 
     expect(result.id).toBe("filled");
     expect(result.blockId).toBe("callout");
     expect(typeof result.label).toBe("string");
+  });
+
+  it("SR-006: describe_variant returns dependencies array (empty when M-005 has no dep model)", () => {
+    const result = describeVariantTool({ blockId: "callout", variantId: "filled" }) as Record<
+      string,
+      unknown
+    >;
+    expect(result).toHaveProperty("dependencies");
+    expect(Array.isArray(result.dependencies)).toBe(true);
   });
 });
 

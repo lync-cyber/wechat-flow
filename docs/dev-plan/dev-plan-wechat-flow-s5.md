@@ -299,7 +299,7 @@ required_sections:
 - **dependencies**: [T-116, T-011, T-031, T-030]
 - **acceptance_criteria**:
   - [x] AC-001: Given `wechat-flow dev ./my-pack`，When 执行，Then 启动 Vite dev 进程，stdout 含「Watching for changes...」[ARCH#§2.M-011]
-  - [x] AC-002: Given 修改 pack 文件后，When HMR 触发，Then stdout 输出含 `[wechat-flow:hmr]` 前缀的刷新提示（≤2s 内输出）
+  - [x] AC-002: [SUPERSEDED by T-127] 占位 HMR 的 `[wechat-flow:hmr]` stdout 前缀契约由 T-127 真实 Vite `server.ws.send({ type: 'full-reload' })` HMR 接管；dev 命令 HMR 行为以 T-127 AC-001/AC-002 为权威
   - [x] AC-003: Given `wechat-flow render --input article.md --theme default`，When 执行，Then stdout 输出 inline-styled HTML（不含 `<style>` 标签）
   - [x] AC-004: Given `wechat-flow publish ./my-pack`，When pack 文件 SHA256 与上次发布不同，Then stdout 输出 'new pack version detected' 提示；退出码 0
   - [x] AC-005: Given `wechat-flow export --input article.md --format html`，When 执行，Then 生成 standalone `.html` 文件
@@ -903,7 +903,7 @@ required_sections:
     when: "本地全栈开发环境手动验证（见 memory/local-fullstack-validation-setup.md）"
 - **deliverables**:
   - [ ] `apps/cli/src/commands/dev.ts` — `serverFactory` 默认实现（`createServer` from vite）+ watcher 接线
-  - [ ] `apps/cli/src/index.ts` — dev 命令传递 packDir + serverFactory 参数
+  - [ ] `apps/cli/src/index.ts` — dev 命令调用 `runDev({ packDir })`；`serverFactory` 由 `dev.ts` 的 `defaultServerFactory`（真实 Vite `createServer`）默认承担，不在 index.ts 显式注入
   - [ ] `apps/cli/package.json` — 补 `vite` devDependency
   - [ ] `tests/cli/dev.test.ts` — 覆盖 AC-001..AC-002（mock serverFactory + HMR 消息格式）
 - **relates_to**: [F-010, F-013, M-011]

@@ -17,7 +17,6 @@ export async function mobileCopy(input: MobileCopyInput): Promise<void> {
       themeId: input.themeId,
       notify: (n) => input.notify(n),
     });
-    input.notify({ type: "success", message: "已复制" });
     return;
   }
 

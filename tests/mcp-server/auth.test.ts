@@ -68,3 +68,30 @@ describe("dispatchTool — AC-003: admin scope → E_PERMISSION_DENIED", () => {
     expect(result).toHaveProperty("code", "E_NOT_IMPLEMENTED");
   });
 });
+
+// ---- SR-005: E_NOT_FOUND is treated as isError in MCP responses ----
+
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
+import { hashApiKey as hashKey } from "../../apps/mcp-server/src/auth/api-key.ts";
+import { createServer } from "../../apps/mcp-server/src/transport/stdio.ts";
+
+describe("SR-005: describe_token with unknown id → MCP isError=true", () => {
+  it("returns isError=true when describe_token finds no matching token", async () => {
+    const raw = "user-key-sr005";
+    const apiKeyStore = new Map([[hashKey(raw), { scope: "user" as const }]]);
+    const server = createServer({ apiKeyStore, rawApiKey: raw });
+    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+    await server.connect(serverTransport);
+    const client = new Client({ name: "test-client", version: "0.0.0" });
+    await client.connect(clientTransport);
+
+    const res = await client.callTool({
+      name: "describe_token",
+      arguments: { id: "no.such.token.xyz" },
+    });
+    expect(res.isError).toBe(true);
+
+    await client.close();
+  });
+});

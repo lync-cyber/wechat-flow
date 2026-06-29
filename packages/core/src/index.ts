@@ -93,5 +93,11 @@ export type {
   WechatAssetRelayClient,
   EventSourceFactory,
 } from "./composers/upload-wechat-asset.ts";
-export { registerToken, listTokens, describeToken } from "./registry/token.ts";
+export {
+  registerToken,
+  listTokens,
+  describeToken,
+  resetTokenRegistry,
+  seedTokenRegistry,
+} from "./registry/token.ts";
 export type { TokenDefinition } from "./registry/token.ts";
