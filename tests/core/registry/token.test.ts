@@ -1,10 +1,17 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { listTokensResponseSchema } from "../../../packages/contracts/src/mcp/tool-contracts.ts";
 import {
   describeToken,
   listTokens,
   registerToken,
+  resetTokenRegistry,
+  seedTokenRegistry,
 } from "../../../packages/core/src/registry/token.ts";
+
+beforeEach(() => {
+  resetTokenRegistry();
+  seedTokenRegistry();
+});
 
 // ---------------------------------------------------------------------------
 // AC-001: TokenDefinition shape

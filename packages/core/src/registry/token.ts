@@ -21,6 +21,10 @@ export function resetTokenRegistry(): void {
   store.clear();
 }
 
-for (const token of DESIGN_TOKENS) {
-  registerToken(token);
+export function seedTokenRegistry(): void {
+  for (const token of DESIGN_TOKENS) {
+    registerToken(token);
+  }
 }
+
+seedTokenRegistry();

@@ -64,7 +64,10 @@ function isErrorResult(result: unknown): boolean {
   if (result === null || typeof result !== "object") return false;
   const code = (result as Record<string, unknown>).code;
   return (
-    code === "E_AUTH_REQUIRED" || code === "E_PERMISSION_DENIED" || code === "E_NOT_IMPLEMENTED"
+    code === "E_AUTH_REQUIRED" ||
+    code === "E_PERMISSION_DENIED" ||
+    code === "E_NOT_IMPLEMENTED" ||
+    code === "E_NOT_FOUND"
   );
 }
 
@@ -72,6 +75,17 @@ export type DispatchResult =
   | { code: "E_NOT_IMPLEMENTED"; tool: string }
   | AuthError
   | Record<string, unknown>;
+
+const handlersCache = new WeakMap<JobsClient, Record<string, ToolHandler>>();
+
+function getCachedHandlers(jobsClient: JobsClient): Record<string, ToolHandler> {
+  let handlers = handlersCache.get(jobsClient);
+  if (!handlers) {
+    handlers = buildHandlers(jobsClient);
+    handlersCache.set(jobsClient, handlers);
+  }
+  return handlers;
+}
 
 export async function dispatchTool(
   name: string,
@@ -81,7 +95,7 @@ export async function dispatchTool(
 ): Promise<DispatchResult> {
   const authError = guardUserScope(keyRecord);
   if (authError) return authError;
-  const handlers = buildHandlers(jobsClient);
+  const handlers = getCachedHandlers(jobsClient);
   const handler = handlers[name];
   if (handler) return (await handler(args)) as Record<string, unknown>;
   return { code: "E_NOT_IMPLEMENTED", tool: name };

@@ -47,7 +47,9 @@ vi.mock("../../use-cases/render.ts", () => ({
 }));
 
 vi.mock("../../use-cases/copy.ts", () => ({
-  composeCopy: vi.fn().mockResolvedValue(undefined),
+  composeCopy: vi.fn(async (input: { notify?: (n: { type: string; message: string }) => void }) => {
+    input.notify?.({ type: "success", message: "已复制到剪贴板" });
+  }),
 }));
 
 import PreviewPage from "../PreviewPage.vue";
@@ -124,10 +126,14 @@ describe("AC-001: PreviewPage 单栏只读布局", () => {
 });
 
 describe("AC-002: 一键复制 — Clipboard API 支持路径", () => {
-  it("点击「一键复制」按钮调用 composeCopy 并 pushToast success「已复制」", async () => {
+  it("点击「一键复制」按钮调用 composeCopy 并 pushToast success「已复制」且仅一次", async () => {
     const { composeCopy } = await import("../../use-cases/copy.ts");
     const composeCopyMock = composeCopy as ReturnType<typeof vi.fn>;
-    composeCopyMock.mockResolvedValue(undefined);
+    composeCopyMock.mockImplementation(
+      async (input: { notify?: (n: { type: string; message: string }) => void }) => {
+        input.notify?.({ type: "success", message: "已复制到剪贴板" });
+      }
+    );
 
     const wrapper = mount(PreviewPage, {
       global: { plugins: [createPinia()] },
@@ -143,6 +149,7 @@ describe("AC-002: 一键复制 — Clipboard API 支持路径", () => {
     expect(pushToast).toHaveBeenCalledWith(
       expect.objectContaining({ type: "success", message: expect.stringContaining("已复制") })
     );
+    expect(pushToast).toHaveBeenCalledTimes(1);
   });
 });
 

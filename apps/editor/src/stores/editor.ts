@@ -63,6 +63,14 @@ export const useEditorStore = defineStore("editor", () => {
     }
   }
 
+  async function createDoc(initialContent: string): Promise<string> {
+    const newId = `draft-${crypto.randomUUID()}`;
+    currentDocId.value = newId;
+    content.value = "";
+    await setContent(initialContent);
+    return newId;
+  }
+
   return {
     currentDocId,
     currentTheme,
@@ -73,5 +81,6 @@ export const useEditorStore = defineStore("editor", () => {
     updatePreview,
     setContent,
     loadDraft,
+    createDoc,
   };
 });

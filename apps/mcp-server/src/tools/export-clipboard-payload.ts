@@ -1,3 +1,5 @@
+// [ASSUMPTION] MCP path calls M-002 renderMarkdown directly; M-008 composeRender adds
+// editor-facing fields (versionTriple/nodeLocations) not needed here.
 import { renderMarkdown, simulatePaste } from "@wechat-flow/core";
 
 export async function exportClipboardPayloadTool(args: Record<string, unknown>) {

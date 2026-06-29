@@ -1,6 +1,10 @@
 import { describeBlock, describeVariant } from "@wechat-flow/core";
 import { z } from "zod";
 
+// [ASSUMPTION] M-005 BlockVariant does not model token/asset dependencies; dependencies is always [].
+// Backlog: extend BlockVariant with deps field when M-005 is updated.
+const EMPTY_DEPENDENCIES: string[] = [];
+
 export function describeVariantTool(args: Record<string, unknown>) {
   const blockId = String(args.blockId ?? "");
   const variantId = String(args.variantId ?? "");
@@ -17,6 +21,7 @@ export function describeVariantTool(args: Record<string, unknown>) {
       label: builtin.label ?? variantId,
       attrsSchema,
       style: block.baseStyle ?? {},
+      dependencies: EMPTY_DEPENDENCIES,
     };
   }
 
@@ -28,6 +33,7 @@ export function describeVariantTool(args: Record<string, unknown>) {
       label: dynamic.label,
       attrsSchema,
       style: dynamic.style,
+      dependencies: EMPTY_DEPENDENCIES,
     };
   }
 
