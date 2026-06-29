@@ -11,6 +11,8 @@ import { createEditorSessionApp } from "./routes/editor-session.ts";
 import { healthRoute } from "./routes/health.ts";
 import { createImagesApp } from "./routes/images.ts";
 import { createJobsApp } from "./routes/jobs.ts";
+import { createWechatAssetsApp } from "./routes/wechat-assets.ts";
+import type { WechatAssetsAppDeps } from "./routes/wechat-assets.ts";
 
 /**
  * Dependencies for the admin route group (/api/v1/admin/*).
@@ -31,6 +33,7 @@ export interface AppDeps {
   auth?: AuthMiddlewareDeps;
   editorSession?: EditorSessionDeps;
   adminDeps?: AdminDeps;
+  wechatAssets?: WechatAssetsAppDeps;
 }
 
 export function createApp(deps: AppDeps = {}): Hono<{ Variables: AuthVariables }> {
@@ -55,6 +58,13 @@ export function createApp(deps: AppDeps = {}): Hono<{ Variables: AuthVariables }
     app.route("/", createJobsApp(deps.jobsDeps));
   }
 
+  if (deps.wechatAssets) {
+    if (deps.auth) {
+      app.use("/api/v1/wechat-assets/*", createAuthMiddleware(deps.auth, { requireScope: "user" }));
+    }
+    app.route("/", createWechatAssetsApp(deps.wechatAssets));
+  }
+
   if (deps.auth) {
     app.use("/api/v1/admin/*", createAuthMiddleware(deps.auth, { requireScope: "admin" }));
   }
@@ -76,8 +86,8 @@ export type { RenderJob, RenderJobData, RenderResult } from "./job/render-proces
 export { createJobsRuntime } from "./job/runtime.ts";
 export type { JobsRuntime } from "./job/runtime.ts";
 export type { JobKind } from "./job/types.ts";
-export { createWechatAssetsApp } from "./routes/wechat-assets.ts";
-export type { WechatAssetsAppDeps } from "./routes/wechat-assets.ts";
+export { createWechatAssetsApp };
+export type { WechatAssetsAppDeps };
 export { loadWechatCredentials } from "./wechat-asset/credential-loader.ts";
 export type { WechatCredentials } from "./wechat-asset/credential-loader.ts";
 export { uploadWechatAsset } from "./wechat-asset/uploader.ts";
