@@ -486,4 +486,16 @@ describe("checkNetworkAccess host-boundary hardening (R-001)", () => {
     ]);
     expect(result).toBe(true);
   });
+
+  it("rejects @userinfo injection: 'https://allowed.com@evil.com/path' against 'https://allowed.com/*'", () => {
+    const result = checkNetworkAccess("https://allowed.com@evil.com/path", [
+      "https://allowed.com/*",
+    ]);
+    expect(result).toBe(false);
+  });
+
+  it("rejects multi-level subdomain: 'https://a.b.example.com/data' against 'https://*.example.com/*'", () => {
+    const result = checkNetworkAccess("https://a.b.example.com/data", ["https://*.example.com/*"]);
+    expect(result).toBe(false);
+  });
 });

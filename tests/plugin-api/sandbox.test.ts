@@ -129,7 +129,7 @@ describe("requestResource audit-log (AC-003)", () => {
     expect(typeof recorded.ts).toBe("number");
   });
 
-  it("does not record an audit entry when access is denied", () => {
+  it("records action:'deny' entry when access is denied", () => {
     const audit = vi.fn();
     const manifest = { id: "plugin-f", permissions: { network: [] } };
     try {
@@ -137,7 +137,16 @@ describe("requestResource audit-log (AC-003)", () => {
     } catch {
       // expected denial
     }
-    expect(audit).not.toHaveBeenCalled();
+    expect(audit).toHaveBeenCalledOnce();
+    const recorded = audit.mock.calls[0][0] as {
+      action: "allow" | "deny";
+      url: string;
+      pluginId: string;
+      ts: number;
+    };
+    expect(recorded.action).toBe("deny");
+    expect(recorded.url).toBe("https://example.com/data");
+    expect(recorded.pluginId).toBe("plugin-f");
   });
 });
 

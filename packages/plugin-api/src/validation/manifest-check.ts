@@ -1,4 +1,7 @@
+import { E_PERMISSION_DENIED } from "../acl/acl-request.ts";
 import { checkNetworkAccess } from "../acl/network-gate.ts";
+
+export { E_PERMISSION_DENIED };
 
 export interface VariantIntent {
   blockId: string;
@@ -15,7 +18,6 @@ export interface PluginManifest {
   };
 }
 
-export const E_PERMISSION_DENIED = "E_PERMISSION_DENIED";
 export const E_MANIFEST_VARIANT_MISMATCH = "E_MANIFEST_VARIANT_MISMATCH";
 
 export interface VariantMismatchWarning {
@@ -64,6 +66,7 @@ export function requestResource(
   const patterns = manifest.permissions.network ?? [];
   const allowed = checkNetworkAccess(url, patterns);
   if (!allowed) {
+    auditRecord({ action: "deny", url, pluginId: manifest.id, ts: Date.now() });
     throw new Error(E_PERMISSION_DENIED);
   }
   auditRecord({ action: "allow", url, pluginId: manifest.id, ts: Date.now() });

@@ -1,4 +1,6 @@
 import type { ZodType } from "zod";
+import { E_PERMISSION_DENIED, aclRequestResource } from "../acl/acl-request.ts";
+import type { AuditLog } from "../acl/audit-log.ts";
 
 export interface DefineBlockInput {
   id: string;
@@ -57,6 +59,12 @@ export interface RegistryBridge {
   listBlockVariants: (blockId: string) => Array<{ id: string; label: string }>;
 }
 
+export interface AclDeps {
+  manifest: { id: string; permissions: { network?: string[] } };
+  auditLog: AuditLog;
+  fetch: (url: string) => Promise<Response>;
+}
+
 export interface PluginSurface {
   defineBlock: (input: DefineBlockInput) => void;
   defineVariant: (input: DefineVariantInput) => void;
@@ -66,7 +74,7 @@ export interface PluginSurface {
   requestResource: (url: string) => Promise<Response>;
 }
 
-export function createPluginSurface(registry: RegistryBridge): PluginSurface {
+export function createPluginSurface(registry: RegistryBridge, acl?: AclDeps): PluginSurface {
   return {
     defineBlock(input: DefineBlockInput): void {
       registry.registerBlock({
@@ -99,9 +107,11 @@ export function createPluginSurface(registry: RegistryBridge): PluginSurface {
       // Asset registration delegates to main thread asset store via Comlink.
     },
 
-    async requestResource(_url: string): Promise<Response> {
-      // Network access is proxied via ACL in production Comlink path.
-      return Promise.reject(new Error("E_PERMISSION_DENIED"));
+    async requestResource(url: string): Promise<Response> {
+      if (!acl) {
+        return Promise.reject(new Error(E_PERMISSION_DENIED));
+      }
+      return aclRequestResource(url, acl.manifest, acl.auditLog, acl.fetch);
     },
   };
 }
