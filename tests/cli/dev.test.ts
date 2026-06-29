@@ -14,15 +14,17 @@ afterEach(() => {
   fs.rmSync(tmpDir, { recursive: true, force: true });
 });
 
-describe("AC-001: runDev prints Watching for changes...", () => {
+describe("startup log", () => {
   it("logs 'Watching for changes...' on startup", () => {
     const logs: string[] = [];
     const fakeWatcher = () => ({ close: vi.fn() });
+    const fakeServer = { ws: { send: vi.fn() } };
 
     const handle = runDev({
       packDir: "/fake/pack",
       watcher: fakeWatcher,
       logger: (line) => logs.push(line),
+      serverFactory: () => fakeServer,
     });
     handle.close();
 
@@ -30,15 +32,25 @@ describe("AC-001: runDev prints Watching for changes...", () => {
   });
 });
 
-describe("AC-002: file change triggers HMR message with [wechat-flow:hmr] prefix", () => {
-  it("formatHmrMessage returns string with [wechat-flow:hmr] prefix", () => {
-    const msg = formatHmrMessage("src/index.ts");
-    expect(msg).toContain("[wechat-flow:hmr]");
-    expect(msg).toContain("src/index.ts");
+describe("AC-001: serverFactory receives { root } and is called once", () => {
+  it("invokes serverFactory with { root: packDir } exactly once", () => {
+    const mockServer = { ws: { send: vi.fn() } };
+    const mockFactory = vi.fn().mockReturnValue(mockServer);
+
+    const handle = runDev({
+      packDir: "/tmp/test-pack",
+      watcher: () => ({ close: vi.fn() }),
+      logger: () => {},
+      serverFactory: mockFactory,
+    });
+    handle.close();
+
+    expect(mockFactory).toHaveBeenCalledOnce();
+    expect(mockFactory).toHaveBeenCalledWith({ root: "/tmp/test-pack" });
   });
 
-  it("onChange callback produces HMR log entry", () => {
-    const logs: string[] = [];
+  it("calls server.ws.send with full-reload payload on file change", () => {
+    const mockServer = { ws: { send: vi.fn() } };
     const captured: { onChange: ((filename: string) => void) | null } = { onChange: null };
 
     const fakeWatcher = (_dir: string, onChange: (filename: string) => void) => {
@@ -47,31 +59,18 @@ describe("AC-002: file change triggers HMR message with [wechat-flow:hmr] prefix
     };
 
     const handle = runDev({
-      packDir: "/fake/pack",
+      packDir: "/tmp/test-pack",
       watcher: fakeWatcher,
-      logger: (line) => logs.push(line),
+      logger: () => {},
+      serverFactory: () => mockServer,
     });
 
     captured.onChange?.("src/theme.ts");
     handle.close();
 
-    const hmrLog = logs.find((l) => l.includes("[wechat-flow:hmr]"));
-    expect(hmrLog).toBeDefined();
-    expect(hmrLog).toContain("src/theme.ts");
-  });
-});
-
-describe("serverFactory injection", () => {
-  it("invokes serverFactory when provided", () => {
-    const factory = vi.fn();
-    const handle = runDev({
-      packDir: "/fake/pack",
-      watcher: () => ({ close: vi.fn() }),
-      logger: () => {},
-      serverFactory: factory,
-    });
-    handle.close();
-    expect(factory).toHaveBeenCalledOnce();
+    expect(mockServer.ws.send).toHaveBeenCalledOnce();
+    const payload = mockServer.ws.send.mock.calls[0][0] as { type: string };
+    expect(payload.type).toBe("full-reload");
   });
 
   it("does not throw when serverFactory is not provided", () => {
@@ -84,6 +83,20 @@ describe("serverFactory injection", () => {
   });
 });
 
+describe("AC-002: formatHmrMessage returns JSON-serializable object with type field", () => {
+  it("returns object with type: 'full-reload'", () => {
+    const result = formatHmrMessage({ type: "full-reload", packDir: "/some/pack" });
+    expect(result.type).toBe("full-reload");
+  });
+
+  it("result survives JSON round-trip", () => {
+    const result = formatHmrMessage({ type: "full-reload", packDir: "/some/pack" });
+    const roundTripped = JSON.parse(JSON.stringify(result));
+    expect(roundTripped.type).toBe(result.type);
+    expect(roundTripped).toMatchObject(result);
+  });
+});
+
 describe("default logger and watcher fallbacks", () => {
   it("uses default console.log when logger is not provided", () => {
     const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
@@ -91,6 +104,7 @@ describe("default logger and watcher fallbacks", () => {
       const handle = runDev({
         packDir: "/fake/pack",
         watcher: () => ({ close: vi.fn() }),
+        serverFactory: () => ({ ws: { send: vi.fn() } }),
       });
       handle.close();
       expect(consoleSpy).toHaveBeenCalledWith("Watching for changes...");
@@ -104,6 +118,7 @@ describe("default logger and watcher fallbacks", () => {
     const handle = runDev({
       packDir: tmpDir,
       logger: (line) => logs.push(line),
+      serverFactory: () => ({ ws: { send: vi.fn() } }),
     });
     handle.close();
     expect(logs[0]).toBe("Watching for changes...");

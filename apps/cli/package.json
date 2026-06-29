@@ -24,5 +24,8 @@
     "@wechat-flow/theme-literary": "workspace:^",
     "@wechat-flow/theme-magazine": "workspace:^",
     "@wechat-flow/theme-tech": "workspace:^"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
   }
 }
