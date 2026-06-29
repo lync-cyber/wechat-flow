@@ -905,7 +905,7 @@ required_sections:
   - [ ] `apps/cli/src/commands/dev.ts` — `serverFactory` 默认实现（`createServer` from vite）+ watcher 接线
   - [ ] `apps/cli/src/index.ts` — dev 命令传递 packDir + serverFactory 参数
   - [ ] `apps/cli/package.json` — 补 `vite` devDependency
-  - [ ] `tests/cli/commands/dev.test.ts` — 覆盖 AC-001..AC-002（mock serverFactory + HMR 消息格式）
+  - [ ] `tests/cli/dev.test.ts` — 覆盖 AC-001..AC-002（mock serverFactory + HMR 消息格式）
 - **relates_to**: [F-010, F-013, M-011]
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-011
