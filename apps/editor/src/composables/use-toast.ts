@@ -2,7 +2,7 @@ import { ref } from "vue";
 
 export interface Toast {
   id: number;
-  type: "success" | "error";
+  type: "success" | "error" | "warning";
   message: string;
 }
 
@@ -11,7 +11,10 @@ let nextId = 0;
 const toasts = ref<Toast[]>([]);
 
 export function useToast() {
-  function pushToast(notification: { type: "success" | "error"; message: string }): void {
+  function pushToast(notification: {
+    type: "success" | "error" | "warning";
+    message: string;
+  }): void {
     toasts.value.push({ id: nextId++, ...notification });
   }
 
