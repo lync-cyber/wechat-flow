@@ -1,5 +1,7 @@
 import { serve } from "@hono/node-server";
 import { Redis } from "ioredis";
+import { createAdminApiKeysApp } from "./admin/api-keys.ts";
+import { createAdminGuard } from "./auth/admin-guard.ts";
 import { loadEditorJwtSecret } from "./auth/editor-session-config.ts";
 import type { EditorSessionDeps, OAuthProvider } from "./auth/editor-session.ts";
 import { createInMemoryRateLimiter } from "./auth/rate-limiter.ts";
@@ -37,7 +39,16 @@ const editorSession: EditorSessionDeps = {
   allowedOrigins,
 };
 
-const app = createApp({ imagesAdapter, jobsDeps, auth, editorSession });
+const adminGuard = createAdminGuard({ auditLog: (entry) => console.log("[admin-audit]", entry) });
+const adminApp = createAdminApiKeysApp({ guard: adminGuard });
+
+const app = createApp({
+  imagesAdapter,
+  jobsDeps,
+  auth,
+  editorSession,
+  adminDeps: { app: adminApp },
+});
 
 const port = Number(process.env.PORT ?? 3000);
 

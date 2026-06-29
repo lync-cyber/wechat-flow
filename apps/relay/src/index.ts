@@ -1,6 +1,5 @@
 import { Hono } from "hono";
 import type { EditorSessionDeps } from "./auth/editor-session.ts";
-import { errorResponse } from "./http/error.ts";
 import type { ImageHostAdapter } from "./image-host/types.ts";
 import type { JobsAppDeps } from "./job/types.ts";
 import {
@@ -13,11 +12,17 @@ import { healthRoute } from "./routes/health.ts";
 import { createImagesApp } from "./routes/images.ts";
 import { createJobsApp } from "./routes/jobs.ts";
 
+export interface AdminDeps {
+  /** Pre-constructed admin API keys Hono app (from createAdminApiKeysApp). */
+  app: Hono;
+}
+
 export interface AppDeps {
   imagesAdapter?: ImageHostAdapter;
   jobsDeps?: JobsAppDeps;
   auth?: AuthMiddlewareDeps;
   editorSession?: EditorSessionDeps;
+  adminDeps?: AdminDeps;
 }
 
 export function createApp(deps: AppDeps = {}): Hono<{ Variables: AuthVariables }> {
@@ -44,9 +49,10 @@ export function createApp(deps: AppDeps = {}): Hono<{ Variables: AuthVariables }
 
   if (deps.auth) {
     app.use("/api/v1/admin/*", createAuthMiddleware(deps.auth, { requireScope: "admin" }));
-    app.post("/api/v1/admin/api-keys", (c) =>
-      errorResponse(c, 501, "E_NOT_IMPLEMENTED", "admin api-keys management is not implemented")
-    );
+  }
+
+  if (deps.adminDeps) {
+    app.route("/api/v1", deps.adminDeps.app);
   }
 
   return app;
