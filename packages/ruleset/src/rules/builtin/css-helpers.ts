@@ -59,3 +59,22 @@ export function hasStyleProp(node: Node, propNames: string[]): boolean {
   const nameSet = new Set(propNames);
   return parseDeclarations(style).some(([p]) => nameSet.has(p));
 }
+
+/** Clamp the px value of the named CSS declarations into [minPx, maxPx]; non-px / NaN values pass through unchanged. */
+export function clampPxProp(node: Node, propNames: string[], minPx: number, maxPx: number): Node {
+  const el = node as Element;
+  const style = el.properties?.style as string;
+  const nameSet = new Set(propNames);
+  const decls = parseDeclarations(style);
+  const updated = decls.map(([prop, val]): [string, string] => {
+    if (!nameSet.has(prop)) return [prop, val];
+    const px = Number.parseFloat(val);
+    if (Number.isNaN(px)) return [prop, val];
+    const clamped = Math.min(maxPx, Math.max(minPx, px));
+    return [prop, `${clamped}px`];
+  });
+  return {
+    ...el,
+    properties: { ...el.properties, style: serializeDeclarations(updated) },
+  } as unknown as Node;
+}

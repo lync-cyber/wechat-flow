@@ -21,7 +21,7 @@ export const tokens: ThemeTokens = {
   "--color-code-text": "#3A2010",
   "--color-quote-border": "#D4521A",
   "--color-quote-bg": "#FFF3E8",
-  "--color-link": "#D4521A",
+  "--color-link": "#C44011",
 
   // spacing — 14 tokens
   "--spacing-xs": "4px",

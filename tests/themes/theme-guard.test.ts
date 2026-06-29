@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { validateThemeGuard } from "../../packages/core/src/guard/eight-dimensions.ts";
+import { validateThemeGuard } from "../../packages/core/src/guard/index.ts";
 import { renderMarkdown } from "../../packages/core/src/index.ts";
 import {
   listThemes,
