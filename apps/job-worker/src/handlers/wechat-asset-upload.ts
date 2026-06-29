@@ -35,14 +35,16 @@ export function createWechatAssetUploadHandler(deps: WechatAssetUploadHandlerDep
 
   let cachedToken: string | null = null;
   let cacheExpiresAt = 0;
+  let cachedAppId: string | null = null;
 
   return async (job: { data: WechatAssetUploadJobData }): Promise<WechatUploadResult> => {
     const serverCreds = await loadCredentials();
 
     const now = clock();
-    if (cachedToken === null || now >= cacheExpiresAt) {
+    if (cachedToken === null || now >= cacheExpiresAt || cachedAppId !== serverCreds.appId) {
       cachedToken = await getAccessToken(serverCreds.appId, serverCreds.appSecret);
       cacheExpiresAt = now + tokenTtlSeconds * 1000;
+      cachedAppId = serverCreds.appId;
     }
 
     const uploadCreds: WechatUploadCredentials = {

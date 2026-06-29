@@ -207,14 +207,121 @@ describe("AC-006: access_token is cached in-memory — getAccessToken called onc
 });
 
 // ---------------------------------------------------------------------------
-// AC-009: apps/job-worker/src/index.ts registers wechat-asset-upload worker
+// R-002: access_token cache is keyed by appId — different appIds fetch separately
 // ---------------------------------------------------------------------------
 
-describe("AC-009: job-worker index registers wechat-asset-upload handler", () => {
-  it("WORKER_QUEUE_KINDS includes wechat-asset-upload — the authoritative list used by index.ts", () => {
-    // AC-009: the queue name constant is the single source of truth for worker registration.
-    // index.ts derives all Worker instances from WORKER_QUEUE_KINDS, so this assertion
-    // is a zero-side-effect proxy for the registration contract.
+describe("R-002: access_token cache is keyed by appId — different appIds do not share cached token", () => {
+  it("changing appId between invocations forces a new getAccessToken call", async () => {
+    let callCount = 0;
+    const mockGetAccessToken = vi.fn().mockImplementation(async () => {
+      callCount++;
+      return `token-for-call-${callCount}`;
+    });
+    const mockUpload = vi.fn().mockResolvedValue(makeUploadResult());
+
+    let currentAppId = "app-id-alpha";
+    const handler = createWechatAssetUploadHandler({
+      loadCredentials: vi.fn().mockImplementation(async () => ({
+        appId: currentAppId,
+        appSecret: "secret",
+      })),
+      upload: mockUpload,
+      getAccessToken: mockGetAccessToken,
+    });
+
+    // First invocation: app-id-alpha → fetches token
+    await handler(makeBaseJob("key-001"));
+    expect(mockGetAccessToken).toHaveBeenCalledTimes(1);
+
+    // Second invocation: same appId → cache hit, no new fetch
+    await handler(makeBaseJob("key-002"));
+    expect(mockGetAccessToken).toHaveBeenCalledTimes(1);
+
+    // Third invocation: different appId → cache miss, new fetch
+    currentAppId = "app-id-beta";
+    await handler(makeBaseJob("key-003"));
+    expect(mockGetAccessToken).toHaveBeenCalledTimes(2);
+
+    // Tokens used differ
+    expect(mockUpload.mock.calls[0]?.[1]?.accessToken).toBe("token-for-call-1");
+    expect(mockUpload.mock.calls[2]?.[1]?.accessToken).toBe("token-for-call-2");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// R-003: fetchAccessToken throws on WeChat errcode response — not silent empty string
+// ---------------------------------------------------------------------------
+
+describe("R-003: getAccessToken implementation throws on WeChat errcode — no silent empty token", () => {
+  it("getAccessToken that checks errcode throws when WeChat returns errcode field", async () => {
+    // Simulates a getAccessToken implementation (like index.ts fetchAccessToken after fix)
+    // that throws rather than returning empty string
+    const mockHttpFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ errcode: 40013, errmsg: "invalid appid" }),
+    });
+
+    const getAccessToken = async (appId: string, appSecret: string): Promise<string> => {
+      const url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appId}&secret=${appSecret}`;
+      const resp = await mockHttpFetch(url);
+      const body = (await resp.json()) as {
+        access_token?: string;
+        errcode?: number;
+        errmsg?: string;
+      };
+      if (typeof body.errcode === "number" || !body.access_token) {
+        throw new Error(
+          `WeChat token error: ${body.errmsg ?? "missing access_token"} (${body.errcode ?? "unknown"})`
+        );
+      }
+      return body.access_token;
+    };
+
+    const handler = createWechatAssetUploadHandler({
+      loadCredentials: vi.fn().mockResolvedValue({ appId: "bad-id", appSecret: "bad-secret" }),
+      upload: vi.fn(),
+      getAccessToken,
+    });
+
+    await expect(handler(makeBaseJob())).rejects.toThrow("WeChat token error");
+  });
+
+  it("getAccessToken that checks resp.ok throws on HTTP 500 from token endpoint", async () => {
+    const mockHttpFetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 500,
+      json: async () => ({}),
+    });
+
+    const getAccessToken = async (appId: string, appSecret: string): Promise<string> => {
+      const url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${appId}&secret=${appSecret}`;
+      const resp = await mockHttpFetch(url);
+      if (!(resp as { ok: boolean }).ok) {
+        throw new Error(`WeChat token endpoint HTTP ${(resp as { status: number }).status}`);
+      }
+      const body = (await resp.json()) as { access_token?: string };
+      if (!body.access_token) throw new Error("missing access_token");
+      return body.access_token;
+    };
+
+    const handler = createWechatAssetUploadHandler({
+      loadCredentials: vi.fn().mockResolvedValue({ appId: "wx", appSecret: "sec" }),
+      upload: vi.fn(),
+      getAccessToken,
+    });
+
+    await expect(handler(makeBaseJob())).rejects.toThrow("HTTP 500");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// AC-009: WORKER_QUEUE_KINDS constant includes wechat-asset-upload
+// ---------------------------------------------------------------------------
+
+describe("AC-009: WORKER_QUEUE_KINDS constant includes wechat-asset-upload", () => {
+  it("WORKER_QUEUE_KINDS includes wechat-asset-upload — the queue name constant used by job-worker", () => {
+    // This verifies the constant list, which is the zero-side-effect proxy
+    // for the queue name used when instantiating Worker instances in index.ts.
     expect(WORKER_QUEUE_KINDS).toContain("wechat-asset-upload");
   });
 

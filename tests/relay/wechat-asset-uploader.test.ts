@@ -333,6 +333,66 @@ describe("AC-008: uploader downloads imageUrl bytes then constructs multipart/fo
 });
 
 // ---------------------------------------------------------------------------
+// R-004: uploader checks imageUrl download response ok — throws on non-2xx
+// ---------------------------------------------------------------------------
+
+describe("R-004: uploader throws when imageUrl download returns non-2xx status", () => {
+  it("throws with HTTP 404 message when imageUrl download returns 404", async () => {
+    const mockFetch = vi.fn().mockImplementation(async (url: string) => {
+      if (!url.includes("api.weixin.qq.com")) {
+        return {
+          ok: false,
+          status: 404,
+          arrayBuffer: async () => new ArrayBuffer(0),
+          json: async () => ({}),
+        };
+      }
+      return {
+        ok: true,
+        status: 200,
+        arrayBuffer: async () => new ArrayBuffer(0),
+        json: async () => ({ media_id: "m", url: "https://cdn.example.com/m" }),
+      };
+    });
+
+    await expect(
+      uploadWechatAsset(
+        { imageUrl: "https://cdn.example.com/missing.png", type: "image" },
+        MOCK_CREDS,
+        { httpFetch: mockFetch }
+      )
+    ).rejects.toThrow("404");
+  });
+
+  it("throws with HTTP 403 message when imageUrl download returns 403", async () => {
+    const mockFetch = vi.fn().mockImplementation(async (url: string) => {
+      if (!url.includes("api.weixin.qq.com")) {
+        return {
+          ok: false,
+          status: 403,
+          arrayBuffer: async () => new ArrayBuffer(0),
+          json: async () => ({}),
+        };
+      }
+      return {
+        ok: true,
+        status: 200,
+        arrayBuffer: async () => new ArrayBuffer(0),
+        json: async () => ({ media_id: "m", url: "https://cdn.example.com/m" }),
+      };
+    });
+
+    await expect(
+      uploadWechatAsset(
+        { imageUrl: "https://cdn.example.com/forbidden.png", type: "image" },
+        MOCK_CREDS,
+        { httpFetch: mockFetch }
+      )
+    ).rejects.toThrow("403");
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Error propagation — WeChat API errcode still throws (behavior preserved from T-077)
 // ---------------------------------------------------------------------------
 

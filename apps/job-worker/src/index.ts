@@ -23,8 +23,16 @@ const processor = createRenderProcessor(pool);
 async function fetchAccessToken(appId: string, appSecret: string): Promise<string> {
   const url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${encodeURIComponent(appId)}&secret=${encodeURIComponent(appSecret)}`;
   const resp = await fetch(url);
-  const body = (await resp.json()) as { access_token?: string };
-  return body.access_token ?? "";
+  if (!resp.ok) {
+    throw new Error(`WeChat token endpoint HTTP ${resp.status}`);
+  }
+  const body = (await resp.json()) as { access_token?: string; errcode?: number; errmsg?: string };
+  if (typeof body.errcode === "number" || !body.access_token) {
+    throw new Error(
+      `WeChat token error: ${body.errmsg ?? "missing access_token"} (${body.errcode ?? "unknown"})`
+    );
+  }
+  return body.access_token;
 }
 
 const wechatUploadHandler = createWechatAssetUploadHandler({

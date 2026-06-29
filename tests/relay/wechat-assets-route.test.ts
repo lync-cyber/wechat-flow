@@ -308,18 +308,24 @@ describe("AC-004: imageUrl SSRF and https validation — non-https / private IP 
     expect(enqueue.calls).toHaveLength(0);
   });
 
-  it("does NOT block a public https imageUrl (control — happy path)", async () => {
+  it("does NOT block a public https imageUrl (control — SSRF validation passes, auth guard runs)", async () => {
+    const token = await signUserJwt({ sub: "user:ssrf-control" });
     const enqueue = makeEnqueue();
-    const app = createWechatAssetsApp({ enqueue: enqueue.mock } as WechatAssetsAppDeps);
+    const app = createApp({
+      auth: makeAuthDeps(),
+      wechatAssets: { enqueue: enqueue.mock },
+    } as Parameters<typeof createApp>[0]);
 
     const res = await app.request("/api/v1/wechat-assets/upload", {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ imageUrl: "https://cdn.example.com/img.png", type: "image" }),
     });
 
-    // Should NOT be 400 due to URL validation (may fail due to other reasons like missing auth)
-    // The key assertion: enqueue was called (URL passed validation)
+    // SSRF validation must not block a valid public URL
     expect(res.status).not.toBe(400);
     expect(enqueue.calls).toHaveLength(1);
   });
@@ -349,6 +355,125 @@ describe("AC-004: imageUrl SSRF and https validation — non-https / private IP 
     });
 
     expect(res.status).toBe(400);
+    expect(enqueue.calls).toHaveLength(0);
+  });
+
+  it("returns 400 when imageUrl host is 127.0.0.1 (loopback IPv4)", async () => {
+    const enqueue = makeEnqueue();
+    const app = createWechatAssetsApp({ enqueue: enqueue.mock } as WechatAssetsAppDeps);
+
+    const res = await app.request("/api/v1/wechat-assets/upload", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ imageUrl: "https://127.0.0.1/img.png", type: "image" }),
+    });
+
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as { error: { code: string } };
+    expect(body.error.code).toBe("E_INVALID_REQUEST");
+    expect(enqueue.calls).toHaveLength(0);
+  });
+
+  it("returns 400 when imageUrl host is localhost (loopback hostname)", async () => {
+    const enqueue = makeEnqueue();
+    const app = createWechatAssetsApp({ enqueue: enqueue.mock } as WechatAssetsAppDeps);
+
+    const res = await app.request("/api/v1/wechat-assets/upload", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ imageUrl: "https://localhost/img.png", type: "image" }),
+    });
+
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as { error: { code: string } };
+    expect(body.error.code).toBe("E_INVALID_REQUEST");
+    expect(enqueue.calls).toHaveLength(0);
+  });
+
+  it("returns 400 when imageUrl host is 169.254.x.x (IPv4 link-local)", async () => {
+    const enqueue = makeEnqueue();
+    const app = createWechatAssetsApp({ enqueue: enqueue.mock } as WechatAssetsAppDeps);
+
+    const res = await app.request("/api/v1/wechat-assets/upload", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ imageUrl: "https://169.254.169.254/img.png", type: "image" }),
+    });
+
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as { error: { code: string } };
+    expect(body.error.code).toBe("E_INVALID_REQUEST");
+    expect(enqueue.calls).toHaveLength(0);
+  });
+
+  it("returns 400 when imageUrl host is 0.0.0.0 (special-use 0.0.0.0/8)", async () => {
+    const enqueue = makeEnqueue();
+    const app = createWechatAssetsApp({ enqueue: enqueue.mock } as WechatAssetsAppDeps);
+
+    const res = await app.request("/api/v1/wechat-assets/upload", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ imageUrl: "https://0.0.0.0/img.png", type: "image" }),
+    });
+
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as { error: { code: string } };
+    expect(body.error.code).toBe("E_INVALID_REQUEST");
+    expect(enqueue.calls).toHaveLength(0);
+  });
+
+  it("returns 400 when imageUrl host is ::1 (IPv6 loopback)", async () => {
+    const enqueue = makeEnqueue();
+    const app = createWechatAssetsApp({ enqueue: enqueue.mock } as WechatAssetsAppDeps);
+
+    const res = await app.request("/api/v1/wechat-assets/upload", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ imageUrl: "https://[::1]/img.png", type: "image" }),
+    });
+
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as { error: { code: string } };
+    expect(body.error.code).toBe("E_INVALID_REQUEST");
+    expect(enqueue.calls).toHaveLength(0);
+  });
+
+  it("returns 400 when imageUrl host is fe80:: (IPv6 link-local)", async () => {
+    const enqueue = makeEnqueue();
+    const app = createWechatAssetsApp({ enqueue: enqueue.mock } as WechatAssetsAppDeps);
+
+    const res = await app.request("/api/v1/wechat-assets/upload", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ imageUrl: "https://[fe80::1]/img.png", type: "image" }),
+    });
+
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as { error: { code: string } };
+    expect(body.error.code).toBe("E_INVALID_REQUEST");
+    expect(enqueue.calls).toHaveLength(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// R-005: fail-closed — handler returns 401 when auth context is absent
+// ---------------------------------------------------------------------------
+
+describe("R-005: apiKeyId fail-closed — 401 when auth context is missing from handler", () => {
+  it("returns 401 E_UNAUTHORIZED when handler is called without auth context (no auth middleware)", async () => {
+    const enqueue = makeEnqueue();
+    // Mount without auth so auth context is absent
+    const app = createWechatAssetsApp({ enqueue: enqueue.mock } as WechatAssetsAppDeps);
+
+    const res = await app.request("/api/v1/wechat-assets/upload", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ imageUrl: "https://cdn.example.com/img.png", type: "image" }),
+    });
+
+    expect(res.status).toBe(401);
+    const body = (await res.json()) as { error: { code: string } };
+    expect(body.error.code).toBe("E_UNAUTHORIZED");
     expect(enqueue.calls).toHaveLength(0);
   });
 });

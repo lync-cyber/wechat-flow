@@ -5,9 +5,11 @@ import type { AuthVariables } from "../middleware/auth.ts";
 
 const VALID_TYPES = new Set(["image", "voice", "video", "thumb"]);
 
-// RFC 1918 / loopback literal-IP SSRF guard (DNS-rebinding not addressed — cataforge: wiring-placeholder)
+// Literal-IP SSRF guard covering RFC 1918, loopback, link-local, and special-use ranges.
+// [ASSUMPTION] DNS rebinding (domain resolving to private IP) is not covered here; mitigation
+// requires async DNS pre-resolution + second-pass filtering and is tracked as a future hardening item.
 const PRIVATE_IP_RE =
-  /^(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|127\.\d{1,3}\.\d{1,3}\.\d{1,3}|::1|localhost)$/i;
+  /^(?:\[::1\]|\[fe[89ab][0-9a-f]:[0-9a-f:]*\]|\[f[cd][0-9a-f]{2}:[0-9a-f:]*\]|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|127\.\d{1,3}\.\d{1,3}\.\d{1,3}|169\.254\.\d{1,3}\.\d{1,3}|0\.\d{1,3}\.\d{1,3}\.\d{1,3}|localhost)$/i;
 
 function isPrivateHost(hostname: string): boolean {
   return PRIVATE_IP_RE.test(hostname);
@@ -67,7 +69,10 @@ export function createWechatAssetsApp(
       );
     }
 
-    const apiKeyId = c.get("auth")?.sub ?? "";
+    const apiKeyId = c.get("auth")?.sub;
+    if (!apiKeyId) {
+      return errorResponse(c, 401, "E_UNAUTHORIZED", "auth context missing");
+    }
     const input = { imageUrl, type: type as "image" | "voice" | "video" | "thumb" };
     const jobId = await enqueue("wechat-asset-upload", input, apiKeyId);
 
