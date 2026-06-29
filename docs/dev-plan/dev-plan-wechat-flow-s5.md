@@ -752,3 +752,160 @@ required_sections:
   - prd-wechat-flow-f001-f014#§2.F-003
   - arch-wechat-flow-modules#§2.M-005
   - ui-spec-wechat-flow#§1
+
+---
+
+### T-124: plugin-api Worker 真实 bootstrap（网络隔离 + Comlink RPC 接线）
+
+- **目标**: 收尾 T-047 R-001/R-002/R-003/R-004。将 `worker/runtime.ts` 从骨架升级为完整 Worker 入口：启动时执行 `delete globalThis.fetch/XMLHttpRequest/WebSocket/EventSource` + `assertNetIsolation()` 断言；接入 Comlink RPC 桥；`surface/plugin-api.ts` 四个占位方法替换为真实委托实现；`acl/audit-log.ts` 的 `getEntries()` 返回数组拷贝（非引用）；消除 `ViolationResult`↔`FallbackPayload` 类型重复定义
+- **模块**: M-007
+- **task_kind**: feature
+- **priority**: P2
+- **complexity**: M
+- **sprint**: 5
+- **tdd_mode**: standard
+- **tdd_refactor**: auto
+- **security_sensitive**: true
+- **dependencies**: [T-047]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given `worker/runtime.ts` 已实现 `assertNetIsolation()`，When 在测试中 stub `globalThis.fetch` 为 `() => {}` 后调用 `assertNetIsolation()`，Then 抛出错误码 `E_WORKER_NETWORK_LEAK` [ARCH#§2.M-007]
+  - [ ] AC-002: Given `worker/runtime.ts` 启动序列，When 调用 Worker 入口初始化函数，Then 执行顺序为 `delete globalThis.fetch` → `delete globalThis.XMLHttpRequest` → `delete globalThis.WebSocket` → `delete globalThis.EventSource` → `assertNetIsolation()` 断言；可通过 spy/mock 顺序验证 [ARCH#§2.M-007]
+  - [ ] AC-003: Given `surface/plugin-api.ts` 的 `requestResource(url, init?)` 已接入 `acl/network-gate.ts`，When 调用 `requestResource('https://allowed.example.com/data')`（URL 在 manifest permissions.network 白名单），Then `network-gate.check()` 返回 allow 且 `audit-log` 记录一条 `{ action: 'allow', url, pluginId }` 条目 [ARCH#§2.M-007]
+  - [ ] AC-004: Given `requestResource` 请求 URL 不在 manifest permissions.network 白名单，When 调用 `requestResource('https://blocked.example.com')`，Then 抛出错误码 `E_PERMISSION_DENIED` 且 `audit-log` 记录 `{ action: 'deny', url, pluginId }` 条目 [ARCH#§2.M-007]
+  - [ ] AC-005: Given `acl/audit-log.ts` 已写入若干条目，When 调用 `auditLog.getEntries()`，Then 返回值是新数组（修改返回数组不影响内部 log 条目数）
+  - [ ] AC-006: Given 类型层面，When 编译 `packages/plugin-api`，Then `ViolationResult` 与 `FallbackPayload` 只在一处定义，另一处通过 import 引用，TypeScript 编译通过无 TS2305/TS2307 [ARCH#§2.M-007]
+  - [ ] AC-007 [ENV-LIMITATION → conditional_release]: Given 真实浏览器 Worker 环境，When 加载包含 `import` 的 plugin pack 并启动 Worker，Then `globalThis.fetch` 在 Worker 内为 `undefined`；happy-dom/jsdom 无法真实模拟 Worker `delete global`，端到端验证需 Playwright E2E 环境（T-058）
+- **blocking_conditions**:
+  - condition: "真实浏览器 Worker 内 delete globalThis.fetch 生效验证"
+    owner: qa-engineer
+    when: "T-058 Playwright E2E harness 就绪后"
+- **deliverables**:
+  - [ ] `packages/plugin-api/src/worker/runtime.ts` — 完整 Worker 入口（delete 全局 + assertNetIsolation + Comlink RPC 桥）
+  - [ ] `packages/plugin-api/src/surface/plugin-api.ts` — defineRule/defineTheme/registerAsset/requestResource 真实实现（requestResource 委托 network-gate）
+  - [ ] `packages/plugin-api/src/acl/audit-log.ts` — `getEntries()` 返回数组拷贝
+  - [ ] `packages/plugin-api/src/runtime/violation-detector.ts` 或 `packages/plugin-api/src/fallback/placeholder.ts` — 消除 `ViolationResult`/`FallbackPayload` 重复类型定义（统一 import）
+  - [ ] `tests/plugin-api/worker-bootstrap.test.ts` — 覆盖 AC-001..AC-006
+- **relates_to**: [F-010, M-007]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-007
+  - prd-wechat-flow-f001-f014#§2.F-010
+
+---
+
+### T-125: relay admin 路由挂载 + mcp-server HTTP 进程启动（生产接线）
+
+- **目标**: 收尾 T-051 deferred wiring。① `apps/relay/src/index.ts` `createApp()` 将 `createAdminApiKeysApp()` 挂载至 `/api/v1/admin/api-keys`（去 501 占位），并传入 admin deps（adminStore 内存 Map + admin-guard）；② `apps/relay/src/main.ts` 在 `serve()` 调用处正确传入 admin deps；③ `apps/mcp-server/src/index.ts` 新增 HTTP/SSE 进程启动入口（`@hono/node-server` serve），`transport/http-sse.ts` 接入 token-resolver 替换 passthrough 占位（内存 token Map + R-003 安全校验）；④ 验证 admin-guard 三层防御（Bearer + X-Admin-Request + IP 白名单）不回归
+- **模块**: M-010, M-009
+- **task_kind**: feature
+- **priority**: P1
+- **complexity**: M
+- **sprint**: 5
+- **tdd_mode**: standard
+- **tdd_refactor**: auto
+- **security_sensitive**: true
+- **dependencies**: [T-051]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given `apps/relay/src/index.ts` `createApp()` 已挂载 admin 路由，When 向 `POST /api/v1/admin/api-keys` 发送合法 admin Bearer + `X-Admin-Request: 1` 请求体（`{ name: 'test', scope: 'user' }`），Then 响应状态 201，body 含 `keyId: string(uuid)` 与 `key: string`，且明文 key 不出现在后续 `GET /api/v1/admin/api-keys` 的列表响应中 [ARCH#§3.API-028]
+  - [ ] AC-002: Given admin 路由已挂载，When 发送无 `X-Admin-Request` header 的 admin 请求，Then 响应状态 403，body `code: 'E_PERMISSION_DENIED'` [ARCH#§3.API-028]
+  - [ ] AC-003: Given admin 路由已挂载，When 发送非 admin scope Bearer token 的请求，Then 响应状态 401，body `code: 'E_AUTH'` [ARCH#§3.API-028]
+  - [ ] AC-004: Given admin 路由已挂载，When 发送来自非白名单 IP 的 admin 请求（通过测试注入非 loopback IP），Then 响应状态 403，body `code: 'E_PERMISSION_DENIED'` [ARCH#§2.M-010]
+  - [ ] AC-005: Given `GET /api/v1/admin/api-keys` 已挂载，When 以合法 admin 凭据列出 API key，Then 响应状态 200，body 结构含 `keys: Array<{ keyId, name, scope, status, quotaConfig, createdAt, lastUsedAt, expiresAt, revokedAt }>` 且不含 `key` 明文字段 [ARCH#§3.API-029]
+  - [ ] AC-006: Given `PATCH /api/v1/admin/api-keys/:keyId/rotate` 已挂载，When 轮换存在的 keyId，Then 响应状态 200，body 含 `newKey: string` 与 `graceUntil: string(datetime)` [ARCH#§3.API-030]
+  - [ ] AC-007: Given `DELETE /api/v1/admin/api-keys/:keyId` 已挂载，When 删除存在的 keyId，Then 响应状态 204；再次 DELETE 同一 keyId，Then 响应状态 409，body `code: 'E_CONFLICT'` [ARCH#§3.API-031]
+  - [ ] AC-008: Given `apps/mcp-server/src/index.ts` 已添加 HTTP 进程启动入口，When HTTP transport token-resolver 接收非 passthrough 请求（Bearer token 对应内存 Map 中 scope=user 的 key），Then 请求放行到 Tool 路由；Bearer token 对应 scope=admin 时返回 403 `E_PERMISSION_DENIED` [ARCH#§2.M-009]
+  - [ ] AC-009: Given 生产挂载路径，When 在 `apps/relay/src/index.ts` 中 `createApp()` 调用 `createAdminApiKeysApp(adminStore, adminGuard)` 并 `.route('/api/v1/admin/api-keys', adminApp)` 挂载，Then `/api/v1/admin/api-keys` 端点不再返回 501；接线字面调用点：`apps/relay/src/index.ts` 中 `app.route(...)` 语句 [ARCH#§2.M-010]
+  - [ ] AC-010 [ENV-LIMITATION → conditional_release]: Given mcp-server HTTP 进程实际监听端口，When 向 `POST /mcp/tools/render_markdown` 发送真实 HTTP 请求，Then 响应时延 < 2s；需要真实进程起停环境（CI 集成测试或 Docker Compose 本地全栈）
+- **blocking_conditions**:
+  - condition: "mcp-server HTTP transport 真实进程端到端响应延迟验证"
+    owner: qa-engineer
+    when: "部署阶段 Docker Compose 全栈环境就绪后"
+- **deliverables**:
+  - [ ] `apps/relay/src/index.ts` — `createApp()` 内挂载 admin 路由（去 501），传入 `adminStore` + `adminGuard`
+  - [ ] `apps/relay/src/main.ts` — `serve()` 调用传入正确 admin deps
+  - [ ] `apps/mcp-server/src/index.ts` — 新增 HTTP 进程启动入口（`@hono/node-server` serve + `createHttpTransportApp()`）
+  - [ ] `apps/mcp-server/src/transport/http-sse.ts` — token-resolver 替换 passthrough（内存 Map 校验 + scope 分流）
+  - [ ] `tests/relay/admin-route-wiring.test.ts` — 覆盖 AC-001..AC-009（含 admin-guard 三层防御回归）
+  - [ ] `tests/mcp-server/http-transport-token.test.ts` — 覆盖 AC-008
+- **relates_to**: [F-013, M-010, M-009]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-010
+  - arch-wechat-flow-modules#§2.M-009
+  - arch-wechat-flow-api#§3.API-028
+  - arch-wechat-flow-api#§3.API-029
+  - arch-wechat-flow-api#§3.API-030
+  - arch-wechat-flow-api#§3.API-031
+
+---
+
+### T-126: 微信素材库上传完整实现（access_token 缓存 + multipart + 安全修复）
+
+- **目标**: 收尾 T-077 R-001/R-002/R-003/R-004。① `wechat-asset/uploader.ts` 实现真实 imageUrl 下载 + multipart 上传 + 响应 `body.url` 赋值（修 R-001 access_token 泄漏）；② `job-worker/handlers/wechat-asset-upload.ts` 实现 `/cgi-bin/token` access_token 获取逻辑（带内存缓存，TTL < 7200s）；③ `routes/wechat-assets.ts` apiKeyId 从 auth context 注入（修 R-003 空串）；④ imageUrl https/SSRF 校验（修 R-004）；⑤ `createWechatAssetsApp()` 挂入 relay `createApp()`；⑥ `apps/job-worker/src/index.ts` 注册 `wechat-asset-upload` handler；全程使用 mock 微信 API 单测
+- **模块**: M-010
+- **task_kind**: feature
+- **priority**: P2
+- **complexity**: L
+- **sprint**: 5
+- **tdd_mode**: standard
+- **tdd_refactor**: auto
+- **security_sensitive**: true
+- **dependencies**: [T-077, T-125]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given `POST /api/v1/wechat-assets/upload` 已挂入 relay `createApp()`，When 以合法 user Bearer token 调用并携带 `{ imageUrl: 'https://cdn.example.com/img.png', type: 'image' }`，Then 响应状态 202，body 含 `jobId: string(uuid)` 与 `statusUrl: string(url)` [ARCH#§3.API-018]
+  - [ ] AC-002: Given API-018 安全路径，When 调用端无 Authorization header，Then 响应状态 401，body `code: 'E_AUTH'`；When 传入非 user scope token，Then 响应状态 403，body `code: 'E_PERMISSION_DENIED'` [ARCH#§3.API-018]
+  - [ ] AC-003: Given `routes/wechat-assets.ts` 已从 auth context 读取 `apiKeyId`，When `enqueue("wechat-asset-upload", input, apiKeyId)` 被调用，Then `apiKeyId` 等于 auth context 中解析出的非空 UUID 字符串（不为空串 `""`）[R-003 修复]
+  - [ ] AC-004: Given imageUrl SSRF 校验已实现，When `imageUrl` 为 `http://` 协议（非 https）或解析为私有 IP 段（10.x.x.x / 172.16-31.x.x / 192.168.x.x）的 URL，When 触发上传，Then 响应状态 400，body `code: 'E_SCHEMA'` 或 `'E_SSRF_BLOCKED'` [R-004 修复，ARCH#§2.M-010]
+  - [ ] AC-005: Given `job-worker/handlers/wechat-asset-upload.ts` 接入 access_token 获取逻辑，When mock `/cgi-bin/token` 返回 `{ access_token: 'mock-token-abc', expires_in: 7200 }`，Then handler 使用 `'mock-token-abc'` 向微信素材 API 发起请求（非空串 `""`）[R-002 修复]
+  - [ ] AC-006: Given access_token 内存缓存已实现，When 在 TTL 内第二次调用 handler，Then `/cgi-bin/token` mock 仅被调用一次（缓存命中）
+  - [ ] AC-007: Given `wechat-asset/uploader.ts` 已实现真实上传逻辑，When mock 微信素材 API 返回 `{ url: 'https://wechat-cdn.example.com/media/abc123' }`，Then `uploader` 将 `Job.result.url` 设为 `'https://wechat-cdn.example.com/media/abc123'`（不含 access_token 参数）[R-001 修复，ARCH#§2.M-010]
+  - [ ] AC-008: Given `wechat-asset/uploader.ts` 需先下载 imageUrl 再上传，When mock imageUrl 端点返回 PNG 字节流，Then uploader 构造 multipart/form-data 请求发往微信 API（Content-Type 含 `multipart/form-data; boundary=...`）
+  - [ ] AC-009: Given `apps/job-worker/src/index.ts` 已注册 `wechat-asset-upload` handler，When job-worker 进程启动并注册 workers，Then `workerRegistry` 中包含键 `'wechat-asset-upload'`；接线字面调用点：`apps/job-worker/src/index.ts` 中 `registerWorker('wechat-asset-upload', ...)` 或等效注册语句
+  - [ ] AC-010 [ENV-LIMITATION → conditional_release]: Given 真实微信开放平台 AppID/AppSecret，When 上传真实图片 URL，Then 微信素材库返回真实 `mediaId`，job 状态流转到 `succeeded`；需 `WECHAT_APP_ID`/`WECHAT_APP_SECRET` 凭据与微信 API 网络访问权限
+- **blocking_conditions**:
+  - condition: "微信开放平台真实 API 端到端上传验证（access_token 实际获取 + multipart 素材上传 + mediaId 回填）"
+    owner: qa-engineer
+    when: "部署阶段具备真实微信 AppID/AppSecret 凭据后"
+- **deliverables**:
+  - [ ] `apps/relay/src/wechat-asset/uploader.ts` — imageUrl 下载 + multipart 上传 + `body.url` 提取（R-001 修复）
+  - [ ] `apps/job-worker/src/handlers/wechat-asset-upload.ts` — `/cgi-bin/token` 获取 + 内存缓存（TTL < 7200s）+ 调用 uploader（R-002 修复）
+  - [ ] `apps/relay/src/routes/wechat-assets.ts` — apiKeyId 从 auth context 注入（R-003 修复）+ imageUrl https/SSRF 校验（R-004 修复）
+  - [ ] `apps/relay/src/index.ts` — `createWechatAssetsApp()` 挂入 `createApp()`（无独立修改文件，与 T-125 交接点：T-125 完成 admin 挂载后本卡追加 wechat 路由挂载）
+  - [ ] `apps/job-worker/src/index.ts` — 注册 `wechat-asset-upload` handler
+  - [ ] `tests/relay/wechat-asset-uploader.test.ts` — 覆盖 AC-005..AC-008（mock 微信 API + imageUrl 下载）
+  - [ ] `tests/relay/wechat-assets-route.test.ts` — 覆盖 AC-001..AC-004（含 SSRF 校验、apiKeyId 注入）
+  - [ ] `tests/job-worker/wechat-asset-upload-handler.test.ts` — 覆盖 AC-006（缓存命中）+ AC-009（handler 注册）
+- **relates_to**: [F-005, M-010]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-010
+  - arch-wechat-flow-api#§3.API-018
+
+---
+
+### T-127: CLI dev 命令真实 Vite 进程接线
+
+- **目标**: 收尾 T-117 deferred wiring。`commands/dev.ts` 接入真实 Vite `createServer()` / middleware 模式，`serverFactory` 默认实现创建 Vite dev server 并启动 HMR；`apps/cli/package.json` 补 `vite` devDependency；`index.ts` dev 命令传递完整参数（packDir + serverFactory）
+- **模块**: M-011
+- **task_kind**: feature
+- **priority**: P2
+- **complexity**: S
+- **sprint**: 5
+- **tdd_mode**: light
+- **tdd_refactor**: skip
+- **security_sensitive**: false
+- **dependencies**: [T-117]
+- **acceptance_criteria**:
+  - [ ] AC-001: Given `commands/dev.ts` 已实现可注入 `serverFactory`，When 以 mock serverFactory（返回 `{ ws: { send: vi.fn() } }`）调用 `runDev({ packDir: '/tmp/test-pack', serverFactory: mockFactory })`，Then mock serverFactory 被调用一次，调用参数含 `{ root: '/tmp/test-pack' }` [ARCH#§2.M-011]
+  - [ ] AC-002: Given HMR 消息契约，When pack 文件变更触发 watcher 回调（mock）后调用 `formatHmrMessage({ type: 'full-reload', packDir })`，Then 返回对象含 `type: 'full-reload'` 字段，字符串序列化后可被 `JSON.parse` 还原
+  - [ ] AC-003: Given `apps/cli/package.json` 已补 `vite` 依赖，When 运行 `pnpm typecheck`（或 `tsc --noEmit`）在 `apps/cli` 包下，Then 编译通过（`import { createServer } from 'vite'` 无 TS2307 模块未找到错误）[ARCH#§2.M-011]
+  - [ ] AC-004 [ENV-LIMITATION → conditional_release]: Given 真实 Vite dev server 已启动，When 修改 packDir 下的主题文件，Then 浏览器收到 HMR `full-reload` 事件；需要真实 Node.js 进程 + 浏览器环境，CI 单测无法覆盖
+- **blocking_conditions**:
+  - condition: "真实 Vite dev server 启动 + 浏览器 HMR 接收验证"
+    owner: developer
+    when: "本地全栈开发环境手动验证（见 memory/local-fullstack-validation-setup.md）"
+- **deliverables**:
+  - [ ] `apps/cli/src/commands/dev.ts` — `serverFactory` 默认实现（`createServer` from vite）+ watcher 接线
+  - [ ] `apps/cli/src/index.ts` — dev 命令传递 packDir + serverFactory 参数
+  - [ ] `apps/cli/package.json` — 补 `vite` devDependency
+  - [ ] `tests/cli/commands/dev.test.ts` — 覆盖 AC-001..AC-002（mock serverFactory + HMR 消息格式）
+- **relates_to**: [F-010, F-013, M-011]
+- **context_load**:
+  - arch-wechat-flow-modules#§2.M-011

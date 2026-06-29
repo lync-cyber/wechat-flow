@@ -1,6 +1,5 @@
 import { Hono } from "hono";
 import type { EditorSessionDeps } from "./auth/editor-session.ts";
-import { errorResponse } from "./http/error.ts";
 import type { ImageHostAdapter } from "./image-host/types.ts";
 import type { JobsAppDeps } from "./job/types.ts";
 import {
@@ -12,12 +11,29 @@ import { createEditorSessionApp } from "./routes/editor-session.ts";
 import { healthRoute } from "./routes/health.ts";
 import { createImagesApp } from "./routes/images.ts";
 import { createJobsApp } from "./routes/jobs.ts";
+import { createWechatAssetsApp } from "./routes/wechat-assets.ts";
+import type { WechatAssetsAppDeps } from "./routes/wechat-assets.ts";
+
+/**
+ * Dependencies for the admin route group (/api/v1/admin/*).
+ *
+ * For complete double-layer authentication, supply `auth` alongside `adminDeps`
+ * in `AppDeps` so that relay-level JWT middleware (requireScope: "admin") runs
+ * before the admin app's internal guard. When used without `auth`, protection
+ * relies solely on the internal guard inside `adminDeps.app`.
+ */
+export interface AdminDeps {
+  /** Pre-constructed admin API keys Hono app (from createAdminApiKeysApp). */
+  app: Hono;
+}
 
 export interface AppDeps {
   imagesAdapter?: ImageHostAdapter;
   jobsDeps?: JobsAppDeps;
   auth?: AuthMiddlewareDeps;
   editorSession?: EditorSessionDeps;
+  adminDeps?: AdminDeps;
+  wechatAssets?: WechatAssetsAppDeps;
 }
 
 export function createApp(deps: AppDeps = {}): Hono<{ Variables: AuthVariables }> {
@@ -42,11 +58,19 @@ export function createApp(deps: AppDeps = {}): Hono<{ Variables: AuthVariables }
     app.route("/", createJobsApp(deps.jobsDeps));
   }
 
+  if (deps.wechatAssets) {
+    if (deps.auth) {
+      app.use("/api/v1/wechat-assets/*", createAuthMiddleware(deps.auth, { requireScope: "user" }));
+    }
+    app.route("/", createWechatAssetsApp(deps.wechatAssets));
+  }
+
   if (deps.auth) {
     app.use("/api/v1/admin/*", createAuthMiddleware(deps.auth, { requireScope: "admin" }));
-    app.post("/api/v1/admin/api-keys", (c) =>
-      errorResponse(c, 501, "E_NOT_IMPLEMENTED", "admin api-keys management is not implemented")
-    );
+  }
+
+  if (deps.adminDeps) {
+    app.route("/api/v1", deps.adminDeps.app);
   }
 
   return app;
@@ -62,8 +86,8 @@ export type { RenderJob, RenderJobData, RenderResult } from "./job/render-proces
 export { createJobsRuntime } from "./job/runtime.ts";
 export type { JobsRuntime } from "./job/runtime.ts";
 export type { JobKind } from "./job/types.ts";
-export { createWechatAssetsApp } from "./routes/wechat-assets.ts";
-export type { WechatAssetsAppDeps } from "./routes/wechat-assets.ts";
+export { createWechatAssetsApp };
+export type { WechatAssetsAppDeps };
 export { loadWechatCredentials } from "./wechat-asset/credential-loader.ts";
 export type { WechatCredentials } from "./wechat-asset/credential-loader.ts";
 export { uploadWechatAsset } from "./wechat-asset/uploader.ts";

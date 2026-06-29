@@ -118,18 +118,18 @@ describe("requestResource audit-log (AC-003)", () => {
 
     expect(audit).toHaveBeenCalledOnce();
     const recorded = audit.mock.calls[0][0] as {
-      allow: boolean;
+      action: "allow" | "deny";
       url: string;
       pluginId: string;
       ts: number;
     };
-    expect(recorded.allow).toBe(true);
+    expect(recorded.action).toBe("allow");
     expect(recorded.url).toBe(url);
     expect(recorded.pluginId).toBe("plugin-e");
     expect(typeof recorded.ts).toBe("number");
   });
 
-  it("does not record an audit entry when access is denied", () => {
+  it("records action:'deny' entry when access is denied", () => {
     const audit = vi.fn();
     const manifest = { id: "plugin-f", permissions: { network: [] } };
     try {
@@ -137,7 +137,16 @@ describe("requestResource audit-log (AC-003)", () => {
     } catch {
       // expected denial
     }
-    expect(audit).not.toHaveBeenCalled();
+    expect(audit).toHaveBeenCalledOnce();
+    const recorded = audit.mock.calls[0][0] as {
+      action: "allow" | "deny";
+      url: string;
+      pluginId: string;
+      ts: number;
+    };
+    expect(recorded.action).toBe("deny");
+    expect(recorded.url).toBe("https://example.com/data");
+    expect(recorded.pluginId).toBe("plugin-f");
   });
 });
 
@@ -161,7 +170,7 @@ describe("AuditLog (AC-003)", () => {
   });
 
   it("record stores an entry and getEntries returns it", () => {
-    const entry = { allow: true, url: "https://a.com/", pluginId: "p1", ts: 1000 };
+    const entry = { action: "allow" as const, url: "https://a.com/", pluginId: "p1", ts: 1000 };
     log.record(entry);
     const entries = log.getEntries();
     expect(entries).toHaveLength(1);
@@ -169,8 +178,8 @@ describe("AuditLog (AC-003)", () => {
   });
 
   it("record appends multiple entries in order", () => {
-    const e1 = { allow: true, url: "https://a.com/1", pluginId: "p1", ts: 1000 };
-    const e2 = { allow: false, url: "https://b.com/2", pluginId: "p2", ts: 2000 };
+    const e1 = { action: "allow" as const, url: "https://a.com/1", pluginId: "p1", ts: 1000 };
+    const e2 = { action: "deny" as const, url: "https://b.com/2", pluginId: "p2", ts: 2000 };
     log.record(e1);
     log.record(e2);
     const entries = log.getEntries();

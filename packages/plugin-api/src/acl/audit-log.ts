@@ -1,5 +1,5 @@
 export interface AuditEntry {
-  allow: boolean;
+  action: "allow" | "deny";
   url: string;
   pluginId: string;
   ts: number;
@@ -14,6 +14,6 @@ export class AuditLog {
   }
 
   getEntries(): AuditEntry[] {
-    return this.entries;
+    return [...this.entries];
   }
 }

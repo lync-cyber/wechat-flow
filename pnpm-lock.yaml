@@ -137,6 +137,10 @@ importers:
       commander:
         specifier: ^12.0.0
         version: 12.1.0
+    devDependencies:
+      vite:
+        specifier: ^6.0.0
+        version: 6.4.3(@types/node@25.9.1)(yaml@2.9.0)
 
   apps/editor:
     dependencies:
@@ -219,6 +223,9 @@ importers:
 
   apps/mcp-server:
     dependencies:
+      '@hono/node-server':
+        specifier: ^1.13.0
+        version: 1.19.14(hono@4.12.26)
       '@modelcontextprotocol/sdk':
         specifier: ^1.29.0
         version: 1.29.0(zod@4.4.3)

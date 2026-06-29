@@ -66,6 +66,9 @@ export function createHttpTransportApp(deps: HttpTransportDeps = {}): Hono {
     if (scope === null) {
       return errorJson(c, 401, "E_AUTH_REQUIRED", "missing or invalid bearer token", requestId);
     }
+    if (scope !== "user") {
+      return errorJson(c, 403, "E_FORBIDDEN", "admin scope cannot call user tools", requestId);
+    }
 
     let args: Record<string, unknown>;
     try {
