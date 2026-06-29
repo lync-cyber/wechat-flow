@@ -1,6 +1,6 @@
 import { serve } from "@hono/node-server";
 import { Redis } from "ioredis";
-import { createAdminApiKeysApp } from "./admin/api-keys.ts";
+import { type ApiKeyEntry, createAdminApiKeysApp } from "./admin/api-keys.ts";
 import { createAdminGuard } from "./auth/admin-guard.ts";
 import { loadEditorJwtSecret } from "./auth/editor-session-config.ts";
 import type { EditorSessionDeps, OAuthProvider } from "./auth/editor-session.ts";
@@ -39,8 +39,28 @@ const editorSession: EditorSessionDeps = {
   allowedOrigins,
 };
 
-const adminGuard = createAdminGuard({ auditLog: (entry) => console.log("[admin-audit]", entry) });
-const adminApp = createAdminApiKeysApp({ guard: adminGuard });
+// cataforge: wiring-placeholder — adminKeyStore is in-memory; wire E-010 DB persistence before production.
+// Shared store injected into both adminApp (writes) and lookupAdminKey (reads) to guarantee consistency.
+const adminKeyStore = new Map<string, ApiKeyEntry>();
+
+/**
+ * Layer 1 Bearer lookup: receives the already-hashed token (HMAC-SHA256, from admin-guard)
+ * and finds a matching admin-scoped key. Fail-closed: returns null when store is empty or no match.
+ */
+function lookupAdminKey(hash: string): string | null {
+  for (const entry of adminKeyStore.values()) {
+    if (entry.apiKeyHash === hash && entry.scope === "admin") {
+      return entry.id;
+    }
+  }
+  return null;
+}
+
+const adminGuard = createAdminGuard({
+  auditLog: (entry) => console.log("[admin-audit]", entry),
+  lookupAdminKey,
+});
+const adminApp = createAdminApiKeysApp({ guard: adminGuard, store: adminKeyStore });
 
 const app = createApp({
   imagesAdapter,

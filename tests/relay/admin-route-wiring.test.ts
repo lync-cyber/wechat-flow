@@ -1,12 +1,12 @@
 /**
  * T-125 AC-001..007, AC-009 — admin route wiring tests.
  * Verifies that createApp() exposes /api/v1/admin/api-keys after wiring
- * createAdminApiKeysApp into createApp. All tests FAIL until the wiring
- * is implemented (currently createApp returns 501 for that path).
+ * createAdminApiKeysApp into createApp.
  */
+import { createHmac } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
-import type { AdminApiKeysDeps } from "../../apps/relay/src/admin/api-keys.ts";
 import { createAdminApiKeysApp } from "../../apps/relay/src/admin/api-keys.ts";
+import type { ApiKeyEntry } from "../../apps/relay/src/admin/api-keys.ts";
 import { createAdminGuard } from "../../apps/relay/src/auth/admin-guard.ts";
 import { createApp } from "../../apps/relay/src/index.ts";
 
@@ -36,9 +36,6 @@ function makeAdminKeyStore() {
 
 /**
  * Builds a createApp instance with admin wiring using the provided guard + store.
- * This matches the wiring pattern that T-125 must implement: passing an
- * `adminDeps` (or equivalent) to createApp so it routes /api/v1/admin/* to
- * createAdminApiKeysApp instead of returning 501.
  */
 function makeWiredApp(
   auditLog = vi.fn(),
@@ -51,8 +48,7 @@ function makeWiredApp(
   const guard = makeGuard(auditLog, lookupAdminKey);
   const adminApiKeysApp = createAdminApiKeysApp({ guard, store });
   // T-125 wiring: createApp must accept adminDeps and route to adminApiKeysApp.
-  // Currently createApp has no such field → all tests FAIL with 501.
-  return createApp({ adminDeps: { app: adminApiKeysApp } } as Parameters<typeof createApp>[0]);
+  return createApp({ adminDeps: { app: adminApiKeysApp } });
 }
 
 const ADMIN_HEADERS = {
@@ -345,7 +341,6 @@ describe("T-125 AC-006: PATCH /api/v1/admin/api-keys/:id/rotate returns new key"
       headers: ADMIN_HEADERS,
       body: JSON.stringify({ label: "rotate-seed" }),
     });
-    // Pre-wiring this returns 404, causing test to FAIL here with assertion mismatch
     expect(createRes.status).toBe(201);
 
     // Rotate a completely different, non-existent id
@@ -420,5 +415,112 @@ describe("T-125 AC-007: DELETE /api/v1/admin/api-keys/:id revokes key", () => {
     });
     const listBody = (await listRes.json()) as { keys: Array<{ id: string }> };
     expect(listBody.keys.find((k) => k.id === created.id)).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// R-001: main.ts production wiring — lookupAdminKey connected; Layer 1 enforced
+// ---------------------------------------------------------------------------
+
+/** Replicates the main.ts shared-store + lookupAdminKey wiring pattern. */
+function makeProductionWiredApp() {
+  const store = new Map<string, ApiKeyEntry>();
+
+  function hashKey(raw: string): string {
+    return createHmac("sha256", process.env.API_KEY_PEPPER ?? "")
+      .update(raw)
+      .digest("hex");
+  }
+
+  function lookupAdminKey(hash: string): string | null {
+    for (const entry of store.values()) {
+      if (entry.apiKeyHash === hash && entry.scope === "admin") {
+        return entry.id;
+      }
+    }
+    return null;
+  }
+
+  const guard = createAdminGuard({
+    auditLog: vi.fn(),
+    allowAllIps: true,
+    lookupAdminKey,
+  });
+  const adminApp = createAdminApiKeysApp({ guard, store });
+  const app = createApp({ adminDeps: { app: adminApp } });
+  return { app, store, hashKey };
+}
+
+describe("R-001: main.ts production wiring — lookupAdminKey enforces Layer 1 Bearer auth", () => {
+  it("returns 401 E_AUTH_REQUIRED when no Authorization header is present", async () => {
+    const { app } = makeProductionWiredApp();
+
+    const res = await app.request("/api/v1/admin/api-keys", {
+      method: "GET",
+      headers: { "x-admin-request": "1" },
+    });
+
+    expect(res.status).toBe(401);
+    const body = (await res.json()) as { error: { code: string } };
+    expect(body.error.code).toBe("E_AUTH_REQUIRED");
+  });
+
+  it("returns 403 E_FORBIDDEN when Bearer token does not match any admin key in the shared store", async () => {
+    const { app } = makeProductionWiredApp();
+
+    const res = await app.request("/api/v1/admin/api-keys", {
+      method: "GET",
+      headers: {
+        "x-admin-request": "1",
+        authorization: "Bearer wf_invalid_key_not_in_store",
+      },
+    });
+
+    expect(res.status).toBe(403);
+    const body = (await res.json()) as { error: { code: string } };
+    expect(body.error.code).toBe("E_FORBIDDEN");
+  });
+
+  it("fails-closed (403) when store is empty — no admin key has been provisioned", async () => {
+    const { app } = makeProductionWiredApp();
+
+    const res = await app.request("/api/v1/admin/api-keys", {
+      method: "POST",
+      headers: {
+        "x-admin-request": "1",
+        "content-type": "application/json",
+        authorization: "Bearer wf_any_key_store_is_empty",
+      },
+      body: JSON.stringify({ label: "bootstrap-attempt" }),
+    });
+
+    expect(res.status).toBe(403);
+  });
+
+  it("allows request when a valid admin-scoped Bearer token is present in the shared store", async () => {
+    const { app, store, hashKey } = makeProductionWiredApp();
+
+    // Seed an admin key directly into the shared store (simulating a pre-provisioned key)
+    const rawKey = "wf_test_admin_seed_key";
+    const id = "admin-seed-id-001";
+    store.set(id, {
+      id,
+      label: "seeded-admin",
+      apiKeyHash: hashKey(rawKey),
+      scope: "admin",
+      createdAt: new Date().toISOString(),
+    });
+
+    const res = await app.request("/api/v1/admin/api-keys", {
+      method: "GET",
+      headers: {
+        "x-admin-request": "1",
+        authorization: `Bearer ${rawKey}`,
+      },
+    });
+
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { keys: Array<{ id: string }> };
+    expect(body.keys.some((k) => k.id === id)).toBe(true);
   });
 });

@@ -12,6 +12,14 @@ import { healthRoute } from "./routes/health.ts";
 import { createImagesApp } from "./routes/images.ts";
 import { createJobsApp } from "./routes/jobs.ts";
 
+/**
+ * Dependencies for the admin route group (/api/v1/admin/*).
+ *
+ * For complete double-layer authentication, supply `auth` alongside `adminDeps`
+ * in `AppDeps` so that relay-level JWT middleware (requireScope: "admin") runs
+ * before the admin app's internal guard. When used without `auth`, protection
+ * relies solely on the internal guard inside `adminDeps.app`.
+ */
 export interface AdminDeps {
   /** Pre-constructed admin API keys Hono app (from createAdminApiKeysApp). */
   app: Hono;

@@ -3,10 +3,6 @@
  * Verifies that createHttpTransportApp correctly enforces scope:
  *   - scope="user" → request passes to tool handler
  *   - scope="admin" → 403 E_FORBIDDEN (not allowed to call user tools)
- *
- * Currently FAILS because the transport does not enforce admin scope as 403;
- * it passes { scope: "admin" } to dispatchTool which returns E_PERMISSION_DENIED
- * as a 200 body object rather than a 403 HTTP error.
  */
 import { describe, expect, it } from "vitest";
 import type { TokenResolver } from "../../apps/mcp-server/src/transport/http-sse.ts";
