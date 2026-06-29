@@ -544,3 +544,5 @@
 {"ts": "2026-06-29T06:11:07+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD GREEN: T-126"}
 {"ts": "2026-06-29T06:48:49+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD RED: T-124"}
 {"ts": "2026-06-29T06:54:22+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD GREEN: T-124"}
+{"ts": "2026-06-29T07:54:37+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD REVISION 闭环: T-124 code-review needs_revision→approved。R-001/R-002(HIGH)~R-006 全闭环: surface.requestResource 委托 aclRequestResource(AclDeps 注入,fail-closed) + Comlink invoke 路由 ACL + manifest-check deny 分支补审计 + E_PERMISSION_DENIED 单一源去重 + @userinfo/多级子域负路径测试。reviewer 复核确认无新 HIGH/CRITICAL。plugin-api 57 passed + 全量 1709 passed 零回归, typecheck 0, biome 0。commit a83b139", "ref": "dev-plan-wechat-flow-s5#§T-124"}
+{"ts": "2026-06-29T07:56:30+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-127 (CLI dev 命令真实 Vite 接线 — serverFactory/formatHmrMessage 契约升级 + vite devDep)", "ref": "dev-plan-wechat-flow-s5#§T-127"}
