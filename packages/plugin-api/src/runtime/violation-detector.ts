@@ -1,7 +1,6 @@
-export interface ViolationResult {
-  type: "fallback";
-  reason: "timeout";
-}
+import type { ViolationResult } from "./violation-result.ts";
+
+export type { ViolationResult };
 
 /**
  * Detects Worker timeout violations.

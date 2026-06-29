@@ -54,12 +54,17 @@ export function checkManifestVariantIntents(
 export function requestResource(
   url: string,
   manifest: PluginManifest,
-  auditRecord: (entry: { allow: boolean; url: string; pluginId: string; ts: number }) => void
+  auditRecord: (entry: {
+    action: "allow" | "deny";
+    url: string;
+    pluginId: string;
+    ts: number;
+  }) => void
 ): void {
   const patterns = manifest.permissions.network ?? [];
   const allowed = checkNetworkAccess(url, patterns);
   if (!allowed) {
     throw new Error(E_PERMISSION_DENIED);
   }
-  auditRecord({ allow: true, url, pluginId: manifest.id, ts: Date.now() });
+  auditRecord({ action: "allow", url, pluginId: manifest.id, ts: Date.now() });
 }
