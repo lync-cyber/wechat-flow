@@ -77,9 +77,10 @@ function visitContainerDirectives(tree: MdastRoot, diagnostics: Diagnostic[] | u
   walk(tree);
 }
 
+const rehypeProcessor = unified().use(remarkRehype, { allowDangerousHtml: false }).freeze();
+
 export function transformToHast(mdast: MdastRoot, diagnostics?: Diagnostic[]): HastRoot {
   visitTextDirectives(mdast);
   visitContainerDirectives(mdast, diagnostics);
-  const processor = unified().use(remarkRehype, { allowDangerousHtml: false });
-  return processor.runSync(mdast) as HastRoot;
+  return rehypeProcessor.runSync(mdast) as HastRoot;
 }
