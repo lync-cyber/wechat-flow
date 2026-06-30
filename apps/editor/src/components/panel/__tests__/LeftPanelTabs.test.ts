@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { mount } from "@vue/test-utils";
 import { registerBlock, resetBlockRegistry } from "@wechat-flow/core";
 import { registerTheme, resetThemeRegistry } from "@wechat-flow/core";
@@ -300,7 +301,10 @@ describe("AC-004: LeftPanelTabs 内 BlockLibItem 插入接线", () => {
   });
 
   it("EditorShell 将 onInsertDirective 接线到 LeftPanelTabs 的 on-insert-block prop", () => {
-    const shellPath = join(process.cwd(), "apps/editor/src/components/layout/EditorShell.vue");
+    const shellPath = resolve(
+      dirname(fileURLToPath(import.meta.url)),
+      "../../layout/EditorShell.vue"
+    );
     const source = readFileSync(shellPath, "utf-8");
     expect(source).toMatch(/<LeftPanelTabs[^>]*:on-insert-block="onInsertDirective"/s);
   });
