@@ -22,6 +22,15 @@ export function registerRule(rule: RuleDefinition): void {
   _rules.push(rule);
 }
 
+export function upsertRule(rule: RuleDefinition): void {
+  const idx = _rules.findIndex((r) => r.id === rule.id);
+  if (idx >= 0) {
+    _rules[idx] = rule;
+  } else {
+    _rules.push(rule);
+  }
+}
+
 export function getRules(): readonly RuleDefinition[] {
   return _rules;
 }
