@@ -26,6 +26,8 @@ const menuItems = computed<MenuItem[]>(() => [
   { id: "export-copy-html", label: "复制 HTML", shortcut: "Ctrl+Shift+C" },
   { id: "export-download-html", label: "下载 HTML" },
   { type: "separator" },
+  { type: "separator" },
+  { id: "settings-paint", label: "自定义配色" },
   { id: "help-shortcuts", label: "快捷键手册", shortcut: "?" },
   { id: "help-whats-new", label: "新功能说明" },
 ]);

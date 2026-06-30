@@ -122,3 +122,8 @@ export {
   seedTokenRegistry,
 } from "./registry/token.ts";
 export type { TokenDefinition } from "./registry/token.ts";
+export {
+  parseFrontmatter,
+  upsertFrontmatterPaint,
+} from "./pipeline/frontmatter.ts";
+export type { FrontmatterMeta, FrontmatterResult } from "./pipeline/frontmatter.ts";
