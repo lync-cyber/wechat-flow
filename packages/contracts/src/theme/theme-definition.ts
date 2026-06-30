@@ -27,7 +27,7 @@ export const themeDeltaSchema = z.object({
   tokens: themeTokensSchema.optional(),
   blocks: themeBlocksSchema.optional(),
   paintable: paintableSchema.optional(),
-  assets: z.record(z.string(), z.unknown()).optional(),
+  assets: z.record(z.string(), z.string()).optional(),
 });
 
 export const brandPackSchema = z.object({
@@ -41,7 +41,7 @@ export const themeDefinitionSchema = z.object({
   tokens: themeTokensSchema,
   blocks: themeBlocksSchema.optional(),
   paintable: paintableSchema.optional(),
-  assets: z.record(z.string(), z.unknown()).optional(),
+  assets: z.record(z.string(), z.string()).optional(),
   meta: themeMetaSchema.optional(),
   templates: z.array(templateDefinitionSchema).optional(),
   extends: z.string().optional(),
