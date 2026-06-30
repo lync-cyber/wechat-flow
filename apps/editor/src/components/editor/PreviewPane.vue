@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import NightModeWarningBanner from "./NightModeWarningBanner.vue";
 import SyncStateIndicator from "./SyncStateIndicator.vue";
+
+const SESSION_KEY = "wf:nightModeWarningDismissed";
 
 const props = withDefaults(
   defineProps<{
@@ -11,6 +14,7 @@ const props = withDefaults(
     error?: string;
     syncState?: "idle" | "connecting" | "syncing" | "synced" | "offline" | "error" | "conflict";
     onViewportChange?: (v: string) => void;
+    onNightModeChange?: (v: "off" | "risk-preview") => void;
     onRetry?: () => void;
   }>(),
   {
@@ -19,6 +23,7 @@ const props = withDefaults(
     isLoading: false,
     syncState: "idle",
     onViewportChange: undefined,
+    onNightModeChange: undefined,
     onRetry: undefined,
   }
 );
@@ -50,6 +55,24 @@ function handleViewportClick(v: "375" | "768" | "auto"): void {
 
 function handleRetry(): void {
   props.onRetry?.();
+}
+
+const internalNightMode = ref<"off" | "risk-preview">(props.nightMode ?? "off");
+const bannerDismissed = ref(sessionStorage.getItem(SESSION_KEY) === "1");
+
+const isRiskPreview = computed(
+  () => internalNightMode.value === "risk-preview" || props.nightMode === "risk-preview"
+);
+
+function handleNightModeToggle(): void {
+  const next: "off" | "risk-preview" = internalNightMode.value === "off" ? "risk-preview" : "off";
+  internalNightMode.value = next;
+  props.onNightModeChange?.(next);
+}
+
+function handleBannerDismiss(): void {
+  sessionStorage.setItem(SESSION_KEY, "1");
+  bannerDismissed.value = true;
 }
 
 const iframeEl = ref<HTMLIFrameElement | null>(null);
@@ -88,7 +111,25 @@ defineExpose({ iframeEl });
         data-testid="viewport-btn-auto"
         @click="handleViewportClick('auto')"
       >自适应</button>
+      <button
+        type="button"
+        :class="[
+          'preview-pane__viewport-btn',
+          isRiskPreview ? 'preview-pane__viewport-btn--active' : '',
+        ]"
+        data-testid="night-mode-toggle"
+        @click="handleNightModeToggle"
+      >夜间风险</button>
     </div>
+
+    <!-- Night mode warning banner (risk-preview 态，且本会话未关闭) -->
+    <NightModeWarningBanner
+      v-if="isRiskPreview"
+      data-testid="night-mode-warning-banner"
+      :visible="isRiskPreview"
+      :dismissed="bannerDismissed"
+      @dismiss="handleBannerDismiss"
+    />
 
     <!-- iframe wrapper -->
     <div class="preview-pane__scroll">
@@ -106,7 +147,10 @@ defineExpose({ iframeEl });
 
       <div
         v-else
-        class="preview-pane__iframe-container"
+        :class="[
+          'preview-pane__iframe-container',
+          isRiskPreview ? 'preview-surface--risk' : '',
+        ]"
         :style="iframeContainerStyle"
         data-testid="iframe-container"
       >
@@ -274,5 +318,9 @@ defineExpose({ iframeEl });
 
 .preview-pane__retry-btn:hover {
   background: var(--color-brand-hover);
+}
+
+.preview-surface--risk {
+  background: #1a1a1a;
 }
 </style>

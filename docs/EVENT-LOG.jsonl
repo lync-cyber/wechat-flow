@@ -572,3 +572,5 @@
 {"ts": "2026-06-30T03:12:49+00:00", "event": "tdd_phase", "phase": "development", "detail": "T-061 GREEN PASS：可读性 3 规则（lint scope, warning/warning/info）集成 builtinRules=45；readability 30 测试绿，全量回归真实测试全过（relay e2e flake 隔离重跑确认环境性）；typecheck/biome 绿；REFACTOR 无触发"}
 {"ts": "2026-06-30T03:58:18+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-060 patch-loader 补丁库热加载"}
 {"ts": "2026-06-30T04:26:07+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-090 实地验证辅助脚本 + EVENT-LOG 回写"}
+{"ts": "2026-06-30T06:18:29+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-068 夜间模式风险提示 banner"}
+{"ts": "2026-06-30T06:37:58+00:00", "event": "tdd_phase", "phase": "development", "detail": "T-068 GREEN PASS（重锚 PRD F-002：nightMode toggle + 底色变深 + NightModeWarningBanner dismiss/sessionStorage）；根 vitest 36 绿 + components/editor 70 绿，vue-tsc 0 biome 0；卡片 meta.dark→nightMode 漂移裁决 PRD 权威；wiring_complete=false 记 sprint-review MEDIUM"}
