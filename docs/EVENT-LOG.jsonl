@@ -564,3 +564,9 @@
 {"ts": "2026-06-29T15:28:19+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD GREEN: T-059 主题守卫 9 维实现（contrast/lab 工具 + 9 维度 + nine-dimensions/index 聚合 + 删 eight-dimensions + magazine 对比度修复 + 迁移 3 测试 import；客观阈值不放水）"}
 {"ts": "2026-06-29T15:56:18+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD REFACTOR: T-059 抽取共享 sRGB 工具消除 contrast.ts/lab.ts 中 linearizeChannel + hex 解析重复（duplication 触发，行为不变）"}
 {"ts": "2026-06-29T16:06:55+00:00", "event": "tdd_phase", "phase": "development", "detail": "T-059 TDD 完成（RED 10 套件→GREEN 9 维+contrast/lab+magazine 修复+codegen 回灌+迁移 3 import→REFACTOR 抽 srgb dedup）；守卫 67/67、themes+core 314、biome 0、core typecheck 0；附带正式化 T-128 theme-enhancement 任务卡"}
+{"ts": "2026-06-30T02:27:58+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD RED: T-057"}
+{"ts": "2026-06-30T02:39:07+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD RED: T-057 主线程接管补齐测试文件（test-writer 截断，fixtures 已落地）"}
+{"ts": "2026-06-30T02:39:09+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD GREEN: T-057 主线程接管（生成快照基线 + test:update-snapshots 脚本）"}
+{"ts": "2026-06-30T02:45:56+00:00", "event": "tdd_phase", "phase": "development", "detail": "T-057 GREEN PASS：e2e 13 场景全绿，全量回归 156 files/1884 passed/1 skip；REFACTOR 无触发（refactor_needed=false）；code-review 延迟 sprint-review"}
+{"ts": "2026-06-30T02:53:18+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-061 可读性检查 3 规则"}
+{"ts": "2026-06-30T03:12:49+00:00", "event": "tdd_phase", "phase": "development", "detail": "T-061 GREEN PASS：可读性 3 规则（lint scope, warning/warning/info）集成 builtinRules=45；readability 30 测试绿，全量回归真实测试全过（relay e2e flake 隔离重跑确认环境性）；typecheck/biome 绿；REFACTOR 无触发"}

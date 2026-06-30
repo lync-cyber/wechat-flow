@@ -1,3 +1,4 @@
+import { readabilityRules } from "../readability/index.ts";
 import type { RuleDefinition, RuleScope } from "../registry.ts";
 import clampBorderRadius from "./clamp-border-radius.ts";
 import clampFontSize from "./clamp-font-size.ts";
@@ -93,6 +94,7 @@ const ALL_RULES: RuleDefinition[] = [
   lintFilterBackdrop,
   lintGridLayout,
   lintPositionFixed,
+  ...readabilityRules,
 ];
 
 export const builtinRules: RuleDefinition[] = [...ALL_RULES].sort((a, b) => {

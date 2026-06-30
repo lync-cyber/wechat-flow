@@ -12,6 +12,7 @@
     "test": "vitest run",
     "test:turbo": "turbo run test",
     "test:coverage": "vitest run --coverage",
+    "test:update-snapshots": "node scripts/update-e2e-snapshots.mjs",
     "test:mutation": "stryker run",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck && tsc --noEmit -p tests/tsconfig.json",
