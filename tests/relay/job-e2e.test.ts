@@ -18,6 +18,10 @@ import { type JobsRuntime, createJobsRuntime } from "../../apps/relay/src/job/ru
 
 const REDIS_URL = process.env.REDIS_URL ?? "redis://127.0.0.1:6379";
 
+// Cold chromium + Redis startup in beforeAll exceeds vitest's 10s default hookTimeout under
+// full-suite parallel + coverage load; the describe-level `timeout` only covers tests, not hooks.
+const BROWSER_HOOK_TIMEOUT_MS = 60_000;
+
 async function isRedisReachable(): Promise<boolean> {
   const { default: Redis } = await import("ioredis");
   const r = new Redis(REDIS_URL, {
@@ -80,7 +84,7 @@ describeE2E(
       workers = ["bullmq-long-image-render", "bullmq-cover-render"].map(
         (q) => new Worker(q, processor, { connection })
       );
-    });
+    }, BROWSER_HOOK_TIMEOUT_MS);
 
     afterAll(async () => {
       await Promise.allSettled((workers ?? []).map((w) => w.close()));
@@ -88,7 +92,7 @@ describeE2E(
       await runtime?.close();
       await fs.rm(exportDir, { recursive: true, force: true });
       await redis?.quit();
-    });
+    }, BROWSER_HOOK_TIMEOUT_MS);
 
     async function pollUntilTerminal(app: ReturnType<typeof createApp>, jobId: string) {
       for (let i = 0; i < 100; i++) {
