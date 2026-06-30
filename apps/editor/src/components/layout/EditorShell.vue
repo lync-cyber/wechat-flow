@@ -6,6 +6,7 @@ import { useBidirectionalHighlight } from "../../composables/use-bidirectional-h
 import { useSplitterWidth } from "../../composables/use-splitter-width";
 import { useToast } from "../../composables/use-toast.ts";
 import { useZhTypo } from "../../composables/use-zh-typo.ts";
+import { countWords } from "../../editor/extensions/word-count.ts";
 import type { CommandDefinition } from "../../lib/command-registry.ts";
 import { buildEditorCommands } from "../../lib/command-registry.ts";
 import { useEditorStore } from "../../stores/editor.ts";
@@ -99,7 +100,7 @@ const currentThemeAccent = computed(() => {
 const diagnostics = computed<DiagnosticReport>(() => editorStore.lastReport);
 
 const statusBarMetrics = computed(() => ({
-  words: editorStore.content.trim() === "" ? 0 : editorStore.content.trim().length,
+  ...countWords(editorStore.content),
   readMinutes: 1,
 }));
 
