@@ -577,3 +577,6 @@
 {"ts": "2026-06-30T07:02:01+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD RED: T-086 编辑器性能 benchmark（typing-latency CodeMirror + theme-switch + perf-runner P50/P95/P99 + perf.yml）"}
 {"ts": "2026-06-30T07:09:48+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD GREEN: T-086 性能 benchmark（perf-runner + typing-latency/theme-switch + tsx+happy-dom registrator + perf.yml）"}
 {"ts": "2026-06-30T07:24:39+00:00", "event": "tdd_phase", "phase": "development", "detail": "T-086 GREEN PASS：perf-runner 纯函数 + CLI(tsx+happy-dom registrator) + typing-latency(CodeMirror DOM)/theme-switch(相对 import 主题) + perf.yml；vitest 36 绿、tsc -p tests 0、biome 0、pnpm bench 双向阈值(exit0/exit1)实测 typing p95≈0.38ms theme≈38ms；AC-001 drift 裁决 PRD 权威(CodeMirror 非预览)；阈值 env 可覆盖防硬件假败；REFACTOR skip(refactor_needed=false)"}
+{"ts": "2026-06-30T07:56:26+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD RED: T-058"}
+{"ts": "2026-06-30T08:06:09+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD GREEN: T-058"}
+{"ts": "2026-06-30T08:52:40+00:00", "event": "state_change", "phase": "development", "detail": "T-058 视觉回归矩阵完成：48 vitest 绿 + 233 win32 基线 + 4 workflows（含 visual-update seeder）；主线程修 composite 空心/AC-007 全量/RED 假通过"}

@@ -1,0 +1,42 @@
+name: Visual Baselines Update (Seed Linux)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  visual-update:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+
+      - uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Seed core + full variant baselines for this platform
+        env:
+          VISUAL_FULL: "1"
+        run: pnpm playwright test --update-snapshots
+
+      - name: Commit regenerated baselines
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add e2e/visual/snapshots/
+          if git diff --cached --quiet; then
+            echo "No baseline changes to commit."
+          else
+            git commit -m "chore(visual): seed/update ${RUNNER_OS} visual baselines [skip ci]"
+            git push
+          fi

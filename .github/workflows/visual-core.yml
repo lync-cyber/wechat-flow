@@ -1,0 +1,32 @@
+name: Visual Regression (Core)
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  visual-core:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.0-noble
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+
+      - uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run core visual matrix (theme-matrix)
+        run: pnpm playwright test e2e/visual/theme-matrix.spec.ts
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: visual-core-report
+          path: playwright-report/
