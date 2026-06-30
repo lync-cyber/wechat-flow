@@ -17,6 +17,7 @@ import CompatibilityDiffView from "../diagnostics/CompatibilityDiffView.vue";
 import DiagnosticsPanel from "../diagnostics/DiagnosticsPanel.vue";
 import PreviewPane from "../editor/PreviewPane.vue";
 import SourcePane from "../editor/SourcePane.vue";
+import PaintDrawer from "../paint/PaintDrawer.vue";
 import ContextMenu from "../panel/ContextMenu.vue";
 import InsertDrawer from "../panel/InsertDrawer.vue";
 import LeftPanelTabs from "../panel/LeftPanelTabs.vue";
@@ -73,6 +74,7 @@ const diffNodeSelector = ref<string | undefined>(undefined);
 const isCommandPaletteOpen = ref(false);
 const isInsertDrawerOpen = ref(false);
 const isContextMenuOpen = ref(false);
+const isPaintDrawerOpen = ref(false);
 
 function switchTheme(themeId: string): void {
   editorStore.currentTheme = themeId;
@@ -173,6 +175,10 @@ function onInsertDirective(directive: string): void {
 function onContextMenuCommand(commandId: string): void {
   if (commandId === "content-zh-typo") {
     zhTypo.openZhTypoPreview(editorStore.content);
+    return;
+  }
+  if (commandId === "settings-paint") {
+    isPaintDrawerOpen.value = true;
     return;
   }
   const cmds = buildEditorCommands({ switchTheme, downloadHtml: onDownloadHtml });
@@ -349,6 +355,12 @@ onUnmounted(() => {
       :is-open="isInsertDrawerOpen"
       :on-insert="onInsertDirective"
       :on-close="() => { isInsertDrawerOpen = false; }"
+    />
+
+    <!-- Paint Drawer -->
+    <PaintDrawer
+      :is-open="isPaintDrawerOpen"
+      @close="isPaintDrawerOpen = false"
     />
 
     <!-- Context Menu -->
