@@ -25,6 +25,8 @@
     "guard:arch": "depcruise --config .dependency-cruiser.cjs apps packages",
     "guard:boundaries": "node scripts/check-module-boundaries.mjs",
     "bench": "tsx tests/perf/perf-runner-cli.ts",
+    "test:visual": "playwright test",
+    "test:visual:update": "playwright test --update-snapshots",
     "guard:secrets": "secretlint --maskSecrets --secretlintignore .secretlintignore \"**/*\""
   },
   "devDependencies": {
@@ -53,6 +55,7 @@
     "jose": "^5.9.0",
     "lefthook": "^2.1.9",
     "piexifjs": "^1.0.6",
+    "@playwright/test": "^1.61.0",
     "playwright": "^1.61.0",
     "secretlint": "^13.0.2",
     "sharp": "^0.35.0",
