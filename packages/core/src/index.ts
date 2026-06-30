@@ -1,4 +1,12 @@
 export { renderMarkdown } from "./render.ts";
+export {
+  contextAwareRender,
+  withinBlock,
+} from "./pipeline/context-aware-renderer.ts";
+export {
+  injectDecorations,
+  resolveTokenPlaceholders,
+} from "./pipeline/decoration-injector.ts";
 export { parseMarkdown } from "./pipeline/parse.ts";
 export { transformToHast } from "./pipeline/transform.ts";
 export { serializeHast } from "./pipeline/serialize.ts";

@@ -1,6 +1,8 @@
 import type { Diagnostic, ThemeDefinition } from "@wechat-flow/contracts";
 import { applyRuleset, builtinRules, getRulesetVersion } from "@wechat-flow/ruleset";
+import { contextAwareRender } from "./pipeline/context-aware-renderer.ts";
 import { applyCustomCss } from "./pipeline/custom-css.ts";
+import { injectDecorations } from "./pipeline/decoration-injector.ts";
 import { parseFrontmatter } from "./pipeline/frontmatter.ts";
 import { inlineStyle } from "./pipeline/inline-style.ts";
 import { injectNodeIds } from "./pipeline/node-id-injector.ts";
@@ -67,7 +69,9 @@ export async function renderMarkdown(
 
   const themeTokens = effectiveTheme?.blocks;
   const styledHast = inlineStyle(hast, themeTokens);
-  const html = serializeHast(styledHast);
+  let decorated = contextAwareRender(styledHast, effectiveTheme);
+  decorated = injectDecorations(decorated, effectiveTheme);
+  const html = serializeHast(decorated);
 
   const allDiagnostics = [...paintDiagnostics, ...transformDiagnostics, ...report.diagnostics];
 

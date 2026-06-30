@@ -91,7 +91,7 @@ const STARTER_MARKDOWN = [
   "\n:::callout\nx\n:::\n:::card\nx\n:::\n:::steps\nx\n:::\n:::quote\nx\n:::\n:::pull-quote\nx\n:::\n:::compare\nx\n:::",
 ].join("");
 
-function makeTheme(assetsOverride?: Record<string, unknown>): ThemeDefinition {
+function makeTheme(assetsOverride?: Record<string, string>): ThemeDefinition {
   return {
     id: "test-theme",
     name: "Test Theme",
