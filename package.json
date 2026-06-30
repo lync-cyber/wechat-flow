@@ -11,6 +11,7 @@
     "build": "turbo run build",
     "test": "vitest run",
     "test:turbo": "turbo run test",
+    "test:affected": "turbo run test --affected",
     "test:coverage": "vitest run --coverage",
     "test:update-snapshots": "node scripts/update-e2e-snapshots.mjs",
     "test:mutation": "stryker run",
