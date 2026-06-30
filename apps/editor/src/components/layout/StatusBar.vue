@@ -3,7 +3,7 @@ import type { DiagnosticReport } from "@wechat-flow/contracts";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 
 const props = defineProps<{
-  metrics: { words: number; readMinutes: number };
+  metrics: { chineseChars: number; totalChars: number; readMinutes: number };
   diagnostics: DiagnosticReport;
   isDiagnosticsExpanded: boolean;
 }>();
@@ -72,7 +72,7 @@ function onToggleDiagnostics(): void {
     data-testid="status-bar-root"
   >
     <span class="status-bar__item" data-testid="word-count">
-      {{ metrics.words }} 字
+      {{ metrics.chineseChars }} 字 / {{ metrics.totalChars }} 字符
     </span>
     <span class="status-bar__item" data-testid="read-time">
       {{ metrics.readMinutes }} 分钟

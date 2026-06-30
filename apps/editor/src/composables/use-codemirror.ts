@@ -2,6 +2,7 @@ import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import { EditorState, type Extension } from "@codemirror/state";
 import { EditorView, keymap, lineNumbers, placeholder } from "@codemirror/view";
 import { type Ref, onBeforeUnmount, ref } from "vue";
+import { findReplaceExtension } from "../editor/extensions/find-replace.ts";
 import { markdownLanguageExtension } from "../lib/cm-markdown-lang";
 import { cmBaseTheme, cmSyntaxHighlighting } from "../lib/cm-theme";
 import { PREVIEW_DEBOUNCE_MS } from "../lib/constants";
@@ -41,6 +42,7 @@ export function useCodemirror(options: UseCodemirrorOptions = {}): UseCodemirror
       lineNumbers(),
       history(),
       keymap.of([...defaultKeymap, ...historyKeymap]),
+      ...findReplaceExtension,
       ...markdownLanguageExtension(),
       cmBaseTheme,
       cmSyntaxHighlighting,
