@@ -39,6 +39,7 @@ playwright-report/
 test-results/
 .stryker-tmp/
 reports/mutation/
+perf-report.json
 
 # Headless render output (runtime / test exports)
 public/exports/
