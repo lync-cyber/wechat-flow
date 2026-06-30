@@ -1,6 +1,7 @@
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
+import { measureColdStart } from "./cold-start.ts";
 import { checkThresholds, toExitCode } from "./perf-runner.ts";
 import { measureThemeSwitch } from "./theme-switch.ts";
 import { measureTypingLatency } from "./typing-latency.ts";
@@ -9,11 +10,13 @@ GlobalRegistrator.register();
 
 const typingLimit = Number(process.env.PERF_TYPING_P95_MS ?? 50);
 const themeLimit = Number(process.env.PERF_THEME_P95_MS ?? 200);
+const coldStartLimit = Number(process.env.PERF_COLDSTART_P95_MS ?? 800);
 
 const typingResult = await measureTypingLatency();
 const themeResult = await measureThemeSwitch();
+const coldStartResult = await measureColdStart();
 
-const results = [typingResult, themeResult];
+const results = [typingResult, themeResult, coldStartResult];
 
 const report = {
   timestamp: new Date().toISOString(),
@@ -34,6 +37,7 @@ console.log(`perf-report.json written to ${outPath}`);
 const check = checkThresholds(results, {
   "typing-latency": typingLimit,
   "theme-switch": themeLimit,
+  "cold-start": coldStartLimit,
 });
 
 if (!check.passed) {

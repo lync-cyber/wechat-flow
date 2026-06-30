@@ -4,7 +4,8 @@ import remarkGfm from "remark-gfm";
 import remarkParse from "remark-parse";
 import { unified } from "unified";
 
+const processor = unified().use(remarkParse).use(remarkGfm).use(remarkDirective).freeze();
+
 export function parseMarkdown(input: string): MdastRoot {
-  const processor = unified().use(remarkParse).use(remarkGfm).use(remarkDirective);
   return processor.parse(input);
 }
