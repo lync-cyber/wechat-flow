@@ -1,7 +1,7 @@
 import { type IDBPDatabase, openDB } from "idb";
 
 const DB_NAME = "wechat-flow-db";
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 export interface DocumentRecord {
   id: string;
@@ -14,11 +14,20 @@ export interface DocumentMeta {
   id: string;
   title: string;
   updatedAt: number;
+  size: number;
 }
 
 export interface PreferenceRecord {
   key: string;
   value: unknown;
+}
+
+export interface BackupRecord {
+  id: string;
+  docId: string;
+  title: string;
+  content: string;
+  createdAt: number;
 }
 
 type WechatFlowDb = {
@@ -30,6 +39,11 @@ type WechatFlowDb = {
   preferences: {
     key: string;
     value: PreferenceRecord;
+  };
+  backups: {
+    key: string;
+    value: BackupRecord;
+    indexes: { by_docId: string };
   };
 };
 
@@ -44,10 +58,16 @@ export async function getDb(): Promise<IDBPDatabase<WechatFlowDb>> {
     return openingPromise;
   }
   openingPromise = openDB<WechatFlowDb>(DB_NAME, DB_VERSION, {
-    upgrade(db) {
-      const docStore = db.createObjectStore("documents", { keyPath: "id" });
-      docStore.createIndex("by_updatedAt", "updatedAt");
-      db.createObjectStore("preferences", { keyPath: "key" });
+    upgrade(db, oldVersion) {
+      if (oldVersion < 1) {
+        const docStore = db.createObjectStore("documents", { keyPath: "id" });
+        docStore.createIndex("by_updatedAt", "updatedAt");
+        db.createObjectStore("preferences", { keyPath: "key" });
+      }
+      if (oldVersion < 2) {
+        const backupStore = db.createObjectStore("backups", { keyPath: "id" });
+        backupStore.createIndex("by_docId", "docId");
+      }
     },
   }).then((db) => {
     dbInstance = db;
