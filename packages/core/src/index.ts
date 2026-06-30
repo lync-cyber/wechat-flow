@@ -13,7 +13,20 @@ export {
   sortedSet,
   canonicalStringify,
 } from "./utils/deterministic.ts";
-export { saveDraft, loadDocument, listDocuments, deleteDocument } from "./documents/manager.ts";
+export {
+  saveDraft,
+  loadDocument,
+  listDocuments,
+  deleteDocument,
+  duplicateDocument,
+} from "./documents/manager.ts";
+export {
+  createBackup,
+  listBackups,
+  deleteBackupsForDoc,
+  MAX_BACKUPS_PER_DOC,
+} from "./backup/auto-backup.ts";
+export type { BackupRecord } from "./storage/indexeddb-adapter.ts";
 export { saveSplitterWidth, loadSplitterWidth } from "./storage/preferences.ts";
 export {
   saveCredential,
