@@ -1,5 +1,5 @@
 import { mount } from "@vue/test-utils";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
 import PreviewPane from "../PreviewPane.vue";
 
@@ -199,6 +199,166 @@ describe("UC-005 error 态", () => {
     await nextTick();
     expect(wrapper.find('[data-testid="preview-error"]').exists()).toBe(false);
     expect(wrapper.find("iframe").exists()).toBe(true);
+    wrapper.unmount();
+  });
+});
+
+// T-068 夜间模式风险预览
+describe("T-068 夜间模式风险预览 (AC-001 ~ AC-005)", () => {
+  beforeEach(() => {
+    sessionStorage.clear();
+  });
+
+  afterEach(() => {
+    sessionStorage.clear();
+  });
+
+  // AC-001: 渲染 night-mode 切换控件；点击后进入 risk-preview 态
+  it("AC-001: 渲染夜间模式 toggle 按钮", async () => {
+    const wrapper = mount(PreviewPane, { props: defaultProps, attachTo: document.body });
+    await nextTick();
+    expect(wrapper.find('[data-testid="night-mode-toggle"]').exists()).toBe(true);
+    wrapper.unmount();
+  });
+
+  it("AC-001: nightMode=off 时，点击 toggle → 进入 risk-preview 态（preview-surface--risk class 出现）", async () => {
+    const wrapper = mount(PreviewPane, { props: defaultProps, attachTo: document.body });
+    await nextTick();
+    await wrapper.find('[data-testid="night-mode-toggle"]').trigger("click");
+    await nextTick();
+    expect(wrapper.find('[data-testid="iframe-container"]').classes()).toContain(
+      "preview-surface--risk"
+    );
+    wrapper.unmount();
+  });
+
+  it("AC-001: nightMode 回调 onNightModeChange 在点击 toggle 时被调用并传入新值", async () => {
+    const onNightModeChange = vi.fn();
+    const wrapper = mount(PreviewPane, {
+      props: { ...defaultProps, onNightModeChange },
+      attachTo: document.body,
+    });
+    await nextTick();
+    await wrapper.find('[data-testid="night-mode-toggle"]').trigger("click");
+    await nextTick();
+    expect(onNightModeChange).toHaveBeenCalledWith("risk-preview");
+    wrapper.unmount();
+  });
+
+  // AC-002: risk-preview 态时 NightModeWarningBanner 可见且含关键文案片段
+  it("AC-002: risk-preview 态时 banner 可见", async () => {
+    const wrapper = mount(PreviewPane, {
+      props: { ...defaultProps, nightMode: "risk-preview" as const },
+      attachTo: document.body,
+    });
+    await nextTick();
+    const banner = wrapper.find('[data-testid="night-mode-warning-banner"]');
+    expect(banner.exists()).toBe(true);
+    wrapper.unmount();
+  });
+
+  it("AC-002: banner 文案含「夜间」和「对比」语义片段", async () => {
+    const wrapper = mount(PreviewPane, {
+      props: { ...defaultProps, nightMode: "risk-preview" as const },
+      attachTo: document.body,
+    });
+    await nextTick();
+    const bannerText = wrapper.find('[data-testid="night-mode-warning-banner"]').text();
+    expect(bannerText).toMatch(/夜间|夜晚/);
+    expect(bannerText).toMatch(/风险|对比盲区|盲区/);
+    wrapper.unmount();
+  });
+
+  // AC-003: risk-preview 态下预览容器加深底 class
+  it("AC-003: risk-preview 态时 iframe 容器含 preview-surface--risk class（深底）", async () => {
+    const wrapper = mount(PreviewPane, {
+      props: { ...defaultProps, nightMode: "risk-preview" as const },
+      attachTo: document.body,
+    });
+    await nextTick();
+    expect(wrapper.find('[data-testid="iframe-container"]').classes()).toContain(
+      "preview-surface--risk"
+    );
+    wrapper.unmount();
+  });
+
+  it("AC-003: off 态时 iframe 容器不含 preview-surface--risk class", async () => {
+    const wrapper = mount(PreviewPane, { props: defaultProps, attachTo: document.body });
+    await nextTick();
+    expect(wrapper.find('[data-testid="iframe-container"]').classes()).not.toContain(
+      "preview-surface--risk"
+    );
+    wrapper.unmount();
+  });
+
+  // AC-004: off 态时 banner 与深底均不渲染
+  it("AC-004: nightMode=off 时 NightModeWarningBanner 不存在", async () => {
+    const wrapper = mount(PreviewPane, { props: defaultProps, attachTo: document.body });
+    await nextTick();
+    expect(wrapper.find('[data-testid="night-mode-warning-banner"]').exists()).toBe(false);
+    wrapper.unmount();
+  });
+
+  it("AC-004: nightMode=off 时无深底 class", async () => {
+    const wrapper = mount(PreviewPane, { props: defaultProps, attachTo: document.body });
+    await nextTick();
+    expect(wrapper.find('[data-testid="iframe-container"]').classes()).not.toContain(
+      "preview-surface--risk"
+    );
+    wrapper.unmount();
+  });
+
+  // AC-005: 点击 banner 关闭按钮 → banner 消失 + sessionStorage 写入；深底仍生效
+  it("AC-005: 点击 banner 关闭后 banner 消失", async () => {
+    const wrapper = mount(PreviewPane, {
+      props: { ...defaultProps, nightMode: "risk-preview" as const },
+      attachTo: document.body,
+    });
+    await nextTick();
+    await wrapper.find('[data-testid="night-banner-close"]').trigger("click");
+    await nextTick();
+    expect(wrapper.find('[data-testid="night-mode-warning-banner"]').exists()).toBe(false);
+    wrapper.unmount();
+  });
+
+  it("AC-005: 点击 banner 关闭后 sessionStorage 写入 dismissed 标记", async () => {
+    const wrapper = mount(PreviewPane, {
+      props: { ...defaultProps, nightMode: "risk-preview" as const },
+      attachTo: document.body,
+    });
+    await nextTick();
+    await wrapper.find('[data-testid="night-banner-close"]').trigger("click");
+    await nextTick();
+    expect(sessionStorage.getItem("wf:nightModeWarningDismissed")).toBeTruthy();
+    wrapper.unmount();
+  });
+
+  it("AC-005: 关闭后深底（preview-surface--risk）仍生效", async () => {
+    const wrapper = mount(PreviewPane, {
+      props: { ...defaultProps, nightMode: "risk-preview" as const },
+      attachTo: document.body,
+    });
+    await nextTick();
+    await wrapper.find('[data-testid="night-banner-close"]').trigger("click");
+    await nextTick();
+    expect(wrapper.find('[data-testid="iframe-container"]').classes()).toContain(
+      "preview-surface--risk"
+    );
+    wrapper.unmount();
+  });
+
+  it("AC-005: sessionStorage 预置 dismissed 标记时进入 risk-preview 态不显示 banner", async () => {
+    sessionStorage.setItem("wf:nightModeWarningDismissed", "1");
+    const wrapper = mount(PreviewPane, {
+      props: { ...defaultProps, nightMode: "risk-preview" as const },
+      attachTo: document.body,
+    });
+    await nextTick();
+    expect(wrapper.find('[data-testid="night-mode-warning-banner"]').exists()).toBe(false);
+    // 深底仍生效
+    expect(wrapper.find('[data-testid="iframe-container"]').classes()).toContain(
+      "preview-surface--risk"
+    );
     wrapper.unmount();
   });
 });
