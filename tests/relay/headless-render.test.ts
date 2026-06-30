@@ -44,6 +44,10 @@ chromiumAvailable = await probeChromium();
 
 const describeIfChromium = chromiumAvailable ? describe : describe.skip;
 
+// Cold chromium launch in beforeAll exceeds vitest's 10s default hookTimeout under full-suite
+// parallel + coverage load; the describe-level `timeout` only covers tests, not hooks.
+const BROWSER_HOOK_TIMEOUT_MS = 60_000;
+
 // ---------------------------------------------------------------------------
 // Minimal HTML fixtures
 // ---------------------------------------------------------------------------
@@ -179,11 +183,11 @@ describeIfChromium(
 
     beforeAll(async () => {
       pool = createPlaywrightPool({ size: 1 });
-    });
+    }, BROWSER_HOOK_TIMEOUT_MS);
 
     afterAll(async () => {
       await pool?.close();
-    });
+    }, BROWSER_HOOK_TIMEOUT_MS);
 
     it("returns a Buffer (not null/undefined)", async () => {
       const result = await renderLongImage(pool as PlaywrightPool, MINIMAL_HTML);
@@ -252,11 +256,11 @@ describeIfChromium(
 
     beforeAll(async () => {
       pool = createPlaywrightPool({ size: 1 });
-    });
+    }, BROWSER_HOOK_TIMEOUT_MS);
 
     afterAll(async () => {
       await pool?.close();
-    });
+    }, BROWSER_HOOK_TIMEOUT_MS);
 
     it("returns a Buffer with landscape format", async () => {
       const result = await renderCover(pool as PlaywrightPool, SHORT_HTML, { format: "landscape" });
@@ -298,11 +302,11 @@ describeIfChromium(
 
     beforeAll(async () => {
       pool = createPlaywrightPool({ size: 1 });
-    });
+    }, BROWSER_HOOK_TIMEOUT_MS);
 
     afterAll(async () => {
       await pool?.close();
-    });
+    }, BROWSER_HOOK_TIMEOUT_MS);
 
     it("returns a Buffer with square format", async () => {
       const result = await renderCover(pool as PlaywrightPool, SHORT_HTML, { format: "square" });
@@ -349,12 +353,12 @@ describeIfChromium(
     beforeAll(async () => {
       pool = createPlaywrightPool({ size: 1 });
       tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "wf-export-chromium-test-"));
-    });
+    }, BROWSER_HOOK_TIMEOUT_MS);
 
     afterAll(async () => {
       await pool?.close();
       await fs.rm(tmpDir, { recursive: true, force: true });
-    });
+    }, BROWSER_HOOK_TIMEOUT_MS);
 
     afterEach(async () => {
       for (const filePath of createdFiles.splice(0)) {
