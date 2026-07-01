@@ -587,3 +587,7 @@
 {"ts": "2026-07-01T04:38:00+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-067"}
 {"ts": "2026-07-01T05:24:15+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-069"}
 {"ts": "2026-07-01T05:55:12+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-072"}
+{"ts": "2026-07-01T08:45:33+00:00", "event": "state_change", "phase": "development", "detail": "skill-run: doc-review Layer 1 FAIL: bad arguments / not executable (exit 2) — run cataforge doctor", "agent": "reviewer", "status": "blocked", "ref": "skill:doc-review/doc_check"}
+{"ts": "2026-07-01T08:45:43+00:00", "event": "state_change", "phase": "dev_planning", "detail": "skill-run: doc-review Layer 1 reported issues", "agent": "reviewer", "status": "needs_revision", "ref": "skill:doc-review/doc_check"}
+{"ts": "2026-07-01T08:46:31+00:00", "event": "state_change", "phase": "dev_planning", "detail": "skill-run: doc-review Layer 1 reported issues", "agent": "reviewer", "status": "needs_revision", "ref": "skill:doc-review/doc_check"}
+{"ts": "2026-07-01T08:47:49+00:00", "event": "state_change", "phase": "dev_planning", "detail": "skill-run: doc-review Layer 1 reported issues", "agent": "reviewer", "status": "needs_revision", "ref": "skill:doc-review/doc_check"}
