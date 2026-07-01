@@ -44,6 +44,9 @@ perf-report.json
 # Headless render output (runtime / test exports)
 public/exports/
 
+# design-overlay 前端截图（Playwright 运行时产出，非提交产物）
+e2e/visual/design-overlay-output/
+
 # Editor local image-host uploads (runtime artifacts)
 apps/editor/public/uploads/
 

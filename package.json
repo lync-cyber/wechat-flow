@@ -29,7 +29,12 @@
     "bench": "tsx tests/perf/perf-runner-cli.ts",
     "test:visual": "playwright test",
     "test:visual:update": "playwright test --update-snapshots",
-    "guard:secrets": "secretlint --maskSecrets --secretlintignore .secretlintignore \"**/*\""
+    "guard:secrets": "secretlint --maskSecrets --secretlintignore .secretlintignore \"**/*\"",
+    "design:token-diff": "tsx scripts/design-sync/token-diff.ts",
+    "design:export-tokens": "tsx scripts/design-sync/export-penpot-tokens.ts",
+    "design:export-frames": "tsx scripts/design-sync/export-penpot-frames.ts",
+    "design:build-overlay-report": "tsx scripts/design-sync/build-overlay-report.ts",
+    "test:design-overlay": "playwright test -c playwright.design-overlay.config.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
