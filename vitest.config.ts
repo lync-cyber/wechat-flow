@@ -1,5 +1,5 @@
 import vue from "@vitejs/plugin-vue";
-import { coverageConfigDefaults, defineConfig } from "vitest/config";
+import { configDefaults, coverageConfigDefaults, defineConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [vue()],
@@ -8,6 +8,9 @@ export default defineConfig({
     // transient failures so the pre-push coverage gate isn't blocked by a false negative.
     retry: 2,
     include: ["packages/*/src/**/*.test.ts", "apps/*/src/**/*.test.ts", "tests/**/*.test.ts"],
+    // cross-runtime tests run under dedicated per-runtime configs (browser/edge/worker
+    // pools), never the default node pool. See vitest.cross-runtime.*.config.ts.
+    exclude: [...configDefaults.exclude, "tests/cross-runtime/**"],
     environmentMatchGlobs: [["apps/editor/**", "happy-dom"]],
     coverage: {
       provider: "v8",

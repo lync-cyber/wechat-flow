@@ -39,6 +39,25 @@ jobs:
           json-summary-path: ./coverage/coverage-summary.json
           json-final-path: ./coverage/coverage-final.json
 
+  # 跨运行时一致性：renderMarkdown 在 Node / Web Worker / Edge(workerd) / 浏览器主线程
+  # 四运行时对同一输入产出字节一致的 HTML（SHA-256 相同）。与 quality-gate 并行。
+  cross-runtime:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: 安装 Playwright chromium（浏览器 / Worker target）
+        run: pnpm exec playwright install --with-deps chromium
+      - name: 跨运行时一致性测试（node + browser + worker + edge）
+        run: pnpm test:cross-runtime
+
   # 架构与安全守卫：全图依赖守卫 + 模块边界守卫 + 全 git 历史密钥扫描
   # 与 quality-gate 并行。规则与渐进式落地见 GUARDS.md。
   guards:
