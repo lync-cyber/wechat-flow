@@ -22,6 +22,7 @@ const menuItems = computed<MenuItem[]>(() => [
     disabled:
       props.isZhTypoDisabled !== null ? (props.isZhTypoDisabled as boolean) : props.isContentEmpty,
   },
+  { id: "content-keyword-lint", label: "检测违规词", disabled: props.isContentEmpty },
   { type: "separator" },
   { id: "export-copy-html", label: "复制 HTML", shortcut: "Ctrl+Shift+C" },
   { id: "export-download-html", label: "下载 HTML" },

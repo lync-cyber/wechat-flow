@@ -3,6 +3,7 @@ import type { DiagnosticReport } from "@wechat-flow/contracts";
 import { describeTheme, listThemes, registerTheme } from "@wechat-flow/core";
 import { type ComponentPublicInstance, computed, onMounted, onUnmounted, ref } from "vue";
 import { useBidirectionalHighlight } from "../../composables/use-bidirectional-highlight.ts";
+import { useKeywordLint } from "../../composables/use-keyword-lint.ts";
 import { useSplitterWidth } from "../../composables/use-splitter-width";
 import { useToast } from "../../composables/use-toast.ts";
 import { useZhTypo } from "../../composables/use-zh-typo.ts";
@@ -29,6 +30,7 @@ import TopBar from "./TopBar.vue";
 const editorStore = useEditorStore();
 const { pushToast } = useToast();
 const zhTypo = useZhTypo();
+const keywordLint = useKeywordLint();
 
 // Component refs for bidirectional highlight wiring
 const previewPaneRef = ref<
@@ -99,7 +101,14 @@ const currentThemeAccent = computed(() => {
   return typeof brand === "string" ? brand : FALLBACK_THEME_ACCENT;
 });
 
-const diagnostics = computed<DiagnosticReport>(() => editorStore.lastReport);
+const diagnostics = computed<DiagnosticReport>(() => {
+  const base = editorStore.lastReport;
+  if (keywordLint.keywordDiagnostics.value.length === 0) return base;
+  return {
+    ...base,
+    diagnostics: [...base.diagnostics, ...keywordLint.keywordDiagnostics.value],
+  };
+});
 
 const statusBarMetrics = computed(() => ({
   ...countWords(editorStore.content),
@@ -179,6 +188,11 @@ function onContextMenuCommand(commandId: string): void {
   }
   if (commandId === "settings-paint") {
     isPaintDrawerOpen.value = true;
+    return;
+  }
+  if (commandId === "content-keyword-lint") {
+    keywordLint.runKeywordLint();
+    isDiagnosticsExpanded.value = true;
     return;
   }
   const cmds = buildEditorCommands({ switchTheme, downloadHtml: onDownloadHtml });

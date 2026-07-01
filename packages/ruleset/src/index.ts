@@ -6,3 +6,5 @@ export { rulesetVersion } from "./version/manifest.ts";
 export { builtinRules } from "./rules/builtin/index.ts";
 export { loadPatchBundle, applyPatchBundle, PatchLoadError } from "./patch-loader.ts";
 export type { PatchBundle } from "./patch-loader.ts";
+export { lintMarkdown, keywordListVersion } from "./lints/keyword-lint.ts";
+export type { KeywordLintOptions } from "./lints/keyword-lint.ts";
