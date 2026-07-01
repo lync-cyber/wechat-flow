@@ -6,8 +6,15 @@ on:
   pull_request:
     branches: [main]
 
+# Turborepo 远程缓存（arch#§7.4 缓存策略）：secrets 配置时命中远程缓存，缺失时 turbo 优雅回落本地 .turbo。
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
 jobs:
-  # 既有质量门禁：lint + 全量类型检查 + 覆盖率测试（保持不变，新增 turbo 缓存）
+  # arch#§7.4 任务图 lint → typecheck → unit-test 合并执行（单次 install，turbo 内部按 turbo.json 依赖图排序）：
+  # pnpm lint（biome）/ pnpm typecheck（turbo per-package tsc + tests/tsconfig）/
+  # pnpm test:coverage（根 vitest：单测 + ruleset-fixtures + 主题 9 维守卫 + 覆盖率阈值）。
   quality-gate:
     runs-on: ubuntu-latest
     steps:
