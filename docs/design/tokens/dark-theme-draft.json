@@ -1,0 +1,275 @@
+{
+  "name": "dark-theme-draft",
+  "colorScheme": "dark",
+  "reference": ["ui-spec#§7.PS-007", "ui-spec#§7.PS-008", "arch#§6", "T-104"],
+  "namingConvention": "--{category}-{role}-{variant}  (variant = dark)",
+  "basisLightTheme": "Penpot Token-* variable groups (light baseline)",
+  "tone": "暖炭底 (warm charcoal) + 提亮墨绿 / 陶红，延续浅色『暖白+墨绿+衬线』调性",
+  "tokens": {
+    "Token-Surface": {
+      "--color-surface-dark": "#1C1917",
+      "--color-surface-elevated-dark": "#26221F",
+      "--color-surface-overlay-dark": "#2E2926",
+      "--color-surface-sunken-dark": "#141110",
+      "--color-surface-preview-dark": "#181818"
+    },
+    "Token-Border": {
+      "--color-border-dark": "#3A342F",
+      "--color-border-strong-dark": "#756C62",
+      "--color-border-subtle-dark": "#2C2723"
+    },
+    "Token-Text": {
+      "--color-text-primary-dark": "#F5F1EA",
+      "--color-text-secondary-dark": "#C9C2B8",
+      "--color-text-muted-dark": "#9C948A",
+      "--color-text-inverse-dark": "#1C1917",
+      "--color-text-link-dark": "#7FB5A6",
+      "--color-text-link-hover-dark": "#A3D0C3"
+    },
+    "Token-Brand": {
+      "--color-brand-dark": "#5AA491",
+      "--color-brand-hover-dark": "#6BB6A2",
+      "--color-brand-active-dark": "#4A8E7C",
+      "--color-brand-subtle-dark": "#22302C",
+      "--color-brand-muted-dark": "#3E6B60",
+      "--color-brand-highlight-outline-dark": "#5AA491"
+    },
+    "Token-Accent": {
+      "--color-accent-dark": "#E0796C",
+      "--color-accent-hover-dark": "#EC8A7D",
+      "--color-accent-subtle-dark": "#3A2724"
+    },
+    "Token-Functional": {
+      "--color-success-dark": "#6DBE86",
+      "--color-success-subtle-dark": "#1E2E22",
+      "--color-warning-dark": "#D9A73E",
+      "--color-warning-subtle-dark": "#332B18",
+      "--color-error-dark": "#E0796C",
+      "--color-error-subtle-dark": "#3A2724",
+      "--color-info-dark": "#6E9BD6",
+      "--color-info-subtle-dark": "#1E2838"
+    },
+    "Token-Diagnostics": {
+      "--color-diag-safe-dark": "#6DBE86",
+      "--color-diag-warn-dark": "#D9A73E",
+      "--color-diag-error-dark": "#E0796C"
+    }
+  },
+  "wcagAudit": {
+    "standard": "WCAG 2.1 AA",
+    "textThreshold": 4.5,
+    "nonTextThreshold": 3,
+    "exemptions": {
+      "--color-border-dark": "1.4.11 装饰性分隔线，非组件识别所必需，豁免",
+      "--color-border-subtle-dark": "1.4.11 装饰性分隔线，非组件识别所必需，豁免"
+    },
+    "totalTokens": 34,
+    "textPass": 16,
+    "textTotal": 16,
+    "nonTextPass": 4,
+    "nonTextTotal": 4,
+    "allPass": true,
+    "results": [
+      {
+        "fg": "--color-text-primary-dark",
+        "fgValue": "#F5F1EA",
+        "bg": "#1C1917",
+        "bgValue": "#1C1917",
+        "ratio": 15.53,
+        "kind": "text",
+        "threshold": 4.5,
+        "pass": true
+      },
+      {
+        "fg": "--color-text-primary-dark",
+        "fgValue": "#F5F1EA",
+        "bg": "#26221F",
+        "bgValue": "#26221F",
+        "ratio": 14.01,
+        "kind": "text",
+        "threshold": 4.5,
+        "pass": true
+      },
+      {
+        "fg": "--color-text-secondary-dark",
+        "fgValue": "#C9C2B8",
+        "bg": "#1C1917",
+        "bgValue": "#1C1917",
+        "ratio": 9.9,
+        "kind": "text",
+        "threshold": 4.5,
+        "pass": true
+      },
+      {
+        "fg": "--color-text-secondary-dark",
+        "fgValue": "#C9C2B8",
+        "bg": "#26221F",
+        "bgValue": "#26221F",
+        "ratio": 8.93,
+        "kind": "text",
+        "threshold": 4.5,
+        "pass": true
+      },
+      {
+        "fg": "--color-text-muted-dark",
+        "fgValue": "#9C948A",
+        "bg": "#1C1917",
+        "bgValue": "#1C1917",
+        "ratio": 5.84,
+        "kind": "text",
+        "threshold": 4.5,
+        "pass": true
+      },
+      {
+        "fg": "--color-text-muted-dark",
+        "fgValue": "#9C948A",
+        "bg": "#26221F",
+        "bgValue": "#26221F",
+        "ratio": 5.27,
+        "kind": "text",
+        "threshold": 4.5,
+        "pass": true
+      },
+      {
+        "fg": "--color-text-link-dark",
+        "fgValue": "#7FB5A6",
+        "bg": "#1C1917",
+        "bgValue": "#1C1917",
+        "ratio": 7.55,
+        "kind": "text",
+        "threshold": 4.5,
+        "pass": true
+      },
+      {
+        "fg": "--color-text-link-dark",
+        "fgValue": "#7FB5A6",
+        "bg": "#26221F",
+        "bgValue": "#26221F",
+        "ratio": 6.81,
+        "kind": "text",
+        "threshold": 4.5,
+        "pass": true
+      },
+      {
+        "fg": "--color-text-link-hover-dark",
+        "fgValue": "#A3D0C3",
+        "bg": "#26221F",
+        "bgValue": "#26221F",
+        "ratio": 9.29,
+        "kind": "text",
+        "threshold": 4.5,
+        "pass": true
+      },
+      {
+        "fg": "--color-error-dark",
+        "fgValue": "#E0796C",
+        "bg": "#26221F",
+        "bgValue": "#26221F",
+        "ratio": 5.35,
+        "kind": "text",
+        "threshold": 4.5,
+        "pass": true
+      },
+      {
+        "fg": "--color-warning-dark",
+        "fgValue": "#D9A73E",
+        "bg": "#26221F",
+        "bgValue": "#26221F",
+        "ratio": 7.17,
+        "kind": "text",
+        "threshold": 4.5,
+        "pass": true
+      },
+      {
+        "fg": "--color-success-dark",
+        "fgValue": "#6DBE86",
+        "bg": "#26221F",
+        "bgValue": "#26221F",
+        "ratio": 7.03,
+        "kind": "text",
+        "threshold": 4.5,
+        "pass": true
+      },
+      {
+        "fg": "--color-info-dark",
+        "fgValue": "#6E9BD6",
+        "bg": "#26221F",
+        "bgValue": "#26221F",
+        "ratio": 5.5,
+        "kind": "text",
+        "threshold": 4.5,
+        "pass": true
+      },
+      {
+        "fg": "--color-brand-dark",
+        "fgValue": "#5AA491",
+        "bg": "#26221F",
+        "bgValue": "#26221F",
+        "ratio": 5.37,
+        "kind": "text",
+        "threshold": 4.5,
+        "pass": true
+      },
+      {
+        "fg": "--color-accent-dark",
+        "fgValue": "#E0796C",
+        "bg": "#26221F",
+        "bgValue": "#26221F",
+        "ratio": 5.35,
+        "kind": "text",
+        "threshold": 4.5,
+        "pass": true
+      },
+      {
+        "fg": "--color-text-inverse-dark",
+        "fgValue": "#1C1917",
+        "bg": "--color-brand-dark",
+        "bgValue": "#5AA491",
+        "ratio": 5.96,
+        "kind": "text",
+        "threshold": 4.5,
+        "pass": true
+      },
+      {
+        "fg": "--color-border-strong-dark",
+        "fgValue": "#756C62",
+        "bg": "#1C1917",
+        "bgValue": "#1C1917",
+        "ratio": 3.4,
+        "kind": "non-text",
+        "threshold": 3,
+        "pass": true
+      },
+      {
+        "fg": "--color-diag-safe-dark",
+        "fgValue": "#6DBE86",
+        "bg": "#26221F",
+        "bgValue": "#26221F",
+        "ratio": 7.03,
+        "kind": "non-text",
+        "threshold": 3,
+        "pass": true
+      },
+      {
+        "fg": "--color-diag-warn-dark",
+        "fgValue": "#D9A73E",
+        "bg": "#26221F",
+        "bgValue": "#26221F",
+        "ratio": 7.17,
+        "kind": "non-text",
+        "threshold": 3,
+        "pass": true
+      },
+      {
+        "fg": "--color-diag-error-dark",
+        "fgValue": "#E0796C",
+        "bg": "#26221F",
+        "bgValue": "#26221F",
+        "ratio": 5.35,
+        "kind": "non-text",
+        "threshold": 3,
+        "pass": true
+      }
+    ]
+  }
+}
