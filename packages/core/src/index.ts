@@ -37,6 +37,11 @@ export {
 export type { BackupRecord } from "./storage/indexeddb-adapter.ts";
 export { saveSplitterWidth, loadSplitterWidth } from "./storage/preferences.ts";
 export {
+  saveEditorPreferences,
+  loadEditorPreferences,
+} from "./storage/preferences.ts";
+export type { EditorPreferences } from "./storage/preferences.ts";
+export {
   saveCredential,
   loadCredential,
   loadCredentialGroup,

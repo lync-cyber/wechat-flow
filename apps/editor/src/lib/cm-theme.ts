@@ -6,7 +6,7 @@ export const cmBaseTheme = EditorView.theme(
   {
     "&": {
       fontFamily: "var(--font-mono, monospace)",
-      fontSize: "var(--font-size-sm, 13px)",
+      fontSize: "var(--editor-font-size, 16px)",
       backgroundColor: "var(--color-surface, #faf8f5)",
       color: "var(--color-text-primary, #1c1917)",
       height: "100%",

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import ApiKeyConfig from "../components/settings/ApiKeyConfig.vue";
+import EditorPreferencesSection from "../components/settings/EditorPreferencesSection.vue";
 import ImageHostConfig from "../components/settings/ImageHostConfig.vue";
 
 type NavSection = "editor" | "theme" | "sync" | "imagehost" | "apikey" | "about";
@@ -45,8 +46,7 @@ function setActive(id: NavSection): void {
     <main class="settings-content">
       <section v-if="activeSection === 'editor'" data-testid="settings-content-editor">
         <h2 class="settings-content__title">编辑器</h2>
-        <!-- [ASSUMPTION]: 待 T-040 实现编辑器配置组件 -->
-        <p class="settings-content__placeholder">编辑器偏好设置</p>
+        <EditorPreferencesSection />
       </section>
 
       <section v-else-if="activeSection === 'theme'" data-testid="settings-content-theme">
