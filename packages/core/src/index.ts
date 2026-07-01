@@ -12,7 +12,8 @@ export { transformToHast } from "./pipeline/transform.ts";
 export { serializeHast } from "./pipeline/serialize.ts";
 export { inlineStyle } from "./pipeline/inline-style.ts";
 export { filterCssAttrs } from "./pipeline/css-attr-filter.ts";
-export { coreVersion } from "./version/triple.ts";
+export { coreVersion, getVersionTriple } from "./version/triple.ts";
+export { verifyDeterminism } from "./verify-determinism.ts";
 export type { RenderResult, RenderOptions } from "./types.ts";
 export type { BlockStyleTable } from "./pipeline/inline-style.ts";
 export {

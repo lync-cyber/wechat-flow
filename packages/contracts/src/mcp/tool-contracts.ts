@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { versionTripleSchema } from "../version/triple-structure.ts";
 import { registerVariantRequestSchema } from "./register-variant.ts";
 
 // ---- render_markdown (API-001) ----
@@ -17,6 +18,7 @@ export const renderMarkdownResponseSchema = z.object({
   rulesetVersion: z.string(),
   themeVersion: z.string(),
   postPaste: z.boolean(),
+  versionTriple: versionTripleSchema.optional(),
 });
 
 // ---- lint_markdown (API-002) ----
