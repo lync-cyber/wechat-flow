@@ -77,6 +77,19 @@ describe("AC-003: getRulesetVersionTool returns coreVersion + themeVersion + rul
   });
 });
 
+// ---- AC-004: render_markdown response includes versionTriple ----
+
+describe("AC-004: renderMarkdownTool response includes versionTriple", () => {
+  it("returns versionTriple with three non-empty string fields", async () => {
+    const result = await renderMarkdownTool({ markdown: "# Hi", themeId: "default" });
+    expect(result).toHaveProperty("versionTriple");
+    expect(typeof result.versionTriple.coreVersion).toBe("string");
+    expect(typeof result.versionTriple.themeVersion).toBe("string");
+    expect(typeof result.versionTriple.rulesetVersion).toBe("string");
+    expect(result.versionTriple.coreVersion.length).toBeGreaterThan(0);
+  });
+});
+
 // ---- AC-004: lint_markdown position:fixed in customCss → diagnostics, no html ----
 
 describe("AC-004: lintMarkdownTool returns diagnostics only (no html field)", () => {

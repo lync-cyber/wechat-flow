@@ -61,6 +61,31 @@ describe("AC-003: renderMarkdownResponseSchema valid parse", () => {
   });
 });
 
+describe("AC-003b: renderMarkdownResponseSchema accepts optional versionTriple", () => {
+  it("parses response with versionTriple present", () => {
+    const result = renderMarkdownResponseSchema.safeParse({
+      html: "<p/>",
+      diagnostics: [],
+      rulesetVersion: "1.0.0",
+      themeVersion: "1.0.0",
+      postPaste: false,
+      versionTriple: { coreVersion: "0.0.0", themeVersion: "0.0.0", rulesetVersion: "0.0.0" },
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("still parses response without versionTriple (backwards compatible)", () => {
+    const result = renderMarkdownResponseSchema.safeParse({
+      html: "<p>test</p>",
+      diagnostics: [],
+      rulesetVersion: "1.0.0",
+      themeVersion: "1.0.0",
+      postPaste: false,
+    });
+    expect(result.success).toBe(true);
+  });
+});
+
 describe("AC-004: renderMarkdownResponseSchema invalid parse", () => {
   it("fails when html is not a string", () => {
     const result = renderMarkdownResponseSchema.safeParse({ html: 123 });
