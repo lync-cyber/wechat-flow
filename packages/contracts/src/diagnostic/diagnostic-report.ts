@@ -30,6 +30,8 @@ export const diagnosticSchema = z.object({
   source: z.string().optional(),
   message: z.string(),
   nodeRef: z.string().optional(),
+  matchedKeyword: z.string().optional(),
+  location: z.object({ line: z.number().int(), column: z.number().int() }).optional(),
 });
 
 export const diagnosticReportSchema = z.object({

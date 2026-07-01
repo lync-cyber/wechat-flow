@@ -183,6 +183,9 @@ importers:
       '@wechat-flow/marks':
         specifier: workspace:^
         version: link:../../packages/marks
+      '@wechat-flow/ruleset':
+        specifier: workspace:^
+        version: link:../../packages/ruleset
       '@wechat-flow/theme-business':
         specifier: workspace:^
         version: link:../../packages/themes/business
