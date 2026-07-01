@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-01T12:34:30.320879+00:00",
+  "generated_at": "2026-07-01T13:36:41.058755+00:00",
   "documents": {
     "arch-wechat-flow-api": {
       "file_path": "docs/arch/arch-wechat-flow-api.md",
@@ -1675,9 +1675,9 @@
       "doc_type": "dev-plan",
       "volume": "sprint",
       "status": "approved",
-      "total_lines": 1009,
-      "est_tokens": 23571,
-      "content_hash": "9d1d3ba3",
+      "total_lines": 1010,
+      "est_tokens": 23671,
+      "content_hash": "2a66905d",
       "sections": {
         "3": {
           "heading": "## 3. 任务卡详细",
@@ -1874,22 +1874,22 @@
         "4": {
           "heading": "## 4. Deferred Backlog",
           "line_start": 933,
-          "line_end": 1009,
-          "est_tokens": 2351,
+          "line_end": 1010,
+          "est_tokens": 2451,
           "deps": [],
           "level": 2,
           "items": {
             "T-128": {
               "heading": "### T-128: 五主题内容元素选择器样式增强（list / img / table / a）",
               "line_start": 937,
-              "line_end": 983,
-              "est_tokens": 1571,
+              "line_end": 984,
+              "est_tokens": 1671,
               "deps": []
             },
             "T-129": {
               "heading": "### T-129: 桌面浏览器 Clipboard 降级路径（execCommand 兜底）",
-              "line_start": 984,
-              "line_end": 1009,
+              "line_start": 985,
+              "line_end": 1010,
               "est_tokens": 755,
               "deps": []
             }
@@ -3144,7 +3144,7 @@
         "dev-plan-wechat-flow-s3": "da417397",
         "dev-plan-wechat-flow-s4": "e4f79fea",
         "dev-plan-wechat-flow-s5": "862c6287",
-        "dev-plan-wechat-flow-s6": "9d1d3ba3"
+        "dev-plan-wechat-flow-s6": "2a66905d"
       }
     },
     "review-dev-plan-wechat-flow-r2": {
@@ -3174,7 +3174,7 @@
         "dev-plan-wechat-flow-s3": "da417397",
         "dev-plan-wechat-flow-s4": "e4f79fea",
         "dev-plan-wechat-flow-s5": "862c6287",
-        "dev-plan-wechat-flow-s6": "9d1d3ba3"
+        "dev-plan-wechat-flow-s6": "2a66905d"
       }
     },
     "review-dev-plan-wechat-flow-r3": {
@@ -3206,7 +3206,7 @@
         "dev-plan-wechat-flow-s3": "da417397",
         "dev-plan-wechat-flow-s4": "e4f79fea",
         "dev-plan-wechat-flow-s5": "862c6287",
-        "dev-plan-wechat-flow-s6": "9d1d3ba3",
+        "dev-plan-wechat-flow-s6": "2a66905d",
         "prd-wechat-flow": "0e15bcb3",
         "arch-wechat-flow": "10499df8"
       }
@@ -3241,7 +3241,7 @@
         "dev-plan-wechat-flow-s3": "da417397",
         "dev-plan-wechat-flow-s4": "e4f79fea",
         "dev-plan-wechat-flow-s5": "862c6287",
-        "dev-plan-wechat-flow-s6": "9d1d3ba3",
+        "dev-plan-wechat-flow-s6": "2a66905d",
         "prd-wechat-flow": "0e15bcb3",
         "arch-wechat-flow": "10499df8",
         "ui-spec-wechat-flow": "201bf6f6"
