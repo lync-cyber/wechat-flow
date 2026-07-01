@@ -2,6 +2,7 @@
 import type { DiagnosticReport } from "@wechat-flow/contracts";
 import { describeTheme, listThemes, registerTheme } from "@wechat-flow/core";
 import { type ComponentPublicInstance, computed, onMounted, onUnmounted, ref } from "vue";
+import { useAutoBackup } from "../../composables/use-auto-backup.ts";
 import { useBidirectionalHighlight } from "../../composables/use-bidirectional-highlight.ts";
 import { useKeywordLint } from "../../composables/use-keyword-lint.ts";
 import { useSplitterWidth } from "../../composables/use-splitter-width";
@@ -59,6 +60,21 @@ const { attachPreviewClickListener, detachPreviewClickListener, highlightPreview
 function onSourceSelectionChange(cursorLine: number): void {
   highlightPreviewNode(editorStore.nodeLocations, cursorLine);
 }
+
+const dirtySinceBackup = ref(false);
+
+function onSourceValueChange(v: string): void {
+  dirtySinceBackup.value = true;
+  editorStore.setContent(v);
+}
+
+useAutoBackup({
+  getDocId: () => editorStore.currentDocId,
+  isDirty: () => dirtySinceBackup.value,
+  onBackedUp: () => {
+    dirtySinceBackup.value = false;
+  },
+});
 
 const LEFT_PANEL_MIN = 160;
 const LEFT_PANEL_MAX = 320;
@@ -178,7 +194,7 @@ function onInsertDirective(directive: string): void {
     });
   } else {
     const newContent = `${editorStore.content ? `${editorStore.content}\n` : ""}${directive}\n`;
-    editorStore.setContent(newContent);
+    onSourceValueChange(newContent);
   }
   isInsertDrawerOpen.value = false;
 }
@@ -306,7 +322,7 @@ onUnmounted(() => {
         <SourcePane
           ref="sourcePaneRef"
           :model-value="editorStore.content"
-          :on-value-change="(v) => editorStore.setContent(v)"
+          :on-value-change="onSourceValueChange"
           :on-selection-change="onSourceSelectionChange"
           :font-size="preferencesStore.fontSize"
           :input-assist="preferencesStore.inputAssist"
