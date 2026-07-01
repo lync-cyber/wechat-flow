@@ -1,0 +1,9 @@
+{
+  "--color-brand": "#2D5A4E",
+  "--color-surface": "#FAF8F5",
+  "--color-text-primary": "#1C1917",
+  "--radius-none": "0px",
+  "--line-height-loose": "2.0",
+  "--shadow-base": "0 2px 8px rgba(28,25,23,0.10)",
+  "--color-brand-highlight-outline": "#2D5A4E"
+}
