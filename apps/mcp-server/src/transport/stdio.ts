@@ -2,6 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { type ApiKeyStore, verifyApiKey } from "../auth/api-key.ts";
 import { registerBuiltins } from "../bootstrap.ts";
+import { checkDeprecations } from "../deprecation.ts";
 import type { JobsClient } from "../jobs/client.ts";
 import { makeNotImplementedJobsClient } from "../jobs/client.ts";
 import { registerAllTools } from "../tools/router.ts";
@@ -24,6 +25,13 @@ export function createServer(deps?: ServerDeps): McpServer {
   const keyRecord = verifyApiKey(deps?.rawApiKey, store);
   const jobsClient = deps?.jobsClient ?? makeNotImplementedJobsClient();
   registerAllTools(server, keyRecord, jobsClient);
+  for (const w of checkDeprecations()) {
+    if (w.expired) {
+      console.warn(
+        `[deprecation] ${w.toolName}.${w.field} 已于 ${w.since} 标记弃用，窗口已于 ${w.until} 到期`
+      );
+    }
+  }
   return server;
 }
 
