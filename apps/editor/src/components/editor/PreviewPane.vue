@@ -16,6 +16,7 @@ const props = withDefaults(
     onViewportChange?: (v: string) => void;
     onNightModeChange?: (v: "off" | "risk-preview") => void;
     onRetry?: () => void;
+    lineHeight?: number;
   }>(),
   {
     viewport: "375",
@@ -25,6 +26,7 @@ const props = withDefaults(
     onViewportChange: undefined,
     onNightModeChange: undefined,
     onRetry: undefined,
+    lineHeight: 1.75,
   }
 );
 
@@ -81,7 +83,11 @@ defineExpose({ iframeEl });
 </script>
 
 <template>
-  <div class="preview-pane" data-testid="preview-pane">
+  <div
+    class="preview-pane"
+    data-testid="preview-pane"
+    :style="{ '--preview-line-height': String(lineHeight) }"
+  >
     <!-- Viewport toolbar -->
     <div class="preview-pane__toolbar" data-testid="viewport-toolbar">
       <button

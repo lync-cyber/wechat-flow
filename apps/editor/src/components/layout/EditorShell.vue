@@ -11,6 +11,7 @@ import { countWords } from "../../editor/extensions/word-count.ts";
 import type { CommandDefinition } from "../../lib/command-registry.ts";
 import { buildEditorCommands } from "../../lib/command-registry.ts";
 import { useEditorStore } from "../../stores/editor.ts";
+import { usePreferencesStore } from "../../stores/preferences-store.ts";
 import { composeCopy } from "../../use-cases/copy.ts";
 import { composeExportHtml } from "../../use-cases/export-html.ts";
 import CommandPalette from "../command/CommandPalette.vue";
@@ -28,6 +29,7 @@ import StatusBar from "./StatusBar.vue";
 import TopBar from "./TopBar.vue";
 
 const editorStore = useEditorStore();
+const preferencesStore = usePreferencesStore();
 const { pushToast } = useToast();
 const zhTypo = useZhTypo();
 const keywordLint = useKeywordLint();
@@ -232,6 +234,7 @@ onMounted(() => {
   window.addEventListener("resize", onResize);
   leftPanel.init();
   rightPanel.init();
+  preferencesStore.init();
   editorStore.loadDraft();
   attachPreviewClickListener();
 });
@@ -305,6 +308,8 @@ onUnmounted(() => {
           :model-value="editorStore.content"
           :on-value-change="(v) => editorStore.setContent(v)"
           :on-selection-change="onSourceSelectionChange"
+          :font-size="preferencesStore.fontSize"
+          :input-assist="preferencesStore.inputAssist"
         />
       </main>
 
@@ -332,6 +337,7 @@ onUnmounted(() => {
           :html-content="editorStore.previewHtml"
           :viewport="previewViewport"
           :on-viewport-change="(v) => (previewViewport = v as '375' | '768' | 'auto')"
+          :line-height="preferencesStore.lineHeight"
           sync-state="idle"
         />
       </aside>

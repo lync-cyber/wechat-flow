@@ -8,6 +8,7 @@ import {
   buildDirectiveSnippet,
   registerDirectiveCompletion,
 } from "../../editor/extensions/directive-completion.ts";
+import { inputRulesExtension } from "../../editor/extensions/input-rules.ts";
 import ImageUploadOverlay from "../upload/ImageUploadOverlay.vue";
 import DirectiveAutocompletePopover from "./DirectiveAutocompletePopover.vue";
 
@@ -19,6 +20,8 @@ const props = withDefaults(
     onSelectionChange?: (cursorLine: number) => void;
     uploadImageFn?: (file: File) => Promise<{ url: string; size: number }>;
     getSessionTokenFn?: () => Promise<string | undefined>;
+    fontSize?: number;
+    inputAssist?: boolean;
   }>(),
   {
     modelValue: "",
@@ -27,6 +30,8 @@ const props = withDefaults(
     onSelectionChange: undefined,
     uploadImageFn: undefined,
     getSessionTokenFn: undefined,
+    fontSize: 16,
+    inputAssist: false,
   }
 );
 
@@ -87,7 +92,7 @@ const { mount, destroy, setValue, editorView } = useCodemirror({
     ? props.onValueChange
     : (value: string) => emit("update:modelValue", value),
   onSelectionChange: props.onSelectionChange,
-  extraExtensions: [directiveCompletionExtension],
+  extraExtensions: [directiveCompletionExtension, inputRulesExtension(() => props.inputAssist)],
 });
 
 // Upload wiring — when uploadImageFn and getSessionTokenFn are both injected (test path),
@@ -259,6 +264,7 @@ watch(
     class="source-pane"
     data-testid="source-pane"
     :class="{ 'source-pane--readonly': readonly }"
+    :style="{ '--editor-font-size': fontSize + 'px' }"
     @dragenter="handleDragEnter"
     @dragover="handleDragOver"
     @dragleave="handleDragLeave"
