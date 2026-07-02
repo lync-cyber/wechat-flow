@@ -112,3 +112,62 @@ describe("DocumentListSheet: 最大高度约束", () => {
     wrapper.unmount();
   });
 });
+
+describe("DocumentListSheet: DEFECT-002 error 态", () => {
+  it("listDocuments reject 时错误被就地处理，渲染「文档加载失败」+ 重试链接，不逃逸到 app 级 errorHandler", async () => {
+    const { listDocuments } = await import("@wechat-flow/core");
+    const listDocumentsMock = vi.mocked(listDocuments);
+    listDocumentsMock.mockRejectedValueOnce(new Error("indexeddb unavailable"));
+
+    const escapedError = vi.fn();
+    const wrapper = mount(DocumentListSheet, {
+      props: { open: true },
+      attachTo: document.body,
+      global: { config: { errorHandler: escapedError } },
+    });
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    expect(escapedError).not.toHaveBeenCalled();
+    expect(wrapper.text()).not.toContain("还没有文档");
+    expect(wrapper.text()).toContain("文档加载失败");
+
+    const retryLink = wrapper.find('[data-testid="doc-list-retry"]');
+    expect(retryLink.exists()).toBe(true);
+    expect(retryLink.text()).toContain("重试");
+    wrapper.unmount();
+  });
+
+  it("点击重试且 resolve 非空列表后渲染文档列表项", async () => {
+    const { listDocuments } = await import("@wechat-flow/core");
+    const listDocumentsMock = vi.mocked(listDocuments);
+    listDocumentsMock.mockRejectedValueOnce(new Error("indexeddb unavailable"));
+
+    const wrapper = mount(DocumentListSheet, {
+      props: { open: true },
+      attachTo: document.body,
+    });
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    expect(wrapper.text()).toContain("文档加载失败");
+
+    listDocumentsMock.mockResolvedValueOnce([
+      { id: "doc-1", title: "文档一", updatedAt: 2000, size: 100 },
+    ]);
+
+    const retryLink = wrapper.find('[data-testid="doc-list-retry"]');
+    await retryLink.trigger("click");
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    expect(wrapper.text()).not.toContain("文档加载失败");
+    const item1 = wrapper.find('[data-testid="doc-item-doc-1"]');
+    expect(item1.exists()).toBe(true);
+    expect(item1.text()).toContain("文档一");
+    wrapper.unmount();
+  });
+});

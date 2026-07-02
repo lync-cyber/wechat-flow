@@ -124,6 +124,7 @@ required_sections:
 | `loading` | 列表区域展示 3 条 skeleton 行（宽度 70% / 50% 交替），pulse 动画 |
 | `empty` | 居中展示「还没有文档」（14px, muted）+ 「创建第一篇」文字链接（`--color-brand`） |
 | `populated` | 文档列表正常显示，当前打开文档项背景 `--color-brand-subtle`，文字 `--color-brand`，左侧 `2px solid --color-brand` 指示条 |
+| `error`（`listDocuments()` 拒绝，如 IndexedDB 不可用）| 居中展示「文档加载失败」（14px, `--color-text-muted`）+ 「重试」文字链接（`--color-brand`），排版与 `empty` 态同构；点击「重试」重新触发 `listDocuments()`，进入 `loading` 态 |
 
 **当前文档激活指示**：列表项左侧竖条 `2px solid --color-brand`，背景 `--color-brand-subtle`，文字 `--color-brand`。
 
@@ -140,6 +141,7 @@ required_sections:
 | `loading` | 3 条 skeleton 行（同桌面态） |
 | `empty` | 居中「还没有文档」+ 文字链接（移动端提示需在桌面端创建） |
 | `populated` | 文档列表正常显示，当前打开文档有对勾标记 |
+| `error`（`listDocuments()` 拒绝，如 IndexedDB 不可用）| 居中展示「文档加载失败」（14px, `--color-text-muted`）+ 「重试」文字链接（`--color-brand`），排版与 `empty` 态同构；点击「重试」重新触发 `listDocuments()`，进入 `loading` 态 |
 
 ---
 
