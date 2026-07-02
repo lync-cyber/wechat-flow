@@ -649,3 +649,4 @@
 {"ts": "2026-07-02T10:59:05+00:00", "event": "agent_dispatch", "phase": "post", "detail": "项目完成触发 retrospective：Sprint 0-6 + Phase 6/7 审查历史提炼 + upstream 反馈打包", "agent": "reflector"}
 {"event": "state_change", "phase": "post", "detail": "reflector RETRO 完成：RETRO-wechat-flow-20260702 + SKILL-IMPROVE×2 + upstream-feedback 三件套 issue 草稿；doctor 环境漂移登记（本地 CataForge 已 0.15.0、scaffold 0.14.0，待用户 framework-update）", "ts": "2026-07-02T11:06:28+00:00"}
 {"event": "phase_end", "phase": "post", "status": "completed", "detail": "项目 wechat-flow Phase 1-7 + post 全部完成；剩余均为用户侧决策（upstream 提报/release go-no-go/框架升级）", "ts": "2026-07-02T11:06:28+00:00"}
+{"ts": "2026-07-02T11:19:58+00:00", "event": "state_change", "phase": "post", "detail": "framework-feedback upstream 提报完成：CataForge#421（finalize 全量重导出越权）/#422（reconcile 校准）/#423（doc-consistency 假阳性）；提报稿基于 upstream-feedback-20260702 草稿，订正了 Issue2 复现路径（实际走 ingest 非 export）与 Issue3 三处归因（对齐 test-report §8 实测裁决），并移除工期估算段"}

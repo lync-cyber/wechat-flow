@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-02T11:05:06.699454+00:00",
+  "generated_at": "2026-07-02T11:20:28.018669+00:00",
   "documents": {
     "arch-wechat-flow-api": {
       "file_path": "docs/arch/arch-wechat-flow-api.md",
@@ -3738,8 +3738,8 @@
       "doc_type": "feedback",
       "volume": "main",
       "status": "draft",
-      "total_lines": 351,
-      "est_tokens": 2899,
+      "total_lines": 355,
+      "est_tokens": 2934,
       "content_hash": "ca4e57c1",
       "sections": {}
     },

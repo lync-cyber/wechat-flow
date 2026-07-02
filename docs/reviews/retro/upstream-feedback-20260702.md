@@ -6,6 +6,10 @@ date: 2026-07-02
 author: reflector
 project: wechat-flow
 target: CataForge
+submitted:
+  - "lync-cyber/CataForge#421"
+  - "lync-cyber/CataForge#422"
+  - "lync-cyber/CataForge#423"
 ---
 
 # 上游反馈草稿 — CataForge 框架级问题与建议
