@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-02T04:04:38.620920+00:00",
+  "generated_at": "2026-07-02T04:30:40.249545+00:00",
   "documents": {
     "arch-wechat-flow-api": {
       "file_path": "docs/arch/arch-wechat-flow-api.md",
@@ -1677,7 +1677,7 @@
       "status": "approved",
       "total_lines": 1017,
       "est_tokens": 24140,
-      "content_hash": "c50d7bf4",
+      "content_hash": "125772c5",
       "sections": {
         "3": {
           "heading": "## 3. 任务卡详细",
@@ -3144,7 +3144,7 @@
         "dev-plan-wechat-flow-s3": "da417397",
         "dev-plan-wechat-flow-s4": "e4f79fea",
         "dev-plan-wechat-flow-s5": "862c6287",
-        "dev-plan-wechat-flow-s6": "c50d7bf4"
+        "dev-plan-wechat-flow-s6": "125772c5"
       }
     },
     "review-dev-plan-wechat-flow-r2": {
@@ -3174,7 +3174,7 @@
         "dev-plan-wechat-flow-s3": "da417397",
         "dev-plan-wechat-flow-s4": "e4f79fea",
         "dev-plan-wechat-flow-s5": "862c6287",
-        "dev-plan-wechat-flow-s6": "c50d7bf4"
+        "dev-plan-wechat-flow-s6": "125772c5"
       }
     },
     "review-dev-plan-wechat-flow-r3": {
@@ -3206,7 +3206,7 @@
         "dev-plan-wechat-flow-s3": "da417397",
         "dev-plan-wechat-flow-s4": "e4f79fea",
         "dev-plan-wechat-flow-s5": "862c6287",
-        "dev-plan-wechat-flow-s6": "c50d7bf4",
+        "dev-plan-wechat-flow-s6": "125772c5",
         "prd-wechat-flow": "0e15bcb3",
         "arch-wechat-flow": "10499df8"
       }
@@ -3241,7 +3241,7 @@
         "dev-plan-wechat-flow-s3": "da417397",
         "dev-plan-wechat-flow-s4": "e4f79fea",
         "dev-plan-wechat-flow-s5": "862c6287",
-        "dev-plan-wechat-flow-s6": "c50d7bf4",
+        "dev-plan-wechat-flow-s6": "125772c5",
         "prd-wechat-flow": "0e15bcb3",
         "arch-wechat-flow": "10499df8",
         "ui-spec-wechat-flow": "201bf6f6"
@@ -3946,6 +3946,22 @@
       ],
       "dep_hashes": {
         "dev-plan-wechat-flow-s5": "862c6287"
+      }
+    },
+    "sprint-review-s6-r1": {
+      "file_path": "docs/reviews/sprint/SPRINT-REVIEW-s6-r1.md",
+      "doc_type": "sprint-review",
+      "volume": "main",
+      "status": "approved",
+      "total_lines": 174,
+      "est_tokens": 3881,
+      "content_hash": "6f0affbe",
+      "sections": {},
+      "deps": [
+        "dev-plan-wechat-flow-s6"
+      ],
+      "dep_hashes": {
+        "dev-plan-wechat-flow-s6": "125772c5"
       }
     },
     "ui-spec-wechat-flow-p001-p005": {
