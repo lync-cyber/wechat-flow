@@ -613,3 +613,4 @@
 {"ts": "2026-07-02T05:35:34+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD RED: T-131-B1 桌面侧栏文档列表"}
 {"ts": "2026-07-02T05:42:12+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD GREEN: T-131-B1 桌面侧栏文档列表"}
 {"ts": "2026-07-02T05:53:33+00:00", "event": "state_change", "phase": "development", "detail": "skill-run: code-review Layer 1 passed", "agent": "reviewer", "status": "completed", "ref": "skill:code-review/code_lint"}
+{"ts": "2026-07-02T06:04:28+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-131-B2 demo fixture seed"}
