@@ -188,3 +188,26 @@ describe("AC-006: 点击非当前文档项触发路由切换", () => {
     wrapper.unmount();
   });
 });
+
+// QA 盲区回归（Phase 6 testing）: listDocuments() reject 时无 error 态，UI 静默退化为
+// "还没有文档" 空态，掩盖真实故障。P-002 spec 仅定义 loading/empty/populated 三态，
+// 属 upstream spec 缺口，见 test-report 缺陷清单。
+describe("QA 回归: listDocuments 失败时的静默降级（无 error 态）", () => {
+  it("listDocuments reject 后错误逃逸到 app 级 errorHandler，UI 渲染空态文案而非错误提示", async () => {
+    // errorHandler 捕获逃逸错误以免污染套件退出码；其被调用本身即缺陷证据（错误未被组件就地处理）
+    const escapedError = vi.fn();
+    listDocumentsMock.mockRejectedValue(new Error("indexeddb unavailable"));
+    const wrapper = mount(DocListPanel, {
+      attachTo: document.body,
+      global: { config: { errorHandler: escapedError } },
+    });
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    expect(escapedError).toHaveBeenCalledTimes(1);
+    expect(wrapper.find('[data-testid="doc-list-skeleton"]').exists()).toBe(false);
+    expect(wrapper.text()).toContain("还没有文档");
+    wrapper.unmount();
+  });
+});

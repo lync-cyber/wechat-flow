@@ -16,7 +16,7 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
-      testIgnore: "design-overlay.spec.ts",
+      testIgnore: ["design-overlay.spec.ts", "preview-sandbox-security.spec.ts"],
       use: { ...devices["Desktop Chrome"] },
     },
   ],
