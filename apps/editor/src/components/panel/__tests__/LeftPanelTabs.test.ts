@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { mount } from "@vue/test-utils";
 import { registerBlock, resetBlockRegistry } from "@wechat-flow/core";
 import { registerTheme, resetThemeRegistry } from "@wechat-flow/core";
+import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
@@ -11,6 +12,15 @@ import { z } from "zod";
 import BlockLibItem from "../BlockLibItem.vue";
 import LeftPanelTabs from "../LeftPanelTabs.vue";
 import ThemeCard from "../ThemeCard.vue";
+
+vi.mock("@wechat-flow/core", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@wechat-flow/core")>();
+  return { ...actual, listDocuments: vi.fn() };
+});
+
+import { listDocuments } from "@wechat-flow/core";
+
+const listDocumentsMock = vi.mocked(listDocuments);
 
 function makeRouter() {
   return createRouter({
@@ -21,6 +31,11 @@ function makeRouter() {
     ],
   });
 }
+
+beforeEach(() => {
+  setActivePinia(createPinia());
+  listDocumentsMock.mockReset();
+});
 
 afterEach(() => {
   resetThemeRegistry();
@@ -307,5 +322,38 @@ describe("AC-004: LeftPanelTabs 内 BlockLibItem 插入接线", () => {
     );
     const source = readFileSync(shellPath, "utf-8");
     expect(source).toMatch(/<LeftPanelTabs[^>]*:on-insert-block="onInsertDirective"/s);
+  });
+});
+
+describe("T-131-B1: docs Tab 渲染真实 DocListPanel 而非占位 stub", () => {
+  it("docs Tab 激活且 listDocuments resolve 后，渲染文档列表的「+ 新建」按钮而非占位文案", async () => {
+    listDocumentsMock.mockResolvedValue([
+      { id: "doc-1", title: "公众号排版指南", updatedAt: 1735689600000, size: 100 },
+    ]);
+    const wrapper = mount(LeftPanelTabs, {
+      props: { defaultTab: "docs" as const },
+      global: { plugins: [makeRouter()] },
+    });
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    expect(wrapper.find('[data-testid="docs-content"]').exists()).toBe(false);
+    expect(wrapper.find('[data-testid="doc-list-new"]').exists()).toBe(true);
+    expect(wrapper.find('[data-testid="doc-item-doc-1"]').exists()).toBe(true);
+  });
+
+  it("docs Tab 激活且 listDocuments resolve 为空数组时，渲染「还没有文档」引导而非占位文案", async () => {
+    listDocumentsMock.mockResolvedValue([]);
+    const wrapper = mount(LeftPanelTabs, {
+      props: { defaultTab: "docs" as const },
+      global: { plugins: [makeRouter()] },
+    });
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    expect(wrapper.find('[data-testid="docs-content"]').exists()).toBe(false);
+    expect(wrapper.text()).toContain("还没有文档");
   });
 });
