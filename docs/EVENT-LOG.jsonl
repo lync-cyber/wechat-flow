@@ -628,3 +628,4 @@
 {"event": "review_verdict", "phase": "testing", "agent": "reviewer", "status": "approved_with_notes", "detail": "doc-review test-report r1：文档质量 approved_with_notes（2×LOW：TC-011 计数口径注记、verdict 判据引用措辞），verdict 语义链核验 qa AGENT.md 特化规则合法覆盖通用三态；REVIEW-test-report-wechat-flow-r1.md", "ts": "2026-07-02T07:31:30+00:00"}
 {"event": "user_decision", "phase": "testing", "detail": "orchestrator（autonomous）按 Approved-with-Notes Protocol 选项 1 接受并继续：2×LOW 保留审查报告备查；test-report 文档 status=approved；缺陷修复进入 Revision 循环（DEFECT-001 debug 闭环 → qa 复验）", "ts": "2026-07-02T07:31:30+00:00"}
 {"ts": "2026-07-02T07:44:39+00:00", "event": "tdd_phase", "phase": "testing", "detail": "TDD LIGHT-DISPATCH: DEFECT-001 图床 ≤2.5MB 压缩循环（T-033/F-006 AC-002b）"}
+{"ts": "2026-07-02T08:24:23+00:00", "event": "agent_dispatch", "phase": "testing", "detail": "task_type=amendment: P-002 状态表补 error 态定义（DEFECT-002 upstream 规范缺口，test-report §7.2）", "agent": "ui-designer"}

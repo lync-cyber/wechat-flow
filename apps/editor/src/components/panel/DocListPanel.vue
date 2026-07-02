@@ -9,6 +9,7 @@ const router = useRouter();
 const store = useEditorStore();
 
 const isLoading = ref(true);
+const loadFailed = ref(false);
 const docs = ref<DocumentMeta[]>([]);
 
 function formatUpdatedAt(updatedAt: number): string {
@@ -23,14 +24,19 @@ function openDoc(id: string): void {
   router.push(`/docs/${id}`);
 }
 
-onMounted(async () => {
+async function load(): Promise<void> {
   isLoading.value = true;
+  loadFailed.value = false;
   try {
     docs.value = await listDocuments();
+  } catch {
+    loadFailed.value = true;
   } finally {
     isLoading.value = false;
   }
-});
+}
+
+onMounted(load);
 </script>
 
 <template>
@@ -55,6 +61,18 @@ onMounted(async () => {
           data-testid="doc-list-skeleton"
           :style="{ width }"
         />
+      </template>
+
+      <template v-else-if="loadFailed">
+        <div class="doc-list-panel__empty">
+          <p class="doc-list-panel__empty-text">文档加载失败</p>
+          <a
+            href="#"
+            class="doc-list-panel__empty-link"
+            data-testid="doc-list-retry"
+            @click.prevent="load"
+          >重试</a>
+        </div>
       </template>
 
       <template v-else-if="docs.length === 0">

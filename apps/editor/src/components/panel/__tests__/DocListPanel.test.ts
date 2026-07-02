@@ -189,12 +189,8 @@ describe("AC-006: 点击非当前文档项触发路由切换", () => {
   });
 });
 
-// QA 盲区回归（Phase 6 testing）: listDocuments() reject 时无 error 态，UI 静默退化为
-// "还没有文档" 空态，掩盖真实故障。P-002 spec 仅定义 loading/empty/populated 三态，
-// 属 upstream spec 缺口，见 test-report 缺陷清单。
-describe("QA 回归: listDocuments 失败时的静默降级（无 error 态）", () => {
-  it("listDocuments reject 后错误逃逸到 app 级 errorHandler，UI 渲染空态文案而非错误提示", async () => {
-    // errorHandler 捕获逃逸错误以免污染套件退出码；其被调用本身即缺陷证据（错误未被组件就地处理）
+describe("QA 回归: listDocuments 失败时渲染 error 态（DEFECT-002 修复）", () => {
+  it("listDocuments reject 后错误被组件就地处理，渲染「文档加载失败」+ 重试链接，不逃逸到 app 级 errorHandler", async () => {
     const escapedError = vi.fn();
     listDocumentsMock.mockRejectedValue(new Error("indexeddb unavailable"));
     const wrapper = mount(DocListPanel, {
@@ -205,9 +201,54 @@ describe("QA 回归: listDocuments 失败时的静默降级（无 error 态）",
     await nextTick();
     await nextTick();
 
-    expect(escapedError).toHaveBeenCalledTimes(1);
+    expect(escapedError).not.toHaveBeenCalled();
     expect(wrapper.find('[data-testid="doc-list-skeleton"]').exists()).toBe(false);
-    expect(wrapper.text()).toContain("还没有文档");
+    expect(wrapper.text()).not.toContain("还没有文档");
+    expect(wrapper.text()).toContain("文档加载失败");
+
+    const retryLink = wrapper.find('[data-testid="doc-list-retry"]');
+    expect(retryLink.exists()).toBe(true);
+    expect(retryLink.text()).toContain("重试");
+    wrapper.unmount();
+  });
+
+  it("点击重试后进入 loading skeleton，resolve 非空列表后渲染 populated 列表项", async () => {
+    listDocumentsMock.mockRejectedValueOnce(new Error("indexeddb unavailable"));
+    const wrapper = mount(DocListPanel, {
+      attachTo: document.body,
+    });
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    expect(wrapper.text()).toContain("文档加载失败");
+
+    let resolveDocs: (
+      docs: Array<{ id: string; title: string; updatedAt: number; size: number }>
+    ) => void = () => {};
+    const pending = new Promise<
+      Array<{ id: string; title: string; updatedAt: number; size: number }>
+    >((resolve) => {
+      resolveDocs = resolve;
+    });
+    listDocumentsMock.mockReturnValueOnce(pending);
+
+    const retryLink = wrapper.find('[data-testid="doc-list-retry"]');
+    await retryLink.trigger("click");
+    await nextTick();
+
+    expect(wrapper.findAll('[data-testid="doc-list-skeleton"]').length).toBe(3);
+    expect(wrapper.find('[data-testid="doc-list-retry"]').exists()).toBe(false);
+
+    resolveDocs([{ id: "doc-1", title: "公众号排版指南", updatedAt: 1735689600000, size: 100 }]);
+    await nextTick();
+    await nextTick();
+    await nextTick();
+
+    expect(wrapper.findAll('[data-testid="doc-list-skeleton"]').length).toBe(0);
+    const item1 = wrapper.find('[data-testid="doc-item-doc-1"]');
+    expect(item1.exists()).toBe(true);
+    expect(item1.text()).toContain("公众号排版指南");
     wrapper.unmount();
   });
 });

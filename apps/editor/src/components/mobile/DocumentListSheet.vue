@@ -18,9 +18,15 @@ interface DocMeta {
 }
 
 const docs = ref<DocMeta[]>([]);
+const loadFailed = ref(false);
 
 async function loadDocs(): Promise<void> {
-  docs.value = await listDocuments();
+  loadFailed.value = false;
+  try {
+    docs.value = await listDocuments();
+  } catch {
+    loadFailed.value = true;
+  }
 }
 
 onMounted(() => {
@@ -53,7 +59,16 @@ function selectDoc(id: string): void {
       style="max-height: 60vh;"
     >
       <div class="document-list-sheet__handle" aria-hidden="true" />
-      <div class="document-list-sheet__list">
+      <div v-if="loadFailed" class="document-list-sheet__error">
+        <p class="document-list-sheet__error-text">文档加载失败</p>
+        <a
+          href="#"
+          class="document-list-sheet__error-link"
+          data-testid="doc-list-retry"
+          @click.prevent="loadDocs"
+        >重试</a>
+      </div>
+      <div v-else class="document-list-sheet__list">
         <button
           v-for="doc in docs"
           :key="doc.id"
@@ -93,6 +108,33 @@ function selectDoc(id: string): void {
 
 .document-list-sheet__list {
   padding: 8px 0 env(safe-area-inset-bottom, 0);
+}
+
+.document-list-sheet__error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  text-align: center;
+}
+
+.document-list-sheet__error-text {
+  font-size: var(--font-size-base, 14px);
+  color: var(--color-text-muted, #6b7280);
+  margin: 0;
+}
+
+.document-list-sheet__error-link {
+  font-size: var(--font-size-sm, 13px);
+  color: var(--color-brand, #2d5a4e);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.document-list-sheet__error-link:hover {
+  text-decoration: underline;
 }
 
 .document-list-sheet__item {

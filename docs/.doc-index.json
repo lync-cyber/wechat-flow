@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-02T07:32:03.342389+00:00",
+  "generated_at": "2026-07-02T08:31:23.193780+00:00",
   "documents": {
     "arch-wechat-flow-api": {
       "file_path": "docs/arch/arch-wechat-flow-api.md",
@@ -972,7 +972,7 @@
         "arch-wechat-flow-modules": "23f0e340",
         "ui-spec-wechat-flow": "201bf6f6",
         "ui-spec-wechat-flow-uc001-uc014": "89aeda11",
-        "ui-spec-wechat-flow-p001-p005": "b9b79904"
+        "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
     },
     "dev-plan-wechat-flow-s2": {
@@ -1430,7 +1430,7 @@
         "arch-wechat-flow-data": "44644219",
         "ui-spec-wechat-flow": "201bf6f6",
         "ui-spec-wechat-flow-uc001-uc014": "89aeda11",
-        "ui-spec-wechat-flow-p001-p005": "b9b79904"
+        "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
     },
     "dev-plan-wechat-flow-s5": {
@@ -1667,7 +1667,7 @@
         "arch-wechat-flow": "10499df8",
         "arch-wechat-flow-modules": "23f0e340",
         "ui-spec-wechat-flow": "201bf6f6",
-        "ui-spec-wechat-flow-p001-p005": "b9b79904"
+        "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
     },
     "dev-plan-wechat-flow-s6": {
@@ -1911,7 +1911,7 @@
         "arch-wechat-flow-api": "b3d30990",
         "ui-spec-wechat-flow": "201bf6f6",
         "ui-spec-wechat-flow-uc001-uc014": "89aeda11",
-        "ui-spec-wechat-flow-p001-p005": "b9b79904"
+        "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
     },
     "dev-plan-wechat-flow": {
@@ -2016,7 +2016,7 @@
         "arch-wechat-flow-data": "44644219",
         "ui-spec-wechat-flow": "201bf6f6",
         "ui-spec-wechat-flow-uc001-uc014": "89aeda11",
-        "ui-spec-wechat-flow-p001-p005": "b9b79904"
+        "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
     },
     "feedback-bug-0-11-0-scaffold-skill-md-cataforge-docs-out-of-the-box-doctor-3-fail": {
@@ -3415,7 +3415,7 @@
       "dep_hashes": {
         "ui-spec-wechat-flow": "201bf6f6",
         "ui-spec-wechat-flow-uc001-uc014": "89aeda11",
-        "ui-spec-wechat-flow-p001-p005": "b9b79904"
+        "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
     },
     "review-ui-spec-wechat-flow-r2": {
@@ -3435,7 +3435,7 @@
       "dep_hashes": {
         "ui-spec-wechat-flow": "201bf6f6",
         "ui-spec-wechat-flow-uc001-uc014": "89aeda11",
-        "ui-spec-wechat-flow-p001-p005": "b9b79904"
+        "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
     },
     "review-ui-spec-wechat-flow-r3": {
@@ -3455,7 +3455,7 @@
       "dep_hashes": {
         "ui-spec-wechat-flow": "201bf6f6",
         "ui-spec-wechat-flow-uc001-uc014": "89aeda11",
-        "ui-spec-wechat-flow-p001-p005": "b9b79904"
+        "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
     },
     "sprint-review-s0-r1": {
@@ -4143,15 +4143,15 @@
       "doc_type": "ui-spec",
       "volume": "pages",
       "status": "approved",
-      "total_lines": 351,
-      "est_tokens": 4768,
-      "content_hash": "b9b79904",
+      "total_lines": 353,
+      "est_tokens": 4887,
+      "content_hash": "3b7254c0",
       "sections": {
         "3": {
           "heading": "## 3. 页面布局",
           "line_start": 22,
-          "line_end": 351,
-          "est_tokens": 4611,
+          "line_end": 353,
+          "est_tokens": 4730,
           "deps": [],
           "level": 2,
           "items": {
@@ -4165,28 +4165,28 @@
             "P-002": {
               "heading": "### P-002: 文档列表（侧栏内嵌 / 移动底部抽屉）",
               "line_start": 103,
-              "line_end": 145,
-              "est_tokens": 463,
+              "line_end": 147,
+              "est_tokens": 583,
               "deps": []
             },
             "P-003": {
               "heading": "### P-003: 主题模板市场（`/themes`）",
-              "line_start": 146,
-              "line_end": 201,
+              "line_start": 148,
+              "line_end": 203,
               "est_tokens": 895,
               "deps": []
             },
             "P-004": {
               "heading": "### P-004: 设置 / 偏好（`/settings`）",
-              "line_start": 202,
-              "line_end": 302,
+              "line_start": 204,
+              "line_end": 304,
               "est_tokens": 1315,
               "deps": []
             },
             "P-005": {
               "heading": "### P-005: 移动端只读预览（`/preview/:docId`）",
-              "line_start": 303,
-              "line_end": 351,
+              "line_start": 305,
+              "line_end": 353,
               "est_tokens": 537,
               "deps": []
             }
