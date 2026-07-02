@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-02T04:30:40.249545+00:00",
+  "generated_at": "2026-07-02T04:53:46.486752+00:00",
   "documents": {
     "arch-wechat-flow-api": {
       "file_path": "docs/arch/arch-wechat-flow-api.md",
@@ -3956,6 +3956,22 @@
       "total_lines": 174,
       "est_tokens": 3881,
       "content_hash": "6f0affbe",
+      "sections": {},
+      "deps": [
+        "dev-plan-wechat-flow-s6"
+      ],
+      "dep_hashes": {
+        "dev-plan-wechat-flow-s6": "125772c5"
+      }
+    },
+    "sprint-review-s6-r2": {
+      "file_path": "docs/reviews/sprint/SPRINT-REVIEW-s6-r2.md",
+      "doc_type": "sprint-review",
+      "volume": "main",
+      "status": "approved",
+      "total_lines": 36,
+      "est_tokens": 666,
+      "content_hash": "96420a38",
       "sections": {},
       "deps": [
         "dev-plan-wechat-flow-s6"

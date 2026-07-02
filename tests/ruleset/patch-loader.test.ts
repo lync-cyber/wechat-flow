@@ -49,7 +49,15 @@ describe("T-060 AC-001: loadPatchBundle(url) fetches and parses JSON patch bundl
         ok: true,
         json: async () => ({
           version: "8.0.0",
-          patches: [{ id: "patch-wechat-8.0-fix-span", scope: "patch", priority: 100 }],
+          patches: [
+            {
+              id: "patch-wechat-8.0-fix-span",
+              scope: "patch",
+              priority: 100,
+              matcher: matchNone,
+              transform: noop,
+            },
+          ],
         }),
       })
     );
@@ -67,13 +75,50 @@ describe("T-060 AC-001: loadPatchBundle(url) fetches and parses JSON patch bundl
         ok: true,
         json: async () => ({
           version: "8.0.33",
-          patches: [{ id: "patch-abc", scope: "patch", priority: 50 }],
+          patches: [
+            { id: "patch-abc", scope: "patch", priority: 50, matcher: matchNone, transform: noop },
+          ],
         }),
       })
     );
 
     const result = await loadPatchBundle("https://example.com/bundle.json");
     expect(result.version).toBe("8.0.33");
+  });
+
+  it("rejects a bundle whose JSON came from a real JSON.parse round-trip (no function fields survive serialization)", async () => {
+    const serialized = JSON.stringify({
+      version: "8.0.0",
+      patches: [{ id: "patch-wechat-8.0-real-json", scope: "patch", priority: 100 }],
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => JSON.parse(serialized),
+      })
+    );
+
+    await expect(loadPatchBundle("https://cdn.example.com/patch-real-8.0.0.json")).rejects.toThrow(
+      PatchLoadError
+    );
+    await expect(loadPatchBundle("https://cdn.example.com/patch-real-8.0.0.json")).rejects.toThrow(
+      /matcher.*transform|function/i
+    );
+  });
+
+  it("resolves successfully for a JSON bundle with an empty patches array", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => JSON.parse(JSON.stringify({ version: "8.0.0", patches: [] })),
+      })
+    );
+
+    const result = await loadPatchBundle("https://cdn.example.com/patch-empty.json");
+    expect(result.version).toBe("8.0.0");
+    expect(result.patches).toEqual([]);
   });
 });
 
@@ -241,6 +286,124 @@ describe("T-060 AC-003: load/apply failures throw PatchLoadError and leave regis
     const rulesAfter = getRules().map((r) => r.id);
     expect(rulesAfter).toEqual(rulesBefore);
     expect(rulesAfter).not.toContain("patch-t060-partial-good");
+  });
+});
+
+// ── matcher/transform executability + scope enum validation ──────────────────
+
+describe("T-060: patch entries missing executable matcher/transform are rejected", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("loadPatchBundle rejects a bundle whose patches carry no function fields", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          version: "8.0.0",
+          patches: [{ id: "patch-json-only", scope: "patch", priority: 1 }],
+        }),
+      })
+    );
+
+    await expect(loadPatchBundle("https://example.com/json-only.json")).rejects.toThrow(
+      PatchLoadError
+    );
+    await expect(loadPatchBundle("https://example.com/json-only.json")).rejects.toThrow(
+      /matcher.*transform|function/i
+    );
+  });
+
+  it("loadPatchBundle resolves for a bundle with an empty patches array", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ version: "8.0.0", patches: [] }),
+      })
+    );
+
+    const result = await loadPatchBundle("https://example.com/empty.json");
+    expect(result.patches).toEqual([]);
+  });
+
+  it("applyPatchBundle throws PatchLoadError when a patch entry lacks matcher/transform, and does not inject it", () => {
+    const badEntry = {
+      id: "patch-t060-no-functions",
+      scope: "patch",
+      priority: 1,
+    } as unknown as RuleDefinition;
+    const bundle = makeBundle("8.0.0", [badEntry]);
+
+    expect(() => applyPatchBundle(bundle)).toThrow(PatchLoadError);
+
+    const ids = getRules().map((r) => r.id);
+    expect(ids).not.toContain("patch-t060-no-functions");
+  });
+
+  it("applyPatchBundle rejects the whole bundle atomically when one entry lacks matcher/transform, even if another entry is valid", () => {
+    const validRule = makePatchRule("patch-t060-mixed-valid");
+    const invalidRule = {
+      id: "patch-t060-mixed-invalid",
+      scope: "patch",
+      priority: 1,
+    } as unknown as RuleDefinition;
+    const bundle = makeBundle("8.0.0", [validRule, invalidRule]);
+
+    expect(() => applyPatchBundle(bundle)).toThrow(PatchLoadError);
+
+    const ids = getRules().map((r) => r.id);
+    expect(ids).not.toContain("patch-t060-mixed-valid");
+    expect(ids).not.toContain("patch-t060-mixed-invalid");
+  });
+});
+
+describe("T-060: patch entry 'scope' must be a valid RuleScope enum value", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("loadPatchBundle rejects an unknown scope value", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          version: "8.0.0",
+          patches: [
+            {
+              id: "patch-bad-scope",
+              scope: "unknown-scope",
+              priority: 1,
+              matcher: matchNone,
+              transform: noop,
+            },
+          ],
+        }),
+      })
+    );
+
+    await expect(loadPatchBundle("https://example.com/bad-scope.json")).rejects.toThrow(
+      PatchLoadError
+    );
+  });
+
+  it("applyPatchBundle rejects an unknown scope value and does not inject the rule", () => {
+    const badScopeRule = {
+      id: "patch-t060-bad-scope",
+      scope: "unknown-scope",
+      priority: 1,
+      matcher: matchNone,
+      transform: noop,
+    } as unknown as RuleDefinition;
+    const bundle = makeBundle("8.0.0", [badScopeRule]);
+
+    expect(() => applyPatchBundle(bundle)).toThrow(PatchLoadError);
+
+    const ids = getRules().map((r) => r.id);
+    expect(ids).not.toContain("patch-t060-bad-scope");
   });
 });
 
