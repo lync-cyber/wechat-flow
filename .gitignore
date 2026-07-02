@@ -14,6 +14,10 @@ build/
 .env
 .env.local
 .env.*.local
+.env.dev
+.env.staging
+.env.prod
+!.env.example
 # .mcp.json 纳入版本控制：仅声明本地自托管 penpot 的 http://localhost MCP 端点，无 token/secret。
 # 新增含密钥的 MCP server 时改用 ${ENV_VAR} 引用，勿明文写入此文件。
 
