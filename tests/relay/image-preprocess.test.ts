@@ -191,3 +191,189 @@ describe("AC-002: preprocessImage resizes to ≤ 1080px width", () => {
     expect(["jpeg", "png", "webp", "avif"]).toContain(result.format);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Fixture helpers for AC-002~004.
+//
+// jpeg/webp: fully random (uniformly distributed) raw pixel buffers are
+// incompressible by DCT prediction, so a 1080-wide × 2200-tall render
+// comfortably exceeds the 2.5MB target even after resize clamps width to
+// 1080 (height passes through unchanged) — this forces the quality ladder
+// to run through to its lowest rungs without ever reaching the target,
+// which is exactly the AC-002/AC-004 scenario under test.
+//
+// png: DEFLATE (used by PNG) *does* exploit spatial redundancy, so a
+// square gaussian-noise render at moderate sigma exceeds 2.5MB uncompressed
+// but responds to compressionLevel 9 and/or width step-down — matching the
+// AC-003 "params first, then step down" scenario where the target is
+// actually reachable.
+// ---------------------------------------------------------------------------
+
+const TARGET_BYTES = 2.5 * 1024 * 1024;
+
+function randomRawBuffer(width: number, height: number, channels: 3 | 4): Buffer {
+  const buf = Buffer.alloc(width * height * channels);
+  for (let i = 0; i < buf.length; i++) {
+    buf[i] = Math.floor(Math.random() * 256);
+  }
+  return buf;
+}
+
+async function buildNoisyJpeg(width = 1080, height = 2200): Promise<Uint8Array> {
+  const raw = randomRawBuffer(width, height, 3);
+  const buf = await sharp(raw, { raw: { width, height, channels: 3 } })
+    .jpeg({ quality: 100 })
+    .toBuffer();
+  return Uint8Array.from(buf);
+}
+
+async function buildNoisyWebp(width = 1080, height = 2200): Promise<Uint8Array> {
+  const raw = randomRawBuffer(width, height, 3);
+  const buf = await sharp(raw, { raw: { width, height, channels: 3 } })
+    .webp({ quality: 100, lossless: false })
+    .toBuffer();
+  return Uint8Array.from(buf);
+}
+
+async function buildNoisyPng(width = 1080, height = 1080): Promise<Uint8Array> {
+  const buf = await sharp({
+    create: {
+      width,
+      height,
+      channels: 4,
+      background: { r: 128, g: 128, b: 128, alpha: 1 },
+      noise: { type: "gaussian", mean: 128, sigma: 20 },
+    },
+  })
+    .png({ compressionLevel: 0, palette: false })
+    .toBuffer();
+  return Uint8Array.from(buf);
+}
+
+// ---------------------------------------------------------------------------
+// AC-002: jpeg/webp quality-ladder recompression when resize output > 2.5MB
+// ---------------------------------------------------------------------------
+
+describe("AC-002: preprocessImage applies quality-ladder recompression for oversized jpeg/webp", () => {
+  it("jpeg input that resizes to > 2.5MB is recompressed to ≤ 2.5MB", async () => {
+    const input = await buildNoisyJpeg();
+    const preSize = (
+      await sharp(input)
+        .resize({ width: 1080, withoutEnlargement: true })
+        .jpeg({ quality: 100 })
+        .toBuffer()
+    ).byteLength;
+    expect(preSize).toBeGreaterThan(TARGET_BYTES);
+
+    const result = await preprocessImage(input);
+
+    expect(result.size).toBeLessThanOrEqual(TARGET_BYTES);
+    expect(result.size).toBe(result.data.byteLength);
+  });
+
+  it("jpeg recompression preserves format as jpeg and does not upscale width", async () => {
+    const input = await buildNoisyJpeg();
+
+    const result = await preprocessImage(input);
+
+    expect(result.format).toBe("jpeg");
+    expect(result.width).toBeLessThanOrEqual(1080);
+  });
+
+  it("webp input that resizes to > 2.5MB is recompressed to ≤ 2.5MB and keeps webp format", async () => {
+    const input = await buildNoisyWebp(1080, 2800);
+    const preSize = (
+      await sharp(input)
+        .resize({ width: 1080, withoutEnlargement: true })
+        .webp({ quality: 100 })
+        .toBuffer()
+    ).byteLength;
+    expect(preSize).toBeGreaterThan(TARGET_BYTES);
+
+    const result = await preprocessImage(input);
+
+    expect(result.size).toBeLessThanOrEqual(TARGET_BYTES);
+    expect(result.format).toBe("webp");
+  });
+
+  it("custom targetBytes option is honored for jpeg recompression", async () => {
+    const input = await buildNoisyJpeg();
+    const customTarget = 1 * 1024 * 1024;
+
+    const result = await preprocessImage(input, { targetBytes: customTarget });
+
+    expect(result.size).toBeLessThanOrEqual(customTarget);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// AC-003: png path — compression params first, then width step-down; no
+// conversion to jpeg (alpha channel must survive).
+// ---------------------------------------------------------------------------
+
+describe("AC-003: preprocessImage compresses oversized png via params then width step-down", () => {
+  it("png input that resizes to > 2.5MB is brought to ≤ 2.5MB while remaining png", async () => {
+    const input = await buildNoisyPng();
+    const preSize = (
+      await sharp(input)
+        .resize({ width: 1080, withoutEnlargement: true })
+        .png({ compressionLevel: 0, palette: false })
+        .toBuffer()
+    ).byteLength;
+    expect(preSize).toBeGreaterThan(TARGET_BYTES);
+
+    const result = await preprocessImage(input);
+
+    expect(result.size).toBeLessThanOrEqual(TARGET_BYTES);
+    expect(result.format).toBe("png");
+  });
+
+  it("png alpha channel survives compression (not converted to jpeg)", async () => {
+    const input = await buildNoisyPng();
+
+    const result = await preprocessImage(input);
+
+    const meta = await sharp(result.data).metadata();
+    expect(meta.format).toBe("png");
+    expect(meta.hasAlpha).toBe(true);
+  });
+
+  it("png width step-down does not go below the 640px floor", async () => {
+    const input = await buildNoisyPng(1080, 1080);
+
+    const result = await preprocessImage(input);
+
+    expect(result.width).toBeGreaterThanOrEqual(640);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// AC-004: best-effort bottoming-out semantics — never throws, returns the
+// last best attempt even when target is unreachable.
+// ---------------------------------------------------------------------------
+
+describe("AC-004: preprocessImage never throws and returns best-effort result when target is unreachable", () => {
+  it("extreme noisy png that cannot reach 2.5MB even at the width floor does not throw", async () => {
+    const input = await buildNoisyPng(1080, 1080);
+
+    await expect(preprocessImage(input, { targetBytes: 1 })).resolves.toBeDefined();
+  });
+
+  it("best-effort result for an unreachable target still respects the 640px width floor", async () => {
+    const input = await buildNoisyPng(1080, 1080);
+
+    const result = await preprocessImage(input, { targetBytes: 1 });
+
+    expect(result.width).toBeGreaterThanOrEqual(640);
+    expect(result.format).toBe("png");
+  });
+
+  it("extreme noisy jpeg that cannot reach an unreachable target does not throw and stays jpeg", async () => {
+    const input = await buildNoisyJpeg();
+
+    const result = await preprocessImage(input, { targetBytes: 1 });
+
+    expect(result.format).toBe("jpeg");
+    expect(result.size).toBe(result.data.byteLength);
+  });
+});
