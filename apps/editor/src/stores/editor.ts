@@ -4,6 +4,7 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { NodeLocation } from "../components/source/source-cursor-tracker.ts";
 import { composeRender } from "../use-cases/render.ts";
+import { ensureDemoDocument } from "../use-cases/seed-demo.ts";
 
 const DEFAULT_DOC_ID = "draft-default";
 
@@ -53,6 +54,7 @@ export const useEditorStore = defineStore("editor", () => {
 
   async function loadDraft(): Promise<void> {
     try {
+      await ensureDemoDocument();
       const record = await loadDocument(currentDocId.value);
       if (record) {
         content.value = record.content;
