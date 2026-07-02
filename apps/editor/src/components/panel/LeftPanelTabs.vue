@@ -3,6 +3,7 @@ import { listBlocks } from "@wechat-flow/core";
 import { listThemes } from "@wechat-flow/core";
 import { computed, ref } from "vue";
 import BlockLibItem from "./BlockLibItem.vue";
+import DocListPanel from "./DocListPanel.vue";
 import ThemeCard from "./ThemeCard.vue";
 
 type TabId = "theme" | "components" | "docs";
@@ -99,9 +100,7 @@ function insertBlock(block: ReturnType<typeof listBlocks>[number]): void {
 
       <!-- Docs tab -->
       <template v-else-if="activeTab === 'docs'">
-        <div class="left-panel-tabs__docs-placeholder" data-testid="docs-content">
-          文档
-        </div>
+        <DocListPanel />
       </template>
     </div>
   </div>
@@ -181,11 +180,5 @@ function insertBlock(block: ReturnType<typeof listBlocks>[number]): void {
 .left-panel-tabs__block-list {
   display: flex;
   flex-direction: column;
-}
-
-.left-panel-tabs__docs-placeholder {
-  padding: 12px;
-  font-size: var(--font-size-sm, 13px);
-  color: var(--color-text-muted);
 }
 </style>
