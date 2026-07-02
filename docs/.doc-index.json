@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-02T05:56:31.803117+00:00",
+  "generated_at": "2026-07-02T07:32:03.342389+00:00",
   "documents": {
     "arch-wechat-flow-api": {
       "file_path": "docs/arch/arch-wechat-flow-api.md",
@@ -3382,6 +3382,22 @@
         "prd-wechat-flow-f001-f014": "aa0c9b68"
       }
     },
+    "review-test-report-wechat-flow-r1": {
+      "file_path": "docs/reviews/doc/REVIEW-test-report-wechat-flow-r1.md",
+      "doc_type": "review",
+      "volume": "main",
+      "status": "approved",
+      "total_lines": 113,
+      "est_tokens": 2993,
+      "content_hash": "e0f965c5",
+      "sections": {},
+      "deps": [
+        "test-report-wechat-flow"
+      ],
+      "dep_hashes": {
+        "test-report-wechat-flow": "124d6843"
+      }
+    },
     "review-ui-spec-wechat-flow-r1": {
       "file_path": "docs/reviews/doc/REVIEW-ui-spec-wechat-flow-r1.md",
       "doc_type": "review",
@@ -3991,6 +4007,135 @@
       ],
       "dep_hashes": {
         "dev-plan-wechat-flow-s6": "125772c5"
+      }
+    },
+    "test-report-wechat-flow": {
+      "file_path": "docs/test-report/test-report-wechat-flow.md",
+      "doc_type": "test-report",
+      "volume": "main",
+      "status": "approved",
+      "total_lines": 190,
+      "est_tokens": 4505,
+      "content_hash": "124d6843",
+      "sections": {
+        "1": {
+          "heading": "## 1. 测试策略",
+          "line_start": 33,
+          "line_end": 50,
+          "est_tokens": 340,
+          "deps": [],
+          "level": 2,
+          "items": {
+            "1.1": {
+              "heading": "### 1.1 测试金字塔",
+              "line_start": 41,
+              "line_end": 47,
+              "est_tokens": 124,
+              "deps": []
+            },
+            "1.2": {
+              "heading": "### 1.2 IPC边界测试",
+              "line_start": 48,
+              "line_end": 50,
+              "est_tokens": 77,
+              "deps": []
+            }
+          }
+        },
+        "2": {
+          "heading": "## 2. 测试用例矩阵",
+          "line_start": 51,
+          "line_end": 68,
+          "est_tokens": 535,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        },
+        "3": {
+          "heading": "## 3. 覆盖率目标",
+          "line_start": 69,
+          "line_end": 81,
+          "est_tokens": 238,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        },
+        "4": {
+          "heading": "## 4. 测试环境",
+          "line_start": 82,
+          "line_end": 92,
+          "est_tokens": 258,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        },
+        "5": {
+          "heading": "## 5. 测试执行结果",
+          "line_start": 93,
+          "line_end": 115,
+          "est_tokens": 426,
+          "deps": [],
+          "level": 2,
+          "items": {
+            "5.1": {
+              "heading": "### 5.1 执行汇总",
+              "line_start": 111,
+              "line_end": 115,
+              "est_tokens": 51,
+              "deps": []
+            }
+          }
+        },
+        "6": {
+          "heading": "## 6. 缺陷清单",
+          "line_start": 116,
+          "line_end": 124,
+          "est_tokens": 408,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        },
+        "7": {
+          "heading": "## 7. 结论与建议",
+          "line_start": 125,
+          "line_end": 138,
+          "est_tokens": 354,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        },
+        "8": {
+          "heading": "## 8. doc-consistency 裁决清单",
+          "line_start": 139,
+          "line_end": 170,
+          "est_tokens": 1073,
+          "deps": [],
+          "level": 2,
+          "items": {
+            "8": {
+              "heading": "### 8-3 / 8-4. MEDIUM [orphaned-component]: UC-015/UC-016/UC-023 未被任何页面引用；MEDIUM [entity-propagation]: ARCH E-001,E-002,E-003,E-004,E-006 未在 DEV-PLAN 任务中引用",
+              "line_start": 162,
+              "line_end": 170,
+              "est_tokens": 435,
+              "deps": []
+            }
+          }
+        },
+        "9": {
+          "heading": "## 9. 盲区登记",
+          "line_start": 171,
+          "line_end": 190,
+          "est_tokens": 693,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        }
+      },
+      "deps": [
+        "dev-plan-wechat-flow"
+      ],
+      "dep_hashes": {
+        "dev-plan-wechat-flow": "cdcb83d2"
       }
     },
     "ui-spec-wechat-flow-p001-p005": {
