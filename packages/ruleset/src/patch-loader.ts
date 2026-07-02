@@ -1,4 +1,4 @@
-import type { RuleDefinition } from "./rules/registry.ts";
+import type { RuleDefinition, RuleScope } from "./rules/registry.ts";
 import { upsertRule } from "./rules/registry.ts";
 
 export interface PatchBundle {
@@ -13,10 +13,9 @@ export class PatchLoadError extends Error {
   }
 }
 
-function validateBundle(data: unknown): asserts data is {
-  version: string;
-  patches: Array<{ id: string; scope: string; priority: number }>;
-} {
+const VALID_SCOPES: readonly RuleScope[] = ["strip", "clamp", "transform", "patch", "lint"];
+
+function validateBundle(data: unknown): asserts data is PatchBundle {
   if (typeof data !== "object" || data === null) {
     throw new PatchLoadError("Patch bundle must be a JSON object");
   }
@@ -28,25 +27,33 @@ function validateBundle(data: unknown): asserts data is {
     throw new PatchLoadError("Patch bundle schema error: 'patches' must be an array");
   }
   for (const entry of obj.patches as unknown[]) {
-    if (typeof entry !== "object" || entry === null) {
-      throw new PatchLoadError("Patch bundle schema error: each patch entry must be an object");
-    }
-    const e = entry as Record<string, unknown>;
-    if (typeof e.id !== "string") {
-      throw new PatchLoadError(
-        "Patch bundle schema error: each patch entry must have a string 'id'"
-      );
-    }
-    if (typeof e.scope !== "string") {
-      throw new PatchLoadError(
-        "Patch bundle schema error: each patch entry must have a string 'scope'"
-      );
-    }
-    if (typeof e.priority !== "number") {
-      throw new PatchLoadError(
-        "Patch bundle schema error: each patch entry must have a numeric 'priority'"
-      );
-    }
+    validatePatchEntry(entry);
+  }
+}
+
+function validatePatchEntry(entry: unknown): asserts entry is RuleDefinition {
+  if (typeof entry !== "object" || entry === null) {
+    throw new PatchLoadError("Patch bundle schema error: each patch entry must be an object");
+  }
+  const e = entry as Record<string, unknown>;
+  const id = typeof e.id === "string" ? e.id : "<unknown>";
+  if (typeof e.id !== "string") {
+    throw new PatchLoadError("Patch bundle schema error: each patch entry must have a string 'id'");
+  }
+  if (typeof e.scope !== "string" || !VALID_SCOPES.includes(e.scope as RuleScope)) {
+    throw new PatchLoadError(
+      `Patch entry '${id}' has invalid 'scope': must be one of ${VALID_SCOPES.join(", ")}`
+    );
+  }
+  if (typeof e.priority !== "number") {
+    throw new PatchLoadError(
+      "Patch bundle schema error: each patch entry must have a numeric 'priority'"
+    );
+  }
+  if (typeof e.matcher !== "function" || typeof e.transform !== "function") {
+    throw new PatchLoadError(
+      `Patch entry '${id}' is missing an executable 'matcher'/'transform' — JSON patch bundles cannot carry functions`
+    );
   }
 }
 
@@ -83,11 +90,7 @@ export async function loadPatchBundle(url: string): Promise<PatchBundle> {
     });
   }
 
-  const raw = data as { version: string; patches: Array<Record<string, unknown>> };
-  return {
-    version: raw.version,
-    patches: raw.patches as unknown as RuleDefinition[],
-  };
+  return data;
 }
 
 export function applyPatchBundle(bundle: PatchBundle): void {
@@ -97,9 +100,7 @@ export function applyPatchBundle(bundle: PatchBundle): void {
 
   // Validate all patches before mutating — atomicity guarantee
   for (const patch of bundle.patches) {
-    if (typeof patch.id !== "string" || !patch.id) {
-      throw new PatchLoadError(`Invalid patch entry: 'id' must be a non-empty string`);
-    }
+    validatePatchEntry(patch);
   }
 
   for (const patch of bundle.patches) {
