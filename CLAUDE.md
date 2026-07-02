@@ -33,10 +33,10 @@
 - 构建/任务编排: Turborepo 2.3（`turbo build`）；apps/editor 用 Vite 6
 
 ## 项目状态 (orchestrator专属写入区，其他Agent禁止修改)
-- 当前阶段: testing
-- 上次完成: **DEFECT-002 修复 — P-002 error 态 spec amendment + 双端组件修复（本 PR）**：ui-designer（task_type=amendment）为 `ui-spec-wechat-flow-p001-p005.md` P-002 桌面/移动状态表各补 error 行（「文档加载失败」14px muted +「重试」brand 链接、与 empty 同构、重试→loading 闭环状态机，+2 行零噪声 diff，finalize 越权重导出已自愈回滚）；implementer 修 `DocListPanel.vue`（loadFailed ref + load() 抽取 + 四态模板 + data-testid="doc-list-retry"）与 `DocumentListSheet.vue`（loadDocs 补 try/catch + 同构 error 块——同缺陷类并入）；QA 回归测试期望翻转（errorHandler 零调用 + 渲染错误态）。editor 559 全 PASS 退出码 0 无 unhandled errors，vue-tsc/tests-tsc/biome 全绿，orchestrator 亲读 diff + 订正 1 处 brand fallback 色值。前批 DEFECT-001（[PR #75](https://github.com/lync-cyber/wechat-flow/pull/75)）。
-- 下一步行动: **qa 复验升级 verdict → Phase 6→7**：① 缺陷已全部修复（DEFECT-001 [PR #75](https://github.com/lync-cyber/wechat-flow/pull/75)、DEFECT-002 本 PR）→ qa 复验按 test-report §7.4 定向核实（TC-003 preprocess 压缩逻辑 + TC-004 error 态 + relay 图片测试），产出 test-report r2/version bump，verdict → approved ② Phase 6→7 转换（检查点 [pre_dev] 已过，无 pre_deploy 门禁）→ 派发 devops 产出 deploy-spec。注意：**context finalize 全量重导出越权问题已两次复现**（qa 会话 + ui-designer amendment 会话，均向 dev-plan 追加陈旧 §4 Deferred Backlog / 重置 test-report status），upstream 反馈优先级提升，见 §待办。arch 层收口项见 §待办。节奏：单卡一 PR、串行合并。
-- 已完成阶段: [requirements, architecture, ui_design, dev_planning, cross_doc_amendment_r2, arch_special_review_css_inlining, dev_plan_amendment_custom_styles, development]
+- 当前阶段: deployment
+- 上次完成: **qa 复验 approved + Phase 6→7 转换（本 PR）**：qa 定向复验（test-report §7.4 方案）核证 DEFECT-001（[PR #75](https://github.com/lync-cyber/wechat-flow/pull/75)）/DEFECT-002（[PR #76](https://github.com/lync-cyber/wechat-flow/pull/76)）真实闭合——TC-003/004 源码走读 + relay 全量 354 + editor 全量 559 + security E2E 重跑 2/2 = 933 用例 0 失败零回归，r1 的 unhandledRejection 诊断噪声消除即修复直接证据；[`test-report-wechat-flow.md`](docs/test-report/test-report-wechat-flow.md) bump v1.1.0，缺陷状态 open→fixed，**verdict=approved**。转换守门：validate 净；reconcile 248 divergences 维持 WARN（图侧富集类，upstream 已登记）；doc-consistency 5 项与 r1 相同、已被 test-report §8 裁决假阳性，降级 WARN；claude-md check PASS；4 事件批写。finalize 越权重导出第三次复现（qa 复验会话，dev-plan 被污染后自愈回滚）——upstream 反馈最高优先级。前批 DEFECT-002（[PR #76](https://github.com/lync-cyber/wechat-flow/pull/76)）。
+- 下一步行动: **Phase 7 deployment：派发 devops（subagent）产出 deploy-spec + changelog（独立分支单 PR）**。输入要点：交付形态三线（Web App editor+relay / npm 包多 package / MCP server+CLI）、CI 既有 ci.yml 全绿基线、relay 依赖 docker redis、真实环境 E2E backlog（T-124~127 部署后环境可达时闭环）、T-033 云凭据集成测试需部署侧凭据管理。deploy-spec 产出后走 doc-review 门禁；检查点 [pre_dev] 已过、pre_deploy 不在本项目集合，doc-review approved 后即可进 post 阶段（reflector RETRO）。upstream 反馈打包（finalize 越权×3/reconcile 校准/doc-consistency 假阳性三件套）建议在 RETRO 阶段随 framework-feedback 一并提交。节奏：单卡一 PR、串行合并。
+- 已完成阶段: [requirements, architecture, ui_design, dev_planning, cross_doc_amendment_r2, arch_special_review_css_inlining, dev_plan_amendment_custom_styles, development, testing]
 - 当前Sprint: 无（development 阶段已收口，Sprint 0-6 全部 DONE 合 main：Sprint 0-5 = PR #1~#31，Sprint 6 = PR #32~#70 + 残差 #71/#72；逐 sprint/逐卡历史见各 dev-plan、EVENT-LOG、docs/reviews/sprint/ 与 PR 记录，不在本状态区复述）。
 - 待办(deferred)（仅列 open 项；已解决项见 git/PR 历史）:
   - **T-131 残差（conditional_release → backlog；B1 已收口 [PR #71](https://github.com/lync-cyber/wechat-flow/pull/71)，B2 已收口 [PR #72](https://github.com/lync-cyber/wechat-flow/pull/72)）**: [C] 14 交互触发组件（palette/menu/toast/modal/drawer/popover/dialog）design-overlay static 未捕获 → spec 增 data-testid 元素定位 + 交互驱动截图（设计板已 sign-off、实现各卡已验证，属 overlay 方法增强）。owner=developer。
@@ -51,7 +51,7 @@
   - arch: approved
   - ui-spec: approved
   - dev-plan: approved
-  - test-report: r1 approved（doc-review approved_with_notes 已接受）；**verdict=needs_revision**（DEFECT-001 修复+qa 复验后升级）
+  - test-report: approved（v1.1.0，verdict=approved，r1→r2 全程见 docs/reviews/doc/ 与 EVENT-LOG）
   - deploy-spec: 未开始
   <!-- changelog 由 devops 产出但不纳入门禁追踪 -->
 - Learnings Registry: (compacted; archive in .cataforge/learnings/registry-archive.md)

@@ -629,3 +629,9 @@
 {"event": "user_decision", "phase": "testing", "detail": "orchestrator（autonomous）按 Approved-with-Notes Protocol 选项 1 接受并继续：2×LOW 保留审查报告备查；test-report 文档 status=approved；缺陷修复进入 Revision 循环（DEFECT-001 debug 闭环 → qa 复验）", "ts": "2026-07-02T07:31:30+00:00"}
 {"ts": "2026-07-02T07:44:39+00:00", "event": "tdd_phase", "phase": "testing", "detail": "TDD LIGHT-DISPATCH: DEFECT-001 图床 ≤2.5MB 压缩循环（T-033/F-006 AC-002b）"}
 {"ts": "2026-07-02T08:24:23+00:00", "event": "agent_dispatch", "phase": "testing", "detail": "task_type=amendment: P-002 状态表补 error 态定义（DEFECT-002 upstream 规范缺口，test-report §7.2）", "agent": "ui-designer"}
+{"ts": "2026-07-02T09:15:01+00:00", "event": "agent_dispatch", "phase": "testing", "detail": "qa 定向复验（test-report §7.4）：DEFECT-001/002 修复核实 → test-report r2 verdict 升级", "agent": "qa-engineer"}
+{"ts": "2026-07-02T09:35:55+00:00", "event": "review_verdict", "phase": "testing", "detail": "test-report r2（v1.1.0）复验 verdict=approved：DEFECT-001（PR #75）/DEFECT-002（PR #76）修复核证，定向复验 933 用例 0 失败，E2E 真实性证据复确认（security 2/2 重跑）", "agent": "qa-engineer", "status": "approved"}
+{"event": "state_change", "phase": "testing", "detail": "Phase 6→7 转换守门：validate 净；reconcile 248 divergences 维持既定 WARN 处置（图侧富集 ghost_relations 类，见 Phase 5→6 转换裁决与 upstream 反馈项）；doc-consistency 1 HIGH+4 MEDIUM 与 r1 完全相同、已被 test-report v1.1.0 §8 证据链裁决为检查器假阳性，降级 WARN", "ts": "2026-07-02T09:37:30+00:00"}
+{"event": "phase_end", "phase": "testing", "status": "approved", "detail": "test-report v1.1.0 verdict=approved（r1 needs_revision → DEFECT-001/002 修复 PR #75/#76 → r2 定向复验 933 用例 0 失败）；doc-review approved_with_notes 已接受", "ts": "2026-07-02T09:37:30+00:00"}
+{"event": "state_change", "phase": "deployment", "detail": "CLAUDE.md 阶段更新: testing → deployment", "ts": "2026-07-02T09:37:30+00:00"}
+{"event": "phase_start", "phase": "deployment", "detail": "进入 Phase 7 deployment 阶段，派发 devops 产出 deploy-spec + changelog", "ts": "2026-07-02T09:37:30+00:00"}
