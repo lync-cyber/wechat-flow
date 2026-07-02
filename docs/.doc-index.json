@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-02T08:31:23.193780+00:00",
+  "generated_at": "2026-07-02T09:38:12.649237+00:00",
   "documents": {
     "arch-wechat-flow-api": {
       "file_path": "docs/arch/arch-wechat-flow-api.md",
@@ -3395,7 +3395,7 @@
         "test-report-wechat-flow"
       ],
       "dep_hashes": {
-        "test-report-wechat-flow": "124d6843"
+        "test-report-wechat-flow": "46047a0b"
       }
     },
     "review-ui-spec-wechat-flow-r1": {
@@ -4014,9 +4014,9 @@
       "doc_type": "test-report",
       "volume": "main",
       "status": "approved",
-      "total_lines": 190,
-      "est_tokens": 4505,
-      "content_hash": "124d6843",
+      "total_lines": 199,
+      "est_tokens": 5424,
+      "content_hash": "46047a0b",
       "sections": {
         "1": {
           "heading": "## 1. 测试策略",
@@ -4072,50 +4072,50 @@
         "5": {
           "heading": "## 5. 测试执行结果",
           "line_start": 93,
-          "line_end": 115,
-          "est_tokens": 426,
+          "line_end": 120,
+          "est_tokens": 978,
           "deps": [],
           "level": 2,
           "items": {
             "5.1": {
-              "heading": "### 5.1 执行汇总",
-              "line_start": 111,
-              "line_end": 115,
-              "est_tokens": 51,
+              "heading": "### 5.1 执行汇总（r2 复验后）",
+              "line_start": 115,
+              "line_end": 120,
+              "est_tokens": 132,
               "deps": []
             }
           }
         },
         "6": {
           "heading": "## 6. 缺陷清单",
-          "line_start": 116,
-          "line_end": 124,
-          "est_tokens": 408,
+          "line_start": 121,
+          "line_end": 129,
+          "est_tokens": 656,
           "deps": [],
           "level": 2,
           "items": {}
         },
         "7": {
           "heading": "## 7. 结论与建议",
-          "line_start": 125,
-          "line_end": 138,
-          "est_tokens": 354,
+          "line_start": 130,
+          "line_end": 147,
+          "est_tokens": 473,
           "deps": [],
           "level": 2,
           "items": {}
         },
         "8": {
           "heading": "## 8. doc-consistency 裁决清单",
-          "line_start": 139,
-          "line_end": 170,
+          "line_start": 148,
+          "line_end": 179,
           "est_tokens": 1073,
           "deps": [],
           "level": 2,
           "items": {
             "8": {
               "heading": "### 8-3 / 8-4. MEDIUM [orphaned-component]: UC-015/UC-016/UC-023 未被任何页面引用；MEDIUM [entity-propagation]: ARCH E-001,E-002,E-003,E-004,E-006 未在 DEV-PLAN 任务中引用",
-              "line_start": 162,
-              "line_end": 170,
+              "line_start": 171,
+              "line_end": 179,
               "est_tokens": 435,
               "deps": []
             }
@@ -4123,8 +4123,8 @@
         },
         "9": {
           "heading": "## 9. 盲区登记",
-          "line_start": 171,
-          "line_end": 190,
+          "line_start": 180,
+          "line_end": 199,
           "est_tokens": 693,
           "deps": [],
           "level": 2,
