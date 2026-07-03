@@ -13,6 +13,20 @@ function makeElement(tagName: string, properties: Properties, children: Element[
   return { type: "element", tagName, properties, children };
 }
 
+// Route input through the production parser so hast property keys are camelCased by
+// property-information (aria-hidden → ariaHidden, data-foo → dataFoo) exactly as they are
+// in the real pipeline. Attribute-name rules must be exercised against parsed HTML, never
+// hand-built kebab-case hast nodes — the latter bypass normalization and mask no-op matchers.
+async function runRule(ruleId: string, inputHtml: string): Promise<string> {
+  const { fromHtml } = await import("hast-util-from-html");
+  const { toHtml } = await import("hast-util-to-html");
+  const mod = await import(`../../packages/ruleset/src/rules/builtin/${ruleId}.ts`);
+  const rule: RuleDefinition = mod.default;
+  const hast = fromHtml(inputHtml, { fragment: true }) as unknown as Root;
+  const result = applyRuleset(hast, [rule]);
+  return toHtml(result.hast).trim();
+}
+
 // ── AC-002 shape checks for new strip rules ──────────────────────────────────
 
 describe("T-056 AC-002: new strip rules have required shape fields", () => {
@@ -43,51 +57,47 @@ describe("T-056 AC-002: new strip rules have required shape fields", () => {
 
 describe("T-056 AC-003: strip-data-attr removes all data-* attributes", () => {
   it("removes data-id and data-value attributes, preserves class and style", async () => {
-    const mod = await import("../../packages/ruleset/src/rules/builtin/strip-data-attr.ts");
-    const rule: RuleDefinition = mod.default;
+    const out = await runRule(
+      "strip-data-attr",
+      `<div data-id="123" data-value="abc" class="box" style="color:red">Box</div>`
+    );
 
-    const el = makeElement("div", {
-      "data-id": "123",
-      "data-value": "abc",
-      class: "box",
-      style: "color:red",
-    });
-    const hast = makeHast([el]);
-
-    const result = applyRuleset(hast, [rule]);
-    const div = (result.hast as Root).children[0] as Element;
-
-    expect(div.properties).not.toHaveProperty("data-id");
-    expect(div.properties).not.toHaveProperty("data-value");
-    expect(div.properties).toHaveProperty("class", "box");
-    expect(div.properties).toHaveProperty("style", "color:red");
+    expect(out).not.toContain("data-id");
+    expect(out).not.toContain("data-value");
+    expect(out).toContain(`class="box"`);
+    expect(out).toContain(`style="color:red"`);
   });
 
   it("does not match an element with no data-* attributes", async () => {
-    const mod = await import("../../packages/ruleset/src/rules/builtin/strip-data-attr.ts");
-    const rule: RuleDefinition = mod.default;
+    const out = await runRule(
+      "strip-data-attr",
+      `<span class="label" style="font-size:14px">Y</span>`
+    );
 
-    const el = makeElement("span", { class: "label", style: "font-size:14px" });
-    const hast = makeHast([el]);
-
-    const result = applyRuleset(hast, [rule]);
-    const span = (result.hast as Root).children[0] as Element;
-
-    expect(span.properties).toHaveProperty("class", "label");
-    expect(span.properties).toHaveProperty("style", "font-size:14px");
+    expect(out).toContain(`class="label"`);
+    expect(out).toContain(`style="font-size:14px"`);
   });
 
-  it("handles element with only data-* attributes — properties object becomes empty", async () => {
-    const mod = await import("../../packages/ruleset/src/rules/builtin/strip-data-attr.ts");
-    const rule: RuleDefinition = mod.default;
+  it("strips every data-* attribute when the element has only data-* attributes", async () => {
+    const out = await runRule(
+      "strip-data-attr",
+      `<section data-track="click" data-section="hero">Z</section>`
+    );
 
-    const el = makeElement("section", { "data-track": "click", "data-section": "hero" });
-    const hast = makeHast([el]);
+    expect(out).not.toContain("data-");
+    expect(out).toBe("<section>Z</section>");
+  });
 
-    const result = applyRuleset(hast, [rule]);
-    const section = (result.hast as Root).children[0] as Element;
+  it("preserves pipeline-semantic data-block/data-variant/data-slot, strips the rest", async () => {
+    const out = await runRule(
+      "strip-data-attr",
+      `<div data-block="hero" data-variant="a" data-slot="s" data-foo="x">Box</div>`
+    );
 
-    expect(Object.keys(section.properties).filter((k) => k.startsWith("data-"))).toHaveLength(0);
+    expect(out).toContain(`data-block="hero"`);
+    expect(out).toContain(`data-variant="a"`);
+    expect(out).toContain(`data-slot="s"`);
+    expect(out).not.toContain("data-foo");
   });
 });
 
@@ -95,46 +105,34 @@ describe("T-056 AC-003: strip-data-attr removes all data-* attributes", () => {
 
 describe("T-056 AC-003: strip-aria-hidden removes aria-hidden attribute", () => {
   it("removes aria-hidden attribute and preserves other attributes", async () => {
-    const mod = await import("../../packages/ruleset/src/rules/builtin/strip-aria-hidden.ts");
-    const rule: RuleDefinition = mod.default;
+    const out = await runRule(
+      "strip-aria-hidden",
+      `<span aria-hidden="true" class="icon" role="presentation">Icon</span>`
+    );
 
-    const el = makeElement("span", { "aria-hidden": "true", class: "icon", role: "presentation" });
-    const hast = makeHast([el]);
-
-    const result = applyRuleset(hast, [rule]);
-    const span = (result.hast as Root).children[0] as Element;
-
-    expect(span.properties).not.toHaveProperty("aria-hidden");
-    expect(span.properties).toHaveProperty("class", "icon");
-    expect(span.properties).toHaveProperty("role", "presentation");
+    expect(out).not.toContain("aria-hidden");
+    expect(out).toContain(`class="icon"`);
+    expect(out).toContain(`role="presentation"`);
   });
 
   it("does not match an element without aria-hidden", async () => {
-    const mod = await import("../../packages/ruleset/src/rules/builtin/strip-aria-hidden.ts");
-    const rule: RuleDefinition = mod.default;
+    const out = await runRule(
+      "strip-aria-hidden",
+      `<div class="container" style="display:block">Y</div>`
+    );
 
-    const el = makeElement("div", { class: "container", style: "display:block" });
-    const hast = makeHast([el]);
-
-    const result = applyRuleset(hast, [rule]);
-    const div = (result.hast as Root).children[0] as Element;
-
-    expect(div.properties).toHaveProperty("class", "container");
-    expect(div.properties).toHaveProperty("style", "display:block");
+    expect(out).toContain(`class="container"`);
+    expect(out).toContain(`style="display:block"`);
   });
 
   it("removes aria-hidden=false as well (attribute presence triggers rule regardless of value)", async () => {
-    const mod = await import("../../packages/ruleset/src/rules/builtin/strip-aria-hidden.ts");
-    const rule: RuleDefinition = mod.default;
+    const out = await runRule(
+      "strip-aria-hidden",
+      `<button aria-hidden="false" type="button">Z</button>`
+    );
 
-    const el = makeElement("button", { "aria-hidden": "false", type: "button" });
-    const hast = makeHast([el]);
-
-    const result = applyRuleset(hast, [rule]);
-    const btn = (result.hast as Root).children[0] as Element;
-
-    expect(btn.properties).not.toHaveProperty("aria-hidden");
-    expect(btn.properties).toHaveProperty("type", "button");
+    expect(out).not.toContain("aria-hidden");
+    expect(out).toContain(`type="button"`);
   });
 });
 
@@ -329,10 +327,8 @@ describe("T-056 AC-003: strip-calc-expression removes CSS declarations containin
 
   it("returns node unchanged when style attribute is absent", async () => {
     const mod = await import("../../packages/ruleset/src/rules/builtin/strip-calc-expression.ts");
-    const rule: RuleDefinition = mod.default;
 
     const el = makeElement("div", { id: "no-style" });
-    const hast = makeHast([el]);
 
     // strip-calc-expression matcher should not fire (no style)
     const matched = (mod.default as RuleDefinition).matcher(el);
