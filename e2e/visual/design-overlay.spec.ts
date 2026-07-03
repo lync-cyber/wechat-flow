@@ -1,6 +1,6 @@
 import { mkdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { expect, test } from "@playwright/test";
+import { type Page, expect, test } from "@playwright/test";
 
 const OUT = fileURLToPath(new URL("./design-overlay-output", import.meta.url));
 
@@ -19,18 +19,163 @@ const PAGES: PageTarget[] = [
   { id: "P-005", route: "/preview/demo", viewport: { width: 375, height: 812 } },
 ];
 
-// UC 组件多为编辑器内嵌子组件，无独立路由：优先按 data-testid 截元素，缺失时退化为宿主页面整页
-// （ui-spec [ASSUMPTION] 允许的页面裁剪来源）。UC-022 位于主题市场，其余以编辑器主页为宿主。
-interface ComponentTarget {
+// 静态组件：selector 映射到实现的真实标识，多实例组件截第一个实例。
+// UC-007/UC-022 的宿主给实例传动态 data-testid（fallthrough 覆盖根静态值），用前缀匹配。
+interface StaticTarget {
   id: string;
   route: string;
-  testid: string;
+  selector: string;
+  prepare?: (page: Page) => Promise<void>;
 }
 
-const COMPONENTS: ComponentTarget[] = Array.from({ length: 23 }, (_, i) => {
-  const id = `UC-${String(i + 1).padStart(3, "0")}`;
-  return { id, route: id === "UC-022" ? "/themes" : "/", testid: id };
-});
+const STATIC_COMPONENTS: StaticTarget[] = [
+  { id: "UC-001", route: "/", selector: '[data-testid="top-bar"]' },
+  { id: "UC-002", route: "/", selector: '[data-testid="left-splitter"]' },
+  { id: "UC-003", route: "/", selector: '[data-testid="top-bar-toolbar"]' },
+  { id: "UC-004", route: "/", selector: '[data-testid="source-pane"]' },
+  { id: "UC-005", route: "/", selector: '[data-testid="preview-pane"]' },
+  { id: "UC-006", route: "/", selector: '[data-testid="left-panel"]' },
+  { id: "UC-007", route: "/", selector: '[data-testid^="theme-card-"]' },
+  {
+    id: "UC-008",
+    route: "/",
+    selector: '[data-testid="block-lib-item"]',
+    prepare: async (page) => {
+      await page.getByTestId("tab-components").click();
+    },
+  },
+  { id: "UC-022", route: "/themes", selector: '[data-testid^="template-theme-card-"]' },
+  { id: "UC-023", route: "/", selector: '[data-testid="status-bar-root"]' },
+];
+
+async function gotoEditor(page: Page): Promise<void> {
+  await page.goto("/");
+  await page.waitForLoadState("networkidle", { timeout: 3000 }).catch(() => {});
+  await expect(page.getByTestId("source-pane")).toBeVisible();
+}
+
+async function openMoreMenu(page: Page): Promise<void> {
+  await page.getByTestId("top-bar-more-btn").click();
+  await expect(page.getByTestId("context-menu")).toBeVisible();
+}
+
+async function typeInEditor(page: Page, text: string): Promise<void> {
+  const editor = page.locator('[data-testid="source-pane-editor"] .cm-content');
+  await editor.click();
+  await page.keyboard.press("Control+A");
+  await page.keyboard.press("Delete");
+  await page.keyboard.type(text, { delay: 5 });
+}
+
+// 交互触发组件：先执行触发交互，组件可见后截组件本体。
+// UC-012（通用 Modal）与 UC-020（BaseColorDeriveModal）在实现侧是 placeholder 命令
+// （command-registry `run: () => {}`），无组件实体可触发 —— 不生成截图，
+// overlay 报告如实显示「未生成」，差异交由人工视觉 sign-off 裁决。
+interface InteractiveTarget {
+  id: string;
+  selector: string;
+  trigger: (page: Page) => Promise<void>;
+}
+
+const INTERACTIVE_COMPONENTS: InteractiveTarget[] = [
+  {
+    id: "UC-009",
+    selector: '[data-testid="command-palette"]',
+    trigger: async (page) => {
+      await page.keyboard.press("Control+k");
+    },
+  },
+  {
+    // DropdownMenu 在实现中的唯一实例是 ContextMenu（fallthrough testid=context-menu）
+    id: "UC-010",
+    selector: '[data-testid="context-menu"]',
+    trigger: openMoreMenu,
+  },
+  {
+    // toast testid 按类型后缀（toast-success/-error），前缀匹配
+    id: "UC-011",
+    selector: '[data-testid^="toast-"]',
+    trigger: async (page) => {
+      await page.getByRole("button", { name: "复制到公众号" }).click();
+    },
+  },
+  {
+    // 设计帧为展开态且带诊断条目。空列表零高度会被判 hidden，需真实条目撑开：
+    // 违禁词文本 + 「检测违规词」命令（该命令强制展开面板）。
+    id: "UC-013",
+    selector: '[data-testid="diagnostics-panel"]',
+    trigger: async (page) => {
+      await typeInEditor(page, "全网最低价，国家级第一品牌，绝对正品。");
+      // 等防抖渲染管线落地（预览出现文本 = store.content 已更新），lint 才不会跑在空内容上
+      const preview = page.frameLocator('[data-testid="preview-iframe"]');
+      await expect(preview.locator("body")).toContainText("国家级", { timeout: 10000 });
+      await openMoreMenu(page);
+      await page.getByTestId("menu-item-content-keyword-lint").click();
+      await expect(page.getByTestId("context-menu")).toBeHidden();
+      await expect(page.getByTestId("diagnostics-list")).toBeVisible({ timeout: 10000 });
+    },
+  },
+  {
+    // 设计帧为整个导出面板卡片（标题 + 进度条 + 文案），截 panel 而非裸进度条
+    id: "UC-014",
+    selector: '[data-testid="export-job-panel"]',
+    trigger: async (page) => {
+      await page.keyboard.press("Control+k");
+      await page.locator('[data-testid="command-palette"] input').fill("导出长图");
+      await page.keyboard.press("Enter");
+    },
+  },
+  {
+    id: "UC-015",
+    selector: '[data-testid="insert-drawer"]',
+    trigger: async (page) => {
+      await page.getByTestId("top-bar-insert-btn").click();
+    },
+  },
+  {
+    id: "UC-016",
+    selector: '[data-testid="context-menu"]',
+    trigger: openMoreMenu,
+  },
+  {
+    // testid 在全屏 backdrop 上；设计帧为 modal panel 本体，截内层 panel
+    id: "UC-017",
+    selector: '[data-testid="zh-typo-preview-modal"] .zh-typo-modal__panel',
+    trigger: async (page) => {
+      await typeInEditor(page, "中文English混排,标点.");
+      await openMoreMenu(page);
+      await page.getByTestId("menu-item-content-zh-typo").click();
+    },
+  },
+  {
+    // SourcePane @dragenter 且 dataTransfer.types 含 Files 时显示 overlay
+    id: "UC-018",
+    selector: '[data-testid="image-upload-overlay"]',
+    trigger: async (page) => {
+      const dataTransfer = await page.evaluateHandle(() => {
+        const dt = new DataTransfer();
+        dt.items.add(new File([new Uint8Array(8)], "probe.png", { type: "image/png" }));
+        return dt;
+      });
+      await page.dispatchEvent('[data-testid="source-pane"]', "dragenter", { dataTransfer });
+    },
+  },
+  {
+    id: "UC-019",
+    selector: '[data-testid="paint-drawer"]',
+    trigger: async (page) => {
+      await openMoreMenu(page);
+      await page.getByTestId("menu-item-settings-paint").click();
+    },
+  },
+  {
+    id: "UC-021",
+    selector: '[data-testid="directive-autocomplete-popover"]',
+    trigger: async (page) => {
+      await typeInEditor(page, ":::");
+    },
+  },
+];
 
 test.describe("design-overlay: 前端 SPA 截图", () => {
   test.beforeAll(() => {
@@ -53,15 +198,25 @@ test.describe("design-overlay: 前端 SPA 截图", () => {
     });
   }
 
-  for (const c of COMPONENTS) {
+  for (const c of STATIC_COMPONENTS) {
     test(`component ${c.id}`, async ({ page }) => {
       await page.goto(c.route);
       await page.waitForLoadState("networkidle", { timeout: 3000 }).catch(() => {});
-      const el = page.locator(`[data-testid="${c.testid}"]`).first();
-      const useEl = (await el.count()) > 0;
-      const buf = useEl
-        ? await el.screenshot({ path: `${OUT}/components/${c.id}.png` })
-        : await page.screenshot({ path: `${OUT}/components/${c.id}.png`, fullPage: true });
+      await c.prepare?.(page);
+      const el = page.locator(c.selector).first();
+      await expect(el).toBeVisible({ timeout: 10000 });
+      const buf = await el.screenshot({ path: `${OUT}/components/${c.id}.png` });
+      expect(buf.byteLength).toBeGreaterThan(0);
+    });
+  }
+
+  for (const c of INTERACTIVE_COMPONENTS) {
+    test(`component ${c.id} (interactive)`, async ({ page }) => {
+      await gotoEditor(page);
+      await c.trigger(page);
+      const el = page.locator(c.selector).first();
+      await expect(el).toBeVisible({ timeout: 10000 });
+      const buf = await el.screenshot({ path: `${OUT}/components/${c.id}.png` });
       expect(buf.byteLength).toBeGreaterThan(0);
     });
   }
