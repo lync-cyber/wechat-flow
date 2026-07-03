@@ -26,6 +26,7 @@ const clampLineHeight: RuleDefinition = {
       properties: { ...el.properties, style: serializeDeclarations(updated) },
     } as unknown as Node;
   },
+  fixture: "rules/builtin/clamp-line-height",
 };
 
 export default clampLineHeight;

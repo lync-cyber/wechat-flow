@@ -1,0 +1,10 @@
+{
+  "ruleId": "transform-rem-to-px",
+  "scope": "transform",
+  "priority": 70,
+  "description": "Convert rem units to px (1rem = 16px) — rem units resolve inconsistently in the WeChat article renderer",
+  "wechatVersion": {
+    "minSupported": "7.0.0",
+    "knownBuggy": []
+  }
+}

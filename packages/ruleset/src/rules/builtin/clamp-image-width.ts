@@ -37,6 +37,7 @@ const clampImageWidth: RuleDefinition = {
       properties: { ...el.properties, style: serializeDeclarations(updated) },
     } as unknown as Node;
   },
+  fixture: "rules/builtin/clamp-image-width",
 };
 
 export default clampImageWidth;

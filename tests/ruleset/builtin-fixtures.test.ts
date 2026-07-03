@@ -1,4 +1,4 @@
-import { readFile, readdir } from "node:fs/promises";
+import { readFile, readdir, stat } from "node:fs/promises";
 import { join } from "node:path";
 import type { Root } from "hast";
 import { describe, expect, it } from "vitest";
@@ -18,12 +18,24 @@ interface FixtureMetadata {
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 
-const FIXTURES_DIR = join(import.meta.dirname, "../ruleset-fixtures");
 const BUILTIN_DIR = join(import.meta.dirname, "../../packages/ruleset/src/rules/builtin");
+const NON_RULE_FILES = new Set(["index.ts", "css-helpers.ts"]);
 
-async function loadFixtureDirs(): Promise<string[]> {
-  const entries = await readdir(FIXTURES_DIR, { withFileTypes: true });
-  return entries.filter((e) => e.isDirectory()).map((e) => e.name);
+async function loadBuiltinRuleIds(): Promise<string[]> {
+  const entries = await readdir(BUILTIN_DIR, { withFileTypes: true });
+  return entries
+    .filter((e) => e.isFile() && e.name.endsWith(".ts") && !NON_RULE_FILES.has(e.name))
+    .map((e) => e.name.replace(/\.ts$/, ""))
+    .sort();
+}
+
+async function dirExists(path: string): Promise<boolean> {
+  try {
+    const s = await stat(path);
+    return s.isDirectory();
+  } catch {
+    return false;
+  }
 }
 
 async function normalizeHtml(html: string): Promise<string> {
@@ -35,18 +47,18 @@ async function normalizeHtml(html: string): Promise<string> {
 
 // ── fixture runner ────────────────────────────────────────────────────────────
 
-describe("T-014 AC-005 + T-015 AC-005: builtin fixture suite (all scopes)", async () => {
-  const fixtureDirs = await loadFixtureDirs().catch(() => [] as string[]);
+describe("T-014 AC-005 + T-015 AC-005 + SR-003: builtin fixture suite (all 42 rules)", async () => {
+  const ruleIds = await loadBuiltinRuleIds().catch(() => [] as string[]);
 
-  if (fixtureDirs.length === 0) {
-    it("fixture directories exist under tests/ruleset-fixtures/", () => {
-      expect(fixtureDirs.length).toBeGreaterThan(0);
+  if (ruleIds.length === 0) {
+    it("builtin rule files exist under packages/ruleset/src/rules/builtin/", () => {
+      expect(ruleIds.length).toBeGreaterThan(0);
     });
     return;
   }
 
-  for (const ruleId of fixtureDirs) {
-    const fixtureDir = join(FIXTURES_DIR, ruleId);
+  for (const ruleId of ruleIds) {
+    const fixtureDir = join(BUILTIN_DIR, ruleId);
 
     it(`fixture[${ruleId}]: applies rule and output matches expected.html`, async () => {
       const metadataRaw = await readFile(join(fixtureDir, "metadata.json"), "utf-8");
@@ -89,6 +101,55 @@ describe("T-014 AC-005 + T-015 AC-005: builtin fixture suite (all scopes)", asyn
         const normalizedExpected = await normalizeHtml(expectedHtml);
         expect(actualHtml).toBe(normalizedExpected);
       }
+    });
+  }
+});
+
+// ── drift guard ───────────────────────────────────────────────────────────────
+// arch#§2.M-003: every registered builtin rule must ship a fixture directory
+// co-located with its definition, with a complete three-piece set and metadata
+// that matches the rule it documents.
+
+describe("SR-003: fixture drift guard — every builtin rule has a complete co-located fixture", async () => {
+  const ruleIds = await loadBuiltinRuleIds().catch(() => [] as string[]);
+
+  it("discovers at least 42 builtin rules", () => {
+    expect(ruleIds.length).toBeGreaterThanOrEqual(42);
+  });
+
+  for (const ruleId of ruleIds) {
+    describe(`rule[${ruleId}]`, () => {
+      const fixtureDir = join(BUILTIN_DIR, ruleId);
+
+      it("has a fixture directory co-located under rules/builtin/{rule-id}/", async () => {
+        expect(await dirExists(fixtureDir)).toBe(true);
+      });
+
+      it("has input.html, expected.html, and metadata.json", async () => {
+        for (const file of ["input.html", "expected.html", "metadata.json"]) {
+          await expect(readFile(join(fixtureDir, file), "utf-8")).resolves.not.toHaveLength(0);
+        }
+      });
+
+      it("declares a fixture field on RuleDefinition referencing rules/builtin/{rule-id}", async () => {
+        const mod = await import(`${BUILTIN_DIR}/${ruleId}.ts`);
+        const rule: RuleDefinition = mod.default;
+        expect(rule.fixture).toBe(`rules/builtin/${ruleId}`);
+      });
+
+      it("metadata.json has ruleId matching the fixture directory name and required schema fields", async () => {
+        const metadataRaw = await readFile(join(fixtureDir, "metadata.json"), "utf-8");
+        const metadata: FixtureMetadata = JSON.parse(metadataRaw);
+
+        expect(metadata.ruleId).toBe(ruleId);
+        expect(typeof metadata.scope).toBe("string");
+        expect(typeof metadata.priority).toBe("number");
+        expect(typeof metadata.description).toBe("string");
+        expect(metadata.description.length).toBeGreaterThan(0);
+        expect(metadata.wechatVersion).toBeDefined();
+        expect(typeof metadata.wechatVersion?.minSupported).toBe("string");
+        expect(Array.isArray(metadata.wechatVersion?.knownBuggy)).toBe(true);
+      });
     });
   }
 });

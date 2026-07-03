@@ -32,6 +32,7 @@ const patchFlexToBlock: RuleDefinition = {
       properties: { ...el.properties, style: serializeDeclarations(updated) },
     } as unknown as Node;
   },
+  fixture: "rules/builtin/patch-flex-to-block",
 };
 
 export default patchFlexToBlock;

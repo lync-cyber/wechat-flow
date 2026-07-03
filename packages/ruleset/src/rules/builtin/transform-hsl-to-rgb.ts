@@ -48,6 +48,7 @@ const transformHslToRgb: RuleDefinition = {
       properties: { ...el.properties, style: serializeDeclarations(updated) },
     } as unknown as Node;
   },
+  fixture: "rules/builtin/transform-hsl-to-rgb",
 };
 
 export default transformHslToRgb;

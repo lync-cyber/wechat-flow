@@ -30,6 +30,7 @@ const transformVwToPercent: RuleDefinition = {
       properties: { ...el.properties, style: serializeDeclarations(updated) },
     } as unknown as Node;
   },
+  fixture: "rules/builtin/transform-vw-to-percent",
 };
 
 export default transformVwToPercent;

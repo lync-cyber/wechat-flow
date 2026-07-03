@@ -20,6 +20,7 @@ const stripJsEvents: RuleDefinition = {
   priority: 100,
   matcher: hasEventHandlers,
   transform: removeEventHandlers,
+  fixture: "rules/builtin/strip-js-events",
 };
 
 export default stripJsEvents;

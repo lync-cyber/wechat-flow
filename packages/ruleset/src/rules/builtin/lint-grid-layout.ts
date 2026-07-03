@@ -30,6 +30,7 @@ const lintGridLayout: RuleDefinition = {
       },
     ];
   },
+  fixture: "rules/builtin/lint-grid-layout",
 };
 
 export default lintGridLayout;

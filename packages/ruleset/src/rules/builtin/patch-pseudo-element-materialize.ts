@@ -30,6 +30,7 @@ const patchPseudoElementMaterialize: RuleDefinition = {
       },
     ];
   },
+  fixture: "rules/builtin/patch-pseudo-element-materialize",
 };
 
 export default patchPseudoElementMaterialize;

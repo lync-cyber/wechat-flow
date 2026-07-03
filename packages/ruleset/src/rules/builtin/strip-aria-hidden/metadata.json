@@ -1,0 +1,10 @@
+{
+  "ruleId": "strip-aria-hidden",
+  "scope": "strip",
+  "priority": 85,
+  "description": "Remove the aria-hidden attribute — accessibility attributes are not processed by the WeChat article renderer and are stripped as dead weight",
+  "wechatVersion": {
+    "minSupported": "7.0.0",
+    "knownBuggy": []
+  }
+}

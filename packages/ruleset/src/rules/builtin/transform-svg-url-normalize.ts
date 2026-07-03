@@ -50,6 +50,7 @@ const transformSvgUrlNormalize: RuleDefinition = {
   priority: 60,
   matcher: isInsideSvg,
   transform: (node: Node): Node => normalizeNode(node),
+  fixture: "rules/builtin/transform-svg-url-normalize",
 };
 
 export default transformSvgUrlNormalize;

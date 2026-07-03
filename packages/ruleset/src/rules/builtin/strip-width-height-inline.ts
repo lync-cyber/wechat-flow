@@ -9,6 +9,7 @@ const stripWidthHeightInline: RuleDefinition = {
   priority: 85,
   matcher: (node) => hasStyleProp(node, PROPS),
   transform: (node) => removeCssDeclarations(node, PROPS),
+  fixture: "rules/builtin/strip-width-height-inline",
 };
 
 export default stripWidthHeightInline;

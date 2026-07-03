@@ -7,6 +7,7 @@ const clampTextIndent: RuleDefinition = {
   priority: 80,
   matcher: (node) => hasStyleProp(node, ["text-indent"]),
   transform: (node) => clampPxProp(node, ["text-indent"], 0, 64),
+  fixture: "rules/builtin/clamp-text-indent",
 };
 
 export default clampTextIndent;

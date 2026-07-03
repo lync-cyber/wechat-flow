@@ -1,0 +1,10 @@
+{
+  "ruleId": "clamp-word-spacing",
+  "scope": "clamp",
+  "priority": 80,
+  "description": "Clamp word-spacing to the range [0px, 8px] — values outside this range break word grouping in WeChat article rendering",
+  "wechatVersion": {
+    "minSupported": "7.0.0",
+    "knownBuggy": []
+  }
+}

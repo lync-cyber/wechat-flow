@@ -1,0 +1,10 @@
+{
+  "ruleId": "clamp-padding",
+  "scope": "clamp",
+  "priority": 80,
+  "description": "Clamp padding to the range [0px, 48px] — values outside this range cause layout overflow in WeChat article rendering",
+  "wechatVersion": {
+    "minSupported": "7.0.0",
+    "knownBuggy": []
+  }
+}

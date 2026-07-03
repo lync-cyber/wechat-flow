@@ -7,6 +7,7 @@ const clampPadding: RuleDefinition = {
   priority: 80,
   matcher: (node) => hasStyleProp(node, ["padding"]),
   transform: (node) => clampPxProp(node, ["padding"], 0, 48),
+  fixture: "rules/builtin/clamp-padding",
 };
 
 export default clampPadding;

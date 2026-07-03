@@ -44,6 +44,7 @@ const stripCssVar: RuleDefinition = {
   priority: 90,
   matcher: hasCssVars,
   transform: expandCssVars,
+  fixture: "rules/builtin/strip-css-var",
 };
 
 export default stripCssVar;

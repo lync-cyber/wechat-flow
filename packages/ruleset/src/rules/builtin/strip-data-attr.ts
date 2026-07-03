@@ -20,6 +20,7 @@ const stripDataAttr: RuleDefinition = {
     );
     return { ...el, properties: cleaned } as unknown as Node;
   },
+  fixture: "rules/builtin/strip-data-attr",
 };
 
 export default stripDataAttr;

@@ -7,6 +7,7 @@ const clampFontSize: RuleDefinition = {
   priority: 80,
   matcher: (node) => hasStyleProp(node, ["font-size"]),
   transform: (node) => clampPxProp(node, ["font-size"], 14, 32),
+  fixture: "rules/builtin/clamp-font-size",
 };
 
 export default clampFontSize;

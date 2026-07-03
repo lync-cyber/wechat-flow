@@ -7,6 +7,7 @@ const clampBorderRadius: RuleDefinition = {
   priority: 80,
   matcher: (node) => hasStyleProp(node, ["border-radius"]),
   transform: (node) => clampPxProp(node, ["border-radius"], 0, 24),
+  fixture: "rules/builtin/clamp-border-radius",
 };
 
 export default clampBorderRadius;

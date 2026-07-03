@@ -24,6 +24,7 @@ const transformDataUriUnquote: RuleDefinition = {
     const newStyle = unquoteDataUrisInStyle(style);
     return { ...el, properties: { ...el.properties, style: newStyle } } as unknown as Node;
   },
+  fixture: "rules/builtin/transform-data-uri-unquote",
 };
 
 export default transformDataUriUnquote;

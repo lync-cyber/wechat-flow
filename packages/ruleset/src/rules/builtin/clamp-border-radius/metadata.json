@@ -1,0 +1,10 @@
+{
+  "ruleId": "clamp-border-radius",
+  "scope": "clamp",
+  "priority": 80,
+  "description": "Clamp border-radius to the range [0px, 24px] — values outside this range render inconsistently in WeChat article layout",
+  "wechatVersion": {
+    "minSupported": "7.0.0",
+    "knownBuggy": []
+  }
+}

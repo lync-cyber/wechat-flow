@@ -15,6 +15,7 @@ const stripAriaHidden: RuleDefinition = {
     const { "aria-hidden": _removed, ...rest } = el.properties;
     return { ...el, properties: rest } as unknown as Node;
   },
+  fixture: "rules/builtin/strip-aria-hidden",
 };
 
 export default stripAriaHidden;

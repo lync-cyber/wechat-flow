@@ -20,6 +20,7 @@ const lintFilterBackdrop: RuleDefinition = {
       },
     ];
   },
+  fixture: "rules/builtin/lint-filter-backdrop",
 };
 
 export default lintFilterBackdrop;
