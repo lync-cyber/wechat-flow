@@ -16,6 +16,7 @@ export function registerTheme(definition: ThemeDefinition): void {
     defineTemplate({
       themeId: definition.id,
       templateId: tpl.templateId,
+      name: tpl.name,
       markdown: tpl.markdown ?? "",
       metadata: tpl.metadata ?? {},
     });

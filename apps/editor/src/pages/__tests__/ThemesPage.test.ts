@@ -43,11 +43,17 @@ vi.mock("../../composables/use-toast.ts", () => ({
   }),
 }));
 
+const mockRouterPush = vi.fn();
+vi.mock("vue-router", () => ({
+  useRouter: () => ({ push: mockRouterPush }),
+}));
+
 import ThemesPage from "../ThemesPage.vue";
 
 beforeEach(() => {
   setActivePinia(createPinia());
   pushToast.mockClear();
+  mockRouterPush.mockClear();
 });
 
 afterEach(() => {
@@ -251,5 +257,82 @@ describe("AC-001: 筛选 — 按主题名关键词过滤卡片", () => {
     await nextTick();
     const cards = wrapper.findAll('[data-testid^="template-theme-card-"]');
     expect(cards.length).toBeGreaterThanOrEqual(1);
+  });
+});
+
+describe("分类筛选 chips", () => {
+  it("渲染「全部」chip 与各主题 chip", async () => {
+    const wrapper = mount(ThemesPage, {
+      global: { plugins: [createPinia()] },
+    });
+    await nextTick();
+    expect(wrapper.find('[data-testid="filter-chip-all"]').exists()).toBe(true);
+    expect(wrapper.find('[data-testid="filter-chip-default"]').exists()).toBe(true);
+    expect(wrapper.find('[data-testid="filter-chip-magazine"]').exists()).toBe(true);
+  });
+
+  it("默认「全部」chip 为选中态", async () => {
+    const wrapper = mount(ThemesPage, {
+      global: { plugins: [createPinia()] },
+    });
+    await nextTick();
+    const allChip = wrapper.find('[data-testid="filter-chip-all"]');
+    expect(allChip.classes()).toContain("themes-page__chip--active");
+  });
+
+  it("点击主题 chip 后仅显示该主题的卡片且 chip 切换为选中态", async () => {
+    const wrapper = mount(ThemesPage, {
+      global: { plugins: [createPinia()] },
+    });
+    await nextTick();
+    const magazineChip = wrapper.find('[data-testid="filter-chip-magazine"]');
+    await magazineChip.trigger("click");
+    await nextTick();
+
+    const cards = wrapper.findAll('[data-testid^="template-theme-card-"]');
+    expect(cards.length).toBeGreaterThanOrEqual(1);
+    for (const card of cards) {
+      expect(card.attributes("data-testid")).toContain("magazine");
+    }
+    expect(wrapper.find('[data-testid="filter-chip-magazine"]').classes()).toContain(
+      "themes-page__chip--active"
+    );
+    expect(wrapper.find('[data-testid="filter-chip-all"]').classes()).not.toContain(
+      "themes-page__chip--active"
+    );
+  });
+
+  it("点击「全部」chip 恢复显示全部卡片", async () => {
+    const wrapper = mount(ThemesPage, {
+      global: { plugins: [createPinia()] },
+    });
+    await nextTick();
+    await wrapper.find('[data-testid="filter-chip-magazine"]').trigger("click");
+    await nextTick();
+    await wrapper.find('[data-testid="filter-chip-all"]').trigger("click");
+    await nextTick();
+    const cards = wrapper.findAll('[data-testid^="template-theme-card-"]');
+    expect(cards.length).toBeGreaterThanOrEqual(5);
+  });
+});
+
+describe("返回编辑器链接", () => {
+  it("页面顶部含返回编辑器链接（data-testid=back-to-editor）", async () => {
+    const wrapper = mount(ThemesPage, {
+      global: { plugins: [createPinia()] },
+    });
+    await nextTick();
+    const link = wrapper.find('[data-testid="back-to-editor"]');
+    expect(link.exists()).toBe(true);
+  });
+
+  it("点击返回链接调用 router.push('/')", async () => {
+    const wrapper = mount(ThemesPage, {
+      global: { plugins: [createPinia()] },
+    });
+    await nextTick();
+    await wrapper.find('[data-testid="back-to-editor"]').trigger("click");
+    await nextTick();
+    expect(mockRouterPush).toHaveBeenCalledWith("/");
   });
 });

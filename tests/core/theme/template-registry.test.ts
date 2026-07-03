@@ -46,6 +46,18 @@ describe("AC-001: defineTemplate registers; listThemeTemplates returns TemplateM
     expect(entry?.description).toBe("A starter template");
   });
 
+  it("listThemeTemplates carries the display name through defineTemplate", () => {
+    defineTemplate({
+      themeId: "default",
+      templateId: "named",
+      name: "标准文章",
+      markdown: "# Hi",
+      metadata: {},
+    });
+    const entry = listThemeTemplates("default").find((t) => t.templateId === "named");
+    expect(entry?.name).toBe("标准文章");
+  });
+
   it("listThemeTemplates entry does not expose markdown body", () => {
     defineTemplate({
       themeId: "default",

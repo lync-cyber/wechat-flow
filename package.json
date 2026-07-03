@@ -35,6 +35,7 @@
     "design:export-tokens": "tsx scripts/design-sync/export-penpot-tokens.ts",
     "design:export-frames": "tsx scripts/design-sync/export-penpot-frames.ts",
     "design:build-overlay-report": "tsx scripts/design-sync/build-overlay-report.ts",
+    "design:overlay-precheck": "tsx scripts/design-sync/overlay-precheck.ts",
     "test:design-overlay": "playwright test -c playwright.design-overlay.config.ts",
     "test:sandbox-security": "playwright test -c playwright.sandbox.config.ts"
   },

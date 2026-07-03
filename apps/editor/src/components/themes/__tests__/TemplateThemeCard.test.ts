@@ -132,3 +132,104 @@ describe("TemplateThemeCard — 内容渲染", () => {
     expect(wrapper.find('[data-testid="thumbnail"]').exists()).toBe(true);
   });
 });
+
+describe("TemplateThemeCard — 骨架缩略图与主题色", () => {
+  it("传入 accentColor 时缩略图容器绑定该色值为 --card-accent", async () => {
+    const wrapper = mount(TemplateThemeCard, {
+      props: {
+        themeId: "magazine",
+        themeName: "生活杂志",
+        templateId: "tpl-1",
+        accentColor: "#E07A2C",
+        isActive: false,
+        onUseTheme: vi.fn(),
+        onUseTemplate: vi.fn(),
+      },
+    });
+    await nextTick();
+    const thumbnail = wrapper.find('[data-testid="thumbnail"]');
+    expect(thumbnail.attributes("style")).toContain("#E07A2C");
+  });
+
+  it("未传 accentColor 时缩略图回退 var(--color-brand)", async () => {
+    const wrapper = mount(TemplateThemeCard, {
+      props: {
+        themeId: "default",
+        themeName: "简约通用",
+        templateId: "tpl-1",
+        isActive: false,
+        onUseTheme: vi.fn(),
+        onUseTemplate: vi.fn(),
+      },
+    });
+    await nextTick();
+    const thumbnail = wrapper.find('[data-testid="thumbnail"]');
+    expect(thumbnail.attributes("style")).toContain("var(--color-brand)");
+  });
+
+  it("缩略图为装饰性区块，标记 aria-hidden", async () => {
+    const wrapper = mount(TemplateThemeCard, {
+      props: {
+        themeId: "default",
+        themeName: "简约通用",
+        templateId: "tpl-1",
+        isActive: false,
+        onUseTheme: vi.fn(),
+        onUseTemplate: vi.fn(),
+      },
+    });
+    await nextTick();
+    const skeleton = wrapper.find(".template-theme-card__thumbnail-skeleton");
+    expect(skeleton.attributes("aria-hidden")).toBe("true");
+  });
+
+  it("isActive=true 时「正在使用」徽章渲染在缩略图容器内部", async () => {
+    const wrapper = mount(TemplateThemeCard, {
+      props: {
+        themeId: "default",
+        themeName: "简约通用",
+        templateId: "tpl-1",
+        isActive: true,
+        onUseTheme: vi.fn(),
+        onUseTemplate: vi.fn(),
+      },
+    });
+    await nextTick();
+    const thumbnail = wrapper.find('[data-testid="thumbnail"]');
+    const badge = thumbnail.find('[data-testid="active-badge"]');
+    expect(badge.exists()).toBe(true);
+  });
+});
+
+describe("TemplateThemeCard — 模板名副标题", () => {
+  it("传入 templateName 时渲染该模板名行", async () => {
+    const wrapper = mount(TemplateThemeCard, {
+      props: {
+        themeId: "default",
+        themeName: "简约通用",
+        templateId: "starter",
+        templateName: "标准文章",
+        isActive: false,
+        onUseTheme: vi.fn(),
+        onUseTemplate: vi.fn(),
+      },
+    });
+    await nextTick();
+    expect(wrapper.text()).toContain("标准文章");
+  });
+
+  it("未传 templateName 时不渲染模板名行", async () => {
+    const wrapper = mount(TemplateThemeCard, {
+      props: {
+        themeId: "default",
+        themeName: "简约通用",
+        templateId: "starter",
+        isActive: false,
+        onUseTheme: vi.fn(),
+        onUseTemplate: vi.fn(),
+      },
+    });
+    await nextTick();
+    expect(wrapper.find(".template-theme-card__template-name").exists()).toBe(false);
+  });
+});

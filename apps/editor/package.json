@@ -22,6 +22,7 @@
     "@wechat-flow/blocks": "workspace:^",
     "@wechat-flow/core": "workspace:^",
     "@wechat-flow/marks": "workspace:^",
+    "@wechat-flow/palette": "workspace:^",
     "@wechat-flow/ruleset": "workspace:^",
     "@wechat-flow/theme-business": "workspace:^",
     "@wechat-flow/theme-default": "workspace:^",
