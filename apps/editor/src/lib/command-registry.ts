@@ -13,6 +13,7 @@ export interface CommandDefinition {
 export interface CommandRegistryDeps {
   switchTheme: (themeId: string) => void;
   downloadHtml?: () => void;
+  exportLongImage?: () => void;
 }
 
 export function buildEditorCommands(deps: CommandRegistryDeps): CommandDefinition[] {
@@ -143,7 +144,12 @@ export function buildEditorCommands(deps: CommandRegistryDeps): CommandDefinitio
       label: "下载 HTML",
       run: () => deps.downloadHtml?.(),
     },
-    { id: "export-long-image", group: "导出", label: "导出长图", placeholder: true, run: () => {} },
+    {
+      id: "export-long-image",
+      group: "导出",
+      label: "导出长图",
+      run: () => deps.exportLongImage?.(),
+    },
     {
       id: "export-cover-landscape",
       group: "导出",

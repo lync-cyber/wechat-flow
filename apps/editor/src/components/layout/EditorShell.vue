@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { DiagnosticReport } from "@wechat-flow/contracts";
 import { describeTheme, listThemes, registerTheme } from "@wechat-flow/core";
-import { type ComponentPublicInstance, computed, onMounted, onUnmounted, ref } from "vue";
+import { type ComponentPublicInstance, computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useAutoBackup } from "../../composables/use-auto-backup.ts";
 import { useBidirectionalHighlight } from "../../composables/use-bidirectional-highlight.ts";
+import { useExportLongImage } from "../../composables/use-export-long-image.ts";
 import { useKeywordLint } from "../../composables/use-keyword-lint.ts";
 import { useSplitterWidth } from "../../composables/use-splitter-width";
 import { useToast } from "../../composables/use-toast.ts";
@@ -20,6 +21,7 @@ import CompatibilityDiffView from "../diagnostics/CompatibilityDiffView.vue";
 import DiagnosticsPanel from "../diagnostics/DiagnosticsPanel.vue";
 import PreviewPane from "../editor/PreviewPane.vue";
 import SourcePane from "../editor/SourcePane.vue";
+import ExportJobPanel from "../export/ExportJobPanel.vue";
 import PaintDrawer from "../paint/PaintDrawer.vue";
 import ContextMenu from "../panel/ContextMenu.vue";
 import InsertDrawer from "../panel/InsertDrawer.vue";
@@ -34,6 +36,27 @@ const preferencesStore = usePreferencesStore();
 const { pushToast } = useToast();
 const zhTypo = useZhTypo();
 const keywordLint = useKeywordLint();
+const exportLongImageJob = useExportLongImage();
+const isExportJobPanelOpen = ref(false);
+
+watch(exportLongImageJob.status, (status) => {
+  if (status === "completed") {
+    pushToast({ type: "success", message: "长图导出成功" });
+  } else if (status === "failed") {
+    pushToast({
+      type: "error",
+      message: `长图导出失败：${exportLongImageJob.error.value?.message ?? "未知错误"}`,
+    });
+  }
+});
+
+function onExportLongImage(): void {
+  isExportJobPanelOpen.value = true;
+  void exportLongImageJob.start({
+    markdown: editorStore.content,
+    themeId: editorStore.currentTheme,
+  });
+}
 
 // Component refs for bidirectional highlight wiring
 const previewPaneRef = ref<
@@ -103,7 +126,7 @@ function switchTheme(themeId: string): void {
 
 const commandPaletteCommands = computed<CommandDefinition[]>(() => {
   listThemes();
-  return buildEditorCommands({ switchTheme });
+  return buildEditorCommands({ switchTheme, exportLongImage: onExportLongImage });
 });
 
 const FALLBACK_THEME_ACCENT = "#2D5A4E";
@@ -128,10 +151,15 @@ const diagnostics = computed<DiagnosticReport>(() => {
   };
 });
 
-const statusBarMetrics = computed(() => ({
-  ...countWords(editorStore.content),
-  readMinutes: 1,
-}));
+const CHARS_PER_MINUTE = 400;
+
+const statusBarMetrics = computed(() => {
+  const wordCount = countWords(editorStore.content);
+  return {
+    ...wordCount,
+    readMinutes: Math.max(1, Math.round(wordCount.totalChars / CHARS_PER_MINUTE)),
+  };
+});
 
 function onToggleDiagnostics(): void {
   isDiagnosticsExpanded.value = !isDiagnosticsExpanded.value;
@@ -213,7 +241,11 @@ function onContextMenuCommand(commandId: string): void {
     isDiagnosticsExpanded.value = true;
     return;
   }
-  const cmds = buildEditorCommands({ switchTheme, downloadHtml: onDownloadHtml });
+  const cmds = buildEditorCommands({
+    switchTheme,
+    downloadHtml: onDownloadHtml,
+    exportLongImage: onExportLongImage,
+  });
   const cmd = cmds.find((c) => c.id === commandId);
   cmd?.run();
 }
@@ -232,17 +264,21 @@ function onCopyHtml(): void {
 }
 
 async function onDownloadHtml(): Promise<void> {
-  const html = await composeExportHtml({
-    markdown: editorStore.content,
-    themeId: editorStore.currentTheme,
-  });
-  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = "wechat-flow.html";
-  anchor.click();
-  URL.revokeObjectURL(url);
+  try {
+    const html = await composeExportHtml({
+      markdown: editorStore.content,
+      themeId: editorStore.currentTheme,
+    });
+    const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "wechat-flow.html";
+    anchor.click();
+    URL.revokeObjectURL(url);
+  } catch {
+    pushToast({ type: "error", message: "下载 HTML 失败，请重试" });
+  }
 }
 
 onMounted(() => {
@@ -416,6 +452,13 @@ onUnmounted(() => {
       :total-changes="zhTypo.totalChanges.value"
       :on-confirm="onZhTypoConfirm"
       :on-cancel="zhTypo.cancel"
+    />
+
+    <!-- Export Long Image Job Panel -->
+    <ExportJobPanel
+      :is-open="isExportJobPanelOpen"
+      :job="exportLongImageJob"
+      @close="isExportJobPanelOpen = false"
     />
   </div>
 

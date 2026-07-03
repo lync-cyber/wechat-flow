@@ -13,21 +13,29 @@ export const usePreferencesStore = defineStore("preferences", () => {
   const fontSize = ref(16);
   const lineHeight = ref(1.75);
 
+  let initPromise: Promise<void> | null = null;
+
   async function init(): Promise<void> {
-    try {
-      const saved = await loadEditorPreferences();
-      if (typeof saved?.inputAssist === "boolean") {
-        inputAssist.value = saved.inputAssist;
+    if (initPromise) return initPromise;
+
+    initPromise = (async () => {
+      try {
+        const saved = await loadEditorPreferences();
+        if (typeof saved?.inputAssist === "boolean") {
+          inputAssist.value = saved.inputAssist;
+        }
+        if (typeof saved?.fontSize === "number") {
+          fontSize.value = saved.fontSize;
+        }
+        if (typeof saved?.lineHeight === "number") {
+          lineHeight.value = saved.lineHeight;
+        }
+      } catch {
+        // Storage unavailable (db closed / private browsing) — keep defaults
       }
-      if (typeof saved?.fontSize === "number") {
-        fontSize.value = saved.fontSize;
-      }
-      if (typeof saved?.lineHeight === "number") {
-        lineHeight.value = saved.lineHeight;
-      }
-    } catch {
-      // Storage unavailable (db closed / private browsing) — keep defaults
-    }
+    })();
+
+    return initPromise;
   }
 
   async function updatePreferences(patch: EditorPreferencesPatch): Promise<void> {
