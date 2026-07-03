@@ -1,16 +1,26 @@
+import { randomUUID } from "node:crypto";
+import type { EventEmitter } from "node:events";
 import { Hono } from "hono";
 import { errorResponse } from "../http/error.ts";
-import type { ImageHostAdapter, UploadResult } from "../image-host/types.ts";
-import { preprocessImage } from "../image/preprocess.ts";
+import { computeIdempotencyKey } from "../job/idempotency.ts";
+import type { JobStore } from "../job/types.ts";
+import type { UploadJobInput, UploadJobResult } from "../job/upload-processor.ts";
+import { UploadJobError } from "../job/upload-processor.ts";
+import type { AuthInfo, AuthVariables } from "../middleware/auth.ts";
 
 export interface ImagesRouteDeps {
-  adapter: ImageHostAdapter;
+  store: JobStore;
+  sseEmitter: EventEmitter;
+  processUpload: (
+    input: UploadJobInput,
+    updateProgress: (progress: number) => Promise<void>
+  ) => Promise<UploadJobResult>;
   maxBytes?: number;
 }
 
-export function createImagesApp(deps: ImagesRouteDeps): Hono {
-  const { adapter, maxBytes = 10 * 1024 * 1024 } = deps;
-  const app = new Hono();
+export function createImagesApp(deps: ImagesRouteDeps): Hono<{ Variables: AuthVariables }> {
+  const { store, sseEmitter, processUpload, maxBytes = 10 * 1024 * 1024 } = deps;
+  const app = new Hono<{ Variables: AuthVariables }>();
 
   app.post("/api/v1/images/upload", async (c) => {
     let formData: FormData;
@@ -37,25 +47,116 @@ export function createImagesApp(deps: ImagesRouteDeps): Hono {
       return errorResponse(c, 413, "E_PAYLOAD_TOO_LARGE", "uploaded file exceeds the size limit");
     }
 
-    let result: Awaited<ReturnType<typeof preprocessImage>>;
-    try {
-      result = await preprocessImage(bytes);
-    } catch {
-      return errorResponse(c, 400, "E_INVALID_IMAGE", "uploaded file is not a decodable image");
-    }
-
     const filename = (file as { name?: string }).name ?? "upload";
-    const contentType = `image/${result.format}`;
+    const auth = c.get("auth") as AuthInfo | undefined;
+    const apiKeyId = auth?.sub ?? "anonymous";
 
-    let uploadResult: UploadResult;
-    try {
-      uploadResult = await adapter.upload(result.data, { filename, contentType });
-    } catch {
-      return errorResponse(c, 502, "E_UPLOAD_FAILED", "image host rejected the upload");
-    }
+    const jobId = randomUUID();
+    const input: UploadJobInput = { data: Buffer.from(bytes).toString("base64"), filename };
+    const idempotencyKey = computeIdempotencyKey({ jobId, apiKeyId }, "1.0.0");
+    const now = new Date().toISOString();
 
-    return c.json({ url: uploadResult.url, size: result.data.length }, 200);
+    await store.upsert({
+      jobId,
+      state: "pending",
+      kind: "image-upload",
+      idempotencyKey,
+      inputDigest: idempotencyKey,
+      result: null,
+      error: null,
+      progress: 0,
+      createdAt: now,
+      updatedAt: now,
+      apiKeyId,
+    });
+
+    setImmediate(() => {
+      void processInBackground({ jobId, apiKeyId, idempotencyKey, createdAt: now, input });
+    });
+
+    return c.json({ jobId }, 202);
   });
+
+  async function processInBackground(ctx: {
+    jobId: string;
+    apiKeyId: string;
+    idempotencyKey: string;
+    createdAt: string;
+    input: UploadJobInput;
+  }): Promise<void> {
+    const { jobId, apiKeyId, idempotencyKey, createdAt, input } = ctx;
+
+    try {
+      await store.upsert({
+        jobId,
+        state: "running",
+        kind: "image-upload",
+        idempotencyKey,
+        inputDigest: idempotencyKey,
+        result: null,
+        error: null,
+        progress: 0,
+        createdAt,
+        updatedAt: new Date().toISOString(),
+        apiKeyId,
+      });
+      sseEmitter.emit("active", { jobId });
+
+      const updateProgress = async (progress: number): Promise<void> => {
+        await store.upsert({
+          jobId,
+          state: "running",
+          kind: "image-upload",
+          idempotencyKey,
+          inputDigest: idempotencyKey,
+          result: null,
+          error: null,
+          progress,
+          createdAt,
+          updatedAt: new Date().toISOString(),
+          apiKeyId,
+        });
+        sseEmitter.emit("progress", { jobId, data: progress });
+      };
+
+      const result = await processUpload(input, updateProgress);
+
+      await store.upsert({
+        jobId,
+        state: "succeeded",
+        kind: "image-upload",
+        idempotencyKey,
+        inputDigest: idempotencyKey,
+        result,
+        error: null,
+        progress: 1,
+        createdAt,
+        updatedAt: new Date().toISOString(),
+        apiKeyId,
+      });
+      sseEmitter.emit("completed", { jobId, returnvalue: result });
+    } catch (err) {
+      const error =
+        err instanceof UploadJobError
+          ? { code: err.code, message: err.message }
+          : { code: "E_UPLOAD_FAILED", message: "image host rejected the upload" };
+
+      await store.upsert({
+        jobId,
+        state: "failed",
+        kind: "image-upload",
+        idempotencyKey,
+        inputDigest: idempotencyKey,
+        result: null,
+        error,
+        progress: 0,
+        createdAt,
+        updatedAt: new Date().toISOString(),
+        apiKeyId,
+      });
+      sseEmitter.emit("failed", { jobId, error });
+    }
+  }
 
   return app;
 }

@@ -1,3 +1,4 @@
+import { EventEmitter } from "node:events";
 import { describe, expect, it } from "vitest";
 import type { EditorSessionDeps } from "../../apps/relay/src/auth/editor-session.ts";
 import { issueEditorSession } from "../../apps/relay/src/auth/editor-session.ts";
@@ -79,6 +80,11 @@ describe("createApp auth: images upload route is gated when auth deps are provid
       auth: makeAuthDeps(store),
       editorSession: makeEditorDeps(store),
       imagesAdapter: makeNoopImageAdapter(),
+      jobsDeps: {
+        store: makeMemoryJobStore(),
+        enqueue: async () => "unused",
+        sseEmitter: new EventEmitter(),
+      },
     });
 
     const res = await app.request("/api/v1/images/upload", { method: "POST" });
@@ -94,6 +100,11 @@ describe("createApp auth: images upload route is gated when auth deps are provid
       auth: makeAuthDeps(store),
       editorSession: editorDeps,
       imagesAdapter: makeNoopImageAdapter(),
+      jobsDeps: {
+        store: makeMemoryJobStore(),
+        enqueue: async () => "unused",
+        sseEmitter: new EventEmitter(),
+      },
     });
 
     const token = await issueToken(editorDeps);
