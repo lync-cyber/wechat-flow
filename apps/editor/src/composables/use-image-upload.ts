@@ -1,5 +1,6 @@
 import { ref } from "vue";
 import { useEditorSession } from "./use-editor-session";
+import type { EventSourceFactory } from "./use-sse-job";
 
 export type UploadState = "idle" | "dragging" | "uploading" | "success" | "error";
 
@@ -9,15 +10,22 @@ export interface UploadResult {
 }
 
 interface ImageUploadOptions {
-  uploadImage?: (file: File) => Promise<UploadResult>;
+  uploadImage?: (file: File, onProgress: (percent: number) => void) => Promise<UploadResult>;
   getSessionToken?: () => Promise<string | undefined>;
   fetchImpl?: typeof fetch;
+  eventSourceFactory?: EventSourceFactory;
+}
+
+function defaultEventSourceFactory(url: string): EventSource {
+  return new EventSource(url);
 }
 
 async function defaultUploadImage(
   file: File,
+  onProgress: (percent: number) => void,
   getToken: () => Promise<string | undefined>,
-  fetchImpl: typeof fetch
+  fetchImpl: typeof fetch,
+  eventSourceFactory: EventSourceFactory
 ): Promise<UploadResult> {
   const token = await getToken();
   const formData = new FormData();
@@ -38,7 +46,31 @@ async function defaultUploadImage(
     const e = err.error ?? { code: String(res.status), message: res.statusText };
     throw Object.assign(new Error(e.message), { code: e.code });
   }
-  return res.json() as Promise<UploadResult>;
+
+  const { jobId } = (await res.json()) as { jobId: string };
+
+  return new Promise<UploadResult>((resolve, reject) => {
+    const es = eventSourceFactory(`/api/v1/jobs/${jobId}/events`);
+
+    const cleanup = () => es.close();
+
+    es.addEventListener("progress", (e: MessageEvent) => {
+      const data = JSON.parse(e.data) as { progress: number };
+      onProgress(Math.round(data.progress * 100));
+    });
+
+    es.addEventListener("succeeded", (e: MessageEvent) => {
+      const data = JSON.parse(e.data) as { result: UploadResult };
+      cleanup();
+      resolve(data.result);
+    });
+
+    es.addEventListener("failed", (e: MessageEvent) => {
+      const data = JSON.parse(e.data) as { error: { code: string; message: string } };
+      cleanup();
+      reject(Object.assign(new Error(data.error.message), { code: data.error.code }));
+    });
+  });
 }
 
 export function useImageUpload(options: ImageUploadOptions = {}) {
@@ -48,7 +80,9 @@ export function useImageUpload(options: ImageUploadOptions = {}) {
   const errorMsg = ref<string | undefined>(undefined);
 
   let lastFile: File | undefined;
+  let activeEventSource: EventSource | undefined;
   const fetchImpl = options.fetchImpl ?? globalThis.fetch.bind(globalThis);
+  const eventSourceFactory = options.eventSourceFactory ?? defaultEventSourceFactory;
   let getSessionToken: () => Promise<string | undefined>;
 
   if (options.getSessionToken) {
@@ -60,7 +94,14 @@ export function useImageUpload(options: ImageUploadOptions = {}) {
 
   const uploadImageFn = options.uploadImage
     ? options.uploadImage
-    : (file: File) => defaultUploadImage(file, getSessionToken, fetchImpl);
+    : (file: File, onProgress: (percent: number) => void) => {
+        const trackingFactory: EventSourceFactory = (url: string) => {
+          const es = eventSourceFactory(url);
+          activeEventSource = es;
+          return es;
+        };
+        return defaultUploadImage(file, onProgress, getSessionToken, fetchImpl, trackingFactory);
+      };
 
   function startDrag(): void {
     state.value = "dragging";
@@ -76,11 +117,15 @@ export function useImageUpload(options: ImageUploadOptions = {}) {
     progress.value = 0;
     errorMsg.value = undefined;
     try {
-      const result = await uploadImageFn(file);
+      const result = await uploadImageFn(file, (percent) => {
+        progress.value = percent;
+      });
+      activeEventSource = undefined;
       previewUrl.value = result.url;
       state.value = "success";
       return result.url;
     } catch (err) {
+      activeEventSource = undefined;
       const e = err as { message?: string; code?: string };
       errorMsg.value = e.message ?? "上传失败";
       state.value = "error";
@@ -94,6 +139,10 @@ export function useImageUpload(options: ImageUploadOptions = {}) {
   }
 
   function cancel(): void {
+    if (activeEventSource) {
+      activeEventSource.close();
+      activeEventSource = undefined;
+    }
     state.value = "idle";
     errorMsg.value = undefined;
     progress.value = 0;

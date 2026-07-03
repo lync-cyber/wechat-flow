@@ -1,7 +1,7 @@
 import type { Queue } from "bullmq";
 import type { Redis } from "ioredis";
 import { mapBullmqState } from "./state-map.ts";
-import type { JobKind, JobRecord, JobStore } from "./types.ts";
+import type { JobError, JobKind, JobRecord, JobState, JobStore } from "./types.ts";
 
 interface JobMeta {
   kind: JobKind;
@@ -9,6 +9,11 @@ interface JobMeta {
   idempotencyKey: string;
   inputDigest: string;
   createdAt: string;
+  state?: JobState;
+  progress?: number;
+  result?: unknown;
+  error?: JobError | null;
+  updatedAt?: string;
 }
 
 const META_TTL = 86400;
@@ -37,6 +42,16 @@ export function createBullmqJobStore(deps: BullmqJobStoreDeps): JobStore {
 
     const job = await getQueue(meta.kind).getJob(jobId);
     if (!job) {
+      if (meta.state !== undefined) {
+        return {
+          ...base,
+          state: meta.state,
+          result: meta.result ?? null,
+          error: meta.error ?? null,
+          progress: meta.progress ?? 0,
+          updatedAt: meta.updatedAt ?? meta.createdAt,
+        };
+      }
       return {
         ...base,
         state: "pending",
@@ -70,6 +85,11 @@ export function createBullmqJobStore(deps: BullmqJobStoreDeps): JobStore {
       idempotencyKey: record.idempotencyKey,
       inputDigest: record.inputDigest,
       createdAt: record.createdAt,
+      state: record.state,
+      progress: record.progress,
+      result: record.result,
+      error: record.error,
+      updatedAt: record.updatedAt,
     };
     await redis.set(metaKey(record.jobId), JSON.stringify(meta), "EX", META_TTL);
   }

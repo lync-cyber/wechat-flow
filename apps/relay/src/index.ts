@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import type { EditorSessionDeps } from "./auth/editor-session.ts";
 import type { ImageHostAdapter } from "./image-host/types.ts";
 import type { JobsAppDeps } from "./job/types.ts";
+import { createUploadProcessor } from "./job/upload-processor.ts";
 import {
   type AuthMiddlewareDeps,
   type AuthVariables,
@@ -47,11 +48,18 @@ export function createApp(deps: AppDeps = {}): Hono<{ Variables: AuthVariables }
     app.route("/", createEditorSessionApp(deps.editorSession));
   }
 
-  if (deps.imagesAdapter) {
+  if (deps.imagesAdapter && deps.jobsDeps?.sseEmitter) {
     if (deps.auth) {
       app.use("/api/v1/images/upload", createAuthMiddleware(deps.auth, { requireScope: "upload" }));
     }
-    app.route("/", createImagesApp({ adapter: deps.imagesAdapter }));
+    app.route(
+      "/",
+      createImagesApp({
+        store: deps.jobsDeps.store,
+        sseEmitter: deps.jobsDeps.sseEmitter,
+        processUpload: createUploadProcessor(deps.imagesAdapter),
+      })
+    );
   }
 
   if (deps.jobsDeps) {
@@ -90,6 +98,8 @@ export { COVER_DIMENSIONS, renderCover } from "./headless/render-cover.ts";
 export { buildExportUrl, persistExport, resolveExportDir } from "./headless/persist-export.ts";
 export { createRenderProcessor } from "./job/render-processor.ts";
 export type { RenderJob, RenderJobData, RenderResult } from "./job/render-processor.ts";
+export { createUploadProcessor, UploadJobError } from "./job/upload-processor.ts";
+export type { UploadJobInput, UploadJobResult } from "./job/upload-processor.ts";
 export { createJobsRuntime } from "./job/runtime.ts";
 export type { JobsRuntime } from "./job/runtime.ts";
 export type { JobKind } from "./job/types.ts";
