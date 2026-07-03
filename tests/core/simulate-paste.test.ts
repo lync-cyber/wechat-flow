@@ -60,3 +60,21 @@ describe("AC-003: <style> 标签完全剥除 + 剥除记录", () => {
     expect(styleDropped).toBe(true);
   });
 });
+
+describe("AC-004: sourceNodeCount 统计 before 树元素节点总数", () => {
+  it("空 HTML 输入 sourceNodeCount 为 0", () => {
+    const result = simulatePaste("");
+    expect(result.sourceNodeCount).toBe(0);
+  });
+
+  it("嵌套元素精确计数，文本节点不计入", () => {
+    const html = "<div><p>hello <strong>world</strong></p><span>x</span></div>";
+    const result = simulatePaste(html);
+    expect(result.sourceNodeCount).toBe(4);
+  });
+
+  it("纯文本（无元素）输入 sourceNodeCount 为 0", () => {
+    const result = simulatePaste("just plain text, no tags");
+    expect(result.sourceNodeCount).toBe(0);
+  });
+});

@@ -17,7 +17,7 @@ const imagesAdapter = createAdapterFromConfig(loadImageHostConfig(process.env));
 const redisUrl = new URL(process.env.REDIS_URL ?? "redis://127.0.0.1:6379");
 const connection = { host: redisUrl.hostname, port: Number(redisUrl.port || 6379) };
 const redis = new Redis({ ...connection, maxRetriesPerRequest: null });
-const { jobsDeps } = createJobsRuntime({ redis, connection });
+const { jobsDeps, queueDepths } = createJobsRuntime({ redis, connection });
 
 const secret = loadEditorJwtSecret(process.env);
 const clock = () => Date.now();
@@ -68,6 +68,7 @@ const app = createApp({
   auth,
   editorSession,
   adminDeps: { app: adminApp },
+  metrics: { queueDepths },
 });
 
 const port = Number(process.env.PORT ?? 3000);

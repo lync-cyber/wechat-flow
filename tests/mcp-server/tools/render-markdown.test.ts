@@ -1,12 +1,17 @@
 import { createHash } from "node:crypto";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { hashApiKey } from "../../../apps/mcp-server/src/auth/api-key.ts";
+import { renderMetrics, resetMetrics } from "../../../apps/mcp-server/src/metrics.ts";
 import { getRulesetVersionTool } from "../../../apps/mcp-server/src/tools/get-ruleset-version.ts";
 import { lintMarkdownTool } from "../../../apps/mcp-server/src/tools/lint-markdown.ts";
 import { renderMarkdownTool } from "../../../apps/mcp-server/src/tools/render-markdown.ts";
 import { createServer } from "../../../apps/mcp-server/src/transport/stdio.ts";
+
+beforeEach(() => {
+  resetMetrics();
+});
 
 // ---- AC-001: render_markdown returns html + four fields ----
 
@@ -112,5 +117,22 @@ describe("AC-004: lintMarkdownTool returns diagnostics only (no html field)", ()
     expect(positionDiag).toBeDefined();
     // severity is 'warning' per custom-css.ts:87 (strip-position is silent; custom-css whitelist rejection is warning)
     expect(positionDiag?.severity).toBe("warning");
+  });
+});
+
+// ---- AC-005: renderMarkdownTool observes render_markdown_latency_ms ----
+
+describe("AC-005: renderMarkdownTool observes render_markdown_latency_ms on each call", () => {
+  it("a single call increments the render_markdown_latency_ms observation count by 1", async () => {
+    await renderMarkdownTool({ markdown: "# Hi", themeId: "default" });
+    const text = await renderMetrics();
+    expect(text).toContain("render_markdown_latency_ms_count 1");
+  });
+
+  it("tool return shape is unchanged (no metrics-related fields leak into the response)", async () => {
+    const result = await renderMarkdownTool({ markdown: "# Hi", themeId: "default" });
+    expect(Object.keys(result).sort()).toEqual(
+      ["diagnostics", "html", "postPaste", "rulesetVersion", "themeVersion", "versionTriple"].sort()
+    );
   });
 });

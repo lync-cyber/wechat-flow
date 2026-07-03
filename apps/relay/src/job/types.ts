@@ -2,6 +2,13 @@ export type JobState = "pending" | "running" | "succeeded" | "failed";
 
 export type JobKind = "image-upload" | "wechat-asset-upload" | "long-image-render" | "cover-render";
 
+export const ALL_JOB_KINDS: JobKind[] = [
+  "image-upload",
+  "wechat-asset-upload",
+  "long-image-render",
+  "cover-render",
+];
+
 export interface JobError {
   code: string;
   message: string;
