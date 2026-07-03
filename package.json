@@ -35,7 +35,8 @@
     "design:export-tokens": "tsx scripts/design-sync/export-penpot-tokens.ts",
     "design:export-frames": "tsx scripts/design-sync/export-penpot-frames.ts",
     "design:build-overlay-report": "tsx scripts/design-sync/build-overlay-report.ts",
-    "test:design-overlay": "playwright test -c playwright.design-overlay.config.ts"
+    "test:design-overlay": "playwright test -c playwright.design-overlay.config.ts",
+    "test:sandbox-security": "playwright test -c playwright.sandbox.config.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
