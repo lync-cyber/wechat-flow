@@ -1,0 +1,229 @@
+{
+  "missing": [],
+  "ranked": [
+    {
+      "id": "UC-002",
+      "penpotSize": "918x242",
+      "frontendSize": "8x607",
+      "arDiff": 0.997,
+      "colorDist": 23.1,
+      "score": 0.544
+    },
+    {
+      "id": "UC-001",
+      "penpotSize": "962x602",
+      "frontendSize": "1280x48",
+      "arDiff": 0.94,
+      "colorDist": 23.7,
+      "score": 0.516
+    },
+    {
+      "id": "UC-013",
+      "penpotSize": "820x800",
+      "frontendSize": "1280x105",
+      "arDiff": 0.916,
+      "colorDist": 13,
+      "score": 0.483
+    },
+    {
+      "id": "UC-023",
+      "penpotSize": "2080x600",
+      "frontendSize": "1280x32",
+      "arDiff": 0.913,
+      "colorDist": 13.5,
+      "score": 0.483
+    },
+    {
+      "id": "UC-006",
+      "penpotSize": "1440x600",
+      "frontendSize": "200x607",
+      "arDiff": 0.863,
+      "colorDist": 14.9,
+      "score": 0.461
+    },
+    {
+      "id": "UC-003",
+      "penpotSize": "1760x720",
+      "frontendSize": "203x33",
+      "arDiff": 0.603,
+      "colorDist": 78.5,
+      "score": 0.455
+    },
+    {
+      "id": "UC-005",
+      "penpotSize": "990x496",
+      "frontendSize": "320x607",
+      "arDiff": 0.736,
+      "colorDist": 21,
+      "score": 0.409
+    },
+    {
+      "id": "UC-018",
+      "penpotSize": "720x760",
+      "frontendSize": "354x100",
+      "arDiff": 0.732,
+      "colorDist": 16.7,
+      "score": 0.399
+    },
+    {
+      "id": "UC-011",
+      "penpotSize": "1280x720",
+      "frontendSize": "355x58",
+      "arDiff": 0.71,
+      "colorDist": 19.9,
+      "score": 0.394
+    },
+    {
+      "id": "UC-015",
+      "penpotSize": "1360x780",
+      "frontendSize": "321x672",
+      "arDiff": 0.726,
+      "colorDist": 11.3,
+      "score": 0.385
+    },
+    {
+      "id": "UC-014",
+      "penpotSize": "560x478",
+      "frontendSize": "346x91",
+      "arDiff": 0.692,
+      "colorDist": 19,
+      "score": 0.383
+    },
+    {
+      "id": "UC-008",
+      "penpotSize": "1440x920",
+      "frontendSize": "200x40",
+      "arDiff": 0.687,
+      "colorDist": 17.2,
+      "score": 0.377
+    },
+    {
+      "id": "UC-019",
+      "penpotSize": "760x540",
+      "frontendSize": "321x672",
+      "arDiff": 0.661,
+      "colorDist": 14.9,
+      "score": 0.36
+    },
+    {
+      "id": "P-003",
+      "penpotSize": "1280x888",
+      "frontendSize": "1280x1803",
+      "arDiff": 0.507,
+      "colorDist": 36.9,
+      "score": 0.326
+    },
+    {
+      "id": "UC-021",
+      "penpotSize": "940x520",
+      "frontendSize": "282x322",
+      "arDiff": 0.516,
+      "colorDist": 19.6,
+      "score": 0.296
+    },
+    {
+      "id": "UC-017",
+      "penpotSize": "800x760",
+      "frontendSize": "560x284",
+      "arDiff": 0.466,
+      "colorDist": 16.3,
+      "score": 0.265
+    },
+    {
+      "id": "UC-007",
+      "penpotSize": "1960x600",
+      "frontendSize": "176x92",
+      "arDiff": 0.414,
+      "colorDist": 28.7,
+      "score": 0.264
+    },
+    {
+      "id": "UC-010",
+      "penpotSize": "1280x840",
+      "frontendSize": "282x321",
+      "arDiff": 0.423,
+      "colorDist": 21.7,
+      "score": 0.254
+    },
+    {
+      "id": "UC-012",
+      "penpotSize": "2240x1040",
+      "frontendSize": "560x368",
+      "arDiff": 0.293,
+      "colorDist": 46.9,
+      "score": 0.239
+    },
+    {
+      "id": "UC-020",
+      "penpotSize": "640x1000",
+      "frontendSize": "560x576",
+      "arDiff": 0.342,
+      "colorDist": 20.4,
+      "score": 0.211
+    },
+    {
+      "id": "UC-016",
+      "penpotSize": "680x560",
+      "frontendSize": "282x321",
+      "arDiff": 0.277,
+      "colorDist": 13.1,
+      "score": 0.164
+    },
+    {
+      "id": "P-002",
+      "penpotSize": "1440x1040",
+      "frontendSize": "1280x720",
+      "arDiff": 0.221,
+      "colorDist": 20.8,
+      "score": 0.151
+    },
+    {
+      "id": "UC-004",
+      "penpotSize": "722x442",
+      "frontendSize": "744x607",
+      "arDiff": 0.25,
+      "colorDist": 10.7,
+      "score": 0.146
+    },
+    {
+      "id": "UC-022",
+      "penpotSize": "620x800",
+      "frontendSize": "284x379",
+      "arDiff": 0.033,
+      "colorDist": 46.5,
+      "score": 0.108
+    },
+    {
+      "id": "UC-009",
+      "penpotSize": "2080x1240",
+      "frontendSize": "562x402",
+      "arDiff": 0.167,
+      "colorDist": 8.1,
+      "score": 0.099
+    },
+    {
+      "id": "P-004",
+      "penpotSize": "1280x860",
+      "frontendSize": "1280x720",
+      "arDiff": 0.163,
+      "colorDist": 4.3,
+      "score": 0.09
+    },
+    {
+      "id": "P-001",
+      "penpotSize": "1282x802",
+      "frontendSize": "1280x720",
+      "arDiff": 0.101,
+      "colorDist": 11.4,
+      "score": 0.073
+    },
+    {
+      "id": "P-005",
+      "penpotSize": "375x812",
+      "frontendSize": "375x812",
+      "arDiff": 0,
+      "colorDist": 13.4,
+      "score": 0.026
+    }
+  ]
+}

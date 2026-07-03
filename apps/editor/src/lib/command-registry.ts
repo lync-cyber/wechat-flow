@@ -14,6 +14,8 @@ export interface CommandRegistryDeps {
   switchTheme: (themeId: string) => void;
   downloadHtml?: () => void;
   exportLongImage?: () => void;
+  openShortcuts?: () => void;
+  openPaletteDerive?: () => void;
 }
 
 export function buildEditorCommands(deps: CommandRegistryDeps): CommandDefinition[] {
@@ -102,8 +104,7 @@ export function buildEditorCommands(deps: CommandRegistryDeps): CommandDefinitio
       id: "theme-palette-derive",
       group: "主题",
       label: "调色板派生",
-      placeholder: true,
-      run: () => {},
+      run: () => deps.openPaletteDerive?.(),
     },
   ];
 
@@ -167,7 +168,13 @@ export function buildEditorCommands(deps: CommandRegistryDeps): CommandDefinitio
   ];
 
   const helpCommands: CommandDefinition[] = [
-    { id: "help-shortcuts", group: "帮助", label: "快捷键手册", placeholder: true, run: () => {} },
+    {
+      id: "help-shortcuts",
+      group: "帮助",
+      label: "快捷键手册",
+      shortcut: "?",
+      run: () => deps.openShortcuts?.(),
+    },
     { id: "help-whats-new", group: "帮助", label: "新功能说明", placeholder: true, run: () => {} },
   ];
 
@@ -191,4 +198,17 @@ export function filterCommands(commands: CommandDefinition[], query: string): Co
       cmd.group.toLowerCase().includes(q) ||
       cmd.id.toLowerCase().includes(q)
   );
+}
+
+export interface ShortcutEntry {
+  group: string;
+  label: string;
+  shortcut: string;
+}
+
+export function listShortcutEntries(): ShortcutEntry[] {
+  const commands = buildEditorCommands({ switchTheme: () => {} });
+  return commands
+    .filter((cmd): cmd is CommandDefinition & { shortcut: string } => Boolean(cmd.shortcut))
+    .map((cmd) => ({ group: cmd.group, label: cmd.label, shortcut: cmd.shortcut }));
 }

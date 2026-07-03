@@ -92,9 +92,23 @@ describe("command-registry: buildEditorCommands", () => {
     expect(exportLongImage).toHaveBeenCalledOnce();
   });
 
+  it("theme-palette-derive.run() 调用 openPaletteDerive 回调", () => {
+    const openPaletteDerive = vi.fn();
+    const cmds = buildEditorCommands({ switchTheme: vi.fn(), openPaletteDerive });
+    const cmd = cmds.find((c) => c.id === "theme-palette-derive");
+    if (!cmd) throw new Error("theme-palette-derive not found");
+    cmd.run();
+    expect(openPaletteDerive).toHaveBeenCalledOnce();
+  });
+
   it("空实现命令显式标记 placeholder: true，switch-theme 与 export-download-html/export-long-image 为真实实现无标记", () => {
     const cmds = buildEditorCommands({ switchTheme: vi.fn() });
-    const realImplIds = new Set(["export-download-html", "export-long-image"]);
+    const realImplIds = new Set([
+      "export-download-html",
+      "export-long-image",
+      "help-shortcuts",
+      "theme-palette-derive",
+    ]);
     for (const cmd of cmds) {
       if (cmd.id.startsWith("switch-theme-") || realImplIds.has(cmd.id)) {
         expect(cmd.placeholder, `command ${cmd.id} has real run impl`).toBeUndefined();

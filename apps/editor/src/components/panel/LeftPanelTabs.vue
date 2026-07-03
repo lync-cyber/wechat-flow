@@ -20,6 +20,11 @@ const props = withDefaults(
   }
 );
 
+const emit = defineEmits<{
+  "palette-derive": [];
+  "custom-color": [];
+}>();
+
 const activeTab = ref<TabId>(props.defaultTab);
 const selectedThemeId = ref<string | null>(null);
 
@@ -77,11 +82,13 @@ function insertBlock(block: ReturnType<typeof listBlocks>[number]): void {
             href="#"
             class="left-panel-tabs__theme-link"
             data-testid="link-custom-color"
+            @click.prevent="emit('custom-color')"
           >自定义配色</a>
           <a
             href="#"
             class="left-panel-tabs__theme-link"
             data-testid="link-palette-derive"
+            @click.prevent="emit('palette-derive')"
           >调色板派生</a>
         </div>
       </template>

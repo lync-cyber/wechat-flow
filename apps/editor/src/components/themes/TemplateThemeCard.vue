@@ -3,7 +3,9 @@ const props = defineProps<{
   themeId: string;
   themeName: string;
   templateId: string;
+  templateName?: string;
   templateDescription?: string;
+  accentColor?: string;
   isActive: boolean;
   onUseTheme: (themeId: string, themeName: string) => void;
   onUseTemplate: (themeId: string, templateId: string) => void;
@@ -16,17 +18,36 @@ const props = defineProps<{
     :class="{ 'template-theme-card--active': isActive }"
     data-testid="template-theme-card"
   >
-    <div class="template-theme-card__thumbnail" data-testid="thumbnail" />
+    <div
+      class="template-theme-card__thumbnail"
+      data-testid="thumbnail"
+      :style="{ '--card-accent': accentColor || 'var(--color-brand)' }"
+    >
+      <div class="template-theme-card__thumbnail-skeleton" aria-hidden="true">
+        <div class="template-theme-card__skeleton-title" />
+        <div class="template-theme-card__skeleton-line" />
+        <div class="template-theme-card__skeleton-line" />
+        <div class="template-theme-card__skeleton-line template-theme-card__skeleton-line--short" />
+        <div class="template-theme-card__skeleton-quote">
+          <div class="template-theme-card__skeleton-line" />
+        </div>
+      </div>
+
+      <span
+        v-if="isActive"
+        class="template-theme-card__badge"
+        data-testid="active-badge"
+      >正在使用</span>
+    </div>
 
     <div class="template-theme-card__body">
       <div class="template-theme-card__header">
         <span class="template-theme-card__theme-name">{{ themeName }}</span>
-        <span
-          v-if="isActive"
-          class="template-theme-card__badge"
-          data-testid="active-badge"
-        >正在使用</span>
       </div>
+
+      <p v-if="templateName" class="template-theme-card__template-name">
+        {{ templateName }}
+      </p>
 
       <p v-if="templateDescription" class="template-theme-card__description">
         {{ templateDescription }}
@@ -72,9 +93,50 @@ const props = defineProps<{
 }
 
 .template-theme-card__thumbnail {
+  position: relative;
   height: 160px;
-  background: var(--color-surface-sunken, #f5f5f5);
+  padding: 16px;
+  background: var(--color-surface, #fff);
   border-radius: var(--radius-sm, 4px) var(--radius-sm, 4px) 0 0;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.template-theme-card__thumbnail-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.template-theme-card__skeleton-title {
+  width: 60%;
+  height: 12px;
+  border-radius: 3px;
+  background: var(--card-accent);
+}
+
+.template-theme-card__skeleton-line {
+  width: 100%;
+  height: 8px;
+  border-radius: 3px;
+  background: var(--color-border, #d9d9d9);
+}
+
+.template-theme-card__skeleton-line--short {
+  width: 70%;
+}
+
+.template-theme-card__skeleton-quote {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  margin-top: 4px;
+  border-left: 3px solid var(--card-accent);
+  background: var(--color-surface-sunken, #f5f5f5);
+}
+
+.template-theme-card__skeleton-quote .template-theme-card__skeleton-line {
+  margin: 0;
 }
 
 .template-theme-card__body {
@@ -98,12 +160,21 @@ const props = defineProps<{
 }
 
 .template-theme-card__badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
   font-size: 12px;
   padding: 2px 8px;
   border-radius: 10px;
   background: var(--color-brand-subtle, #e8f0fe);
   color: var(--color-brand);
   white-space: nowrap;
+}
+
+.template-theme-card__template-name {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  margin: 0;
 }
 
 .template-theme-card__description {

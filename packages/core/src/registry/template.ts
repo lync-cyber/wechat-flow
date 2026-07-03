@@ -2,6 +2,7 @@ import type { TemplateDefinition } from "@wechat-flow/contracts";
 
 export type TemplateMeta = {
   templateId: string;
+  name: string | undefined;
   description: string | undefined;
 };
 
@@ -19,17 +20,18 @@ const knownThemeIds = new Set<string>();
 export function defineTemplate(input: {
   themeId: string;
   templateId: string;
+  name?: string;
   markdown: string;
   metadata: { description?: string };
 }): void {
-  const { themeId, templateId, markdown, metadata } = input;
+  const { themeId, templateId, name, markdown, metadata } = input;
   knownThemeIds.add(themeId);
   if (!store.has(themeId)) {
     store.set(themeId, new Map());
   }
   const themeMap = store.get(themeId);
   if (themeMap) {
-    themeMap.set(templateId, { themeId, templateId, markdown, metadata });
+    themeMap.set(templateId, { themeId, templateId, name, markdown, metadata });
   }
 }
 
@@ -38,6 +40,7 @@ export function listThemeTemplates(themeId: string): TemplateMeta[] {
   if (!themeMap) return [];
   return Array.from(themeMap.values()).map((def) => ({
     templateId: def.templateId,
+    name: def.name,
     description: def.metadata?.description,
   }));
 }

@@ -68,9 +68,6 @@ async function typeInEditor(page: Page, text: string): Promise<void> {
 }
 
 // 交互触发组件：先执行触发交互，组件可见后截组件本体。
-// UC-012（通用 Modal）与 UC-020（BaseColorDeriveModal）在实现侧是 placeholder 命令
-// （command-registry `run: () => {}`），无组件实体可触发 —— 不生成截图，
-// overlay 报告如实显示「未生成」，差异交由人工视觉 sign-off 裁决。
 interface InteractiveTarget {
   id: string;
   selector: string;
@@ -97,6 +94,16 @@ const INTERACTIVE_COMPONENTS: InteractiveTarget[] = [
     selector: '[data-testid^="toast-"]',
     trigger: async (page) => {
       await page.getByRole("button", { name: "复制到公众号" }).click();
+    },
+  },
+  {
+    // 快捷键手册是 BaseModal confirm 实例；截 base-modal 面板含标题与 footer
+    id: "UC-012",
+    selector: '[data-testid="base-modal"]',
+    trigger: async (page) => {
+      await openMoreMenu(page);
+      await page.getByTestId("menu-item-help-shortcuts").click();
+      await expect(page.getByTestId("shortcuts-modal")).toBeVisible();
     },
   },
   {
@@ -166,6 +173,20 @@ const INTERACTIVE_COMPONENTS: InteractiveTarget[] = [
     trigger: async (page) => {
       await openMoreMenu(page);
       await page.getByTestId("menu-item-settings-paint").click();
+    },
+  },
+  {
+    // 设计帧为 editing 态：填主色等 300ms 防抖派生矩阵渲染出色块后截面板
+    id: "UC-020",
+    selector: '[data-testid="base-modal"]',
+    trigger: async (page) => {
+      await page.getByTestId("link-palette-derive").click();
+      await expect(page.getByTestId("base-color-derive-modal")).toBeVisible();
+      await page.getByTestId("derive-hex-input").fill("#2d5a4e");
+      // derive-token- 前缀会误匹配常驻的 derive-token-matrix 容器；分组容器仅派生后渲染
+      await expect(page.locator('[data-testid^="derive-group-"]').first()).toBeVisible({
+        timeout: 5000,
+      });
     },
   },
   {

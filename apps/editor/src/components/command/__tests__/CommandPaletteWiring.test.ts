@@ -152,6 +152,27 @@ describe("AC-003: switch-theme-tech 命令执行 → editorStore.currentTheme �
   });
 });
 
+describe("AC-005: help-shortcuts 命令打开 ShortcutsModal", () => {
+  it("上下文菜单执行 help-shortcuts 后 shortcuts-modal 出现在 DOM", async () => {
+    const wrapper = mount(EditorShell, {
+      attachTo: document.body,
+      global: { plugins: [createPinia(), makeRouter()] },
+    });
+    await nextTick();
+
+    expect(wrapper.find('[data-testid="shortcuts-modal"]').exists()).toBe(false);
+
+    await wrapper.find('[data-testid="top-bar-more-btn"]').trigger("click");
+    await nextTick();
+
+    await wrapper.find('[data-testid="menu-item-help-shortcuts"]').trigger("click");
+    await nextTick();
+
+    expect(wrapper.find('[data-testid="shortcuts-modal"]').exists()).toBe(true);
+    wrapper.unmount();
+  });
+});
+
 describe("AC-004: Esc 在 EditorShell 级关闭 CommandPalette", () => {
   it("面板打开后按 Esc 面板消失", async () => {
     const wrapper = mount(EditorShell, {

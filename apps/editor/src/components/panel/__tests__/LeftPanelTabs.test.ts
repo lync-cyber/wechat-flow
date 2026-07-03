@@ -127,6 +127,32 @@ describe("AC-001: 主题 Tab 激活态 + ThemeCard 列表", () => {
     expect(wrapper.find('[data-testid="link-custom-color"]').exists()).toBe(true);
     expect(wrapper.find('[data-testid="link-palette-derive"]').exists()).toBe(true);
   });
+
+  it("点击「调色板派生」链接 emit palette-derive 事件", async () => {
+    const wrapper = mount(LeftPanelTabs, {
+      props: { defaultTab: "theme" },
+      global: { plugins: [makeRouter()] },
+    });
+    await nextTick();
+
+    await wrapper.find('[data-testid="link-palette-derive"]').trigger("click");
+    await nextTick();
+
+    expect(wrapper.emitted("palette-derive")).toBeDefined();
+  });
+
+  it("点击「自定义配色」链接 emit custom-color 事件", async () => {
+    const wrapper = mount(LeftPanelTabs, {
+      props: { defaultTab: "theme" },
+      global: { plugins: [makeRouter()] },
+    });
+    await nextTick();
+
+    await wrapper.find('[data-testid="link-custom-color"]').trigger("click");
+    await nextTick();
+
+    expect(wrapper.emitted("custom-color")).toBeDefined();
+  });
 });
 
 describe("AC-002: ThemeCard selected 态", () => {

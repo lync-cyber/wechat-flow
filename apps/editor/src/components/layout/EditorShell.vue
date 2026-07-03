@@ -6,6 +6,7 @@ import { useAutoBackup } from "../../composables/use-auto-backup.ts";
 import { useBidirectionalHighlight } from "../../composables/use-bidirectional-highlight.ts";
 import { useExportLongImage } from "../../composables/use-export-long-image.ts";
 import { useKeywordLint } from "../../composables/use-keyword-lint.ts";
+import { usePaintBinding } from "../../composables/use-paint-binding.ts";
 import { useSplitterWidth } from "../../composables/use-splitter-width";
 import { useToast } from "../../composables/use-toast.ts";
 import { useZhTypo } from "../../composables/use-zh-typo.ts";
@@ -22,6 +23,8 @@ import DiagnosticsPanel from "../diagnostics/DiagnosticsPanel.vue";
 import PreviewPane from "../editor/PreviewPane.vue";
 import SourcePane from "../editor/SourcePane.vue";
 import ExportJobPanel from "../export/ExportJobPanel.vue";
+import ShortcutsModal from "../help/ShortcutsModal.vue";
+import BaseColorDeriveModal from "../paint/BaseColorDeriveModal.vue";
 import PaintDrawer from "../paint/PaintDrawer.vue";
 import ContextMenu from "../panel/ContextMenu.vue";
 import InsertDrawer from "../panel/InsertDrawer.vue";
@@ -118,15 +121,43 @@ const isCommandPaletteOpen = ref(false);
 const isInsertDrawerOpen = ref(false);
 const isContextMenuOpen = ref(false);
 const isPaintDrawerOpen = ref(false);
+const isShortcutsModalOpen = ref(false);
+const isPaletteDeriveOpen = ref(false);
+
+const { paintableTokens, setPaint } = usePaintBinding();
 
 function switchTheme(themeId: string): void {
   editorStore.currentTheme = themeId;
   editorStore.updatePreview(editorStore.content);
 }
 
+function openShortcuts(): void {
+  isShortcutsModalOpen.value = true;
+}
+
+function openPaletteDerive(): void {
+  isPaletteDeriveOpen.value = true;
+}
+
+function onPaletteDeriveApply(_baseColor: string, derivedTokens: Record<string, string>): void {
+  const paintableSet = new Set(paintableTokens.value);
+  for (const [tokenId, color] of Object.entries(derivedTokens)) {
+    if (paintableSet.has(tokenId)) {
+      setPaint(tokenId, color);
+    }
+  }
+  isPaletteDeriveOpen.value = false;
+  pushToast({ type: "success", message: "调色板已应用到当前主题" });
+}
+
 const commandPaletteCommands = computed<CommandDefinition[]>(() => {
   listThemes();
-  return buildEditorCommands({ switchTheme, exportLongImage: onExportLongImage });
+  return buildEditorCommands({
+    switchTheme,
+    exportLongImage: onExportLongImage,
+    openShortcuts,
+    openPaletteDerive,
+  });
 });
 
 const FALLBACK_THEME_ACCENT = "#2D5A4E";
@@ -245,6 +276,8 @@ function onContextMenuCommand(commandId: string): void {
     switchTheme,
     downloadHtml: onDownloadHtml,
     exportLongImage: onExportLongImage,
+    openShortcuts,
+    openPaletteDerive,
   });
   const cmd = cmds.find((c) => c.id === commandId);
   cmd?.run();
@@ -336,7 +369,13 @@ onUnmounted(() => {
         data-testid="left-panel"
         :style="!isTablet ? { width: leftPanel.width.value + 'px' } : undefined"
       >
-        <LeftPanelTabs default-tab="theme" :on-theme-select="switchTheme" :on-insert-block="onInsertDirective" />
+        <LeftPanelTabs
+          default-tab="theme"
+          :on-theme-select="switchTheme"
+          :on-insert-block="onInsertDirective"
+          @palette-derive="openPaletteDerive"
+          @custom-color="isPaintDrawerOpen = true"
+        />
       </aside>
 
       <!-- Left splitter (desktop only, not focus mode) -->
@@ -459,6 +498,19 @@ onUnmounted(() => {
       :is-open="isExportJobPanelOpen"
       :job="exportLongImageJob"
       @close="isExportJobPanelOpen = false"
+    />
+
+    <!-- Shortcuts Modal -->
+    <ShortcutsModal
+      :is-open="isShortcutsModalOpen"
+      :on-close="() => { isShortcutsModalOpen = false; }"
+    />
+
+    <!-- Base Color Derive Modal -->
+    <BaseColorDeriveModal
+      :is-open="isPaletteDeriveOpen"
+      :on-apply="onPaletteDeriveApply"
+      :on-cancel="() => { isPaletteDeriveOpen = false; }"
     />
   </div>
 
