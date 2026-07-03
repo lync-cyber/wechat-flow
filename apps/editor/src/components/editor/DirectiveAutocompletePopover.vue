@@ -42,6 +42,7 @@ function handleClick(index: number): void {
   <div
     v-if="isOpen"
     class="directive-autocomplete-popover"
+    data-testid="directive-autocomplete-popover"
     @keydown="handleKeydown"
   >
     <div
