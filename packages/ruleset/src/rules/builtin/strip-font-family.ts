@@ -9,6 +9,7 @@ const stripFontFamily: RuleDefinition = {
   priority: 80,
   matcher: (node) => hasStyleProp(node, PROPS),
   transform: (node) => removeCssDeclarations(node, PROPS),
+  fixture: "rules/builtin/strip-font-family",
 };
 
 export default stripFontFamily;

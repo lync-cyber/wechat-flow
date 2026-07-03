@@ -37,6 +37,7 @@ const stripNegativeMargin: RuleDefinition = {
       properties: { ...el.properties, style: serializeDeclarations(kept) },
     } as unknown as Node;
   },
+  fixture: "rules/builtin/strip-negative-margin",
 };
 
 export default stripNegativeMargin;

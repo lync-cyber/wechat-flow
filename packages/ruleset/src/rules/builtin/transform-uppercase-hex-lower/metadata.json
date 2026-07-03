@@ -1,0 +1,10 @@
+{
+  "ruleId": "transform-uppercase-hex-lower",
+  "scope": "transform",
+  "priority": 70,
+  "description": "Lowercase uppercase hex color values — normalizes color representation for the WeChat article renderer's color processing",
+  "wechatVersion": {
+    "minSupported": "7.0.0",
+    "knownBuggy": []
+  }
+}

@@ -9,6 +9,7 @@ const clampMarginTopBottom: RuleDefinition = {
   priority: 80,
   matcher: (node) => hasStyleProp(node, PROPS),
   transform: (node) => clampPxProp(node, PROPS, 0, 48),
+  fixture: "rules/builtin/clamp-margin-top-bottom",
 };
 
 export default clampMarginTopBottom;

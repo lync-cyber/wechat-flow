@@ -45,6 +45,7 @@ const transformUlMarkerType: RuleDefinition = {
     });
     return { ...ul, children: newChildren } as unknown as Node;
   },
+  fixture: "rules/builtin/transform-ul-marker-type",
 };
 
 export default transformUlMarkerType;

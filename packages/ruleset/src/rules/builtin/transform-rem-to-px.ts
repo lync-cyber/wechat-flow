@@ -30,6 +30,7 @@ const transformRemToPx: RuleDefinition = {
       properties: { ...el.properties, style: serializeDeclarations(updated) },
     } as unknown as Node;
   },
+  fixture: "rules/builtin/transform-rem-to-px",
 };
 
 export default transformRemToPx;

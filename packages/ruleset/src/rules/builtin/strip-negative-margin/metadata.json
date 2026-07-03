@@ -1,0 +1,10 @@
+{
+  "ruleId": "strip-negative-margin",
+  "scope": "strip",
+  "priority": 85,
+  "description": "Remove negative margin declarations — negative margins cause unpredictable overlap in the WeChat article renderer",
+  "wechatVersion": {
+    "minSupported": "7.0.0",
+    "knownBuggy": []
+  }
+}

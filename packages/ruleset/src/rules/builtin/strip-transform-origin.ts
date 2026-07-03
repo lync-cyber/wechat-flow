@@ -9,6 +9,7 @@ const stripTransformOrigin: RuleDefinition = {
   priority: 80,
   matcher: (node) => hasStyleProp(node, PROPS),
   transform: (node) => removeCssDeclarations(node, PROPS),
+  fixture: "rules/builtin/strip-transform-origin",
 };
 
 export default stripTransformOrigin;

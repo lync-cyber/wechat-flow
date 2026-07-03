@@ -1,0 +1,10 @@
+{
+  "ruleId": "transform-vh-fallback",
+  "scope": "transform",
+  "priority": 70,
+  "description": "Replace vh units with auto — viewport height units are not supported in the WeChat article renderer",
+  "wechatVersion": {
+    "minSupported": "7.0.0",
+    "knownBuggy": []
+  }
+}

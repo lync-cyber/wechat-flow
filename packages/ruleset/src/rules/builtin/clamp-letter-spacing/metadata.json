@@ -1,0 +1,10 @@
+{
+  "ruleId": "clamp-letter-spacing",
+  "scope": "clamp",
+  "priority": 80,
+  "description": "Clamp letter-spacing to the range [-0.05em, 0.2em] — values outside this range cause illegible text in WeChat article rendering",
+  "wechatVersion": {
+    "minSupported": "7.0.0",
+    "knownBuggy": []
+  }
+}

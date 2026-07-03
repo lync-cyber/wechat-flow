@@ -1,0 +1,10 @@
+{
+  "ruleId": "clamp-text-indent",
+  "scope": "clamp",
+  "priority": 80,
+  "description": "Clamp text-indent to the range [0px, 64px] — values outside this range push text out of the readable area in WeChat article layout",
+  "wechatVersion": {
+    "minSupported": "7.0.0",
+    "knownBuggy": []
+  }
+}

@@ -11,6 +11,7 @@ const stripIdAttr: RuleDefinition = {
     const { id: _id, ...rest } = el.properties;
     return { ...el, properties: rest } as Node;
   },
+  fixture: "rules/builtin/strip-id-attr",
 };
 
 export default stripIdAttr;

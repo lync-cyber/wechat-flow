@@ -34,6 +34,7 @@ const transformEmToPx: RuleDefinition = {
       properties: { ...el.properties, style: serializeDeclarations(updated) },
     } as unknown as Node;
   },
+  fixture: "rules/builtin/transform-em-to-px",
 };
 
 export default transformEmToPx;

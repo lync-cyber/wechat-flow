@@ -7,6 +7,7 @@ const stripStyleTag: RuleDefinition = {
   priority: 100,
   matcher: (node) => isTag(node, "style"),
   transform: () => null,
+  fixture: "rules/builtin/strip-style-tag",
 };
 
 export default stripStyleTag;

@@ -42,6 +42,7 @@ const clampRgbaAlpha: RuleDefinition = {
       properties: { ...el.properties, style: serializeDeclarations(updated) },
     } as unknown as Node;
   },
+  fixture: "rules/builtin/clamp-rgba-alpha",
 };
 
 export default clampRgbaAlpha;

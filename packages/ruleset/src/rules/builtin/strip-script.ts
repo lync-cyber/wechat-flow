@@ -7,6 +7,7 @@ const stripScript: RuleDefinition = {
   priority: 100,
   matcher: (node) => isTag(node, "script"),
   transform: () => null,
+  fixture: "rules/builtin/strip-script",
 };
 
 export default stripScript;

@@ -1,0 +1,10 @@
+{
+  "ruleId": "strip-calc-expression",
+  "scope": "strip",
+  "priority": 85,
+  "description": "Remove CSS declarations containing calc() expressions — calc() is not supported in the WeChat article renderer",
+  "wechatVersion": {
+    "minSupported": "7.0.0",
+    "knownBuggy": []
+  }
+}

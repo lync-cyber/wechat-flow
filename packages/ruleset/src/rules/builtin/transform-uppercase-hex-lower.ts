@@ -32,6 +32,7 @@ const transformUppercaseHexLower: RuleDefinition = {
       properties: { ...el.properties, style: serializeDeclarations(updated) },
     } as unknown as Node;
   },
+  fixture: "rules/builtin/transform-uppercase-hex-lower",
 };
 
 export default transformUppercaseHexLower;

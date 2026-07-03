@@ -1,0 +1,10 @@
+{
+  "ruleId": "clamp-margin-top-bottom",
+  "scope": "clamp",
+  "priority": 80,
+  "description": "Clamp margin-top and margin-bottom to the range [0px, 48px] — values outside this range cause excessive spacing in WeChat article layout",
+  "wechatVersion": {
+    "minSupported": "7.0.0",
+    "knownBuggy": []
+  }
+}

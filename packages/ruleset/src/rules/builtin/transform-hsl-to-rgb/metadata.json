@@ -1,0 +1,10 @@
+{
+  "ruleId": "transform-hsl-to-rgb",
+  "scope": "transform",
+  "priority": 70,
+  "description": "Convert hsl()/hsl() color values to rgb() — hsl() is not reliably supported in the WeChat article renderer",
+  "wechatVersion": {
+    "minSupported": "7.0.0",
+    "knownBuggy": []
+  }
+}

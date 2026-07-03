@@ -30,6 +30,7 @@ const lintPositionFixed: RuleDefinition = {
       },
     ];
   },
+  fixture: "rules/builtin/lint-position-fixed",
 };
 
 export default lintPositionFixed;

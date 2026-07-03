@@ -28,6 +28,7 @@ const stripPseudoClasses: RuleDefinition = {
       .join(";");
     return { ...el, properties: { ...el.properties, style: cleaned } } as Node;
   },
+  fixture: "rules/builtin/strip-pseudo-classes",
 };
 
 export default stripPseudoClasses;

@@ -29,6 +29,7 @@ const transformListToTable: RuleDefinition = {
   priority: 60,
   matcher: (node: Node) => isTag(node, "ul"),
   transform: (node: Node): Node => ulToTable(node as Element),
+  fixture: "rules/builtin/transform-list-to-table",
 };
 
 export default transformListToTable;

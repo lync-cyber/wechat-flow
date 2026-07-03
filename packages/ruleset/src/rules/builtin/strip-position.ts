@@ -9,6 +9,7 @@ const stripPosition: RuleDefinition = {
   priority: 90,
   matcher: (node) => hasStyleProp(node, PROPS),
   transform: (node) => removeCssDeclarations(node, PROPS),
+  fixture: "rules/builtin/strip-position",
 };
 
 export default stripPosition;

@@ -25,6 +25,7 @@ const stripCalcExpression: RuleDefinition = {
       properties: { ...el.properties, style: serializeDeclarations(kept) },
     } as unknown as Node;
   },
+  fixture: "rules/builtin/strip-calc-expression",
 };
 
 export default stripCalcExpression;

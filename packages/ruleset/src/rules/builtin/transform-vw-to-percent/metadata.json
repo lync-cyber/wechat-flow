@@ -1,0 +1,10 @@
+{
+  "ruleId": "transform-vw-to-percent",
+  "scope": "transform",
+  "priority": 70,
+  "description": "Convert vw units to percent — viewport width units are not supported in the WeChat article renderer, percent is the closest equivalent",
+  "wechatVersion": {
+    "minSupported": "7.0.0",
+    "knownBuggy": []
+  }
+}

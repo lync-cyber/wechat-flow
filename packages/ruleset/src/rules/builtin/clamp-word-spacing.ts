@@ -7,6 +7,7 @@ const clampWordSpacing: RuleDefinition = {
   priority: 80,
   matcher: (node) => hasStyleProp(node, ["word-spacing"]),
   transform: (node) => clampPxProp(node, ["word-spacing"], 0, 8),
+  fixture: "rules/builtin/clamp-word-spacing",
 };
 
 export default clampWordSpacing;

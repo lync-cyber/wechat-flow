@@ -38,6 +38,7 @@ const transformSvgWhiteOffset: RuleDefinition = {
     return el.type === "element" && el.tagName === "svg";
   },
   transform: (node: Node): Node => replaceWhiteInNode(node),
+  fixture: "rules/builtin/transform-svg-white-offset",
 };
 
 export default transformSvgWhiteOffset;
