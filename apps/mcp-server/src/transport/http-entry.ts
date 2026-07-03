@@ -1,4 +1,5 @@
 import { serve } from "@hono/node-server";
+import { resolveJobsClientFromEnv } from "../jobs/relay-client.ts";
 import { type HttpTransportDeps, createHttpTransportApp } from "./http-sse.ts";
 
 /**
@@ -9,7 +10,11 @@ export function startHttpTransport(
   port: number,
   deps: HttpTransportDeps = {}
 ): ReturnType<typeof serve> {
-  const app = createHttpTransportApp(deps);
+  const resolvedDeps: HttpTransportDeps = {
+    ...deps,
+    jobsClient: deps.jobsClient ?? resolveJobsClientFromEnv(),
+  };
+  const app = createHttpTransportApp(resolvedDeps);
   return serve({ fetch: app.fetch, port }, (info) => {
     console.log(`mcp-server HTTP transport listening on http://localhost:${info.port}`);
   });
