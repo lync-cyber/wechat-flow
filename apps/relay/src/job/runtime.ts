@@ -5,12 +5,13 @@ import type { Redis } from "ioredis";
 import { createBullmqJobStore } from "./bullmq-store.ts";
 import { computeIdempotencyKey } from "./idempotency.ts";
 import { type QueueConnection, createQueue } from "./queue.ts";
-import type { IdempotencyStore, JobKind, JobsAppDeps } from "./types.ts";
+import { ALL_JOB_KINDS, type IdempotencyStore, type JobKind, type JobsAppDeps } from "./types.ts";
 
 const RENDER_KINDS: JobKind[] = ["long-image-render", "cover-render"];
 
 export interface JobsRuntime {
   jobsDeps: JobsAppDeps;
+  queueDepths(): Promise<Record<JobKind, number>>;
   close(): Promise<void>;
 }
 
@@ -80,6 +81,13 @@ export function createJobsRuntime(opts: {
 
   const jobsDeps: JobsAppDeps = { store, enqueue, idemStore, sseEmitter };
 
+  const queueDepths = async (): Promise<Record<JobKind, number>> => {
+    const entries = await Promise.all(
+      ALL_JOB_KINDS.map(async (kind) => [kind, await getQueue(kind).getWaitingCount()] as const)
+    );
+    return Object.fromEntries(entries) as Record<JobKind, number>;
+  };
+
   const close = async (): Promise<void> => {
     await Promise.allSettled([
       ...[...queues.values()].map((q) => q.close()),
@@ -87,5 +95,5 @@ export function createJobsRuntime(opts: {
     ]);
   };
 
-  return { jobsDeps, close };
+  return { jobsDeps, queueDepths, close };
 }

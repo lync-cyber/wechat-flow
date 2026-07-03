@@ -1,5 +1,10 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
+import { renderMetrics, resetMetrics } from "../../../apps/mcp-server/src/metrics.ts";
 import { simulatePasteTool } from "../../../apps/mcp-server/src/tools/simulate-paste.ts";
+
+beforeEach(() => {
+  resetMetrics();
+});
 
 // AC-001: handler returns { filteredHtml, diffNodes, droppedAttrs } with diffNodes mapped from core nodeDiffs
 describe("AC-001: simulatePasteTool returns filteredHtml, diffNodes, droppedAttrs", () => {
@@ -50,5 +55,23 @@ describe("AC-003: simulatePasteTool is a thin wrapper — args.html is passed th
     expect(idDropped).toBeDefined();
     // filteredHtml should not contain id attribute
     expect(result.filteredHtml).not.toContain('id="x"');
+  });
+});
+
+// AC-004: simulatePasteTool observes paste_simulation_diff_ratio; sourceNodeCount stays internal
+describe("AC-004: simulatePasteTool observes paste_simulation_diff_ratio on each call", () => {
+  it("a single call increments the paste_simulation_diff_ratio observation count by 1", async () => {
+    simulatePasteTool({ html: '<div id="x">hello</div>' });
+    const text = await renderMetrics();
+    expect(text).toContain("paste_simulation_diff_ratio_count 1");
+  });
+
+  it("tool return shape stays { filteredHtml, diffNodes, droppedAttrs } — sourceNodeCount not exposed", () => {
+    const result = simulatePasteTool({ html: '<div id="x">hello</div>' }) as Record<
+      string,
+      unknown
+    >;
+    expect(Object.keys(result).sort()).toEqual(["diffNodes", "droppedAttrs", "filteredHtml"]);
+    expect(result).not.toHaveProperty("sourceNodeCount");
   });
 });

@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { registerBuiltins } from "../bootstrap.ts";
 import type { JobsClient } from "../jobs/client.ts";
 import { makeNotImplementedJobsClient } from "../jobs/client.ts";
+import { renderMetrics } from "../metrics.ts";
 import { dispatchTool } from "../tools/router.ts";
 
 export interface TokenResolver {
@@ -49,6 +50,7 @@ const passthroughResolver: TokenResolver = {
 /**
  * Creates a standalone Hono app exposing MCP tool dispatch over HTTP.
  * POST /mcp/tools/:tool — dispatches to the named tool.
+ * GET /metrics — Prometheus text exposition of SLIs; not gated by Bearer auth.
  * Token resolution is injectable via deps.tokenResolver.
  */
 export function createHttpTransportApp(deps: HttpTransportDeps = {}): Hono {
@@ -90,6 +92,11 @@ export function createHttpTransportApp(deps: HttpTransportDeps = {}): Hono {
     }
 
     return c.json(result, 200);
+  });
+
+  app.get("/metrics", async (c) => {
+    const text = await renderMetrics();
+    return c.text(text, 200, { "content-type": "text/plain; version=0.0.4; charset=utf-8" });
   });
 
   return app;

@@ -90,6 +90,7 @@ beforeEach(() => {
     filteredHtml: SAMPLE_FILTERED_HTML,
     nodeDiffs: [],
     droppedAttrs: [],
+    sourceNodeCount: 0,
   });
 });
 
@@ -186,7 +187,12 @@ describe("AC-005: pipeline order: composeRender → simulatePaste → clipboard.
 
     mockSimulatePaste.mockImplementation(() => {
       callOrder.push("simulatePaste");
-      return { filteredHtml: SAMPLE_FILTERED_HTML, nodeDiffs: [], droppedAttrs: [] };
+      return {
+        filteredHtml: SAMPLE_FILTERED_HTML,
+        nodeDiffs: [],
+        droppedAttrs: [],
+        sourceNodeCount: 0,
+      };
     });
 
     await composeCopy({ markdown: "# Hello", themeId: "default" });
@@ -208,7 +214,12 @@ describe("AC-005: pipeline order: composeRender → simulatePaste → clipboard.
 
     mockSimulatePaste.mockImplementation(() => {
       callOrder.push("simulatePaste");
-      return { filteredHtml: SAMPLE_FILTERED_HTML, nodeDiffs: [], droppedAttrs: [] };
+      return {
+        filteredHtml: SAMPLE_FILTERED_HTML,
+        nodeDiffs: [],
+        droppedAttrs: [],
+        sourceNodeCount: 0,
+      };
     });
 
     clipboardWriteStub.mockImplementation(async () => {

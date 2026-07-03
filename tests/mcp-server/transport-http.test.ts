@@ -1,6 +1,11 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
+import { resetMetrics } from "../../apps/mcp-server/src/metrics.ts";
 import type { TokenResolver } from "../../apps/mcp-server/src/transport/http-sse.ts";
 import { createHttpTransportApp } from "../../apps/mcp-server/src/transport/http-sse.ts";
+
+beforeEach(() => {
+  resetMetrics();
+});
 
 // AC-001: MCP HTTP transport dispatch renders markdown and returns HTTP 200
 
@@ -121,7 +126,55 @@ describe("R-003: HTTP transport token resolver injection", () => {
     const body = (await res.json()) as { html: string };
     expect(typeof body.html).toBe("string");
   });
+});
 
+// GET /metrics: Prometheus SLI endpoint
+
+describe("GET /metrics: Prometheus text exposition of MCP server SLIs", () => {
+  it("POST render_markdown then GET /metrics contains render_markdown_latency_ms_count 1", async () => {
+    const app = createHttpTransportApp();
+
+    await app.request("/mcp/tools/render_markdown", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ markdown: "# Hi" }),
+    });
+
+    const res = await app.request("/metrics");
+    expect(res.status).toBe(200);
+    const text = await res.text();
+    expect(text).toContain("render_markdown_latency_ms_count 1");
+  });
+
+  it("POST simulate_paste then GET /metrics contains paste_simulation_diff_ratio_count 1", async () => {
+    const app = createHttpTransportApp();
+
+    await app.request("/mcp/tools/simulate_paste", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ html: "<p>hi</p>" }),
+    });
+
+    const res = await app.request("/metrics");
+    expect(res.status).toBe(200);
+    const text = await res.text();
+    expect(text).toContain("paste_simulation_diff_ratio_count 1");
+  });
+
+  it("GET /metrics with no authorization header still returns 200 (not gated by Bearer auth)", async () => {
+    const app = createHttpTransportApp();
+    const res = await app.request("/metrics");
+    expect(res.status).toBe(200);
+  });
+
+  it("GET /metrics response content-type is the Prometheus text exposition format", async () => {
+    const app = createHttpTransportApp();
+    const res = await app.request("/metrics");
+    expect(res.headers.get("content-type")).toContain("text/plain");
+  });
+});
+
+describe("R-003: HTTP transport token resolver injection (metrics endpoint unaffected)", () => {
   it("default resolver (no tokenResolver injected) allows requests with no auth header", async () => {
     // Default passthrough resolver accepts all traffic (wiring-placeholder behavior)
     const app = createHttpTransportApp();

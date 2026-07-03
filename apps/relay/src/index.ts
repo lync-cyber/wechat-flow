@@ -11,6 +11,8 @@ import { createEditorSessionApp } from "./routes/editor-session.ts";
 import { healthRoute } from "./routes/health.ts";
 import { createImagesApp } from "./routes/images.ts";
 import { createJobsApp } from "./routes/jobs.ts";
+import { createMetricsApp } from "./routes/metrics.ts";
+import type { MetricsAppDeps } from "./routes/metrics.ts";
 import { createWechatAssetsApp } from "./routes/wechat-assets.ts";
 import type { WechatAssetsAppDeps } from "./routes/wechat-assets.ts";
 
@@ -34,6 +36,7 @@ export interface AppDeps {
   editorSession?: EditorSessionDeps;
   adminDeps?: AdminDeps;
   wechatAssets?: WechatAssetsAppDeps;
+  metrics?: MetricsAppDeps;
 }
 
 export function createApp(deps: AppDeps = {}): Hono<{ Variables: AuthVariables }> {
@@ -71,6 +74,10 @@ export function createApp(deps: AppDeps = {}): Hono<{ Variables: AuthVariables }
 
   if (deps.adminDeps) {
     app.route("/api/v1", deps.adminDeps.app);
+  }
+
+  if (deps.metrics) {
+    app.route("/", createMetricsApp(deps.metrics));
   }
 
   return app;

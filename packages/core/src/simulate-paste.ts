@@ -12,10 +12,21 @@ export interface SimulatePasteResult {
   filteredHtml: string;
   nodeDiffs: NodeDiff[];
   droppedAttrs: DroppedAttr[];
+  sourceNodeCount: number;
 }
 
 function deepClone(tree: Root): Root {
   return JSON.parse(JSON.stringify(tree)) as Root;
+}
+
+function countElementNodes(node: Root | Element): number {
+  let count = 0;
+  for (const child of node.children) {
+    if (child.type === "element") {
+      count += 1 + countElementNodes(child as Element);
+    }
+  }
+  return count;
 }
 
 function applyStripAttrs(tree: Root): { tree: Root; dropped: DroppedAttr[] } {
@@ -59,5 +70,6 @@ export function simulatePaste(html: string): SimulatePasteResult {
     filteredHtml,
     nodeDiffs,
     droppedAttrs: [...strippedTagDropped, ...dropped],
+    sourceNodeCount: countElementNodes(beforeTree),
   };
 }
