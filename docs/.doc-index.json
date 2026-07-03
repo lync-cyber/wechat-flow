@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-02T11:20:28.018669+00:00",
+  "generated_at": "2026-07-03T04:32:32.256096+00:00",
   "documents": {
     "arch-wechat-flow-api": {
       "file_path": "docs/arch/arch-wechat-flow-api.md",
@@ -2692,6 +2692,24 @@
       "dep_hashes": {
         "prd-wechat-flow": "0e15bcb3",
         "arch-wechat-flow": "10499df8"
+      }
+    },
+    "rn-007-patch-dsl": {
+      "file_path": "docs/research/tech-eval-patch-dsl.md",
+      "doc_type": "research",
+      "volume": "main",
+      "status": "approved",
+      "total_lines": 82,
+      "est_tokens": 981,
+      "content_hash": "6634c3d5",
+      "sections": {},
+      "deps": [
+        "arch-wechat-flow",
+        "prd-wechat-flow"
+      ],
+      "dep_hashes": {
+        "arch-wechat-flow": "10499df8",
+        "prd-wechat-flow": "0e15bcb3"
       }
     },
     "rn-003-backend-framework": {
