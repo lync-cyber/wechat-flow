@@ -10,6 +10,7 @@ export interface TokenVerifyResult {
   count: number;
   tokenKeys: string[];
   ok: boolean;
+  error?: string;
 }
 
 const PENPOT_TOKENS_JSON = "docs/design/tokens/penpot-tokens.json";
@@ -22,7 +23,19 @@ export function verifyPenpotTokens(
   if (!existsSync(jsonPath)) {
     return { path: jsonPath, exists: false, count: 0, tokenKeys: [], ok: false };
   }
-  const parsed = JSON.parse(readFileSync(jsonPath, "utf8")) as Record<string, unknown>;
+  let parsed: Record<string, unknown>;
+  try {
+    parsed = JSON.parse(readFileSync(jsonPath, "utf8")) as Record<string, unknown>;
+  } catch (e) {
+    return {
+      path: jsonPath,
+      exists: true,
+      count: 0,
+      tokenKeys: [],
+      ok: false,
+      error: e instanceof Error ? e.message : String(e),
+    };
+  }
   const tokenKeys = Object.keys(parsed).filter((k) => k.startsWith("--"));
   return {
     path: jsonPath,

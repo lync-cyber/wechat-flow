@@ -96,6 +96,8 @@ export async function issueEditorSession(
   return {
     sessionJwt: jwt,
     expiresAt: new Date(expMs).toISOString(),
+    // refreshUntil 是续期允许的截止时刻，与 expiresAt 相同：过期 JWT 会被 jwtVerify 拒绝；
+    // 窗口起点 = exp - REFRESH_WINDOW_MS，客户端按 expiresAt 自行推导。
     refreshUntil: new Date(expMs).toISOString(),
     scope: SCOPE,
     sessionId,
@@ -148,6 +150,8 @@ export async function refreshEditorSession(
   return {
     sessionJwt: jwt,
     expiresAt: new Date(expMs).toISOString(),
+    // refreshUntil 是续期允许的截止时刻，与 expiresAt 相同：过期 JWT 会被 jwtVerify 拒绝；
+    // 窗口起点 = exp - REFRESH_WINDOW_MS，客户端按 expiresAt 自行推导。
     refreshUntil: new Date(expMs).toISOString(),
     scope: SCOPE,
     sessionId: newSessionId,

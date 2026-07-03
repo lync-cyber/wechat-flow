@@ -113,6 +113,23 @@ describe("createAuthMiddleware: scope enforcement", () => {
   });
 });
 
+describe("createAuthMiddleware: Bearer auth-scheme case-insensitivity (RFC 7235 §2.1)", () => {
+  it.each(["bearer", "BEARER", "Bearer"])(
+    "accepts the '%s' auth-scheme casing and populates c.get('auth')",
+    async (scheme) => {
+      const app = makeProtectedApp();
+      const token = await signEditorJwt({ sub: "user:case-test" });
+      const res = await app.request("/protected", {
+        headers: { authorization: `${scheme} ${token}` },
+      });
+      expect(res.status).toBe(200);
+      const body = (await res.json()) as { ok: boolean; sub: string };
+      expect(body.ok).toBe(true);
+      expect(body.sub).toBe("user:case-test");
+    }
+  );
+});
+
 describe("error envelope: requestId echoes inbound x-request-id and is mirrored to response header", () => {
   it("echoes the provided x-request-id in both the body and the response header", async () => {
     const app = makeProtectedApp();
