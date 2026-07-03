@@ -51,13 +51,13 @@ function setActive(id: NavSection): void {
 
       <section v-else-if="activeSection === 'theme'" data-testid="settings-content-theme">
         <h2 class="settings-content__title">主题与品牌</h2>
-        <!-- [ASSUMPTION]: 待 T-041 实现主题市场页组件 -->
+        <!-- [ASSUMPTION] 占位 section，依赖主题市场等后续功能接线 -->
         <p class="settings-content__placeholder">主题与品牌配置</p>
       </section>
 
       <section v-else-if="activeSection === 'sync'" data-testid="settings-content-sync">
         <h2 class="settings-content__title">同步与协作</h2>
-        <!-- [ASSUMPTION]: 同步与协作功能待后续 Sprint 规划 -->
+        <!-- [ASSUMPTION] 占位 section，依赖凭据同步等后续功能接线 -->
         <p class="settings-content__placeholder">同步与协作配置</p>
       </section>
 
@@ -76,7 +76,7 @@ function setActive(id: NavSection): void {
 
       <section v-else-if="activeSection === 'about'" data-testid="settings-content-about">
         <h2 class="settings-content__title">关于</h2>
-        <!-- [ASSUMPTION]: 版本信息展示待 deploy-spec 确认产物版本注入方式 -->
+        <!-- [ASSUMPTION] 占位 section，依赖产物版本注入等后续功能接线 -->
         <p class="settings-content__placeholder">版本信息</p>
       </section>
     </main>

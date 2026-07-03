@@ -83,9 +83,18 @@ describe("command-registry: buildEditorCommands", () => {
     expect(downloadHtml).toHaveBeenCalledOnce();
   });
 
-  it("空实现命令显式标记 placeholder: true，switch-theme 与 export-download-html 为真实实现无标记", () => {
+  it("export-long-image.run() 调用 exportLongImage 回调", () => {
+    const exportLongImage = vi.fn();
+    const cmds = buildEditorCommands({ switchTheme: vi.fn(), exportLongImage });
+    const cmd = cmds.find((c) => c.id === "export-long-image");
+    if (!cmd) throw new Error("export-long-image not found");
+    cmd.run();
+    expect(exportLongImage).toHaveBeenCalledOnce();
+  });
+
+  it("空实现命令显式标记 placeholder: true，switch-theme 与 export-download-html/export-long-image 为真实实现无标记", () => {
     const cmds = buildEditorCommands({ switchTheme: vi.fn() });
-    const realImplIds = new Set(["export-download-html"]);
+    const realImplIds = new Set(["export-download-html", "export-long-image"]);
     for (const cmd of cmds) {
       if (cmd.id.startsWith("switch-theme-") || realImplIds.has(cmd.id)) {
         expect(cmd.placeholder, `command ${cmd.id} has real run impl`).toBeUndefined();

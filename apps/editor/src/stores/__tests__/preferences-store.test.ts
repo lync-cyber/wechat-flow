@@ -116,3 +116,20 @@ describe("AC-002/AC-003: init 从 loadEditorPreferences 回填", () => {
     expect(store.lineHeight).toBe(1.75);
   });
 });
+
+describe("SR-005: init() 幂等 guard — 二次调用不重复读取 IndexedDB", () => {
+  it("连续调用 init 两次，loadEditorPreferences 只被调用一次", async () => {
+    const store = usePreferencesStore();
+    await store.init();
+    await store.init();
+    expect(loadEditorPreferences).toHaveBeenCalledTimes(1);
+  });
+
+  it("并发调用 init（未 await 第一次）仍只读取一次", async () => {
+    const store = usePreferencesStore();
+    const p1 = store.init();
+    const p2 = store.init();
+    await Promise.all([p1, p2]);
+    expect(loadEditorPreferences).toHaveBeenCalledTimes(1);
+  });
+});

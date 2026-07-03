@@ -121,3 +121,134 @@ describe("useEditorSession: getSessionToken", () => {
     expect(body.deviceFingerprint.length).toBeGreaterThanOrEqual(16);
   });
 });
+
+describe("SR-R2-006: getSessionToken JWT 主动续期", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-01-01T00:00:00.000Z"));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("未到期（不在续期窗口内）→ 直接复用缓存，不发 refresh 请求", async () => {
+    const now = Date.now();
+    const fakeFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        sessionJwt: "jwt-fresh",
+        expiresAt: new Date(now + 15 * 60 * 1000).toISOString(),
+        refreshUntil: new Date(now + 15 * 60 * 1000).toISOString(),
+        scope: [],
+        sessionId: "sess-fresh",
+      }),
+    });
+
+    const { useEditorSession } = await import("../use-editor-session");
+    const session = useEditorSession({ fetchImpl: fakeFetch as typeof fetch });
+    const t1 = await session.getSessionToken();
+
+    vi.advanceTimersByTime(60 * 1000);
+
+    const t2 = await session.getSessionToken();
+
+    expect(t1).toBe("jwt-fresh");
+    expect(t2).toBe("jwt-fresh");
+    expect(fakeFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it("进入续期窗口（<60s 到期）→ 调用 refresh 端点并更新缓存", async () => {
+    const now = Date.now();
+    const bootstrapFetch = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        sessionJwt: "jwt-old",
+        expiresAt: new Date(now + 70 * 1000).toISOString(),
+        refreshUntil: new Date(now + 70 * 1000).toISOString(),
+        scope: [],
+        sessionId: "sess-old",
+      }),
+    });
+    const refreshResponse = {
+      ok: true,
+      json: async () => ({
+        sessionJwt: "jwt-refreshed",
+        expiresAt: new Date(now + 70 * 1000 + 15 * 60 * 1000).toISOString(),
+        refreshUntil: new Date(now + 70 * 1000 + 15 * 60 * 1000).toISOString(),
+        scope: [],
+        sessionId: "sess-refreshed",
+      }),
+    };
+    const fakeFetch = vi
+      .fn()
+      .mockImplementationOnce(bootstrapFetch)
+      .mockResolvedValueOnce(refreshResponse);
+
+    const { useEditorSession } = await import("../use-editor-session");
+    const session = useEditorSession({ fetchImpl: fakeFetch as typeof fetch });
+    const t1 = await session.getSessionToken();
+    expect(t1).toBe("jwt-old");
+
+    // Advance past (expiresAt - 60_000) so we're inside the refresh window
+    vi.advanceTimersByTime(20 * 1000);
+
+    const t2 = await session.getSessionToken();
+
+    expect(t2).toBe("jwt-refreshed");
+    expect(fakeFetch).toHaveBeenCalledTimes(2);
+    const [refreshUrl, refreshOpts] = fakeFetch.mock.calls[1] as [string, RequestInit];
+    expect(refreshUrl).toBe("/api/v1/editor/session/refresh");
+    const headers = refreshOpts.headers as Record<string, string>;
+    expect(headers.authorization ?? headers.Authorization).toBe("Bearer jwt-old");
+  });
+
+  it("refresh 失败（401）→ 回退重新匿名 bootstrap", async () => {
+    const now = Date.now();
+    const bootstrapResponse1 = {
+      ok: true,
+      json: async () => ({
+        sessionJwt: "jwt-old",
+        expiresAt: new Date(now + 70 * 1000).toISOString(),
+        refreshUntil: new Date(now + 70 * 1000).toISOString(),
+        scope: [],
+        sessionId: "sess-old",
+      }),
+    };
+    const refreshFailedResponse = {
+      ok: false,
+      status: 401,
+      json: async () => ({ error: { code: "E_UNAUTHORIZED", message: "refresh rejected" } }),
+    };
+    const bootstrapResponse2 = {
+      ok: true,
+      json: async () => ({
+        sessionJwt: "jwt-rebootstrapped",
+        expiresAt: new Date(now + 70 * 1000 + 15 * 60 * 1000).toISOString(),
+        refreshUntil: new Date(now + 70 * 1000 + 15 * 60 * 1000).toISOString(),
+        scope: [],
+        sessionId: "sess-rebootstrapped",
+      }),
+    };
+    const fakeFetch = vi
+      .fn()
+      .mockResolvedValueOnce(bootstrapResponse1)
+      .mockResolvedValueOnce(refreshFailedResponse)
+      .mockResolvedValueOnce(bootstrapResponse2);
+
+    const { useEditorSession } = await import("../use-editor-session");
+    const session = useEditorSession({ fetchImpl: fakeFetch as typeof fetch });
+    const t1 = await session.getSessionToken();
+    expect(t1).toBe("jwt-old");
+
+    vi.advanceTimersByTime(20 * 1000);
+
+    const t2 = await session.getSessionToken();
+
+    expect(t2).toBe("jwt-rebootstrapped");
+    expect(fakeFetch).toHaveBeenCalledTimes(3);
+    const [thirdUrl, thirdOpts] = fakeFetch.mock.calls[2] as [string, RequestInit];
+    expect(thirdUrl).toBe("/api/v1/editor/session");
+    expect(thirdOpts.method).toBe("POST");
+  });
+});
