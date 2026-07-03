@@ -78,10 +78,11 @@ services:
         condition: service_healthy
     networks: [backend]
 
-  # KNOWN GAP (deploy-spec §2): startHttpTransport() boots with makeNotImplementedJobsClient()
-  # by default — job-dependent tools (export_long_image/export_cover/upload_to_wechat_asset)
-  # return E_NOT_IMPLEMENTED until a real JobsClient wired to relay is injected via ServerDeps
-  # (T-125 backlog). render_markdown/lint_markdown/list_themes/describe_* tools work standalone.
+  # KNOWN GAP (deploy-spec §2): job-dependent tools (export_long_image/export_cover/
+  # upload_to_wechat_asset) proxy to relay's /api/v1/jobs via RELAY_BASE_URL below. relay's
+  # production job routes require a valid Bearer token — set RELAY_BEARER_TOKEN once an
+  # admin API key is provisioned (E-010 provisioning flow is still backlog). Without it,
+  # enqueue/getJob calls receive relay's 401 and surface as E_RELAY_HTTP_401.
   mcp-server:
     build:
       context: .
@@ -91,6 +92,8 @@ services:
       - "8788:8788"
     environment:
       PORT: "8788"
+      RELAY_BASE_URL: http://relay:8787
+      RELAY_BEARER_TOKEN: ${RELAY_BEARER_TOKEN:-}
     depends_on:
       relay:
         condition: service_healthy
