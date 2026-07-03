@@ -26,6 +26,7 @@ function makeDefaultDeps(overrides: Partial<EditorSessionDeps> = {}): EditorSess
     clock: () => Date.now(),
     sessionStore: makeMemorySessionStore(),
     rateLimiter: makeMemoryRateLimiter(),
+    // oauth 上游验证未接线，本套件不校验 oauthToken 内容；stub 仅按 "invalid" 前缀模拟拒绝分支。
     verifyOAuthToken: async (provider, token) =>
       token.startsWith("invalid") ? null : { sub: `oauth:${provider}` },
     allowedOrigins: ["https://editor.example.com"],
@@ -553,6 +554,114 @@ describe("AC-003: POST /api/v1/editor/session/refresh — issues new JWT; old us
     expect(body.sessionJwt).toBeTypeOf("string");
     expect(body.sessionJwt).not.toBe(initial.sessionJwt);
     expect(body.expiresAt).toBeTypeOf("string");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// AC-003 (case-insensitivity): refresh endpoint Bearer auth-scheme variants
+// ---------------------------------------------------------------------------
+
+describe("POST /api/v1/editor/session/refresh: Bearer auth-scheme case-insensitivity (RFC 7235 §2.1)", () => {
+  it.each(["bearer", "BEARER", "Bearer"])(
+    "accepts the '%s' auth-scheme casing and returns a fresh JWT",
+    async (scheme) => {
+      const nowMs = Date.now();
+      const clockValue = { current: nowMs };
+      const clock = () => clockValue.current;
+      const deps = makeDefaultDeps({ clock });
+
+      const initial = await issueEditorSession(
+        { bootstrap: "oauth", provider: "github", oauthToken: `token-scheme-${scheme}` },
+        deps
+      );
+
+      const expiresAtMs = new Date(initial.expiresAt).getTime();
+      clockValue.current = expiresAtMs - 30_000;
+
+      const app = createEditorSessionApp(deps);
+      const res = await app.request("/api/v1/editor/session/refresh", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          authorization: `${scheme} ${initial.sessionJwt}`,
+          "x-editor-origin": "https://editor.example.com",
+        },
+      });
+
+      expect(res.status).toBe(200);
+      const body = (await res.json()) as { sessionJwt: string };
+      expect(body.sessionJwt).toBeTypeOf("string");
+      expect(body.sessionJwt).not.toBe(initial.sessionJwt);
+    }
+  );
+});
+
+// ---------------------------------------------------------------------------
+// refreshUntil semantics: deadline that equals expiresAt (enforced by jwtVerify
+// exp check + refresh-window check); window start = exp - REFRESH_WINDOW_MS
+// ---------------------------------------------------------------------------
+
+describe("refreshUntil semantics — refresh deadline equals expiresAt", () => {
+  const REFRESH_WINDOW_MS = 60 * 1000;
+
+  it("issueEditorSession: refreshUntil equals expiresAt (refresh impossible after JWT expiry)", async () => {
+    const deps = makeDefaultDeps();
+    const result = await issueEditorSession(
+      { bootstrap: "oauth", provider: "github", oauthToken: "token-refresh-until-issue" },
+      deps
+    );
+
+    expect(new Date(result.refreshUntil).getTime()).toBe(new Date(result.expiresAt).getTime());
+  });
+
+  it("refreshEditorSession: refreshed session's refreshUntil equals its expiresAt", async () => {
+    const nowMs = Date.now();
+    const clockValue = { current: nowMs };
+    const clock = () => clockValue.current;
+    const deps = makeDefaultDeps({ clock });
+
+    const initial = await issueEditorSession(
+      { bootstrap: "oauth", provider: "github", oauthToken: "token-refresh-until-refresh" },
+      deps
+    );
+
+    const initialExpiresAtMs = new Date(initial.expiresAt).getTime();
+    clockValue.current = initialExpiresAtMs - 30_000;
+
+    const refreshed = await refreshEditorSession(initial.sessionJwt, deps);
+    expect(new Date(refreshed.refreshUntil).getTime()).toBe(
+      new Date(refreshed.expiresAt).getTime()
+    );
+  });
+
+  it("refresh is rejected after expiresAt — the advertised deadline is enforced", async () => {
+    const nowMs = Date.now();
+    const clockValue = { current: nowMs };
+    const deps = makeDefaultDeps({ clock: () => clockValue.current });
+
+    const initial = await issueEditorSession(
+      { bootstrap: "oauth", provider: "github", oauthToken: "token-refresh-after-expiry" },
+      deps
+    );
+
+    clockValue.current = new Date(initial.expiresAt).getTime() + 1_000;
+    await expect(refreshEditorSession(initial.sessionJwt, deps)).rejects.toThrow();
+  });
+
+  it("refresh is rejected earlier than REFRESH_WINDOW_MS before expiresAt", async () => {
+    const nowMs = Date.now();
+    const clockValue = { current: nowMs };
+    const deps = makeDefaultDeps({ clock: () => clockValue.current });
+
+    const initial = await issueEditorSession(
+      { bootstrap: "oauth", provider: "github", oauthToken: "token-refresh-too-early" },
+      deps
+    );
+
+    clockValue.current = new Date(initial.expiresAt).getTime() - REFRESH_WINDOW_MS - 5_000;
+    await expect(refreshEditorSession(initial.sessionJwt, deps)).rejects.toThrow(
+      /within the refresh window/
+    );
   });
 });
 

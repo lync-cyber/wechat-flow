@@ -27,6 +27,7 @@
     "guard:arch": "depcruise --config .dependency-cruiser.cjs apps packages",
     "guard:boundaries": "node scripts/check-module-boundaries.mjs",
     "bench": "tsx tests/perf/perf-runner-cli.ts",
+    "realworld-verify": "tsx scripts/realworld-verify.ts",
     "test:visual": "playwright test",
     "test:visual:update": "playwright test --update-snapshots",
     "guard:secrets": "secretlint --maskSecrets --secretlintignore .secretlintignore \"**/*\"",
