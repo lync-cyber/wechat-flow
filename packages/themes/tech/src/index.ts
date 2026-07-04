@@ -22,7 +22,7 @@ const techTheme: ThemeDefinition = {
     ...listBlocks,
     ...mediaBlocks,
   },
-  paintable: {},
+  paintable: Object.keys(tokens).filter((key) => key.startsWith("--color-")),
   assets: {},
   meta: {
     author: "wechat-flow",

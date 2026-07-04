@@ -6,8 +6,11 @@ import { useEditorStore } from "../stores/editor.ts";
 export interface UsePaintBinding {
   paintableTokens: ComputedRef<string[]>;
   currentPaint: ComputedRef<Record<string, string>>;
+  themeDefaults: ComputedRef<Record<string, string>>;
   setPaint: (tokenId: string, color: string) => void;
   clearPaint: (tokenId: string) => void;
+  applyPaint: (paint: Record<string, string>) => void;
+  resetPaint: () => void;
 }
 
 export function usePaintBinding(): UsePaintBinding {
@@ -24,6 +27,10 @@ export function usePaintBinding(): UsePaintBinding {
     return parseFrontmatter(store.content).meta.paint ?? {};
   });
 
+  const themeDefaults = computed<Record<string, string>>(() => {
+    return describeTheme(store.currentTheme)?.tokens ?? {};
+  });
+
   function setPaint(tokenId: string, color: string): void {
     const next = { ...currentPaint.value, [tokenId]: color };
     store.setContent(upsertFrontmatterPaint(store.content, next));
@@ -35,5 +42,21 @@ export function usePaintBinding(): UsePaintBinding {
     store.setContent(upsertFrontmatterPaint(store.content, next));
   }
 
-  return { paintableTokens, currentPaint, setPaint, clearPaint };
+  function applyPaint(paint: Record<string, string>): void {
+    store.setContent(upsertFrontmatterPaint(store.content, paint));
+  }
+
+  function resetPaint(): void {
+    store.setContent(upsertFrontmatterPaint(store.content, {}));
+  }
+
+  return {
+    paintableTokens,
+    currentPaint,
+    themeDefaults,
+    setPaint,
+    clearPaint,
+    applyPaint,
+    resetPaint,
+  };
 }

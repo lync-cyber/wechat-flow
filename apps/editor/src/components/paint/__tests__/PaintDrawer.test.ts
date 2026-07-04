@@ -133,11 +133,11 @@ describe("AC-001: PaintDrawer 列出当前主题 paintable tokens", () => {
 });
 
 // ---------------------------------------------------------------------------
-// AC-002: picker input → store.content 更新（UI → 源码）
+// AC-002: picker input 暂存草稿，点击「应用」→ store.content 更新（UI → 源码）
 // ---------------------------------------------------------------------------
 
-describe("AC-002: color picker 触发 input → store.content 含 paint 字段（UI→源码）", () => {
-  it("触发 picker @input → store.content 经 parseFrontmatter 读出 meta.paint 含对应 token 与颜色", async () => {
+describe("AC-002: picker input 暂存草稿，点击「应用」后 store.content 含 paint 字段（UI→源码）", () => {
+  it("触发 picker @input 后 store.content 不变；点击「应用」→ meta.paint 含对应 token 与颜色", async () => {
     const store = useEditorStore();
     store.currentTheme = PAINT_TEST_THEME_ID;
     store.content = "# Hello\n";
@@ -156,12 +156,17 @@ describe("AC-002: color picker 触发 input → store.content 含 paint 字段�
     await input.trigger("input");
     await nextTick();
 
+    expect(store.content).toBe("# Hello\n");
+
+    await wrapper.find('[data-testid="paint-drawer-apply"]').trigger("click");
+    await nextTick();
+
     const { meta } = parseFrontmatter(store.content);
     expect(meta.paint?.["--color-accent"]).toBe("#ff0000");
     wrapper.unmount();
   });
 
-  it("触发 picker input 后 store.content 字符串含 'paint:'", async () => {
+  it("picker input + 应用后 store.content 字符串含 'paint:'", async () => {
     const store = useEditorStore();
     store.currentTheme = PAINT_TEST_THEME_ID;
     store.content = "# Hello\n";
@@ -173,9 +178,40 @@ describe("AC-002: color picker 触发 input → store.content 含 paint 字段�
     const input = row.find('input[type="color"]');
     (input.element as HTMLInputElement).value = "#445566";
     await input.trigger("input");
+    await wrapper.find('[data-testid="paint-drawer-apply"]').trigger("click");
     await nextTick();
 
     expect(store.content).toContain("paint:");
+    wrapper.unmount();
+  });
+
+  it("无草稿时「应用」按钮 disabled", async () => {
+    const store = useEditorStore();
+    store.currentTheme = PAINT_TEST_THEME_ID;
+    store.content = "# Hello\n";
+
+    const wrapper = mount(PaintDrawer, { props: { isOpen: true } });
+    await nextTick();
+
+    const apply = wrapper.find('[data-testid="paint-drawer-apply"]');
+    expect((apply.element as HTMLButtonElement).disabled).toBe(true);
+    wrapper.unmount();
+  });
+
+  it("点击「重置默认值」→ frontmatter paint 块被移除", async () => {
+    const store = useEditorStore();
+    store.currentTheme = PAINT_TEST_THEME_ID;
+    store.content = "---\npaint:\n  '--color-accent': '#ff0000'\n---\n# Hello\n";
+
+    const wrapper = mount(PaintDrawer, { props: { isOpen: true } });
+    await nextTick();
+
+    await wrapper.find('[data-testid="paint-drawer-reset"]').trigger("click");
+    await nextTick();
+
+    const { meta } = parseFrontmatter(store.content);
+    expect(meta.paint).toBeUndefined();
+    expect(store.content).not.toContain("paint:");
     wrapper.unmount();
   });
 });
@@ -201,7 +237,7 @@ describe("AC-003: store.content 含 paint → picker value 双向同步（源码
     wrapper.unmount();
   });
 
-  it("content 中无 paint 时 picker value 使用默认 #000000", async () => {
+  it("content 中无 paint 时 picker value 回退到主题默认 token 值", async () => {
     const store = useEditorStore();
     store.currentTheme = PAINT_TEST_THEME_ID;
     store.content = "# Hello\n";
@@ -211,7 +247,121 @@ describe("AC-003: store.content 含 paint → picker value 双向同步（源码
 
     const row = wrapper.find('[data-testid="paint-token---color-brand"]');
     const input = row.find('input[type="color"]');
-    expect((input.element as HTMLInputElement).value).toBe("#000000");
+    expect((input.element as HTMLInputElement).value).toBe("#001122");
+    wrapper.unmount();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// UC-019 行结构: hex 输入校验 + 越界 ⚠ + footer
+// ---------------------------------------------------------------------------
+
+describe("UC-019: hex 受控输入校验", () => {
+  it("输入非法 hex → 显示错误文案；失焦回滚到上一次合法值", async () => {
+    const store = useEditorStore();
+    store.currentTheme = PAINT_TEST_THEME_ID;
+    store.content = "# Hello\n";
+
+    const wrapper = mount(PaintDrawer, { props: { isOpen: true } });
+    await nextTick();
+
+    const hexInput = wrapper.find('[data-testid="paint-hex---color-accent"]');
+    await hexInput.setValue("not-a-hex");
+    await nextTick();
+
+    expect(wrapper.find('[data-testid="paint-hex-error---color-accent"]').exists()).toBe(true);
+
+    await hexInput.trigger("blur");
+    await nextTick();
+
+    expect(wrapper.find('[data-testid="paint-hex-error---color-accent"]').exists()).toBe(false);
+    expect((hexInput.element as HTMLInputElement).value).toBe("#aabbcc");
+    wrapper.unmount();
+  });
+
+  it("输入合法 hex → 应用后写入 frontmatter paint（自动补 # 前缀）", async () => {
+    const store = useEditorStore();
+    store.currentTheme = PAINT_TEST_THEME_ID;
+    store.content = "# Hello\n";
+
+    const wrapper = mount(PaintDrawer, { props: { isOpen: true } });
+    await nextTick();
+
+    const hexInput = wrapper.find('[data-testid="paint-hex---color-brand"]');
+    await hexInput.setValue("ff8800");
+    await wrapper.find('[data-testid="paint-drawer-apply"]').trigger("click");
+    await nextTick();
+
+    const { meta } = parseFrontmatter(store.content);
+    expect(meta.paint?.["--color-brand"]).toBe("#ff8800");
+    wrapper.unmount();
+  });
+});
+
+describe("UC-019: 超出 paintable 范围的覆盖项显示 ⚠", () => {
+  it("frontmatter paint 含非 paintable token → 行末出现 ⚠ 图标（带 tooltip）", async () => {
+    const store = useEditorStore();
+    store.currentTheme = PAINT_TEST_THEME_ID;
+    store.content = "---\npaint:\n  '--color-not-paintable': '#ffffff'\n---\n# Hello\n";
+
+    const wrapper = mount(PaintDrawer, { props: { isOpen: true } });
+    await nextTick();
+
+    const warn = wrapper.find('[data-testid="paint-warn---color-not-paintable"]');
+    expect(warn.exists()).toBe(true);
+    expect(warn.attributes("title")).toContain("不在主题 paintable 范围内");
+    wrapper.unmount();
+  });
+
+  it("paintable token 行不显示 ⚠", async () => {
+    const store = useEditorStore();
+    store.currentTheme = PAINT_TEST_THEME_ID;
+    store.content = "# Hello\n";
+
+    const wrapper = mount(PaintDrawer, { props: { isOpen: true } });
+    await nextTick();
+
+    expect(wrapper.find('[data-testid="paint-warn---color-accent"]').exists()).toBe(false);
+    wrapper.unmount();
+  });
+});
+
+describe("UC-019: footer 操作行", () => {
+  it("footer 含「重置默认值」与「应用」按钮", async () => {
+    const store = useEditorStore();
+    store.currentTheme = PAINT_TEST_THEME_ID;
+
+    const wrapper = mount(PaintDrawer, { props: { isOpen: true } });
+    await nextTick();
+
+    const footer = wrapper.find('[data-testid="paint-drawer-footer"]');
+    expect(footer.exists()).toBe(true);
+    expect(footer.find('[data-testid="paint-drawer-reset"]').text()).toBe("重置默认值");
+    expect(footer.find('[data-testid="paint-drawer-apply"]').text()).toBe("应用");
+    wrapper.unmount();
+  });
+
+  it("关闭抽屉丢弃未应用草稿：重开后 picker 回到主题默认值", async () => {
+    const store = useEditorStore();
+    store.currentTheme = PAINT_TEST_THEME_ID;
+    store.content = "# Hello\n";
+
+    const wrapper = mount(PaintDrawer, { props: { isOpen: true } });
+    await nextTick();
+
+    const row = wrapper.find('[data-testid="paint-token---color-brand"]');
+    const input = row.find('input[type="color"]');
+    (input.element as HTMLInputElement).value = "#445566";
+    await input.trigger("input");
+    await nextTick();
+
+    await wrapper.setProps({ isOpen: false });
+    await wrapper.setProps({ isOpen: true });
+    await nextTick();
+
+    const reopened = wrapper.find('[data-testid="paint-token---color-brand"] input[type="color"]');
+    expect((reopened.element as HTMLInputElement).value).toBe("#001122");
+    expect(store.content).toBe("# Hello\n");
     wrapper.unmount();
   });
 });
@@ -305,5 +455,38 @@ describe("usePaintBinding composable", () => {
 
     const { paintableTokens } = usePaintBinding();
     expect(paintableTokens.value).toEqual([]);
+  });
+
+  it("themeDefaults 返回当前主题 tokens 字典", () => {
+    const store = useEditorStore();
+    store.currentTheme = PAINT_TEST_THEME_ID;
+
+    const { themeDefaults } = usePaintBinding();
+    expect(themeDefaults.value["--color-accent"]).toBe("#aabbcc");
+    expect(themeDefaults.value["--color-brand"]).toBe("#001122");
+  });
+
+  it("applyPaint 整字典写入 frontmatter paint", () => {
+    const store = useEditorStore();
+    store.currentTheme = PAINT_TEST_THEME_ID;
+    store.content = "# Hello\n";
+
+    const { applyPaint } = usePaintBinding();
+    applyPaint({ "--color-accent": "#ff0000", "--color-brand": "#00ff00" });
+
+    const { meta } = parseFrontmatter(store.content);
+    expect(meta.paint).toEqual({ "--color-accent": "#ff0000", "--color-brand": "#00ff00" });
+  });
+
+  it("resetPaint 移除 frontmatter paint 块", () => {
+    const store = useEditorStore();
+    store.currentTheme = PAINT_TEST_THEME_ID;
+    store.content = "---\npaint:\n  '--color-accent': '#ff0000'\n---\n# Hello\n";
+
+    const { resetPaint } = usePaintBinding();
+    resetPaint();
+
+    const { meta } = parseFrontmatter(store.content);
+    expect(meta.paint).toBeUndefined();
   });
 });
