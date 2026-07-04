@@ -501,7 +501,8 @@ onUnmounted(() => {
     <!-- ZhTypo Preview Modal -->
     <ZhTypoPreviewModal
       :is-open="zhTypo.isPreviewOpen.value"
-      :diff="zhTypo.diff.value"
+      :original="zhTypo.original.value"
+      :revised="zhTypo.revised.value"
       :per-rule="zhTypo.perRule.value"
       :total-changes="zhTypo.totalChanges.value"
       :on-confirm="onZhTypoConfirm"

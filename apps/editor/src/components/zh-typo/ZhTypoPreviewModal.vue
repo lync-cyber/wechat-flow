@@ -1,14 +1,51 @@
 <script setup lang="ts">
-import type { DiffEntry } from "@wechat-flow/core";
+import { computed } from "vue";
 
 const props = defineProps<{
   isOpen: boolean;
-  diff: DiffEntry[];
+  original: string;
+  revised: string;
   perRule: Record<string, number>;
   totalChanges: number;
   onConfirm: () => void;
   onCancel: () => void;
 }>();
+
+const RULE_LABELS: Record<string, string> = {
+  "zh-en-space": "中英文空格",
+  "fullwidth-punctuation": "全半角标点",
+  "smart-quotes": "智能引号",
+  "ellipsis-dash": "省略号/破折号",
+};
+
+function toLines(text: string): string[] {
+  return text
+    .split("\n")
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
+}
+
+const originalLines = computed(() => toLines(props.original));
+const revisedLines = computed(() => toLines(props.revised));
+
+const revisedRows = computed(() => {
+  const rowCount = Math.max(originalLines.value.length, revisedLines.value.length);
+  return Array.from({ length: rowCount }, (_, i) => {
+    const text = revisedLines.value[i] ?? "";
+    const orig = originalLines.value[i] ?? "";
+    return { text, changed: text !== orig };
+  });
+});
+
+const categories = computed(() =>
+  Object.entries(props.perRule)
+    .filter(([, count]) => count > 0)
+    .map(([ruleId, count]) => ({
+      ruleId,
+      label: RULE_LABELS[ruleId] ?? ruleId,
+      count,
+    }))
+);
 </script>
 
 <template>
@@ -23,35 +60,57 @@ const props = defineProps<{
     <div class="zh-typo-modal__panel">
       <div class="zh-typo-modal__header">
         <h2 id="zh-typo-modal-title" class="zh-typo-modal__title">中文排版修订预览</h2>
-        <span class="zh-typo-modal__summary">共修订 {{ totalChanges }} 处</span>
+        <span v-if="totalChanges > 0" class="zh-typo-modal__summary">共修订 {{ totalChanges }} 处</span>
       </div>
 
-      <div v-if="Object.keys(perRule).length > 0" class="zh-typo-modal__rules">
-        <div
-          v-for="(count, ruleId) in perRule"
-          :key="ruleId"
-          class="zh-typo-modal__rule-row"
-          :data-testid="`zh-typo-rule-${ruleId}`"
-        >
-          <span class="zh-typo-modal__rule-id">{{ ruleId }}</span>
-          <span class="zh-typo-modal__rule-count">{{ count }}</span>
-        </div>
+      <div
+        v-if="totalChanges === 0"
+        class="zh-typo-modal__empty"
+        data-testid="zh-typo-empty"
+      >
+        <span class="zh-typo-modal__empty-check" aria-hidden="true">✓</span>
+        <p class="zh-typo-modal__empty-text">文档排版规范，无需修订</p>
       </div>
 
-      <div class="zh-typo-modal__diff">
-        <div
-          v-for="(entry, idx) in diff"
-          :key="idx"
-          class="zh-typo-modal__diff-row"
-          :data-testid="`zh-typo-diff-${idx}`"
+      <div v-else class="zh-typo-modal__body">
+        <section class="zh-typo-modal__col" data-testid="zh-typo-col-original">
+          <h3 class="zh-typo-modal__col-title">原文</h3>
+          <div class="zh-typo-modal__col-body">
+            <p
+              v-for="(line, i) in originalLines"
+              :key="i"
+              class="zh-typo-modal__line"
+            >{{ line }}</p>
+          </div>
+        </section>
+
+        <section
+          class="zh-typo-modal__col zh-typo-modal__col--revised"
+          data-testid="zh-typo-col-revised"
         >
-          <span class="zh-typo-modal__diff-original">{{ entry.original }}</span>
-          <span class="zh-typo-modal__diff-arrow">→</span>
-          <span class="zh-typo-modal__diff-revised">{{ entry.revised }}</span>
-        </div>
-        <div v-if="diff.length === 0" class="zh-typo-modal__no-changes">
-          无排版问题
-        </div>
+          <h3 class="zh-typo-modal__col-title">修订后</h3>
+          <div class="zh-typo-modal__col-body">
+            <p
+              v-for="(row, i) in revisedRows"
+              :key="i"
+              class="zh-typo-modal__line"
+              :class="{ 'zh-typo-modal__line--changed': row.changed }"
+              :data-changed="row.changed ? 'true' : 'false'"
+            >{{ row.text }}</p>
+          </div>
+        </section>
+
+        <aside class="zh-typo-modal__sidebar" data-testid="zh-typo-sidebar">
+          <div
+            v-for="cat in categories"
+            :key="cat.ruleId"
+            class="zh-typo-modal__cat"
+            :data-testid="`zh-typo-cat-${cat.ruleId}`"
+          >
+            <span class="zh-typo-modal__cat-label">{{ cat.label }}</span>
+            <span class="zh-typo-modal__cat-count"><strong>{{ cat.count }}</strong> 处</span>
+          </div>
+        </aside>
       </div>
 
       <div class="zh-typo-modal__footer">
@@ -69,7 +128,7 @@ const props = defineProps<{
           data-testid="zh-typo-confirm"
           @click="props.onConfirm()"
         >
-          确认修订
+          应用修订
         </button>
       </div>
     </div>
@@ -91,9 +150,9 @@ const props = defineProps<{
   background: var(--color-surface, #fff);
   border-radius: var(--radius-md, 8px);
   box-shadow: var(--shadow-lg, 0 8px 32px rgba(0, 0, 0, 0.18));
-  width: 560px;
-  max-width: 90vw;
-  max-height: 80vh;
+  width: 760px;
+  max-width: 92vw;
+  max-height: 82vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -120,68 +179,116 @@ const props = defineProps<{
   color: var(--color-text-muted, #6b7280);
 }
 
-.zh-typo-modal__rules {
-  padding: var(--space-3, 12px) var(--space-4, 16px) 0;
+.zh-typo-modal__body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr 168px;
+  gap: var(--space-3, 12px);
+  padding: var(--space-4, 16px);
+  overflow: hidden;
+}
+
+.zh-typo-modal__col {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 1px solid var(--color-border-subtle, #e5e7eb);
+  border-radius: var(--radius-base, 4px);
+  overflow: hidden;
+}
+
+.zh-typo-modal__col--revised {
+  background: var(--color-brand-subtle, #eef4f1);
+}
+
+.zh-typo-modal__col-title {
+  margin: 0;
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+  font-size: var(--font-size-xs, 12px);
+  font-weight: 500;
+  color: var(--color-text-muted, #6b7280);
+  border-bottom: 1px solid var(--color-border-subtle, #e5e7eb);
   flex-shrink: 0;
 }
 
-.zh-typo-modal__rule-row {
-  display: flex;
-  justify-content: space-between;
+.zh-typo-modal__col--revised .zh-typo-modal__col-title {
+  color: var(--color-brand, #2d5a4e);
+}
+
+.zh-typo-modal__col-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-3, 12px);
+}
+
+.zh-typo-modal__line {
+  margin: 0 0 var(--space-2, 8px);
   font-size: var(--font-size-sm, 13px);
-  padding: var(--space-1, 4px) 0;
+  line-height: 1.7;
+  color: var(--color-text-secondary, #374151);
+  word-break: break-word;
+}
+
+.zh-typo-modal__line:last-child {
+  margin-bottom: 0;
+}
+
+.zh-typo-modal__line--changed {
+  padding-left: var(--space-2, 8px);
+  border-left: 3px solid var(--color-brand, #2d5a4e);
+  color: var(--color-text-primary, #111);
+}
+
+.zh-typo-modal__sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 12px);
+  overflow-y: auto;
+  padding-right: var(--space-1, 4px);
+}
+
+.zh-typo-modal__cat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.zh-typo-modal__cat-label {
+  font-size: var(--font-size-sm, 13px);
   color: var(--color-text-secondary, #374151);
 }
 
-.zh-typo-modal__rule-id {
-  font-family: var(--font-mono, monospace);
+.zh-typo-modal__cat-count {
+  font-size: var(--font-size-sm, 13px);
   color: var(--color-text-muted, #6b7280);
 }
 
-.zh-typo-modal__rule-count {
-  font-weight: 500;
+.zh-typo-modal__cat-count strong {
+  color: var(--color-brand, #2d5a4e);
+  font-weight: 600;
 }
 
-.zh-typo-modal__diff {
+.zh-typo-modal__empty {
   flex: 1;
-  overflow-y: auto;
-  padding: var(--space-3, 12px) var(--space-4, 16px);
-}
-
-.zh-typo-modal__diff-row {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: var(--space-2, 8px);
-  font-size: var(--font-size-sm, 13px);
-  padding: var(--space-1, 4px) 0;
-  border-bottom: 1px solid var(--color-border-subtle, #e5e7eb);
+  justify-content: center;
+  gap: var(--space-3, 12px);
+  padding: var(--space-6, 24px);
 }
 
-.zh-typo-modal__diff-original {
-  flex: 1;
-  color: var(--color-error, #dc2626);
-  text-decoration: line-through;
-  font-family: var(--font-mono, monospace);
-  word-break: break-all;
-}
-
-.zh-typo-modal__diff-arrow {
-  color: var(--color-text-muted, #9ca3af);
-  flex-shrink: 0;
-}
-
-.zh-typo-modal__diff-revised {
-  flex: 1;
+.zh-typo-modal__empty-check {
+  font-size: 32px;
+  line-height: 1;
   color: var(--color-success, #16a34a);
-  font-family: var(--font-mono, monospace);
-  word-break: break-all;
 }
 
-.zh-typo-modal__no-changes {
-  text-align: center;
-  color: var(--color-text-muted, #9ca3af);
+.zh-typo-modal__empty-text {
+  margin: 0;
   font-size: var(--font-size-sm, 13px);
-  padding: var(--space-4, 16px) 0;
+  color: var(--color-text-muted, #6b7280);
 }
 
 .zh-typo-modal__footer {
