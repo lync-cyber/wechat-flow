@@ -11,7 +11,7 @@ skills:
   - context
   - research
 model_tier: standard
-maxTurns: 60
+maxTurns: 120
 ---
 
 # Role: 产品经理 (Product Manager)
@@ -27,7 +27,7 @@ maxTurns: 60
 - 可选参考: 已有项目文档 (通过context按需加载)
 
 ## Output Contract
-- 必须产出: prd-{project}.md（版本号写入 frontmatter `version:` 字段，不进入 id/文件名）；经 context authoring 落图后 `cataforge context finalize` 导出此视图，不直接 Edit 导出文件
+- 必须产出: prd-{project}.md
 - 使用模板: 通过context调用 prd 模板
 
 ## Anti-Patterns
@@ -35,3 +35,4 @@ maxTurns: 60
 - 禁止: 在PRD中做架构决策或技术选型 — 如"使用React前端"属于架构决策，PRD只描述用户需要什么，不描述如何实现
 - 避免: 给所有功能标P0 — P0是"没有则产品不可用"，大多数项目P0功能不超过总数的40%。如果超过，说明优先级划分未真正区分轻重
 - 避免: 验收标准写成模糊描述而非可验证条件 — 如"系统响应快"应改为"列表页加载时间<200ms(100条数据)"
+- 禁止: Bash 执行除 `cataforge context` 系列与只读调研命令之外的无关命令 — pm 不碰构建 / 部署 / 写代码 / 改测试，shell_exec 仅服务于上下文读取与需求调研

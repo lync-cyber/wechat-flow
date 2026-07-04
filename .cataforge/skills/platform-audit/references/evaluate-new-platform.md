@@ -50,7 +50,7 @@ WebSearch + WebFetch 调研目标平台:
 
 ## Step 5: 平台特性评估
 
-逐一评估 17 个 platform features（清单见 `src/cataforge/core/types.py::PLATFORM_FEATURES`）:
+逐一评估 platform features（清单见 `src/cataforge/core/types.py::PLATFORM_FEATURES`）:
 
 | 特性 | 支持 | 备注 |
 |------|------|------|
@@ -71,6 +71,6 @@ WebSearch + WebFetch 调研目标平台:
 - **核心能力覆盖率**: N/10 capabilities, M/5 hook events
 - **扩展能力覆盖率**: N/4 extended capabilities
 - **Agent 配置覆盖率**: N/17 frontmatter fields
-- **平台特性覆盖率**: N/17 features
-- **接入工作量估算**
+- **平台特性覆盖率**: N/18 features
+- **接入成本/复杂度评估**（按能力覆盖率 + 需新建文件数衡量，不折算工时）
 - **需新建的文件清单**: adapter 类、profile.yaml、overrides 模板

@@ -29,6 +29,8 @@ user-invocable: true
 
 ## 操作指令
 
+> **语言细则**: 根据 `framework.json` `project.languages`，按需载入本 skill `references/lang-<lang>.md`（仅 active 语言，逐个 Read），获取对应语言的构建部署细则（构建/打包工具、依赖锁定、CI 缓存策略、容器基镜像、产物发布）。
+
 ### 指令1: CI/CD流水线 (pipeline)
 
 #### Step 1: 平台选型
@@ -55,20 +57,16 @@ lint → unit-test → integration-test → build → deploy-staging → e2e-tes
 - 覆盖率报告: 集成到PR检查中
 
 #### Step 4: 环境变量与密钥管理
-- secrets通过平台机制注入:
-  - GitHub: Repository Secrets / Environment Secrets
-  - GitLab: CI/CD Variables (masked + protected)
-  - Jenkins: Credentials Store
-- 禁止硬编码任何密钥或敏感信息
+- secrets 注入见 §密钥管理规范
 - 环境差异通过环境变量控制(dev/staging/prod)
 
 #### Step 5: 缓存策略
-- 依赖缓存: node_modules / pip cache / maven .m2 等
+- 依赖缓存: 包管理器的依赖目录 / 下载缓存（按技术栈）
 - 构建缓存: Docker layer cache / 编译产物缓存
 - 缓存key包含lock文件hash，确保依赖变更时刷新
 
 #### Step 6: 发布检查清单
-- 版本号: package.json/pyproject.toml 与 Git tag 一致
+- 版本号: 项目版本元数据与 Git tag 一致
 - changelog: 已更新且包含当前版本条目
 - 构建产物: 存档到artifact存储
 - 通知: 部署结果通知(Slack/邮件/webhook)
@@ -126,7 +124,7 @@ lint → unit-test → integration-test → build → deploy-staging → e2e-tes
 1. **平台原生 Secret 机制**（推荐）:
    - GitHub Actions: `${{ secrets.MY_SECRET }}`，通过 Repository/Environment Secrets 配置
    - GitLab CI: `$MY_SECRET`，通过 CI/CD Variables (masked + protected) 配置
-   - Jenkins: `withCredentials([string(credentialsId: 'my-secret', variable: 'MY_SECRET')])`
+   - Jenkins: Credentials Store（`withCredentials` 绑定注入环境变量）
 2. **外部 Secret Manager**（生产环境推荐）:
    - AWS Secrets Manager / Azure Key Vault / GCP Secret Manager / HashiCorp Vault
    - 应用启动时动态拉取，不持久化到文件系统
@@ -152,7 +150,5 @@ deploy-spec 文档中必须包含密钥清单节:
 
 ## 效率策略
 - 配置文件模板化，按项目技术栈适配
-- 密钥通过环境变量注入，不硬编码
 - Dockerfile层顺序优化，最大化构建缓存命中
 - 环境差异最小化，通过变量控制
-- 利用缓存减少重复构建时间

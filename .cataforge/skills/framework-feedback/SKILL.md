@@ -56,8 +56,8 @@ cataforge skill run framework-feedback -- suggest \
     --summary "希望支持 --dry-run 预览" \
     --out docs/feedback/suggest-$(date +%Y%m%d).md
 
-# 上游反馈聚合 (仅当 upstream-gap 数 ≥ threshold)
-cataforge skill run framework-feedback -- correction-export --threshold 3
+# 上游反馈聚合 (仅当 upstream-gap 数 ≥ threshold；缺省 threshold = RETRO_TRIGGER_UPSTREAM_GAP_DEFAULT)
+cataforge skill run framework-feedback -- correction-export
 ```
 
 ### Step 3: 上游通道选择
@@ -78,15 +78,6 @@ label 由 `framework.json#feedback.gh.labels` 配置（`bug` / `suggest` / `corr
 - 仅在内部反馈 / 自托管 GitHub 时考虑加 `--include-paths`
 
 ## Layer 1 检查项
-| ID | 标题 | 严重等级 |
-|----|------|---------|
-| feedback_env | 环境采集 (package + scaffold + python + os + runtime_platform) | info |
-| feedback_doctor_summary | cataforge doctor FAIL/WARN 行抽取 | info |
-| feedback_event_tail | EVENT-LOG.jsonl 尾部 N 条 (默认 20，可 --since 过滤) | info |
-| feedback_correction_aggregate | CORRECTIONS-LOG deviation=upstream-gap 聚合 | info |
-| feedback_framework_review | framework-review Layer 1 FAIL 摘要 (best-effort) | info |
-| feedback_redaction | 路径脱敏 (~ / <project>，--include-paths 显式关闭) | fail |
-| feedback_sinks | 输出通道 --print / --out / --clip / --gh 互斥校验 | fail |
 
 权威清单见 `cataforge.runtime.skill.builtins.framework_feedback.CHECKS_MANIFEST`。
 

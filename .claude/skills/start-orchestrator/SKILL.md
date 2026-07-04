@@ -15,7 +15,9 @@ user-invocable: true
 - 不做: 通过 agent-dispatch 启动 orchestrator 子代理（见 §角色假设）；不替代 orchestrator 各 phase 的编排判定逻辑；不直接写 docs/ 子目录产物
 
 ## 角色假设（关键）
-**你（当前主线程会话）即是 orchestrator。** 读取 AGENT.md 是为了加载角色定义，**不要通过 agent-dispatch 启动 orchestrator 子代理**。orchestrator 在主线程运行、跨会话持续感知状态，由主线程直接扮演该角色是框架设计的核心约束。
+本 skill 在主线程会话执行，orchestrator 角色由主线程承载——读取 AGENT.md 加载角色定义后直接执行，不经 agent-dispatch 把 orchestrator 派为子代理（子代理无跨会话主线程状态，会断裂 §项目状态 写权限链路与进度定位）。
+
+该约束是对调度行为的内部要求，非用户可见信息：首条回复不复述角色身份与调度宿主，直接进入对用户有意义的开场——分支 A 先确认对项目的理解再询问执行模式；分支 B 先报告恢复到的阶段与项目状态。
 
 ## 输入规范
 - 必填: 项目描述自然语言字符串，或 `continue` 关键字（触发分支 B 恢复模式）
@@ -41,8 +43,7 @@ user-invocable: true
 ### 分支 A: 新项目启动
 1. 读取 .cataforge/agents/orchestrator/AGENT.md 的角色定义
 2. 执行 `.cataforge/agents/orchestrator/ORCHESTRATOR-PROTOCOLS.md` §Project Bootstrap
-   - 其中 Step 2 会通过 AskUserQuestion 询问执行模式（standard / agile-lite / agile-prototype），选项语义见 COMMON-RULES §执行模式矩阵
-3. 进入初始阶段（由执行模式决定，见 Bootstrap Step 8）
+3. 进入初始阶段（由执行模式决定，见 Bootstrap 末步「进入初始阶段」）
 
 ### 分支 B: 继续已有项目
 
@@ -52,11 +53,7 @@ user-invocable: true
 3. 版本检查仅提示，不阻断流程，继续 B.2
 
 #### B.2: 恢复推进
-1. 读取 CLAUDE.md 获取当前阶段和项目状态
-2. 分支处理:
+1. 读取 .cataforge/agents/orchestrator/AGENT.md 的角色定义，执行其 §Startup Protocol 恢复推进（读状态 / 读索引 / 路由由该协议承担）
+2. 本入口独有分支:
    - 当前阶段=completed → 提示项目已完成，询问用户意图(新版本/新需求/重新审查)
-   - 当前阶段=development 且存在未完成任务 → 定位到当前Sprint和具体任务，恢复TDD流程
-   - 用户指定目标阶段（如"从架构设计开始"）→ 验证前置条件后跳转（前置条件校验规则见 ORCHESTRATOR-PROTOCOLS §Phase Transition Protocol，如上游文档须已 approved）
-   - 其他 → 正常恢复
-3. 读取 .cataforge/agents/orchestrator/AGENT.md 的角色定义
-4. 执行 Startup Protocol 恢复推进
+   - 用户指定目标阶段（如"从架构设计开始"）→ 验证前置条件后跳转（前置条件见 orchestrator AGENT.md §Phase Routing，如上游文档须已 approved）

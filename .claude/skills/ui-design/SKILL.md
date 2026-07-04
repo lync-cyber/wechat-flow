@@ -11,7 +11,7 @@ user-invocable: true
 # UI设计 (ui-design)
 ## 能力边界
 - 能做: 设计方向决策、设计系统token定义、页面布局决策、组件规范定义、交互流程、响应式策略、组件目录维护(UC-NNN注册/去重/合并)、设计token一致性检查
-- 不做: 需求分析、架构设计、代码实现、从 Penpot 设计稿生成代码骨架（由 penpot-implement 负责）
+- 不做: 需求分析、架构设计、代码实现、Penpot 代码骨架生成与设计一致性验证（generate / verify 的调用方分工见 penpot-bridge description）
 
 ## 输入规范
 - prd#§2功能需求(F-{NNN})
@@ -31,7 +31,7 @@ user-invocable: true
 ### Step 1: 设计方向决策（产出任何Token前必须完成）
 理解产品上下文，确立设计方向:
 - **用户与场景**: 产品服务什么人？在什么环境使用？(办公桌前/通勤中/嘈杂车间)
-- **产品调性**: 通过 user-interview 向用户确认调性方向（inline 承载时主线程直接提问，派发子代理时经 needs_input 回传），提供具体选项而非开放提问。示例选项:
+- **产品调性**: 通过 user-interview 向用户确认调性方向，提供具体选项而非开放提问。示例选项:
   - 专业克制(企业工具/数据平台) vs 活泼亲和(消费端/社交)
   - 信息密集(仪表盘/管理后台) vs 内容聚焦(阅读/展示)
   - 科技感(深色/渐变/动效) vs 朴素实用(浅色/清晰/快速)
@@ -57,12 +57,12 @@ user-invocable: true
 - 圆角程度与产品调性一致(企业工具偏小圆角2-4px，消费产品可用较大圆角8-16px)
 
 ### Step 3: [Penpot可选] Token同步
-若 CLAUDE.md `设计工具` 为 `penpot`，调用 penpot-sync 将token同步到Penpot项目和 tokens.css
+若 CLAUDE.md `设计工具` 为 `penpot`，调用 penpot-bridge sync（emit / mirror 语义见其 §sync）
 
 ### Step 4: 页面与组件规划
 从PRD功能需求推导页面和组件需求:
-- 先规划页面(P-NNN)：按用户任务流组织，不是按功能模块罗列
-- 再推导组件(UC-NNN)：从页面需求中提取可复用的交互单元
+- 先规划页面(P-{NNN})：按用户任务流组织，不是按功能模块罗列
+- 再推导组件(UC-{NNN})：从页面需求中提取可复用的交互单元
 
 ### Step 5: 组件定义（对应ui-spec §2）
 为每个组件定义完整规范:
@@ -87,14 +87,11 @@ user-invocable: true
 3. 确保组件复用，避免重复定义
 4. Token变量化，确保全局一致
 
-### Step 9: [Penpot可选] 设计一致性验证
-若 CLAUDE.md `设计工具` 为 `penpot`，在 penpot-implement 产出代码骨架后由 orchestrator 调度 penpot-review 验证设计与实现的一致性（penpot-review 前置要求组件已实现，故不在本设计阶段直接调用）
-
 ## Anti-Patterns
 - 禁止: 跳过 Token 阶段直接画组件 —— Token 是设计系统基础，未先确立会让组件层风格漂移，后期返工成本高
 - 禁止: 在 ui-spec 写交互逻辑细节（"点击后弹出 X 然后 Y"）—— 交互流转属于产品需求层，ui-spec 只承载视觉与结构契约
 - 禁止: 用截图 / 图片代替组件结构描述 —— ui-spec 必须是文字可索引的契约，否则 implementer 无法精确还原也无法被 reviewer 校对
-- 避免: 一次设计所有页面 —— 按 P-xxx 分批，每批闭环 Token → 组件 → 页面，避免后期单点改动引发全局连锁
+- 避免: 一次设计所有页面 —— 按 P-{NNN} 分批，每批闭环 Token → 组件 → 页面，避免后期单点改动引发全局连锁
 
 ## 效率策略
 - 设计方向先行，避免Token定义完成后才发现方向不对
