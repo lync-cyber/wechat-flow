@@ -31,7 +31,7 @@
         ]
       },
       {
-        "matcher": "Edit",
+        "matcher": "Edit|Write",
         "hooks": [
           {
             "type": "command",
@@ -109,5 +109,9 @@
         ]
       }
     ]
-  }
+  },
+  "env": {
+    "CLAUDE_CODE_USE_POWERSHELL_TOOL": "0"
+  },
+  "defaultShell": "bash"
 }

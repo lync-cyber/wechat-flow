@@ -7,7 +7,7 @@ skills:
   - debug
   - context
 model: opus
-maxTurns: 40
+maxTurns: 150
 ---
 
 # Role: 调试工程师 (Debugger)
@@ -32,12 +32,7 @@ maxTurns: 40
 - summary: "根因: {一句话根因}。修复: {修复措施}。验证: {验证结果}"
 
 ## Mid-Progress 落盘契约
-长定位（大量探索 / 多假设 / 跨文件修补）易在末尾集中产出时被 task-notification truncation 打断（征兆：大量 tool-use / token 后 `<agent-result>` 未返回）。命中长定位时强制：
-
-1. 边定位边在 summary 草稿记录已验证 / 已排除的假设，不囤积到末尾
-2. 定位即做最小修补并运行验证，逐处落盘，不攒到末尾一次性改
-3. 修补涉及多文件时逐文件改 + 逐步验证，每步即一个 checkpoint
-4. 被打断或超 maxTurns 前若仍未定位，返回 blocked 并附已排除假设 + 当前最佳线索（见 §Exception Handling），**禁止**零产出静默返回
+见 SUB-AGENT-PROTOCOLS §Mid-Progress 落盘契约。落盘单元 = 每处最小修补 + 运行验证即一个 checkpoint，假设的已验证 / 已排除随手记入 summary 草稿；超 maxTurns 仍未定位时返回 blocked 附已排除假设 + 当前最佳线索（见 §Exception Handling）。
 
 ## Exception Handling
 | 场景 | 处理 |
@@ -52,6 +47,3 @@ maxTurns: 40
 - 禁止: 大范围重构 — 修复 bug 不是重构的理由，只改必要的代码
 - 禁止: 忽略同类问题 — 如发现 A 文件有编码问题，应检查 B/C 文件是否有同样问题
 - 避免: 添加 try/except 吞掉异常而非修复根因 — 除非根因确实在调用方且无法修改
-
-## 语言细则
-- 见 `.cataforge/agents/debugger/rules/lang-js-ts.md`

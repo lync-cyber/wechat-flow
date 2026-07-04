@@ -2,7 +2,7 @@
 
 本文件记录 CataForge 定义的所有标准能力维度及其跨平台映射基线。审计时以此为起点，对比最新文档。
 
-> 此文件为参考快照，不是实时数据。真实映射以各平台 `profile.yaml` 为准。
+> 本文件定义平台无关的能力维度与评分基线；**任何逐平台映射值的权威源是各平台 `profile.yaml` 与 `src/cataforge/core/types.py`**（各节已注代码 / 声明位置）。下方 ✓/- 支持矩阵为审计起点快照，与权威源不一致时以权威源为准并更新本表。
 
 ---
 
@@ -82,9 +82,9 @@ Agent 定义支持的 frontmatter 字段超集:
 
 ---
 
-## Platform Features (17)
+## Platform Features
 
-平台级功能特性 boolean flags:
+平台级功能特性 boolean flags（完整集与计数以 `PLATFORM_FEATURES` 为准）:
 
 | # | Feature | 语义 | Claude Code | Cursor | Codex | OpenCode |
 |---|---------|------|------------|--------|-------|----------|
@@ -120,10 +120,10 @@ Agent 定义支持的 frontmatter 字段超集:
 | # | Mode | 语义 | Claude Code | Cursor | Codex | OpenCode |
 |---|------|------|------------|--------|-------|----------|
 | 1 | `default` | 标准权限提示 | ✓ | ✓ | - | ✓ |
-| 2 | `accept_edits` | 自动接受文件编辑 | ✓ | - | - | - |
+| 2 | `acceptEdits` | 自动接受文件编辑 | ✓ | - | - | - |
 | 3 | `auto` | 分类器自动审批 | ✓ | ✓ | ✓ | - |
-| 4 | `dont_ask` | 自动拒绝提示 | ✓ | - | - | - |
-| 5 | `bypass` | 跳过所有权限提示 | ✓ | - | - | - |
+| 4 | `dontAsk` | 自动拒绝提示 | ✓ | - | - | - |
+| 5 | `bypassPermissions` | 跳过所有权限提示 | ✓ | - | - | - |
 | 6 | `plan` | 只读探索 | ✓ | - | - | - |
 | 7 | `read_only` | 顾问模式 | - | - | ✓ | - |
 | 8 | `full_access` | 无限制 | - | - | ✓ | - |
@@ -163,85 +163,17 @@ CataForge 定义 5 个标准 hook 事件:
 
 ## 跨平台映射基线
 
-以下为各平台的典型映射（可能因版本更新而变化，审计时以最新文档为准）:
+各 capability / hook event / dispatch / model 的**逐平台映射值由 `.cataforge/platforms/{platform_id}/profile.yaml` 单一持有**：
 
-### Core Tool Names
+| 维度 | profile.yaml 字段 |
+|------|------------------|
+| 核心 / 扩展工具名 | `tool_map` / `extended_capabilities` |
+| hook 事件名、tool override、配置格式与路径 | `hooks.event_map` / `hooks.tool_overrides` / `hooks.config_format` / `hooks.config_path` |
+| agent 格式、扫描目录、是否需部署 | `agent_config` |
+| 调度工具、是否异步、参数 | `dispatch` |
+| 可用模型、是否 per-agent | `model_routing` |
 
-| Capability | Claude Code | Cursor | Codex | OpenCode |
-|-----------|-------------|--------|-------|----------|
-| file_read | Read | Read | shell | read |
-| file_write | Write | Write | apply_patch | write |
-| file_edit | Edit | Write | apply_patch | edit |
-| file_glob | Glob | Glob | shell | glob |
-| file_grep | Grep | Grep | shell | grep |
-| shell_exec | Bash | Shell | shell | bash |
-| web_search | WebSearch | WebSearch | web_search | websearch |
-| web_fetch | WebFetch | *null* | shell | webfetch |
-| user_question | AskUserQuestion | *null* | *null* | question |
-| agent_dispatch | Agent | Task | spawn_agent | task |
-
-### Extended Capability Names
-
-| Capability | Claude Code | Cursor | Codex | OpenCode |
-|-----------|-------------|--------|-------|----------|
-| notebook_edit | NotebookEdit | *null* | *null* | *null* |
-| browser_preview | preview_start | computer | *null* | *null* |
-| image_input | Read | *null* | image | image |
-| code_review | *null* | *null* | review | *null* |
-
-### Hook Event Names
-
-| 标准事件 | Claude Code | Cursor | Codex | OpenCode |
-|---------|-------------|--------|-------|----------|
-| PreToolUse | PreToolUse | preToolUse | PreToolUse | tool.execute.before |
-| PostToolUse | PostToolUse | postToolUse | PostToolUse | tool.execute.after |
-| Stop | Stop | stop | Stop | session.idle |
-| SessionStart | SessionStart | sessionStart | SessionStart | session.created |
-| Notification | Notification | *null* | *null* | *null* |
-
-### Hook Tool Overrides
-
-仅当 hook matcher 名称与 tool_map 不同时需要:
-
-| 平台 | Capability | tool_map 值 | hook override 值 | 原因 |
-|------|-----------|-------------|-----------------|------|
-| Codex | shell_exec | shell | Bash | Codex hook 事件内部使用 "Bash" 标识 |
-
-### Hook Config
-
-| 平台 | 格式 | 路径 |
-|------|------|------|
-| Claude Code | JSON | .claude/settings.json |
-| Cursor | JSON | .cursor/hooks.json |
-| Codex | JSON | .codex/hooks.json |
-| OpenCode | plugin | .opencode/plugins/ (JS/TS) |
-
-### Agent Format
-
-| 平台 | 格式 | 扫描目录 | 需要部署 |
-|------|------|---------|---------|
-| Claude Code | yaml-frontmatter | .claude/agents | Yes |
-| Cursor | yaml-frontmatter | .cursor/agents, .claude/agents | Yes |
-| Codex | toml | .codex/agents | Yes |
-| OpenCode | yaml-frontmatter | .opencode/agents, .claude/agents | Yes |
-
-### Dispatch
-
-| 平台 | 工具 | 异步 | 参数 |
-|------|------|------|------|
-| Claude Code | Agent | No | subagent_type, prompt, description |
-| Cursor | Task | No | subagent_type, prompt, description, model |
-| Codex | spawn_agent | Yes | agent, fork_context, prompt |
-| OpenCode | task | No | subagent_type, description, prompt |
-
-### Model Routing
-
-| 平台 | 可用模型 | Per-agent |
-|------|---------|----------|
-| Claude Code | opus, sonnet, haiku | Yes |
-| Cursor | opus, sonnet, gpt-5.4, gemini-3-pro, grok-code, composer-2 | Yes |
-| Codex | gpt-5.4, gpt-5.3-codex-spark | No |
-| OpenCode | 75+ (provider-agnostic via Models.dev) | Yes |
+审计时直接读对应平台的 profile.yaml 比对，不在本文件维护映射副本——原始值随平台版本演进，副本必然滞后。
 
 ---
 
@@ -251,8 +183,8 @@ CataForge 定义 5 个标准 hook 事件:
 
 | 等级 | 覆盖率 | 判定 |
 |------|--------|------|
-| A+ | 10/10 core + 4/4 ext + 5/5 hooks + 15+/17 features | 完全兼容 |
-| A | 10/10 core + 5/5 hooks + 10+/17 features | 高度兼容 |
-| B | 8+/10 core + 3+/5 hooks + 5+/17 features | 推荐接入 |
-| C | 6+/10 core + 1+/5 hooks + 1+/17 features | 有条件接入（需降级方案） |
+| A+ | 10/10 core + 4/4 ext + 5/5 hooks + 15+/18 features | 完全兼容 |
+| A | 10/10 core + 5/5 hooks + 10+/18 features | 高度兼容 |
+| B | 8+/10 core + 3+/5 hooks + 5+/18 features | 推荐接入 |
+| C | 6+/10 core + 1+/5 hooks + 1+/18 features | 有条件接入（需降级方案） |
 | D | <6/10 core 或 0 hooks | 不建议接入 |

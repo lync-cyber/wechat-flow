@@ -1,5 +1,5 @@
 {
-  "version": "0.14.0",
+  "version": "0.15.0",
   "runtime_api_version": "1.0",
   "runtime": {
     "platform": "claude-code"
@@ -13,9 +13,9 @@
       "token_env": "GITHUB_TOKEN"
     },
     "state": {
-      "last_commit": "1c940f6",
-      "last_version": "0.14.0",
-      "last_upgrade_date": "2026-06-23"
+      "last_commit": "46d025b",
+      "last_version": "0.15.0",
+      "last_upgrade_date": "2026-07-04"
     }
   },
   "feedback": {
@@ -41,7 +41,7 @@
     "base_namespace": "https://cataforge.dev/instance/"
   },
   "context": {
-    "mode": "hybrid",
+    "mode": "graph",
     "kg_active_doc_types": [
       "prd",
       "arch",
@@ -58,7 +58,8 @@
   "claude_md_limits": {
     "max_bytes": 30000,
     "max_state_section_lines": 80,
-    "learnings_registry_max_entries": 10
+    "learnings_registry_max_entries": 10,
+    "max_state_bullet_chars": 500
   },
   "constants": {
     "MAX_QUESTIONS_PER_BATCH": 3,
@@ -77,6 +78,8 @@
       "changelog"
     ],
     "TDD_LIGHT_LOC_THRESHOLD": 150,
+    "TASK_SPLIT_LOC": 250,
+    "MID_PROGRESS_LOC": 200,
     "TDD_DEFAULT_MODE": "light",
     "TDD_REFACTOR_TRIGGER": [
       "complexity",
@@ -113,7 +116,7 @@
       "devops": "standard",
       "debugger": "heavy",
       "reviewer": "standard",
-      "reflector": "light"
+      "reflector": "standard"
     },
     "AGENT_MODEL_TIER_HEAVY_WHITELIST": [
       "architect",
@@ -249,11 +252,11 @@
       "phase_guard": "development",
       "description": "代码双层审计 (Layer 1 lint + Layer 2 AI)"
     },
-    "penpot-sync": {
+    "penpot-bridge": {
       "min_version": "0.1.0",
       "auto_enable": false,
       "phase_guard": "ui_design",
-      "description": "Penpot设计工具集成 (需设置 design-tool: penpot)"
+      "description": "Penpot 设计↔代码桥 (read/sync/generate/verify，需设置 design-tool: penpot)"
     },
     "sprint-review": {
       "min_version": "0.1.0",
@@ -509,6 +512,18 @@
       "allow_missing": true,
       "patterns": [
         "--format json|mermaid"
+      ]
+    },
+    {
+      "id": "mc-0.15.0-loc-thresholds",
+      "release_version": "0.15.0",
+      "deprecate_after": "0.17.0",
+      "description": "COMMON-RULES.md 须声明 TASK_SPLIT_LOC=250（task-decomp 拆分阈值）与 MID_PROGRESS_LOC=200（tdd-engine mid-progress 增量落盘阈值）两常量，二者职责互不重叠",
+      "type": "file_must_contain",
+      "path": ".cataforge/rules/COMMON-RULES.md",
+      "patterns": [
+        "TASK_SPLIT_LOC | 250",
+        "MID_PROGRESS_LOC | 200"
       ]
     }
   ]
