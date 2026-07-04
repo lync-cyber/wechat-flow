@@ -11,6 +11,7 @@ export interface ZhTypoConfirmOptions {
 
 export function useZhTypo() {
   const isPreviewOpen = ref(false);
+  const original = ref("");
   const diff = ref<DiffEntry[]>([]);
   const perRule = ref<Record<string, number>>({});
   const totalChanges = ref(0);
@@ -18,6 +19,7 @@ export function useZhTypo() {
 
   function openZhTypoPreview(markdown: string): void {
     const result = composeApplyZhTypo({ markdown });
+    original.value = markdown;
     pendingFixed.value = result.fixed;
     diff.value = result.diff;
     perRule.value = result.perRule;
@@ -59,6 +61,8 @@ export function useZhTypo() {
 
   return {
     isPreviewOpen,
+    original,
+    revised: pendingFixed,
     diff,
     perRule,
     totalChanges,

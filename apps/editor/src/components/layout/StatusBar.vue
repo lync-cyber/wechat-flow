@@ -12,12 +12,19 @@ const emit = defineEmits<{
   "toggle-diagnostics": [];
 }>();
 
+const KEYWORD_RULE_ID = "keyword-lint";
+
+// 兼容性摘要不计入违规词诊断 —— 违规词单列一段，避免重复计数
+const compatDiagnostics = computed(() =>
+  props.diagnostics.diagnostics.filter((d) => d.ruleId !== KEYWORD_RULE_ID)
+);
+
 const errorCount = computed(
-  () => props.diagnostics.diagnostics.filter((d) => d.severity === "error").length
+  () => compatDiagnostics.value.filter((d) => d.severity === "error").length
 );
 
 const warnCount = computed(
-  () => props.diagnostics.diagnostics.filter((d) => d.severity === "warning").length
+  () => compatDiagnostics.value.filter((d) => d.severity === "warning").length
 );
 
 const compatColor = computed<"error" | "warning" | "muted">(() => {
@@ -39,12 +46,32 @@ const compatText = computed(() => {
 });
 
 const tooltipText = computed(() => {
-  const items = props.diagnostics.diagnostics.filter(
+  const items = compatDiagnostics.value.filter(
     (d) => d.severity === "error" || d.severity === "warning"
   );
   if (items.length === 0) return "无风险";
   return items.map((d) => d.message).join("；");
 });
+
+const keywordDiagnostics = computed(() =>
+  props.diagnostics.diagnostics.filter((d) => d.ruleId === KEYWORD_RULE_ID)
+);
+
+const violationCount = computed(() => keywordDiagnostics.value.length);
+
+const violationColor = computed<"error" | "warning" | "muted">(() => {
+  if (violationCount.value === 0) return "muted";
+  if (keywordDiagnostics.value.some((d) => d.severity === "error")) return "error";
+  return "warning";
+});
+
+const violationTooltip = computed(() => `违规词 ${violationCount.value}`);
+
+const nightRiskCount = computed(() => props.diagnostics.nightRiskIssues.length);
+
+const nightRiskColor = computed<"error" | "muted">(() =>
+  nightRiskCount.value > 0 ? "error" : "muted"
+);
 
 const isTablet = ref(window.innerWidth < 768);
 
@@ -101,6 +128,35 @@ function onToggleDiagnostics(): void {
     >
       ⓘ
     </button>
+
+    <span
+      v-if="!isTablet"
+      class="status-bar__item status-bar__metric"
+      :class="`status-bar__metric--${violationColor}`"
+      :data-color="violationColor"
+      data-testid="violation-count"
+    >
+      违规词 {{ violationCount }}
+    </span>
+    <span
+      v-else
+      class="status-bar__item status-bar__metric status-bar__metric-icon"
+      :class="`status-bar__metric--${violationColor}`"
+      :data-color="violationColor"
+      :title="violationTooltip"
+      data-testid="violation-icon"
+    >
+      ⓘ
+    </span>
+
+    <span
+      class="status-bar__item status-bar__metric"
+      :class="`status-bar__metric--${nightRiskColor}`"
+      :data-color="nightRiskColor"
+      data-testid="night-risk-count"
+    >
+      夜间风险 {{ nightRiskCount }} 项
+    </span>
   </footer>
 </template>
 
@@ -119,28 +175,48 @@ function onToggleDiagnostics(): void {
 }
 
 .status-bar__item {
+  position: relative;
   font-size: var(--font-size-xs, 12px);
   color: var(--color-text-muted);
   white-space: nowrap;
 }
 
-.status-bar__compat {
+/* 竖分隔线 —— 居中于每两段间的 gap */
+.status-bar__item + .status-bar__item::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--space-4, 16px) / -2);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 14px;
+  background: var(--color-border, #e5e7eb);
+}
+
+.status-bar__compat,
+.status-bar__metric {
   background: none;
   border: none;
   padding: 0;
-  cursor: pointer;
   font-size: var(--font-size-xs, 12px);
 }
 
-.status-bar__compat--muted {
+.status-bar__compat {
+  cursor: pointer;
+}
+
+.status-bar__compat--muted,
+.status-bar__metric--muted {
   color: var(--color-text-muted);
 }
 
-.status-bar__compat--error {
+.status-bar__compat--error,
+.status-bar__metric--error {
   color: var(--color-error);
 }
 
-.status-bar__compat--warning {
+.status-bar__compat--warning,
+.status-bar__metric--warning {
   color: var(--color-warning);
 }
 </style>
