@@ -34,6 +34,15 @@ describe("UC-018 dragging 状态", () => {
     );
     wrapper.unmount();
   });
+
+  it("state=dragging → 渲染向下拖拽箭头（松开以上传视觉指示）", async () => {
+    const wrapper = mount(ImageUploadOverlay, { props: { ...baseProps, state: "dragging" } });
+    await nextTick();
+    const arrow = wrapper.find(".image-upload-overlay__drag-arrow");
+    expect(arrow.exists()).toBe(true);
+    expect(arrow.text()).toBe("↓");
+    wrapper.unmount();
+  });
 });
 
 describe("UC-018 uploading 状态", () => {

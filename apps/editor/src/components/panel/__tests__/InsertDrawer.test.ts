@@ -100,6 +100,21 @@ describe("AC-001: InsertDrawer 从右侧滑入，宽 320px 并含分类 Tab + Bl
     expect(items.length).toBe(blocks.length);
     wrapper.unmount();
   });
+
+  it("UC-015 Block 行首图标数据驱动（callout → block-glyph，非硬编码占位）", async () => {
+    const wrapper = mount(InsertDrawer, { props: defaultProps() });
+    await nextTick();
+
+    const calloutItem = wrapper
+      .findAll('[data-testid="block-lib-item"]')
+      .find((i) => i.text().includes("提示框"));
+    expect(calloutItem).toBeTruthy();
+    const icon = calloutItem?.find(".block-lib-item__icon");
+    expect(icon?.exists()).toBe(true);
+    expect(icon?.text()).toBe("▢");
+    expect(icon?.text()).not.toBe("⬜");
+    wrapper.unmount();
+  });
 });
 
 describe("AC-002: 选中 Block 展开参数表单，点击「插入」生成 directive 片段并调用 onInsert", () => {

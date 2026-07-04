@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { BlockDefinition } from "@wechat-flow/core";
+import { blockGlyph } from "../common/block-glyphs.ts";
 
 const props = defineProps<{
   block: BlockDefinition;
@@ -30,7 +31,7 @@ const variantCount = props.variants?.length ?? props.block.variants?.length ?? 0
     @click="handleClick"
     @keydown.enter="handleClick"
   >
-    <span class="block-lib-item__icon" aria-hidden="true">⬜</span>
+    <span class="block-lib-item__icon" aria-hidden="true">{{ blockGlyph(block.id) }}</span>
     <span class="block-lib-item__name" data-testid="block-name">{{ block.name }}</span>
     <span
       v-if="variantCount > 0"
@@ -78,8 +79,13 @@ const variantCount = props.variants?.length ?? props.block.variants?.length ?? 0
 }
 
 .block-lib-item__variant-badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  border-radius: var(--radius-full, 999px);
+  background: var(--color-surface-elevated);
   font-size: 12px;
   color: var(--color-text-muted);
-  flex-shrink: 0;
 }
 </style>

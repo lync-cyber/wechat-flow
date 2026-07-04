@@ -31,7 +31,7 @@ const props = withDefaults(
   >
     <!-- idle -->
     <div v-if="state === 'idle'" class="image-upload-overlay__idle" data-testid="overlay-idle">
-      <span class="image-upload-overlay__icon" aria-hidden="true">🖼</span>
+      <span class="image-upload-overlay__icon" aria-hidden="true">▣</span>
       <p class="image-upload-overlay__hint">拖入图片或粘贴</p>
     </div>
 
@@ -41,6 +41,7 @@ const props = withDefaults(
       class="image-upload-overlay__dragging"
       data-testid="overlay-dragging"
     >
+      <span class="image-upload-overlay__drag-arrow" aria-hidden="true">↓</span>
       <p class="image-upload-overlay__drag-hint">松开以上传</p>
     </div>
 
@@ -129,11 +130,19 @@ const props = withDefaults(
 
 .image-upload-overlay__dragging {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: var(--space-2);
   padding: var(--space-6);
   width: 100%;
   box-sizing: border-box;
+}
+
+.image-upload-overlay__drag-arrow {
+  font-size: 32px;
+  line-height: 1;
+  color: var(--color-brand);
 }
 
 .image-upload-overlay__drag-hint {

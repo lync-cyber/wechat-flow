@@ -15,22 +15,22 @@ const props = withDefaults(
 );
 
 const menuItems = computed<MenuItem[]>(() => [
-  { id: "doc-load-example", label: "载入示例文档" },
+  { id: "doc-load-example", label: "载入示例文档", icon: "▤" },
   {
     id: "content-zh-typo",
     label: "中文排版修订",
+    icon: "文",
     disabled:
       props.isZhTypoDisabled !== null ? (props.isZhTypoDisabled as boolean) : props.isContentEmpty,
   },
-  { id: "content-keyword-lint", label: "检测违规词", disabled: props.isContentEmpty },
+  { id: "content-keyword-lint", label: "检测违规词", icon: "⊘", disabled: props.isContentEmpty },
   { type: "separator" },
-  { id: "export-copy-html", label: "复制 HTML", shortcut: "Ctrl+Shift+C" },
-  { id: "export-download-html", label: "下载 HTML" },
+  { id: "export-copy-html", label: "复制 HTML", icon: "⧉", shortcut: "Ctrl+Shift+C" },
+  { id: "export-download-html", label: "下载 HTML", icon: "↓" },
   { type: "separator" },
-  { type: "separator" },
-  { id: "settings-paint", label: "自定义配色" },
-  { id: "help-shortcuts", label: "快捷键手册", shortcut: "?" },
-  { id: "help-whats-new", label: "新功能说明" },
+  { id: "settings-paint", label: "自定义配色", icon: "◐" },
+  { id: "help-shortcuts", label: "快捷键手册", icon: "⌨", shortcut: "?" },
+  { id: "help-whats-new", label: "新功能说明", icon: "✦" },
 ]);
 
 function handleSelect(id: string): void {
