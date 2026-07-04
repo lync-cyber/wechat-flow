@@ -5,6 +5,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useCodemirror } from "../../composables/use-codemirror";
 import { useImageUpload } from "../../composables/use-image-upload";
 import {
+  type SnippetOptions,
   buildDirectiveSnippet,
   registerDirectiveCompletion,
 } from "../../editor/extensions/directive-completion.ts";
@@ -22,6 +23,7 @@ const props = withDefaults(
     getSessionTokenFn?: () => Promise<string | undefined>;
     fontSize?: number;
     inputAssist?: boolean;
+    onOpenInsertDrawer?: () => void;
   }>(),
   {
     modelValue: "",
@@ -32,6 +34,7 @@ const props = withDefaults(
     getSessionTokenFn: undefined,
     fontSize: 16,
     inputAssist: false,
+    onOpenInsertDrawer: undefined,
   }
 );
 
@@ -54,10 +57,10 @@ function closeAutocomplete(): void {
   isAutocompleteOpen.value = false;
 }
 
-function onAutocompleteSelect(payload: { type: "block" | "inline"; blockId: string }): void {
+function onAutocompleteSelect(payload: SnippetOptions): void {
   const view = editorView.value;
   if (view) {
-    const snippet = buildDirectiveSnippet({ type: payload.type, blockId: payload.blockId });
+    const snippet = buildDirectiveSnippet(payload);
     // cursor lands on the content slot (block: empty middle line; inline: inside brackets)
     // so the directive prefix no longer matches and the popover does not re-trigger
     const cursorOffset =
@@ -293,6 +296,7 @@ watch(
       :current-input="autocompleteInput"
       :on-select="onAutocompleteSelect"
       :on-close="closeAutocomplete"
+      :on-open-insert-drawer="props.onOpenInsertDrawer"
       :style="{ position: 'fixed', left: `${popoverPosition.left}px`, top: `${popoverPosition.top}px` }"
     />
     <ImageUploadOverlay

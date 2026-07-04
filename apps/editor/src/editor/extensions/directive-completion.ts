@@ -12,6 +12,7 @@ export interface Candidate {
   id: string;
   name: string;
   type: "block" | "inline";
+  variantCount: number;
 }
 
 export interface SnippetOptions {
@@ -31,7 +32,7 @@ export interface TriggerContext {
 
 export interface CompletionCallbacks {
   onClose: () => void;
-  onSelect: (payload: { type: "block" | "inline"; blockId: string }) => void;
+  onSelect: (payload: SnippetOptions) => void;
   onTrigger?: (context: TriggerContext) => void;
 }
 
@@ -56,27 +57,35 @@ export function buildCandidates(
   if (triggerType === "block") {
     return blocks
       .filter((b) => q === "" || b.id.toLowerCase().includes(q) || b.name.toLowerCase().includes(q))
-      .map((b) => ({ id: b.id, name: b.name, type: "block" as const }));
+      .map((b) => ({
+        id: b.id,
+        name: b.name,
+        type: "block" as const,
+        variantCount: b.variants.length,
+      }));
   }
   return marks
     .filter((m) => q === "" || m.id.toLowerCase().includes(q) || m.name.toLowerCase().includes(q))
-    .map((m) => ({ id: m.id, name: m.name, type: "inline" as const }));
+    .map((m) => ({ id: m.id, name: m.name, type: "inline" as const, variantCount: 0 }));
 }
 
+// variant 经 directive class 语法（{.variant}）传递，渲染管线取 class 首词为 data-variant；
+// "default" 与省略等价，不显式写出
 export function buildDirectiveSnippet(options: SnippetOptions): string {
   const { type, blockId, variantId, params } = options;
-  const paramsStr =
-    params && Object.keys(params).length > 0
-      ? `{${Object.entries(params)
-          .map(([k, v]) => `${k}=${v}`)
-          .join(" ")}}`
-      : "";
+  const attrParts: string[] = [];
+  if (type === "block" && variantId && variantId !== "default") {
+    attrParts.push(`.${variantId}`);
+  }
+  for (const [k, v] of Object.entries(params ?? {})) {
+    attrParts.push(/\s/.test(v) ? `${k}="${v}"` : `${k}=${v}`);
+  }
+  const attrsStr = attrParts.length > 0 ? `{${attrParts.join(" ")}}` : "";
 
   if (type === "block") {
-    const name = variantId ? `${blockId}-${variantId}` : blockId;
-    return `:::${name}${paramsStr}\n\n:::`;
+    return `:::${blockId}${attrsStr}\n\n:::`;
   }
-  return `:${blockId}[${paramsStr}]`;
+  return `:${blockId}[]${attrsStr}`;
 }
 
 export function registerDirectiveCompletion(callbacks: CompletionCallbacks): Extension {
