@@ -7,6 +7,7 @@ defineProps<{
 
 defineEmits<{
   showDiff: [nodeSelector: string];
+  itemClick: [nodeSelector: string];
 }>();
 </script>
 
@@ -17,7 +18,14 @@ defineEmits<{
     <button
       v-if="diagnostic.nodeRef"
       type="button"
-      class="diagnostics-item__diff-link"
+      class="diagnostics-item__action-link"
+      data-testid="view-btn"
+      @click="$emit('itemClick', diagnostic.nodeRef!)"
+    >查看</button>
+    <button
+      v-if="diagnostic.nodeRef"
+      type="button"
+      class="diagnostics-item__action-link"
       data-testid="show-diff-btn"
       @click="$emit('showDiff', diagnostic.nodeRef!)"
     >查看变更</button>
@@ -60,7 +68,7 @@ defineEmits<{
   white-space: nowrap;
 }
 
-.diagnostics-item__diff-link {
+.diagnostics-item__action-link {
   border: none;
   background: none;
   color: var(--color-text-link);
@@ -70,7 +78,7 @@ defineEmits<{
   flex-shrink: 0;
 }
 
-.diagnostics-item__diff-link:hover {
+.diagnostics-item__action-link:hover {
   color: var(--color-text-link-hover);
   text-decoration: underline;
 }

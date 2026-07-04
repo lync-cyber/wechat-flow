@@ -150,6 +150,40 @@ describe("AC-003: 查看变更链接触发 show-diff 事件", () => {
   });
 });
 
+// UC-013: issue 行「查看」链接 → item-click 事件（跳转/定位对应节点）
+describe("UC-013: 查看链接触发 item-click 事件", () => {
+  it("点击「查看」按钮触发 item-click 事件，携带 nodeRef 值", async () => {
+    const report = makeReport({
+      diagnostics: [{ severity: "error", ruleId: "R-001", message: "错误", nodeRef: "DIV" }],
+    });
+    const wrapper = mount(DiagnosticsPanel, {
+      props: { diagnostics: report, isExpanded: true },
+    });
+    await nextTick();
+
+    await wrapper.find('[data-testid="view-btn"]').trigger("click");
+    await nextTick();
+
+    const emitted = wrapper.emitted("item-click");
+    expect(emitted).toBeTruthy();
+    expect(emitted?.[0]).toEqual(["DIV"]);
+    wrapper.unmount();
+  });
+
+  it("无 nodeRef 的诊断项不渲染「查看」按钮", async () => {
+    const report = makeReport({
+      diagnostics: [{ severity: "error", ruleId: "R-001", message: "没有 nodeRef" }],
+    });
+    const wrapper = mount(DiagnosticsPanel, {
+      props: { diagnostics: report, isExpanded: true },
+    });
+    await nextTick();
+
+    expect(wrapper.find('[data-testid="view-btn"]').exists()).toBe(false);
+    wrapper.unmount();
+  });
+});
+
 // AC-004: diagnostics 含 error 时折叠态自动触发 toggle 事件
 describe("AC-004: 含 error 时自动展开（emit toggle）", () => {
   it("diagnostics 含 error 且 isExpanded=false 时，挂载后 emit toggle", async () => {
