@@ -1,7 +1,8 @@
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
+import { createMemoryHistory, createRouter } from "vue-router";
 
 const { saveCredential, loadCredentialGroup, clearCredential } = vi.hoisted(() => ({
   saveCredential: vi.fn().mockResolvedValue(undefined),
@@ -40,6 +41,35 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.clearAllMocks();
+});
+
+describe("P-004: 简化顶栏 + 返回编辑器", () => {
+  it("渲染顶栏「设置」标题与「← 返回编辑器」按钮", async () => {
+    const wrapper = mount(SettingsPage, { global: { plugins: [createPinia()] } });
+    await nextTick();
+    const topbar = wrapper.find('[data-testid="settings-topbar"]');
+    expect(topbar.exists()).toBe(true);
+    expect(topbar.text()).toContain("设置");
+    expect(wrapper.find('[data-testid="settings-back-btn"]').text()).toContain("返回编辑器");
+  });
+
+  it("点击「返回编辑器」导航到 /", async () => {
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [
+        { path: "/", component: { template: "<div/>" } },
+        { path: "/settings", component: { template: "<div/>" } },
+      ],
+    });
+    router.push("/settings");
+    await router.isReady();
+    const wrapper = mount(SettingsPage, { global: { plugins: [createPinia(), router] } });
+    await nextTick();
+
+    await wrapper.find('[data-testid="settings-back-btn"]').trigger("click");
+    await flushPromises();
+    expect(router.currentRoute.value.path).toBe("/");
+  });
 });
 
 describe("AC-001: 左侧导航项渲染", () => {
