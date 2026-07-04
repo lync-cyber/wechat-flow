@@ -292,6 +292,139 @@ describe("T-052 AC-003: 违规内容在图标旁显示警告色标记 + tooltip 
   });
 });
 
+// ── BC-4 UC-023 违规词 / 夜间风险指标段 ──────────────────────────────────────
+
+function reportWithKeyword(count: number): DiagnosticReport {
+  return {
+    diagnostics: Array.from({ length: count }, (_, i) => ({
+      severity: "warning" as const,
+      ruleId: "keyword-lint",
+      message: `违规关键词「x${i}」`,
+      matchedKeyword: `x${i}`,
+    })),
+    nodeChangeRecords: [],
+    nightRiskIssues: [],
+    versionTriple: { coreVersion: "0.0.0", themeVersion: "0.0.0", rulesetVersion: "0.0.0" },
+  };
+}
+
+function reportWithNightRisk(count: number): DiagnosticReport {
+  return {
+    diagnostics: [],
+    nodeChangeRecords: [],
+    nightRiskIssues: Array.from({ length: count }, () => ({
+      nodeSelector: "p",
+      contrastRatio: 2.1,
+      foreground: "#333",
+      background: "#111",
+      suggestion: "提高对比度",
+    })),
+    versionTriple: { coreVersion: "0.0.0", themeVersion: "0.0.0", rulesetVersion: "0.0.0" },
+  };
+}
+
+describe("BC-4 UC-023: 违规词指标段", () => {
+  beforeEach(() => setViewportWidth(1440));
+  afterEach(() => setViewportWidth(1440));
+
+  it("违规词段渲染 keyword-lint 诊断计数", () => {
+    const wrapper = mount(StatusBar, {
+      props: {
+        metrics: { chineseChars: 100, totalChars: 100, readMinutes: 1 },
+        diagnostics: reportWithKeyword(3),
+        isDiagnosticsExpanded: false,
+      },
+    });
+    const seg = wrapper.find('[data-testid="violation-count"]');
+    expect(seg.exists()).toBe(true);
+    expect(seg.text()).toContain("违规词 3");
+  });
+
+  it("无违规词时段位为 muted 色", () => {
+    const wrapper = mount(StatusBar, {
+      props: {
+        metrics: { chineseChars: 100, totalChars: 100, readMinutes: 1 },
+        diagnostics: emptyReport(),
+        isDiagnosticsExpanded: false,
+      },
+    });
+    const seg = wrapper.find('[data-testid="violation-count"]');
+    expect(seg.text()).toContain("违规词 0");
+    expect((seg.element as HTMLElement).getAttribute("data-color")).toBe("muted");
+  });
+
+  it("有违规词时段位为 warning 色", () => {
+    const wrapper = mount(StatusBar, {
+      props: {
+        metrics: { chineseChars: 100, totalChars: 100, readMinutes: 1 },
+        diagnostics: reportWithKeyword(2),
+        isDiagnosticsExpanded: false,
+      },
+    });
+    const seg = wrapper.find('[data-testid="violation-count"]');
+    expect((seg.element as HTMLElement).getAttribute("data-color")).toBe("warning");
+  });
+
+  it("兼容性摘要不把违规词计入 —— keyword-lint 诊断不改变兼容性状态", () => {
+    const wrapper = mount(StatusBar, {
+      props: {
+        metrics: { chineseChars: 100, totalChars: 100, readMinutes: 1 },
+        diagnostics: reportWithKeyword(4),
+        isDiagnosticsExpanded: false,
+      },
+    });
+    const compat = wrapper.find('[data-testid="compat-summary"]');
+    expect(compat.text()).toContain("无风险");
+    expect(wrapper.find('[data-testid="status-bar-root"]').classes()).toContain("status-bar--idle");
+  });
+});
+
+describe("BC-4 UC-023: 夜间风险指标段", () => {
+  beforeEach(() => setViewportWidth(1440));
+  afterEach(() => setViewportWidth(1440));
+
+  it("夜间风险段渲染 nightRiskIssues 计数", () => {
+    const wrapper = mount(StatusBar, {
+      props: {
+        metrics: { chineseChars: 100, totalChars: 100, readMinutes: 1 },
+        diagnostics: reportWithNightRisk(1),
+        isDiagnosticsExpanded: false,
+      },
+    });
+    const seg = wrapper.find('[data-testid="night-risk-count"]');
+    expect(seg.exists()).toBe(true);
+    expect(seg.text()).toContain("夜间风险 1 项");
+  });
+
+  it("有夜间风险时段位为 error 色，无风险时 muted", () => {
+    const risky = mount(StatusBar, {
+      props: {
+        metrics: { chineseChars: 100, totalChars: 100, readMinutes: 1 },
+        diagnostics: reportWithNightRisk(2),
+        isDiagnosticsExpanded: false,
+      },
+    });
+    expect(
+      (risky.find('[data-testid="night-risk-count"]').element as HTMLElement).getAttribute(
+        "data-color"
+      )
+    ).toBe("error");
+
+    const clean = mount(StatusBar, {
+      props: {
+        metrics: { chineseChars: 100, totalChars: 100, readMinutes: 1 },
+        diagnostics: emptyReport(),
+        isDiagnosticsExpanded: false,
+      },
+    });
+    expect(
+      (clean.find('[data-testid="night-risk-count"]').element as HTMLElement).getAttribute(
+        "data-color"
+      )
+    ).toBe("muted");
+  });
+});
+
 describe("T-066 AC-004/005: 字数统计格式", () => {
   it("AC-004: 中英混排显示 '{chineseChars} 字 / {totalChars} 字符' 格式", () => {
     const wrapper = mount(StatusBar, {
