@@ -1,4 +1,4 @@
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
@@ -71,6 +71,24 @@ describe("AC-001: PreviewPage 单栏只读布局", () => {
     });
     await nextTick();
     expect(wrapper.find('[data-testid="preview-iframe"]').exists()).toBe(true);
+  });
+
+  it("P-005: 不渲染视口切换 tabs（viewport-toolbar 缺席）", async () => {
+    const wrapper = mount(PreviewPage, {
+      global: { plugins: [createPinia()] },
+    });
+    await nextTick();
+    expect(wrapper.find('[data-testid="viewport-toolbar"]').exists()).toBe(false);
+  });
+
+  it("P-005: 请求文档缺失时回退 demo 内容，预览非空", async () => {
+    const wrapper = mount(PreviewPage, {
+      global: { plugins: [createPinia()] },
+    });
+    await flushPromises();
+    await nextTick();
+    const iframe = wrapper.find('[data-testid="preview-iframe"]');
+    expect(iframe.attributes("srcdoc")).toContain("preview");
   });
 
   it("渲染底部固定栏（data-testid=mobile-bottom-bar）", async () => {

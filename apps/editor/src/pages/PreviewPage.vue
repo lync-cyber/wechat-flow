@@ -66,6 +66,7 @@ const docTitle = computed(() => store.currentDocId || "文档");
         <PreviewPane
           :html-content="store.previewHtml"
           viewport="375"
+          :show-toolbar="false"
         />
       </div>
     </main>
