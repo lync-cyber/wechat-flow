@@ -11,6 +11,7 @@ export const wcagContrastMetaSchema = z.object({
 export const themeMetaSchema = z.object({
   author: z.string().optional(),
   version: z.string().optional(),
+  description: z.string().optional(),
   wcagContrast: wcagContrastMetaSchema.optional(),
 });
 

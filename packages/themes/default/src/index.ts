@@ -27,6 +27,7 @@ const defaultTheme: ThemeDefinition = {
   meta: {
     author: "wechat-flow",
     version: "1.0.0",
+    description: "中性排版 · 墨绿点缀",
     wcagContrast: {
       checked: true,
       minRatio: 7.1,

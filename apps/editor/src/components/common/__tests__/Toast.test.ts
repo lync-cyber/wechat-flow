@@ -164,3 +164,26 @@ describe("Toast 消息内容渲染", () => {
     wrapper.unmount();
   });
 });
+
+describe("UC-011 类型图标", () => {
+  const cases: Array<{ type: "info" | "success" | "warning" | "error"; glyph: string }> = [
+    { type: "info", glyph: "ⓘ" },
+    { type: "success", glyph: "✓" },
+    { type: "warning", glyph: "⚠" },
+    { type: "error", glyph: "✕" },
+  ];
+
+  for (const { type, glyph } of cases) {
+    it(`type=${type} → 渲染类型图标 ${glyph} 且带类型着色 class`, async () => {
+      const onClose = vi.fn();
+      const wrapper = mount(Toast, { props: { type, message: "x", onClose } });
+      await nextTick();
+
+      const icon = wrapper.find('[data-testid="toast-icon"]');
+      expect(icon.exists()).toBe(true);
+      expect(icon.text()).toBe(glyph);
+      expect(icon.classes()).toContain(`toast__icon--${type}`);
+      wrapper.unmount();
+    });
+  }
+});

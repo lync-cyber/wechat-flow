@@ -1,8 +1,15 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import ApiKeyConfig from "../components/settings/ApiKeyConfig.vue";
 import EditorPreferencesSection from "../components/settings/EditorPreferencesSection.vue";
 import ImageHostConfig from "../components/settings/ImageHostConfig.vue";
+
+const router = useRouter();
+
+function backToEditor(): void {
+  router.push("/");
+}
 
 type NavSection = "editor" | "theme" | "sync" | "imagehost" | "apikey" | "about";
 
@@ -29,7 +36,18 @@ function setActive(id: NavSection): void {
 
 <template>
   <div class="settings-page">
-    <nav class="settings-nav">
+    <header class="settings-topbar" data-testid="settings-topbar">
+      <button
+        type="button"
+        class="settings-topbar__back"
+        data-testid="settings-back-btn"
+        @click="backToEditor"
+      >← 返回编辑器</button>
+      <span class="settings-topbar__title">设置</span>
+    </header>
+
+    <div class="settings-page__body">
+      <nav class="settings-nav">
       <button
         v-for="item in navItems"
         :key="item.id"
@@ -80,14 +98,54 @@ function setActive(id: NavSection): void {
         <p class="settings-content__placeholder">版本信息</p>
       </section>
     </main>
+    </div>
   </div>
 </template>
 
 <style scoped>
 .settings-page {
   display: flex;
+  flex-direction: column;
   height: 100%;
   background: var(--color-surface);
+}
+
+.settings-topbar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 48px;
+  flex-shrink: 0;
+  padding: 0 var(--space-4, 16px);
+  border-bottom: 1px solid var(--color-border-subtle);
+  background: var(--color-surface-elevated);
+}
+
+.settings-topbar__back {
+  background: none;
+  border: none;
+  padding: var(--space-1, 4px) 0;
+  cursor: pointer;
+  font-size: var(--font-size-sm, 13px);
+  color: var(--color-text-secondary);
+}
+
+.settings-topbar__back:hover {
+  color: var(--color-brand);
+}
+
+.settings-topbar__title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-text-primary);
+}
+
+.settings-page__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
 }
 
 .settings-nav {

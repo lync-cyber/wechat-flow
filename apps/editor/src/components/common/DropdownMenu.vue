@@ -2,6 +2,7 @@
 export interface MenuActionItem {
   id: string;
   label: string;
+  icon?: string;
   shortcut?: string;
   disabled?: boolean;
 }
@@ -54,6 +55,7 @@ function handleClick(item: MenuItem): void {
         :aria-disabled="item.disabled ?? false"
         @click="handleClick(item)"
       >
+        <span v-if="item.icon" class="dropdown-menu__item-icon" aria-hidden="true">{{ item.icon }}</span>
         <span class="dropdown-menu__item-label">{{ item.label }}</span>
         <kbd v-if="item.shortcut" class="dropdown-menu__item-shortcut">{{ item.shortcut }}</kbd>
       </div>
@@ -100,6 +102,17 @@ function handleClick(item: MenuItem): void {
   opacity: 0.4;
   cursor: default;
   pointer-events: none;
+}
+
+.dropdown-menu__item-icon {
+  flex-shrink: 0;
+  width: 16px;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.dropdown-menu__item:hover:not(.dropdown-menu__item--disabled) .dropdown-menu__item-icon {
+  color: var(--color-brand);
 }
 
 .dropdown-menu__item-label {

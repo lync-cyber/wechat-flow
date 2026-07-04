@@ -15,6 +15,13 @@ const AUTO_CLOSE_DURATIONS: Record<string, number | null> = {
   error: null,
 };
 
+const TYPE_ICONS: Record<string, string> = {
+  info: "ⓘ",
+  success: "✓",
+  warning: "⚠",
+  error: "✕",
+};
+
 let timerId: ReturnType<typeof setTimeout> | null = null;
 
 onMounted(() => {
@@ -40,6 +47,7 @@ onUnmounted(() => {
     :data-testid="`toast-${type}`"
     role="alert"
   >
+    <span class="toast__icon" :class="`toast__icon--${type}`" data-testid="toast-icon" aria-hidden="true">{{ TYPE_ICONS[type] }}</span>
     <span class="toast__message" data-testid="toast-message">{{ message }}</span>
     <button
       class="toast__close"
@@ -81,6 +89,28 @@ onUnmounted(() => {
 .toast--error {
   background: var(--color-error-subtle);
   border-left: 3px solid var(--color-error);
+}
+
+.toast__icon {
+  flex-shrink: 0;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.toast__icon--info {
+  color: var(--color-info);
+}
+
+.toast__icon--success {
+  color: var(--color-success);
+}
+
+.toast__icon--warning {
+  color: var(--color-warning);
+}
+
+.toast__icon--error {
+  color: var(--color-error);
 }
 
 .toast__message {

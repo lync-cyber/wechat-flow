@@ -50,6 +50,10 @@ function handleToggle(): void {
 function handleShowDiff(nodeSelector: string): void {
   emit("show-diff", nodeSelector);
 }
+
+function handleItemClick(nodeSelector: string): void {
+  emit("item-click", nodeSelector);
+}
 </script>
 
 <template>
@@ -116,6 +120,7 @@ function handleShowDiff(nodeSelector: string): void {
           :key="i"
           :diagnostic="diag"
           @show-diff="handleShowDiff"
+          @item-click="handleItemClick"
         />
       </template>
     </div>

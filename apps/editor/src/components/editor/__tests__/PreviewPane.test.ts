@@ -12,6 +12,22 @@ const defaultProps = {
   onViewportChange: () => {},
 };
 
+describe("视口工具栏可见性（showToolbar）", () => {
+  it("默认渲染视口工具栏", async () => {
+    const wrapper = mount(PreviewPane, { props: defaultProps });
+    await nextTick();
+    expect(wrapper.find('[data-testid="viewport-toolbar"]').exists()).toBe(true);
+    wrapper.unmount();
+  });
+
+  it("showToolbar=false 时不渲染视口工具栏（P-005 预览页）", async () => {
+    const wrapper = mount(PreviewPane, { props: { ...defaultProps, showToolbar: false } });
+    await nextTick();
+    expect(wrapper.find('[data-testid="viewport-toolbar"]').exists()).toBe(false);
+    wrapper.unmount();
+  });
+});
+
 // AC-001: iframe sandbox allows same-origin for contentDocument access + CSP blocks scripts
 describe("AC-001: iframe 沙箱安全属性", () => {
   it("iframe sandbox 含 allow-same-origin（启用 contentDocument 双向高亮；scripts 由 CSP 阻断）", async () => {

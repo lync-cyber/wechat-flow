@@ -31,6 +31,16 @@ describe("AC-003: ContextMenu 展开含正确菜单项，复用 command-registry
     wrapper.unmount();
   });
 
+  it("UC-016 菜单项渲染前置图标", async () => {
+    const wrapper = mount(ContextMenu, { props: defaultProps() });
+    await nextTick();
+
+    const item = wrapper.find('[data-testid="menu-item-doc-load-example"]');
+    expect(item.exists()).toBe(true);
+    expect(item.find(".dropdown-menu__item-icon").exists()).toBe(true);
+    wrapper.unmount();
+  });
+
   it("含「中文排版修订」菜单项", async () => {
     const wrapper = mount(ContextMenu, { props: defaultProps() });
     await nextTick();

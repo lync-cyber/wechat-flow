@@ -201,6 +201,19 @@ function onShowDiff(nodeSelector: string): void {
   isDiffOpen.value = true;
 }
 
+// nodeRef granularity is a bare tagName (see ruleset builtin lint-*), so this scrolls to
+// the first preview element of that tag and flashes the shared highlight — precise
+// source-line jump needs richer node refs upstream.
+function onDiagnosticView(nodeRef: string): void {
+  const doc = previewPaneRef.value?.iframeEl?.contentDocument;
+  if (!doc || !nodeRef) return;
+  const el = doc.querySelector(nodeRef.toLowerCase());
+  if (!el) return;
+  el.scrollIntoView({ block: "center" });
+  el.classList.add("cm-highlighted");
+  setTimeout(() => el.classList.remove("cm-highlighted"), 800);
+}
+
 function onCloseDiff(): void {
   isDiffOpen.value = false;
 }
@@ -441,6 +454,7 @@ onUnmounted(() => {
       :is-expanded="isDiagnosticsExpanded"
       @toggle="onToggleDiagnostics"
       @show-diff="onShowDiff"
+      @item-click="onDiagnosticView"
     />
 
     <!-- Compatibility diff modal -->

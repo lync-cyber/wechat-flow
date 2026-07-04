@@ -27,6 +27,7 @@ const techTheme: ThemeDefinition = {
   meta: {
     author: "wechat-flow",
     version: "1.0.0",
+    description: "暗色 · 科技蓝",
     wcagContrast: {
       checked: true,
       minRatio: 8.2,

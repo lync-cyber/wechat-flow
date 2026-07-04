@@ -56,12 +56,12 @@ const props = defineProps<{
       class="top-bar__toolbar"
       data-testid="top-bar-toolbar"
     >
-      <button type="button" aria-label="insert" data-testid="top-bar-insert-btn" @click="props.onInsert?.()">+</button>
-      <button type="button" aria-label="viewport">□</button>
+      <button type="button" class="top-bar__icon-btn" aria-label="insert" data-testid="top-bar-insert-btn" @click="props.onInsert?.()">+</button>
+      <button type="button" class="top-bar__icon-btn" aria-label="viewport">□</button>
       <button type="button" class="top-bar__copy-btn" @click="props.onCopy">
         复制到公众号
       </button>
-      <button type="button" aria-label="more" data-testid="top-bar-more-btn" @click="props.onMore?.()">...</button>
+      <button type="button" class="top-bar__icon-btn" aria-label="more" data-testid="top-bar-more-btn" @click="props.onMore?.()">...</button>
     </div>
 
     <!-- User menu placeholder -->
@@ -145,6 +145,28 @@ const props = defineProps<{
   align-items: center;
   gap: var(--space-2);
   margin-left: auto;
+}
+
+.top-bar__icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 4px;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-base);
+  color: var(--color-text-secondary);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.top-bar__icon-btn:hover {
+  background: var(--color-surface-overlay);
+  color: var(--color-brand);
 }
 
 .top-bar__copy-btn {

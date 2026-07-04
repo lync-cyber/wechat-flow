@@ -21,11 +21,15 @@ interface CardEntry {
   templateName?: string;
   templateDescription?: string;
   accentColor: string;
+  themeTokens?: Record<string, string>;
+}
+
+function tokensForTheme(themeId: string): Record<string, string> | undefined {
+  return describeTheme(themeId)?.tokens as Record<string, string> | undefined;
 }
 
 function accentColorForTheme(themeId: string): string {
-  const tokens = describeTheme(themeId)?.tokens;
-  const brand = tokens && (tokens as Record<string, string>)["--color-brand"];
+  const brand = tokensForTheme(themeId)?.["--color-brand"];
   return typeof brand === "string" ? brand : FALLBACK_THEME_ACCENT;
 }
 
@@ -36,9 +40,16 @@ const allCards = computed<CardEntry[]>(() => {
   const result: CardEntry[] = [];
   for (const theme of themes) {
     const accentColor = accentColorForTheme(theme.id);
+    const themeTokens = tokensForTheme(theme.id);
     const templates = listThemeTemplates(theme.id);
     if (templates.length === 0) {
-      result.push({ themeId: theme.id, themeName: theme.name, templateId: "", accentColor });
+      result.push({
+        themeId: theme.id,
+        themeName: theme.name,
+        templateId: "",
+        accentColor,
+        themeTokens,
+      });
     } else {
       for (const tpl of templates) {
         result.push({
@@ -48,6 +59,7 @@ const allCards = computed<CardEntry[]>(() => {
           templateName: tpl.name ?? tpl.templateId,
           templateDescription: tpl.description,
           accentColor,
+          themeTokens,
         });
       }
     }
@@ -147,6 +159,7 @@ async function handleUseTemplate(themeId: string, templateId: string): Promise<v
         :template-name="card.templateName"
         :template-description="card.templateDescription"
         :accent-color="card.accentColor"
+        :theme-tokens="card.themeTokens"
         :is-active="editorStore.currentTheme === card.themeId"
         :on-use-theme="handleUseTheme"
         :on-use-template="handleUseTemplate"

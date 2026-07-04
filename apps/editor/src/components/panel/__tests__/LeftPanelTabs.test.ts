@@ -71,6 +71,29 @@ describe("AC-001: 主题 Tab 激活态 + ThemeCard 列表", () => {
     expect(cards.length).toBe(2);
   });
 
+  it("UC-007: ThemeCard 缩略图取主题 brand 色 + 渲染描述副行", async () => {
+    resetThemeRegistry();
+    registerTheme({
+      id: "default",
+      name: "简约通用",
+      tokens: { "--color-brand": "#2D5A4E" },
+      paintable: {},
+      assets: {},
+      meta: { description: "中性排版 · 墨绿点缀" },
+    });
+    const wrapper = mount(LeftPanelTabs, {
+      props: { defaultTab: "theme" },
+      global: { plugins: [makeRouter()] },
+    });
+    await nextTick();
+
+    const thumb = wrapper.find('[data-testid="themecard-thumbnail"]');
+    expect(thumb.attributes("style")).toContain("#2D5A4E");
+    const desc = wrapper.find('[data-testid="themecard-description"]');
+    expect(desc.exists()).toBe(true);
+    expect(desc.text()).toBe("中性排版 · 墨绿点缀");
+  });
+
   it("点击「组件」Tab 后，「主题」Tab 失去 active class，「组件」Tab 获得 active class", async () => {
     const wrapper = mount(LeftPanelTabs, {
       props: { defaultTab: "theme" },

@@ -13,6 +13,7 @@ const props = withDefaults(
     isLoading?: boolean;
     error?: string;
     syncState?: "idle" | "connecting" | "syncing" | "synced" | "offline" | "error" | "conflict";
+    showToolbar?: boolean;
     onViewportChange?: (v: string) => void;
     onNightModeChange?: (v: "off" | "risk-preview") => void;
     onRetry?: () => void;
@@ -23,6 +24,7 @@ const props = withDefaults(
     nightMode: "off",
     isLoading: false,
     syncState: "idle",
+    showToolbar: true,
     onViewportChange: undefined,
     onNightModeChange: undefined,
     onRetry: undefined,
@@ -89,7 +91,7 @@ defineExpose({ iframeEl });
     :style="{ '--preview-line-height': String(lineHeight) }"
   >
     <!-- Viewport toolbar -->
-    <div class="preview-pane__toolbar" data-testid="viewport-toolbar">
+    <div v-if="showToolbar" class="preview-pane__toolbar" data-testid="viewport-toolbar">
       <button
         type="button"
         :class="[

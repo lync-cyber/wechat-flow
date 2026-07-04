@@ -4,7 +4,7 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { NodeLocation } from "../components/source/source-cursor-tracker.ts";
 import { composeRender } from "../use-cases/render.ts";
-import { ensureDemoDocument } from "../use-cases/seed-demo.ts";
+import { DEMO_DOC_CONTENT, ensureDemoDocument } from "../use-cases/seed-demo.ts";
 
 const DEFAULT_DOC_ID = "draft-default";
 
@@ -59,6 +59,10 @@ export const useEditorStore = defineStore("editor", () => {
       if (record) {
         content.value = record.content;
         await updatePreview(record.content);
+      } else {
+        // requested doc absent (e.g. deep-linked /preview/:docId) — render demo so it is not blank
+        content.value = DEMO_DOC_CONTENT;
+        await updatePreview(DEMO_DOC_CONTENT);
       }
     } catch {
       // Storage unavailable (e.g. private browsing, test teardown) — start with empty content

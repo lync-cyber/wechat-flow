@@ -27,6 +27,7 @@ const magazineTheme: ThemeDefinition = {
   meta: {
     author: "wechat-flow",
     version: "1.0.0",
+    description: "杂志风 · 活力橙",
     wcagContrast: {
       checked: true,
       minRatio: 5.2,
