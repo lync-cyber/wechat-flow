@@ -167,6 +167,29 @@ describe("TemplateThemeCard — 骨架缩略图与主题色", () => {
     expect(thumbnail.attributes("style")).toContain("var(--color-brand)");
   });
 
+  it("P-003：传入 themeTokens 时缩略图底色取主题 --color-background（暗色主题得暗底）", async () => {
+    const wrapper = mount(TemplateThemeCard, {
+      props: {
+        themeId: "tech",
+        themeName: "科技数码",
+        templateId: "tpl-1",
+        isActive: false,
+        themeTokens: {
+          "--color-background": "#0F1117",
+          "--color-surface": "#161B22",
+          "--color-border": "#30363D",
+        },
+        onUseTheme: vi.fn(),
+        onUseTemplate: vi.fn(),
+      },
+    });
+    await nextTick();
+    const style = wrapper.find('[data-testid="thumbnail"]').attributes("style") ?? "";
+    expect(style).toContain("--thumbnail-bg: #0F1117");
+    expect(style).toContain("--thumbnail-surface: #161B22");
+    expect(style).toContain("--thumbnail-border: #30363D");
+  });
+
   it("缩略图为装饰性区块，标记 aria-hidden", async () => {
     const wrapper = mount(TemplateThemeCard, {
       props: {

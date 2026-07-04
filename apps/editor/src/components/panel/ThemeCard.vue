@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ThemeDefinition } from "@wechat-flow/contracts";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 
 const props = withDefaults(
@@ -7,14 +8,20 @@ const props = withDefaults(
     theme: Pick<ThemeDefinition, "id" | "name" | "tokens">;
     isSelected: boolean;
     isPlaceholder?: boolean;
+    description?: string;
     onSelect: (id: string) => void;
   }>(),
   {
     isPlaceholder: false,
+    description: undefined,
   }
 );
 
 const router = useRouter();
+
+const thumbnailColor = computed(
+  () => props.theme.tokens?.["--color-brand"] ?? "var(--color-surface-sunken)"
+);
 
 function handleClick(): void {
   if (props.isPlaceholder) {
@@ -38,14 +45,21 @@ function handleClick(): void {
     @click="handleClick"
     @keydown.enter="handleClick"
   >
-    <div class="theme-card__thumbnail">
+    <div
+      class="theme-card__thumbnail"
+      :style="isPlaceholder ? undefined : { background: thumbnailColor }"
+      data-testid="themecard-thumbnail"
+    >
       <span v-if="isPlaceholder" class="theme-card__placeholder-text" data-testid="placeholder-text">
         更多主题即将上线
       </span>
     </div>
     <div class="theme-card__body">
       <span class="theme-card__check-icon" v-if="isSelected" data-testid="check-icon" aria-hidden="true">✓</span>
-      <span class="theme-card__name">{{ theme.name }}</span>
+      <div class="theme-card__meta">
+        <span class="theme-card__name">{{ theme.name }}</span>
+        <span v-if="description" class="theme-card__description" data-testid="themecard-description">{{ description }}</span>
+      </div>
     </div>
     <a
       v-if="isPlaceholder"
@@ -93,8 +107,22 @@ function handleClick(): void {
 .theme-card__body {
   padding: 6px 8px;
   display: flex;
-  align-items: center;
-  gap: 4px;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.theme-card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.theme-card__description {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .theme-card__check-icon {

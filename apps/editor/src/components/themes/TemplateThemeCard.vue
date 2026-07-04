@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from "vue";
+
 const props = defineProps<{
   themeId: string;
   themeName: string;
@@ -6,10 +8,18 @@ const props = defineProps<{
   templateName?: string;
   templateDescription?: string;
   accentColor?: string;
+  themeTokens?: Record<string, string>;
   isActive: boolean;
   onUseTheme: (themeId: string, themeName: string) => void;
   onUseTemplate: (themeId: string, templateId: string) => void;
 }>();
+
+const thumbnailStyle = computed(() => ({
+  "--card-accent": props.accentColor || "var(--color-brand)",
+  "--thumbnail-bg": props.themeTokens?.["--color-background"] ?? "var(--color-surface)",
+  "--thumbnail-surface": props.themeTokens?.["--color-surface"] ?? "var(--color-surface-sunken)",
+  "--thumbnail-border": props.themeTokens?.["--color-border"] ?? "var(--color-border)",
+}));
 </script>
 
 <template>
@@ -21,7 +31,7 @@ const props = defineProps<{
     <div
       class="template-theme-card__thumbnail"
       data-testid="thumbnail"
-      :style="{ '--card-accent': accentColor || 'var(--color-brand)' }"
+      :style="thumbnailStyle"
     >
       <div class="template-theme-card__thumbnail-skeleton" aria-hidden="true">
         <div class="template-theme-card__skeleton-title" />
@@ -96,7 +106,7 @@ const props = defineProps<{
   position: relative;
   height: 160px;
   padding: 16px;
-  background: var(--color-surface, #fff);
+  background: var(--thumbnail-bg, var(--color-surface, #fff));
   border-radius: var(--radius-sm, 4px) var(--radius-sm, 4px) 0 0;
   border-bottom: 1px solid var(--color-border-subtle);
 }
@@ -118,7 +128,7 @@ const props = defineProps<{
   width: 100%;
   height: 8px;
   border-radius: 3px;
-  background: var(--color-border, #d9d9d9);
+  background: var(--thumbnail-border, var(--color-border, #d9d9d9));
 }
 
 .template-theme-card__skeleton-line--short {
@@ -132,7 +142,7 @@ const props = defineProps<{
   padding: 6px 8px;
   margin-top: 4px;
   border-left: 3px solid var(--card-accent);
-  background: var(--color-surface-sunken, #f5f5f5);
+  background: var(--thumbnail-surface, var(--color-surface-sunken, #f5f5f5));
 }
 
 .template-theme-card__skeleton-quote .template-theme-card__skeleton-line {

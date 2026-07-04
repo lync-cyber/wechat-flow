@@ -27,6 +27,7 @@ const businessTheme: ThemeDefinition = {
   meta: {
     author: "wechat-flow",
     version: "1.0.0",
+    description: "商务 · 沉稳蓝",
     wcagContrast: {
       checked: true,
       minRatio: 7.5,

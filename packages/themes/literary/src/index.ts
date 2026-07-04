@@ -27,6 +27,7 @@ const literaryTheme: ThemeDefinition = {
   meta: {
     author: "wechat-flow",
     version: "1.0.0",
+    description: "衬线 · 温润",
     wcagContrast: {
       checked: true,
       minRatio: 6.8,

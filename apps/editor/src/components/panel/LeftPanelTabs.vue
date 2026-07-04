@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { listBlocks } from "@wechat-flow/core";
+import { describeTheme, listBlocks } from "@wechat-flow/core";
 import { listThemes } from "@wechat-flow/core";
 import { computed, ref } from "vue";
 import BlockLibItem from "./BlockLibItem.vue";
@@ -28,7 +28,17 @@ const emit = defineEmits<{
 const activeTab = ref<TabId>(props.defaultTab);
 const selectedThemeId = ref<string | null>(null);
 
-const themes = computed(() => listThemes());
+const themes = computed(() =>
+  listThemes().map((t) => {
+    const def = describeTheme(t.id);
+    return {
+      id: t.id,
+      name: t.name,
+      tokens: def?.tokens ?? {},
+      description: def?.meta?.description,
+    };
+  })
+);
 const blocks = computed(() => listBlocks());
 
 function switchTab(tab: TabId): void {
@@ -72,7 +82,8 @@ function insertBlock(block: ReturnType<typeof listBlocks>[number]): void {
             v-for="theme in themes"
             :key="theme.id"
             :data-testid="`theme-card-${theme.id}`"
-            :theme="{ id: theme.id, name: theme.name, tokens: {} }"
+            :theme="{ id: theme.id, name: theme.name, tokens: theme.tokens }"
+            :description="theme.description"
             :is-selected="selectedThemeId === theme.id"
             :on-select="selectTheme"
           />
