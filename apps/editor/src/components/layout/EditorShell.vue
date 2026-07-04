@@ -401,6 +401,7 @@ onUnmounted(() => {
           :on-selection-change="onSourceSelectionChange"
           :font-size="preferencesStore.fontSize"
           :input-assist="preferencesStore.inputAssist"
+          :on-open-insert-drawer="() => { isInsertDrawerOpen = true; }"
         />
       </main>
 

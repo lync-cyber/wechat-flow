@@ -227,7 +227,7 @@ describe("AC-001: buildDirectiveSnippet — selection produces directive syntax 
     expect(snippet).toMatch(/^:::card/);
   });
 
-  it("block snippet for 'card' with variantId 'elevated' contains 'card' and ':::'", async () => {
+  it("block snippet for 'card' with variantId 'elevated' encodes variant as class syntax '{.elevated}'", async () => {
     const { buildDirectiveSnippet } = (await import(
       /* @vite-ignore */ COMPLETION_MODULE
     )) as typeof import("../../apps/editor/src/editor/extensions/directive-completion.ts");
@@ -236,8 +236,32 @@ describe("AC-001: buildDirectiveSnippet — selection produces directive syntax 
       blockId: "card",
       variantId: "elevated",
     });
-    expect(snippet).toContain("card");
+    expect(snippet).toMatch(/^:::card\{\.elevated\}/);
     expect(snippet).toContain(":::");
+  });
+
+  it("block snippet with variantId 'default' omits class attr (default 与省略等价)", async () => {
+    const { buildDirectiveSnippet } = (await import(
+      /* @vite-ignore */ COMPLETION_MODULE
+    )) as typeof import("../../apps/editor/src/editor/extensions/directive-completion.ts");
+    const snippet = buildDirectiveSnippet({
+      type: "block",
+      blockId: "card",
+      variantId: "default",
+    });
+    expect(snippet).toMatch(/^:::card\n/);
+  });
+
+  it("inline snippet params 落在中括号之外（:badge[]{color=red}）", async () => {
+    const { buildDirectiveSnippet } = (await import(
+      /* @vite-ignore */ COMPLETION_MODULE
+    )) as typeof import("../../apps/editor/src/editor/extensions/directive-completion.ts");
+    const snippet = buildDirectiveSnippet({
+      type: "inline",
+      blockId: "badge",
+      params: { color: "red" },
+    });
+    expect(snippet).toBe(":badge[]{color=red}");
   });
 
   it("inline snippet for 'bold' starts with ':bold['", async () => {
@@ -390,20 +414,21 @@ describe("AC-001: DirectiveAutocompletePopover — renders candidates from props
     }
   });
 
-  it("calls onSelect with {type, blockId} payload when a list item is clicked", async () => {
+  it("二段式：block 项点击进入 variant 面板，点击「插入」后 onSelect 携带 variantId", async () => {
     const { mount } = await import("@vue/test-utils");
     const { default: DirectiveAutocompletePopover } = (await import(
       /* @vite-ignore */ POPOVER_MODULE
     )) as typeof import("../../apps/editor/src/components/editor/DirectiveAutocompletePopover.vue");
     const { listBlocks } = await import("../../packages/core/src/registry/block.ts");
     const { listMarks } = await import("../../packages/core/src/registry/mark.ts");
-    const blocks = listBlocks().slice(0, 2);
+    const callout = listBlocks().find((b) => b.id === "callout");
+    if (!callout) throw new Error("callout block not registered");
     const onSelect = vi.fn();
     const wrapper = mount(DirectiveAutocompletePopover, {
       props: {
         isOpen: true,
         triggerType: "block" as const,
-        blocks,
+        blocks: [callout],
         marks: listMarks(),
         currentInput: "",
         onSelect,
@@ -412,11 +437,217 @@ describe("AC-001: DirectiveAutocompletePopover — renders candidates from props
     });
     const firstItem = wrapper.find("[data-testid='autocomplete-item']");
     await firstItem.trigger("click");
+
+    expect(onSelect).not.toHaveBeenCalled();
+    expect(wrapper.find("[data-testid='autocomplete-variant-list']").exists()).toBe(true);
+    expect(wrapper.find("[data-testid='autocomplete-breadcrumb']").text()).toContain("callout");
+
+    await wrapper.find("[data-testid='autocomplete-insert']").trigger("click");
+    expect(onSelect).toHaveBeenCalledOnce();
+    const call = onSelect.mock.calls[0][0] as { type: string; blockId: string; variantId?: string };
+    expect(call.type).toBe("block");
+    expect(call.blockId).toBe("callout");
+    expect(call.variantId).toBe(callout.variants[0].id);
+  });
+
+  it("二段式：variant 面板可切换 variant，插入携带所选 variantId 与非空参数", async () => {
+    const { mount } = await import("@vue/test-utils");
+    const { default: DirectiveAutocompletePopover } = (await import(
+      /* @vite-ignore */ POPOVER_MODULE
+    )) as typeof import("../../apps/editor/src/components/editor/DirectiveAutocompletePopover.vue");
+    const { listBlocks } = await import("../../packages/core/src/registry/block.ts");
+    const { listMarks } = await import("../../packages/core/src/registry/mark.ts");
+    const callout = listBlocks().find((b) => b.id === "callout");
+    if (!callout) throw new Error("callout block not registered");
+    const onSelect = vi.fn();
+    const wrapper = mount(DirectiveAutocompletePopover, {
+      props: {
+        isOpen: true,
+        triggerType: "block" as const,
+        blocks: [callout],
+        marks: listMarks(),
+        currentInput: "",
+        onSelect,
+        onClose: () => {},
+      },
+    });
+    await wrapper.find("[data-testid='autocomplete-item']").trigger("click");
+
+    const infoVariant = wrapper.find("[data-testid='autocomplete-variant-info']");
+    expect(infoVariant.exists()).toBe(true);
+    await infoVariant.trigger("click");
+
+    const titleInput = wrapper.find("[data-testid='autocomplete-param-title']");
+    expect(titleInput.exists()).toBe(true);
+    await titleInput.setValue("提示标题");
+
+    await wrapper.find("[data-testid='autocomplete-insert']").trigger("click");
+    const call = onSelect.mock.calls[0][0] as {
+      variantId?: string;
+      params?: Record<string, string>;
+    };
+    expect(call.variantId).toBe("info");
+    expect(call.params?.title).toBe("提示标题");
+  });
+
+  it("二段式：面包屑点击回退到列表一段", async () => {
+    const { mount } = await import("@vue/test-utils");
+    const { default: DirectiveAutocompletePopover } = (await import(
+      /* @vite-ignore */ POPOVER_MODULE
+    )) as typeof import("../../apps/editor/src/components/editor/DirectiveAutocompletePopover.vue");
+    const { listBlocks } = await import("../../packages/core/src/registry/block.ts");
+    const { listMarks } = await import("../../packages/core/src/registry/mark.ts");
+    const wrapper = mount(DirectiveAutocompletePopover, {
+      props: {
+        isOpen: true,
+        triggerType: "block" as const,
+        blocks: listBlocks().slice(0, 5),
+        marks: listMarks(),
+        currentInput: "",
+        onSelect: () => {},
+        onClose: () => {},
+      },
+    });
+    await wrapper.find("[data-testid='autocomplete-item']").trigger("click");
+    expect(wrapper.find("[data-testid='autocomplete-variant-list']").exists()).toBe(true);
+
+    await wrapper.find("[data-testid='autocomplete-breadcrumb']").trigger("click");
+    expect(wrapper.find("[data-testid='autocomplete-variant-list']").exists()).toBe(false);
+    expect(wrapper.findAll("[data-testid='autocomplete-item']").length).toBe(5);
+  });
+
+  it("inline mark 项点击直接 onSelect（无二段）", async () => {
+    const { mount } = await import("@vue/test-utils");
+    const { default: DirectiveAutocompletePopover } = (await import(
+      /* @vite-ignore */ POPOVER_MODULE
+    )) as typeof import("../../apps/editor/src/components/editor/DirectiveAutocompletePopover.vue");
+    const { listBlocks } = await import("../../packages/core/src/registry/block.ts");
+    const { listMarks } = await import("../../packages/core/src/registry/mark.ts");
+    const onSelect = vi.fn();
+    const wrapper = mount(DirectiveAutocompletePopover, {
+      props: {
+        isOpen: true,
+        triggerType: "inline" as const,
+        blocks: listBlocks(),
+        marks: listMarks().slice(0, 2),
+        currentInput: "",
+        onSelect,
+        onClose: () => {},
+      },
+    });
+    await wrapper.find("[data-testid='autocomplete-item']").trigger("click");
     expect(onSelect).toHaveBeenCalledOnce();
     const call = onSelect.mock.calls[0][0] as { type: string; blockId: string };
-    expect(call.type === "block" || call.type === "inline").toBe(true);
-    expect(typeof call.blockId).toBe("string");
+    expect(call.type).toBe("inline");
     expect(call.blockId.length).toBeGreaterThan(0);
+  });
+
+  it("参数字段超过 3 项时显示「在 InsertDrawer 中配置」链接，点击关闭并回调", async () => {
+    const { mount } = await import("@vue/test-utils");
+    const { default: DirectiveAutocompletePopover } = (await import(
+      /* @vite-ignore */ POPOVER_MODULE
+    )) as typeof import("../../apps/editor/src/components/editor/DirectiveAutocompletePopover.vue");
+    const { listBlocks } = await import("../../packages/core/src/registry/block.ts");
+    const { listMarks } = await import("../../packages/core/src/registry/mark.ts");
+    const advertCard = listBlocks().find((b) => b.id === "advert-card");
+    if (!advertCard) throw new Error("advert-card block not registered");
+    const onClose = vi.fn();
+    const onOpenInsertDrawer = vi.fn();
+    const wrapper = mount(DirectiveAutocompletePopover, {
+      props: {
+        isOpen: true,
+        triggerType: "block" as const,
+        blocks: [advertCard],
+        marks: listMarks(),
+        currentInput: "",
+        onSelect: () => {},
+        onClose,
+        onOpenInsertDrawer,
+      },
+    });
+    await wrapper.find("[data-testid='autocomplete-item']").trigger("click");
+
+    const paramInputs = wrapper.findAll("[data-testid^='autocomplete-param-']");
+    expect(paramInputs.length).toBe(3);
+    const moreLink = wrapper.find("[data-testid='autocomplete-more-params']");
+    expect(moreLink.exists()).toBe(true);
+
+    await moreLink.trigger("click");
+    expect(onClose).toHaveBeenCalledOnce();
+    expect(onOpenInsertDrawer).toHaveBeenCalledOnce();
+  });
+
+  it("分类 tab 行渲染（行内/块级），点击切换候选源", async () => {
+    const { mount } = await import("@vue/test-utils");
+    const { default: DirectiveAutocompletePopover } = (await import(
+      /* @vite-ignore */ POPOVER_MODULE
+    )) as typeof import("../../apps/editor/src/components/editor/DirectiveAutocompletePopover.vue");
+    const { listBlocks } = await import("../../packages/core/src/registry/block.ts");
+    const { listMarks } = await import("../../packages/core/src/registry/mark.ts");
+    const wrapper = mount(DirectiveAutocompletePopover, {
+      props: {
+        isOpen: true,
+        triggerType: "block" as const,
+        blocks: listBlocks(),
+        marks: listMarks(),
+        currentInput: "",
+        onSelect: () => {},
+        onClose: () => {},
+      },
+    });
+    expect(wrapper.find("[data-testid='autocomplete-tabs']").exists()).toBe(true);
+    expect(wrapper.findAll("[data-testid='autocomplete-item']").length).toBe(listBlocks().length);
+
+    await wrapper.find("[data-testid='autocomplete-tab-inline']").trigger("click");
+    expect(wrapper.findAll("[data-testid='autocomplete-item']").length).toBe(listMarks().length);
+  });
+
+  it("block 项渲染 variant 数量角标，数值等于 variants.length", async () => {
+    const { mount } = await import("@vue/test-utils");
+    const { default: DirectiveAutocompletePopover } = (await import(
+      /* @vite-ignore */ POPOVER_MODULE
+    )) as typeof import("../../apps/editor/src/components/editor/DirectiveAutocompletePopover.vue");
+    const { listBlocks } = await import("../../packages/core/src/registry/block.ts");
+    const { listMarks } = await import("../../packages/core/src/registry/mark.ts");
+    const callout = listBlocks().find((b) => b.id === "callout");
+    if (!callout) throw new Error("callout block not registered");
+    const wrapper = mount(DirectiveAutocompletePopover, {
+      props: {
+        isOpen: true,
+        triggerType: "block" as const,
+        blocks: [callout],
+        marks: listMarks(),
+        currentInput: "",
+        onSelect: () => {},
+        onClose: () => {},
+      },
+    });
+    const badge = wrapper.find("[data-testid='autocomplete-variant-count']");
+    expect(badge.exists()).toBe(true);
+    expect(badge.text()).toBe(String(callout.variants.length));
+  });
+
+  it("typing 态：匹配字符以高亮 span 呈现", async () => {
+    const { mount } = await import("@vue/test-utils");
+    const { default: DirectiveAutocompletePopover } = (await import(
+      /* @vite-ignore */ POPOVER_MODULE
+    )) as typeof import("../../apps/editor/src/components/editor/DirectiveAutocompletePopover.vue");
+    const { listBlocks } = await import("../../packages/core/src/registry/block.ts");
+    const { listMarks } = await import("../../packages/core/src/registry/mark.ts");
+    const wrapper = mount(DirectiveAutocompletePopover, {
+      props: {
+        isOpen: true,
+        triggerType: "block" as const,
+        blocks: listBlocks(),
+        marks: listMarks(),
+        currentInput: "cal",
+        onSelect: () => {},
+        onClose: () => {},
+      },
+    });
+    const hit = wrapper.find(".autocomplete-item__hit");
+    expect(hit.exists()).toBe(true);
+    expect(hit.text().toLowerCase()).toBe("cal");
   });
 });
 
