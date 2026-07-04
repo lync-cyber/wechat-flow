@@ -1025,7 +1025,7 @@ response:
 
 ### 3.6 Editor Session 鉴权 (API-032)
 
-> Editor SPA 部署于 CDN，**不持有任何长期 API key**；调用 Relay 受保护端点（API-017/018/019/020 等）须先经此端点交换短期 JWT。JWT 生命周期 ≤15min，过期前 1min 客户端主动续期；JWT 在 `Authorization: Bearer` header 传递，与 API key 共用同一鉴权中间件（中间件按 `iss` 字段区分）。
+> Editor SPA 部署于 CDN，**不持有任何长期 API key**；调用 Relay 受保护端点（API-017/018/019/020 等）须先经此端点交换短期 JWT。JWT 生命周期 ≤15min，续期窗口为过期前最后 60s（exp − 60s 起），过期后不可续期（`refreshUntil = expiresAt`）；JWT 在 `Authorization: Bearer` header 传递，与 API key 共用同一鉴权中间件（中间件按 `iss` 字段区分）。
 
 #### API-032: POST /api/v1/editor/session
 
@@ -1059,7 +1059,7 @@ response:
       z.object({
         sessionJwt: z.string(),                  // 短期 JWT，HS256 签名，载荷含 iss='editor', sub=ownerRef, scope, exp, iat
         expiresAt: z.string().datetime(),        // ISO datetime，≤ now + 15min
-        refreshUntil: z.string().datetime(),     // 允许续期窗口（exp 前 1min 起）
+        refreshUntil: z.string().datetime(),     // = expiresAt（续期截止即 JWT 过期时刻；续期窗口起点为 exp − 60s，过期后不可续期）
         scope: ScopeSchema,                      // 通常为 'user,render,upload'（不含 wechat-asset、不含 admin）
         sessionId: z.string().uuid(),            // 服务端 audit 追溯
       })
@@ -1069,7 +1069,7 @@ response:
   429: { schema: ErrorResponse, desc: "E_QUOTA_EXCEEDED — 匿名 session 限流" }
 behavior:
   - "JWT 载荷 `{ iss:'editor', sub:ownerRef, scope, exp, iat, sessionId }`；HS256 签名，密钥从 Relay 环境变量 EDITOR_JWT_SECRET 读取"
-  - "续期路径：客户端在 exp 前 1min 调用 POST /api/v1/editor/session/refresh（Authorization: Bearer 旧 JWT）；服务端校验 sessionId 未吊销后颁发新 JWT"
+  - "续期路径：客户端在 exp 前最后 60s（exp − 60s 起）调用 POST /api/v1/editor/session/refresh（Authorization: Bearer 旧 JWT）；服务端校验 sessionId 未吊销后颁发新 JWT，新 session 的 `refreshUntil` 再次等于其 `expiresAt`；旧 JWT 一旦过期则续期被拒（`refreshUntil = expiresAt` 语义）"
   - "M-009 / M-010 鉴权中间件统一按 Bearer token 解析；JWT `iss='editor'` 时走 session 校验路径，API key（长期）走原 E-010 哈希校验路径"
   - "AppID/AppSecret / 图床 token 在所有 session 路径下均不下发到浏览器；wechat-asset scope 仅 user/admin key 可携带，editor session 不可达 API-018"
 ```

@@ -80,7 +80,7 @@ required_sections:
   - `rules/scope/strip.ts`、`clamp.ts`、`transform.ts`、`patch.ts`、`lint.ts` — 五类作用域执行器
   - `rules/builtin/` — ≥ 42 条内置规则；每条规则一个 TS 文件 `rules/builtin/{rule-id}.ts` 导出 `RuleDefinition`（含 id / scope / priority / matcher / transform / fixture 引用）
   - `version/manifest.ts` — 规则集 manifest 与版本号
-  - `patch-loader.ts` — 已知 Bug 补丁库热加载（按微信客户端版本号匹配）
+  - `patch-loader.ts` — 已知 Bug 补丁库热加载（`loadPatchBundle(url)` 取远端 `PatchBundle`，`applyPatchBundle` 先整体编译校验后原子 upsert 进 registry）。`PatchBundle = { version, formatVersion?, patches: PatchEntry[] }`，`PatchEntry` 为 in-memory `RuleDefinition`（含 matcher/transform 函数）或 JSON 可传输的声明式条目 `DeclarativePatchEntry = { id, scope, priority, match, apply }`——`match` 为 `PatchMatcherSpec`（style-prop / tag / attr / and / or 组合），`apply` 为 `PatchTransformSpec { transform, params? }`，`transform` id 在 `patch-dsl.ts` 的 transform registry 中注册后经 `compilePatchEntry` 编译为可执行 RuleDefinition（详 `patch-dsl.ts`，研究依据 rn-007）
   - `shared/paste-strip.ts` — 导出 `pasteStripRuleIds: readonly RuleId[]`，定义 M-004 粘贴模拟所共享的 strip 规则子集（详 §8.2 Q3.13）
   - `lint/readability.ts` — F-011 AC-006 可读性运行时检查（颜色对比度 / 字号下限 / 段长上限），输出 `Diagnostic[]` 汇入渲染管线诊断流；遍历过程中对 `contrastRatio < 4.5`（WCAG AA 文本基准）的节点产 `NightRiskEntry`，按 `nodeSelector` 去重后追加到 `DiagnosticReport.nightRiskIssues`
   - `lint/keywords.ts` — F-011 AC-007 违规关键词检测，词库 `packages/ruleset/src/data/keyword-list.json`，bump 时 rulesetVersion 升 minor
@@ -117,7 +117,7 @@ required_sections:
       suggestion: string;          // 修复建议文本（例：「将前景调至 #1A1A1A 以满足 AA 4.5:1」）
     }
     ```
-- **规则文件存放**: 规则定义在 `packages/ruleset/src/rules/{rule-id}.ts`；fixture 在 `packages/ruleset/src/rules/{rule-id}/`，目录结构：
+- **规则文件存放**: 规则定义在 `packages/ruleset/src/rules/builtin/{rule-id}.ts`；fixture 在同名子目录 `packages/ruleset/src/rules/builtin/{rule-id}/`，目录结构：
   - `input.html` — 进入规则前的 hast 序列化
   - `expected.html` — 规则应用后的 hast 序列化
   - `metadata.json` — `{ ruleId, scope, priority, description, wechatVersion: { minSupported, knownBuggy[] } }`
@@ -191,22 +191,19 @@ required_sections:
     failingTemplates: string[];  // pass=false 的 templateId 集合
   }
   ```
-- **template 命名空间隔离语义**: 主题是 template 的命名空间；同名 templateId（如 `tech-review`）可在 `tech` 与 `default` 主题下独立定义且渲染产物不同；frontmatter `theme: tech` + `template: tech-review` 解析为 (themeId=tech, templateId=tech-review) 复合键，运行时仅作为审计标记不参与渲染（PRD F-008 AC-003）
+- **template 命名空间隔离语义**: 主题是 template 的命名空间；同名 templateId（如各内置主题均提供的 `starter`）在不同主题下独立定义且渲染产物不同；frontmatter `theme: tech` + `template: starter` 解析为 (themeId=tech, templateId=starter) 复合键，运行时仅作为审计标记不参与渲染（PRD F-008 AC-003）
 - **内置 template 完整性下限**: 每内置主题（default / magazine / literary / business / tech）须 ≥ 1 预设 template；每 template 须 mdast 覆盖 F-003 AC-012 白名单 9 基础元素 + ≥ 6 核心 Block 容器；不达标由 `guard/nine-dimensions.ts` 在 CI 阻断发布（F-011 AC-009）
-- **内置 template 清单**: 每内置主题 `templates/` 目录下提供 ≥ 1 份 Markdown，文件名即 templateId。基线清单（templateId 可跨主题复用，由各主题独立实现）：
+- **内置 template 清单**: 每内置主题 `templates/` 目录下提供一份通用起步模板 `starter` 加一份场景化模板，文件名即 templateId：
 
-  | scenario | 候选 templateId | 推荐适配主题 |
-  |----------|----------------|--------------|
-  | 科技评测 | `tech-review` | tech / default |
-  | 诗歌赏析 | `poetry-essay` | literary |
-  | 行业分析报告 | `industry-report` | business |
-  | 生活记录 | `life-vlog` | magazine |
-  | 教程 / How-to | `tutorial` | tech / default |
-  | 书评 / 影评 | `book-review` | literary / default |
-  | 数据 / KPI 总结 | `kpi-summary` | business |
-  | 生活方式指南 | `lifestyle-guide` | magazine |
+  | 主题 | 场景化 templateId | 通用 templateId |
+  |------|------------------|----------------|
+  | default | `listicle`（清单体） | `starter` |
+  | magazine | `feature-story`（专题特写） | `starter` |
+  | literary | `essay`（散文随笔） | `starter` |
+  | business | `case-study`（案例分析） | `starter` |
+  | tech | `tutorial`（教程 / How-to） | `starter` |
 
-  各主题在其 `templates/{templateId}.md` 提供具体实现；同 scenario 在不同主题下视觉差异由主题 token 与 Block variant 驱动，Markdown 源码亦可独立编写（不强制跨主题复用 Markdown）。
+  各主题在其 `templates/{templateId}.md` 提供具体实现；templateId 在其 themeId 命名空间内唯一，同名 templateId 在不同主题下可独立定义，视觉差异由主题 token 与 Block variant 驱动。
 - **context_load**: [prd#§2.F-003, prd#§2.F-008, prd#§2.F-009, prd#§2.F-011, arch#§2.M-006]
 
 ### M-006: 调色板派生

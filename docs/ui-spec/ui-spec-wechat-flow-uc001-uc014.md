@@ -38,7 +38,7 @@ required_sections:
 4. **工具栏按钮组**（右对齐，从左到右顺序）：
    - 「+」插入按钮（UC-003 ghost variant，触发 UC-015 InsertDrawer）
    - 视口切换器（UC-003 ghost variant，切换预览宽度）
-   - 「**复制到公众号**」（UC-003 **primary** variant，映射 F-004 主入口）：文字「复制」；**桌面档（≥1280px）**：80×32px 图标+文字；**平板/移动档（<1280px）**：32×32px 纯图标
+   - 「**复制到公众号**」（UC-003 **primary** variant，映射 F-004 主入口）：纯文案「复制到公众号」，无图标
    - 「...」次级菜单按钮（UC-003 ghost variant，触发 UC-016 ContextMenu）
 5. **用户菜单**（最右侧）：头像或默认图标，下拉展开 UC-010
 
@@ -180,7 +180,7 @@ required_sections:
 **布局**：占据右栏全部区域，背景 `--color-surface-preview`（略冷白，模拟微信阅读环境）。
 
 **内部结构**：
-- 顶部视口切换工具栏（高 `36px`）：3 个切换按钮，显示标签「手机 / 平板 / 自适应」（对应 viewport 值 `375` / `768` / `auto`），当前激活状态用 `--color-brand-subtle` 背景高亮
+- 顶部视口切换工具栏（高 `36px`）：3 视口切换按钮 + 1 夜间风险 toggle 按钮同栏，共 4 按钮。3 视口按钮显示标签「手机 / 平板 / 自适应」（对应 viewport 值 `375` / `768` / `auto`）；第 4 个「夜间风险」toggle 按钮切换 `nightMode`（`'off'` ↔ `'risk-preview'`）。当前激活状态（含夜间风险 toggle 激活时）均用 `--color-brand-subtle` 背景高亮
 - iframe 容器（居中显示，width 按选中视口，周围留白 `--space-4`）
 - 右下角同步状态指示器（直径 `8px` 圆点，见 A-012）
 - 右上角复制按钮悬浮层（hover 时显示，`z-index: var(--z-toolbar)`）
@@ -310,7 +310,7 @@ required_sections:
 - 底部快捷键提示行（`↑↓ 导航 | ↵ 执行 | Esc 关闭`）
 
 **动作分组**（D1 扩展后 6 组，~25-30 命令）：
-1. **视图** — 专注模式切换、折叠左栏、折叠右栏、切换视口、撤销（`Ctrl+Z`）、重做（`Ctrl+Y`）、查找（`Ctrl+F`）、查找替换（`Ctrl+H`）
+1. **视图** — 专注模式切换（`F11`）、折叠左栏、折叠右栏、切换视口、撤销（`Ctrl+Z`）、重做（`Ctrl+Y`）、查找（`Ctrl+F`）、查找替换（`Ctrl+H`）
 2. **主题** — 切换至各内置主题（动态生成）、自定义配色（触发 UC-019）、调色板派生（触发 UC-020）
 3. **文档** — 跳转到指定文档（输入关键词模糊匹配）、新建文档（跳转 P-003）、删除当前文档
 4. **内容** — 插入组件（触发 UC-015 InsertDrawer 或 UC-021 内联补全）、中文排版修订（触发 UC-017 ZhTypoReviseDialog）
@@ -733,7 +733,7 @@ before/after HTML 片段由 M-003 过滤规则集引擎在执行过滤时记录�
 **内部结构**：
 - 标题行：「调色板派生」（20px, semibold）
 - 主色输入区（高 `64px`）：color picker 色圆（40×40px）+ hex 输入框（`--font-mono`）+ 采色说明文字（12px, muted）
-- 实时派生 token 字典预览（色块矩阵）：按类别分组（表面色/边框色/文字色/品牌色/功能色），每组横向排列色块（`24×24px` 圆角 `--radius-sm`）+ 对应 Token 名（10px, mono, muted）；派生结果随主色输入实时更新（debounce 300ms）
+- 实时派生 token 字典预览（色块矩阵）：按类别分组，组顺序品牌色置顶（品牌色/表面色/边框色/文字色/功能色），分组由 Token 前缀数据驱动（`--color-brand*` / `--color-surface*` / `--color-border*` / `--color-text*` / `--color-status*`）；每组横向排列色块（`24×24px` 圆角 `--radius-sm`）+ 色块下方标注对应 mono Token 名（10px, mono, muted）；派生结果随主色输入实时更新（debounce 300ms）
 - 底部操作行：「取消」（ghost）+ 「应用到当前主题」（primary）
 
 **颜色选择器规格**：
@@ -810,7 +810,7 @@ before/after HTML 片段由 M-003 过滤规则集引擎在执行过滤时记录�
   - 主题名（16px, semibold，`--color-text-primary`）
   - template 名（14px, `--color-text-secondary`）
   - 简短描述（12px, `--color-text-muted`，最多 2 行，超出省略）
-  - 「使用此模板」按钮（UC-003 primary，全宽，高 `36px`）
+  - 底部双按钮纵向堆叠：「使用此主题」（UC-003 primary，全宽，换主题）+「使用此模板」（UC-003 secondary/描边，全宽，载入模板）
 
 **状态**：
 
@@ -818,12 +818,12 @@ before/after HTML 片段由 M-003 过滤规则集引擎在执行过滤时记录�
 |------|---------|
 | `default` | 边框 `1px solid --color-border-subtle`，无阴影 |
 | `hover` | 边框 `1px solid --color-border`，阴影 `--shadow-sm`，缩略图轻微 zoom（scale 1.02，overflow hidden），鼠标 `pointer` |
-| `loading` | 「使用此模板」按钮变为 loading 态（spinner），卡片其余部分 opacity 0.7 |
-| `selected`（当前已应用主题对应卡片）| 左上角徽章「正在使用」（`--color-brand-subtle` 背景，`--color-brand` 文字，`--font-size-xs`，`--radius-full`）；边框 `2px solid --color-brand` |
+| `loading` | 触发按钮变为 loading 态（spinner），卡片其余部分 opacity 0.7 |
+| `selected`（当前已应用主题对应卡片）| 缩略图左上角徽章「正在使用」（`--color-brand-subtle` 背景，`--color-brand` 文字，`--font-size-xs`，`--radius-full`）；整卡边框 `2px solid --color-brand`；内容区背景满铺 `--color-brand-subtle` |
 
 **变体 (variant)**: 单一形态组件，无 variant 区分
 
-**Props**: `theme: ThemeDefinition`, `template: TemplateDefinition`, `isCurrentTheme: boolean`, `onUseTemplate: (themeId: string, templateId: string) => void`
+**Props**: `themeId: string`, `themeName: string`, `templateId: string`, `templateName?: string`, `templateDescription?: string`, `isActive: boolean`, `onUseTheme: (themeId: string, themeName: string) => void`, `onUseTemplate: (themeId: string, templateId: string) => void`
 
 **约束**：缩略图须为该 (主题, template) 实际渲染结果（截图或 iframe 缩略），不允许使用通用空模板预览图，以确保卡片的"主题能力活样本"职责。
 

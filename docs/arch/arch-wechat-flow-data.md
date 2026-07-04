@@ -199,7 +199,7 @@ erDiagram
 | ruleCount | number | required，≥ 42 | 当前生效规则数 |
 | schemaVersion | string | required | Public Tool Schema 版本（与 PRD F-013 AC-005 联动） |
 | rules | array | required | 规则定义列表，每条含 `{id, scope, severity, matcher, action, fixtureRef}` |
-| patches | array | optional | 已知 Bug 补丁列表（F-011 AC-005，按微信客户端版本号匹配） |
+| patches | array | optional | 已知 Bug 补丁列表（F-011 AC-005，按微信客户端版本号匹配）；随 `PatchBundle` 热加载分发，每条 patch 为可执行 `RuleDefinition` 或声明式 `DeclarativePatchEntry`（`{id, scope, priority, match, apply}`，JSON 可传输，经 patch DSL 编译为 RuleDefinition） |
 
 映射：F-007 / F-011 AC-005 / F-013 AC-005 / AC-006
 
