@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-04T10:20:32.130557+00:00",
+  "generated_at": "2026-07-04T11:22:36.491322+00:00",
   "documents": {
     "arch-wechat-flow-api": {
       "file_path": "docs/arch/arch-wechat-flow-api.md",
@@ -8,14 +8,14 @@
       "volume": "api",
       "status": "approved",
       "total_lines": 1077,
-      "est_tokens": 12091,
-      "content_hash": "b3d30990",
+      "est_tokens": 12152,
+      "content_hash": "92ecf40b",
       "sections": {
         "3": {
           "heading": "## 3. 接口契约",
           "line_start": 27,
           "line_end": 1077,
-          "est_tokens": 11838,
+          "est_tokens": 11900,
           "deps": [],
           "level": 2,
           "items": {
@@ -289,14 +289,14 @@
               "heading": "### 3.6 Editor Session 鉴权 (API-032)",
               "line_start": 1026,
               "line_end": 1077,
-              "est_tokens": 913,
+              "est_tokens": 974,
               "deps": []
             },
             "API-032": {
               "heading": "#### API-032: POST /api/v1/editor/session",
               "line_start": 1030,
               "line_end": 1077,
-              "est_tokens": 832,
+              "est_tokens": 878,
               "deps": []
             }
           }
@@ -318,14 +318,14 @@
       "volume": "data",
       "status": "approved",
       "total_lines": 455,
-      "est_tokens": 5933,
-      "content_hash": "44644219",
+      "est_tokens": 5987,
+      "content_hash": "dfad5fc1",
       "sections": {
         "4": {
           "heading": "## 4. 数据模型",
           "line_start": 21,
           "line_end": 455,
-          "est_tokens": 5730,
+          "est_tokens": 5783,
           "deps": [],
           "level": 2,
           "items": {
@@ -361,7 +361,7 @@
               "heading": "### E-004: RulesetVersion (打包实体，npm registry 分发)",
               "line_start": 194,
               "line_end": 205,
-              "est_tokens": 167,
+              "est_tokens": 220,
               "deps": []
             },
             "E-005": {
@@ -438,15 +438,15 @@
       "doc_type": "arch",
       "volume": "modules",
       "status": "approved",
-      "total_lines": 401,
-      "est_tokens": 10721,
-      "content_hash": "23f0e340",
+      "total_lines": 398,
+      "est_tokens": 10858,
+      "content_hash": "9d95d99c",
       "sections": {
         "2": {
           "heading": "## 2. 模块划分",
           "line_start": 21,
-          "line_end": 401,
-          "est_tokens": 10565,
+          "line_end": 398,
+          "est_tokens": 10702,
           "deps": [],
           "level": 2,
           "items": {
@@ -468,7 +468,7 @@
               "heading": "### M-003: 过滤规则集引擎",
               "line_start": 70,
               "line_end": 128,
-              "est_tokens": 1315,
+              "est_tokens": 1504,
               "deps": []
             },
             "M-004": {
@@ -481,63 +481,63 @@
             "M-005": {
               "heading": "### M-005: 主题与组件注册中心",
               "line_start": 142,
-              "line_end": 211,
-              "est_tokens": 1875,
+              "line_end": 208,
+              "est_tokens": 1823,
               "deps": []
             },
             "M-006": {
               "heading": "### M-006: 调色板派生",
-              "line_start": 212,
-              "line_end": 223,
+              "line_start": 209,
+              "line_end": 220,
               "est_tokens": 184,
               "deps": []
             },
             "M-007": {
               "heading": "### M-007: 插件沙箱与 plugin-api",
-              "line_start": 224,
-              "line_end": 254,
+              "line_start": 221,
+              "line_end": 251,
               "est_tokens": 758,
               "deps": []
             },
             "M-008": {
               "heading": "### M-008: 应用层 use case",
-              "line_start": 255,
-              "line_end": 268,
+              "line_start": 252,
+              "line_end": 265,
               "est_tokens": 462,
               "deps": []
             },
             "M-009": {
               "heading": "### M-009: MCP server",
-              "line_start": 269,
-              "line_end": 285,
+              "line_start": 266,
+              "line_end": 282,
               "est_tokens": 688,
               "deps": []
             },
             "M-010": {
               "heading": "### M-010: 中继服务",
-              "line_start": 286,
-              "line_end": 308,
+              "line_start": 283,
+              "line_end": 305,
               "est_tokens": 947,
               "deps": []
             },
             "M-011": {
               "heading": "### M-011: CLI",
-              "line_start": 309,
-              "line_end": 322,
+              "line_start": 306,
+              "line_end": 319,
               "est_tokens": 287,
               "deps": []
             },
             "M-012": {
               "heading": "### M-012: schema 契约层",
-              "line_start": 323,
-              "line_end": 344,
+              "line_start": 320,
+              "line_end": 341,
               "est_tokens": 846,
               "deps": []
             },
             "M-013": {
               "heading": "### M-013: 浏览器端持久化与同步",
-              "line_start": 345,
-              "line_end": 401,
+              "line_start": 342,
+              "line_end": 398,
               "est_tokens": 1097,
               "deps": []
             }
@@ -989,9 +989,9 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "23f0e340",
-        "arch-wechat-flow-api": "b3d30990",
-        "arch-wechat-flow-data": "44644219",
+        "arch-wechat-flow-modules": "9d95d99c",
+        "arch-wechat-flow-api": "92ecf40b",
+        "arch-wechat-flow-data": "dfad5fc1",
         "prd-wechat-flow": "0e15bcb3",
         "test-report-wechat-flow": "46047a0b"
       }
@@ -1182,9 +1182,9 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "23f0e340",
+        "arch-wechat-flow-modules": "9d95d99c",
         "ui-spec-wechat-flow": "201bf6f6",
-        "ui-spec-wechat-flow-uc001-uc014": "89aeda11",
+        "ui-spec-wechat-flow-uc001-uc014": "e4c310da",
         "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
     },
@@ -1294,9 +1294,9 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "23f0e340",
+        "arch-wechat-flow-modules": "9d95d99c",
         "ui-spec-wechat-flow": "201bf6f6",
-        "ui-spec-wechat-flow-uc001-uc014": "89aeda11"
+        "ui-spec-wechat-flow-uc001-uc014": "e4c310da"
       }
     },
     "dev-plan-wechat-flow-s3": {
@@ -1426,9 +1426,9 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "23f0e340",
+        "arch-wechat-flow-modules": "9d95d99c",
         "ui-spec-wechat-flow": "201bf6f6",
-        "ui-spec-wechat-flow-uc001-uc014": "89aeda11"
+        "ui-spec-wechat-flow-uc001-uc014": "e4c310da"
       }
     },
     "dev-plan-wechat-flow-s4": {
@@ -1638,11 +1638,11 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "23f0e340",
-        "arch-wechat-flow-api": "b3d30990",
-        "arch-wechat-flow-data": "44644219",
+        "arch-wechat-flow-modules": "9d95d99c",
+        "arch-wechat-flow-api": "92ecf40b",
+        "arch-wechat-flow-data": "dfad5fc1",
         "ui-spec-wechat-flow": "201bf6f6",
-        "ui-spec-wechat-flow-uc001-uc014": "89aeda11",
+        "ui-spec-wechat-flow-uc001-uc014": "e4c310da",
         "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
     },
@@ -1878,7 +1878,7 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "23f0e340",
+        "arch-wechat-flow-modules": "9d95d99c",
         "ui-spec-wechat-flow": "201bf6f6",
         "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
@@ -2120,10 +2120,10 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "23f0e340",
-        "arch-wechat-flow-api": "b3d30990",
+        "arch-wechat-flow-modules": "9d95d99c",
+        "arch-wechat-flow-api": "92ecf40b",
         "ui-spec-wechat-flow": "201bf6f6",
-        "ui-spec-wechat-flow-uc001-uc014": "89aeda11",
+        "ui-spec-wechat-flow-uc001-uc014": "e4c310da",
         "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
     },
@@ -2224,11 +2224,11 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "23f0e340",
-        "arch-wechat-flow-api": "b3d30990",
-        "arch-wechat-flow-data": "44644219",
+        "arch-wechat-flow-modules": "9d95d99c",
+        "arch-wechat-flow-api": "92ecf40b",
+        "arch-wechat-flow-data": "dfad5fc1",
         "ui-spec-wechat-flow": "201bf6f6",
-        "ui-spec-wechat-flow-uc001-uc014": "89aeda11",
+        "ui-spec-wechat-flow-uc001-uc014": "e4c310da",
         "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
     },
@@ -3204,7 +3204,7 @@
         "ui-spec-wechat-flow-uc001-uc014"
       ],
       "dep_hashes": {
-        "ui-spec-wechat-flow-uc001-uc014": "89aeda11"
+        "ui-spec-wechat-flow-uc001-uc014": "e4c310da"
       }
     },
     "review-arch-wechat-flow-r1": {
@@ -3224,9 +3224,9 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "23f0e340",
-        "arch-wechat-flow-api": "b3d30990",
-        "arch-wechat-flow-data": "44644219"
+        "arch-wechat-flow-modules": "9d95d99c",
+        "arch-wechat-flow-api": "92ecf40b",
+        "arch-wechat-flow-data": "dfad5fc1"
       }
     },
     "review-arch-wechat-flow-r2": {
@@ -3246,9 +3246,9 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "23f0e340",
-        "arch-wechat-flow-api": "b3d30990",
-        "arch-wechat-flow-data": "44644219"
+        "arch-wechat-flow-modules": "9d95d99c",
+        "arch-wechat-flow-api": "92ecf40b",
+        "arch-wechat-flow-data": "dfad5fc1"
       }
     },
     "review-arch-wechat-flow-r3": {
@@ -3268,9 +3268,9 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "23f0e340",
-        "arch-wechat-flow-api": "b3d30990",
-        "arch-wechat-flow-data": "44644219"
+        "arch-wechat-flow-modules": "9d95d99c",
+        "arch-wechat-flow-api": "92ecf40b",
+        "arch-wechat-flow-data": "dfad5fc1"
       }
     },
     "review-arch-wechat-flow-r4": {
@@ -3290,9 +3290,9 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "23f0e340",
-        "arch-wechat-flow-api": "b3d30990",
-        "arch-wechat-flow-data": "44644219"
+        "arch-wechat-flow-modules": "9d95d99c",
+        "arch-wechat-flow-api": "92ecf40b",
+        "arch-wechat-flow-data": "dfad5fc1"
       }
     },
     "review-arch-wechat-flow-r5": {
@@ -3312,9 +3312,9 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "23f0e340",
-        "arch-wechat-flow-api": "b3d30990",
-        "arch-wechat-flow-data": "44644219"
+        "arch-wechat-flow-modules": "9d95d99c",
+        "arch-wechat-flow-api": "92ecf40b",
+        "arch-wechat-flow-data": "dfad5fc1"
       }
     },
     "review-arch-wechat-flow-r6": {
@@ -3335,8 +3335,8 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "23f0e340",
-        "arch-wechat-flow-api": "b3d30990",
+        "arch-wechat-flow-modules": "9d95d99c",
+        "arch-wechat-flow-api": "92ecf40b",
         "prd-wechat-flow": "0e15bcb3",
         "prd-wechat-flow-f001-f014": "aa0c9b68"
       }
@@ -3357,7 +3357,7 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-api": "b3d30990",
+        "arch-wechat-flow-api": "92ecf40b",
         "prd-wechat-flow-f001-f014": "aa0c9b68"
       }
     },
@@ -3677,7 +3677,7 @@
       ],
       "dep_hashes": {
         "ui-spec-wechat-flow": "201bf6f6",
-        "ui-spec-wechat-flow-uc001-uc014": "89aeda11",
+        "ui-spec-wechat-flow-uc001-uc014": "e4c310da",
         "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
     },
@@ -3697,7 +3697,7 @@
       ],
       "dep_hashes": {
         "ui-spec-wechat-flow": "201bf6f6",
-        "ui-spec-wechat-flow-uc001-uc014": "89aeda11",
+        "ui-spec-wechat-flow-uc001-uc014": "e4c310da",
         "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
     },
@@ -3717,7 +3717,7 @@
       ],
       "dep_hashes": {
         "ui-spec-wechat-flow": "201bf6f6",
-        "ui-spec-wechat-flow-uc001-uc014": "89aeda11",
+        "ui-spec-wechat-flow-uc001-uc014": "e4c310da",
         "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
     },
@@ -4238,8 +4238,8 @@
       "dep_hashes": {
         "dev-plan-wechat-flow": "cdcb83d2",
         "dev-plan-wechat-flow-s4": "e4f79fea",
-        "arch-wechat-flow-modules": "23f0e340",
-        "arch-wechat-flow-api": "b3d30990"
+        "arch-wechat-flow-modules": "9d95d99c",
+        "arch-wechat-flow-api": "92ecf40b"
       }
     },
     "sprint-review-s4-r2": {
@@ -4259,8 +4259,8 @@
       ],
       "dep_hashes": {
         "dev-plan-wechat-flow-s4": "e4f79fea",
-        "arch-wechat-flow-modules": "23f0e340",
-        "arch-wechat-flow-api": "b3d30990",
+        "arch-wechat-flow-modules": "9d95d99c",
+        "arch-wechat-flow-api": "92ecf40b",
         "dev-plan-wechat-flow": "cdcb83d2"
       }
     },
@@ -4533,7 +4533,7 @@
         "prd-wechat-flow": "0e15bcb3",
         "prd-wechat-flow-f001-f014": "aa0c9b68",
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "23f0e340"
+        "arch-wechat-flow-modules": "9d95d99c"
       }
     },
     "ui-spec-wechat-flow-uc001-uc014": {
@@ -4542,14 +4542,14 @@
       "volume": "components",
       "status": "approved",
       "total_lines": 867,
-      "est_tokens": 12597,
-      "content_hash": "89aeda11",
+      "est_tokens": 12727,
+      "content_hash": "e4c310da",
       "sections": {
         "2": {
           "heading": "## 2. 组件清单",
           "line_start": 22,
           "line_end": 867,
-          "est_tokens": 12436,
+          "est_tokens": 12566,
           "deps": [],
           "level": 2,
           "items": {
@@ -4557,7 +4557,7 @@
               "heading": "### UC-001: 顶栏（TopBar）",
               "line_start": 28,
               "line_end": 61,
-              "est_tokens": 660,
+              "est_tokens": 642,
               "deps": []
             },
             "UC-002": {
@@ -4613,7 +4613,7 @@
               "heading": "### UC-009: 命令面板（CommandPalette）",
               "line_start": 301,
               "line_end": 352,
-              "est_tokens": 615,
+              "est_tokens": 617,
               "deps": []
             },
             "UC-010": {
@@ -4690,7 +4690,7 @@
               "heading": "### UC-020: 调色板派生 Modal（BaseColorDeriveModal）",
               "line_start": 725,
               "line_end": 761,
-              "est_tokens": 507,
+              "est_tokens": 552,
               "deps": []
             },
             "UC-021": {
@@ -4704,7 +4704,7 @@
               "heading": "### UC-022: 主题模板卡片（TemplateThemeCard）",
               "line_start": 799,
               "line_end": 831,
-              "est_tokens": 415,
+              "est_tokens": 477,
               "deps": []
             },
             "UC-023": {
@@ -4728,7 +4728,7 @@
         "prd-wechat-flow": "0e15bcb3",
         "prd-wechat-flow-f001-f014": "aa0c9b68",
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "23f0e340"
+        "arch-wechat-flow-modules": "9d95d99c"
       }
     },
     "ui-spec-wechat-flow": {
@@ -4946,7 +4946,7 @@
         "prd-wechat-flow": "0e15bcb3",
         "prd-wechat-flow-f001-f014": "aa0c9b68",
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "23f0e340"
+        "arch-wechat-flow-modules": "9d95d99c"
       }
     }
   },
