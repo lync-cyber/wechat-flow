@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { autoUpdate, flip, offset, shift, useFloating } from "@floating-ui/vue";
+import { computed, onBeforeUnmount, ref, toRef, watch } from "vue";
+
 export interface MenuActionItem {
   id: string;
   label: string;
@@ -13,12 +16,30 @@ export interface MenuSeparatorItem {
 
 export type MenuItem = MenuActionItem | MenuSeparatorItem;
 
-const props = defineProps<{
-  isOpen: boolean;
-  items: MenuItem[];
-  onSelect: (id: string) => void;
-  onClose: () => void;
-}>();
+export type MenuPlacement = "bottom-end" | "bottom-start";
+
+const props = withDefaults(
+  defineProps<{
+    isOpen: boolean;
+    items: MenuItem[];
+    anchor?: HTMLElement | null;
+    placement?: MenuPlacement;
+    onSelect: (id: string) => void;
+    onClose: () => void;
+  }>(),
+  { anchor: null, placement: "bottom-end" }
+);
+
+const menuRef = ref<HTMLElement | null>(null);
+const anchorRef = computed(() => props.anchor ?? null);
+
+const { floatingStyles } = useFloating(anchorRef, menuRef, {
+  placement: toRef(props, "placement"),
+  strategy: "fixed",
+  transform: false,
+  middleware: [offset(4), flip(), shift({ padding: 8 })],
+  whileElementsMounted: autoUpdate,
+});
 
 function isSeparator(item: MenuItem): item is MenuSeparatorItem {
   return "type" in item && item.type === "separator";
@@ -30,12 +51,45 @@ function handleClick(item: MenuItem): void {
   props.onSelect(item.id);
   props.onClose();
 }
+
+function onDocumentPointerDown(event: PointerEvent): void {
+  const target = event.target as Node | null;
+  if (!target) return;
+  if (menuRef.value?.contains(target)) return;
+  if (props.anchor?.contains(target)) return;
+  props.onClose();
+}
+
+function onDocumentKeydown(event: KeyboardEvent): void {
+  if (event.key === "Escape") props.onClose();
+}
+
+watch(
+  () => props.isOpen,
+  (open) => {
+    if (open) {
+      document.addEventListener("pointerdown", onDocumentPointerDown, true);
+      document.addEventListener("keydown", onDocumentKeydown);
+    } else {
+      document.removeEventListener("pointerdown", onDocumentPointerDown, true);
+      document.removeEventListener("keydown", onDocumentKeydown);
+    }
+  },
+  { immediate: true }
+);
+
+onBeforeUnmount(() => {
+  document.removeEventListener("pointerdown", onDocumentPointerDown, true);
+  document.removeEventListener("keydown", onDocumentKeydown);
+});
 </script>
 
 <template>
   <div
     v-if="isOpen"
+    ref="menuRef"
     class="dropdown-menu"
+    :style="anchor ? floatingStyles : undefined"
     data-testid="dropdown-menu"
     role="menu"
   >
@@ -65,6 +119,7 @@ function handleClick(item: MenuItem): void {
 
 <style scoped>
 .dropdown-menu {
+  position: fixed;
   min-width: 160px;
   max-width: 280px;
   background: var(--color-surface);
@@ -74,6 +129,24 @@ function handleClick(item: MenuItem): void {
   z-index: var(--z-dropdown);
   overflow: hidden;
   padding: var(--space-1) 0;
+  animation: dropdown-menu-in 0.12s ease-out;
+}
+
+@keyframes dropdown-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dropdown-menu {
+    animation: none;
+  }
 }
 
 .dropdown-menu__separator {

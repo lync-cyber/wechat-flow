@@ -2,6 +2,8 @@
 import type { ThemeDefinition } from "@wechat-flow/contracts";
 import { computed } from "vue";
 import { useRouter } from "vue-router";
+import { themeThumbnailVars } from "../../lib/theme-thumbnail-vars.ts";
+import ThemeThumbnail from "../common/ThemeThumbnail.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -19,9 +21,7 @@ const props = withDefaults(
 
 const router = useRouter();
 
-const thumbnailColor = computed(
-  () => props.theme.tokens?.["--color-brand"] ?? "var(--color-surface-sunken)"
-);
+const thumbnailStyle = computed(() => themeThumbnailVars(props.theme.tokens));
 
 function handleClick(): void {
   if (props.isPlaceholder) {
@@ -47,12 +47,13 @@ function handleClick(): void {
   >
     <div
       class="theme-card__thumbnail"
-      :style="isPlaceholder ? undefined : { background: thumbnailColor }"
+      :style="isPlaceholder ? undefined : thumbnailStyle"
       data-testid="themecard-thumbnail"
     >
       <span v-if="isPlaceholder" class="theme-card__placeholder-text" data-testid="placeholder-text">
         更多主题即将上线
       </span>
+      <ThemeThumbnail v-else compact />
     </div>
     <div class="theme-card__body">
       <span class="theme-card__check-icon" v-if="isSelected" data-testid="check-icon" aria-hidden="true">✓</span>
@@ -95,6 +96,7 @@ function handleClick(): void {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .theme-card__placeholder-text {

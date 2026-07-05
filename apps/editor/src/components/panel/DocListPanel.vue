@@ -3,6 +3,7 @@ import { listDocuments } from "@wechat-flow/core";
 import type { DocumentMeta } from "@wechat-flow/core";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import { formatRelativeTime } from "../../lib/relative-time.ts";
 import { useEditorStore } from "../../stores/editor.ts";
 
 const router = useRouter();
@@ -13,7 +14,7 @@ const loadFailed = ref(false);
 const docs = ref<DocumentMeta[]>([]);
 
 function formatUpdatedAt(updatedAt: number): string {
-  return new Date(updatedAt).toLocaleString();
+  return formatRelativeTime(updatedAt);
 }
 
 function goToThemes(): void {

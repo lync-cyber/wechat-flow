@@ -1,6 +1,11 @@
 <script setup lang="ts">
+import { WCAG_AA_MIN_RATIO, wcagContrast } from "@wechat-flow/palette";
 import { computed, ref, watch } from "vue";
 import { usePaintBinding } from "../../composables/use-paint-binding.ts";
+import {
+  PAINTABLE_SEMANTIC_TOKENS,
+  isBackgroundToken,
+} from "../../lib/paintable-semantic-tokens.ts";
 
 const props = defineProps<{
   isOpen: boolean;
@@ -40,12 +45,26 @@ interface PaintRow {
 
 const rows = computed<PaintRow[]>(() => {
   const paintableSet = new Set(paintableTokens.value);
-  const extras = Object.keys(currentPaint.value).filter((token) => !paintableSet.has(token));
+  const semantic = PAINTABLE_SEMANTIC_TOKENS.filter((token) => paintableSet.has(token));
+  const semanticSet = new Set<string>(semantic);
+  const extras = Object.keys(currentPaint.value).filter((token) => !semanticSet.has(token));
   return [
-    ...paintableTokens.value.map((token) => ({ token, paintable: true })),
-    ...extras.map((token) => ({ token, paintable: false })),
+    ...semantic.map((token) => ({ token, paintable: true })),
+    ...extras.map((token) => ({ token, paintable: paintableSet.has(token) })),
   ];
 });
+
+function contrastWarning(token: string): string | null {
+  if (isBackgroundToken(token)) return null;
+  const bg =
+    draft.value["--color-surface"] ??
+    currentPaint.value["--color-surface"] ??
+    themeDefaults.value["--color-surface"];
+  if (!bg) return null;
+  const ratio = wcagContrast(normalizeHex(displayValue(token)), normalizeHex(bg));
+  if (!Number.isFinite(ratio) || ratio >= WCAG_AA_MIN_RATIO) return null;
+  return `对比度 ${ratio.toFixed(1)}:1 低于 AA 基准 ${WCAG_AA_MIN_RATIO}:1`;
+}
 
 const isDirty = computed(() => Object.keys(draft.value).length > 0);
 
@@ -164,6 +183,12 @@ function onReset(): void {
               class="paint-drawer__warn"
               :data-testid="`paint-warn-${row.token}`"
               title="此 Token 不在主题 paintable 范围内"
+            >⚠</span>
+            <span
+              v-else-if="contrastWarning(row.token)"
+              class="paint-drawer__warn"
+              :data-testid="`paint-contrast-warn-${row.token}`"
+              :title="contrastWarning(row.token) ?? undefined"
             >⚠</span>
           </div>
         </div>

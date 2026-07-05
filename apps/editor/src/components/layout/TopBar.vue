@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref } from "vue";
+
 const props = defineProps<{
   docTitle: string;
   themeName: string;
@@ -15,6 +17,10 @@ const props = defineProps<{
   onInsert?: () => void;
   onMore?: () => void;
 }>();
+
+const moreBtnRef = ref<HTMLButtonElement | null>(null);
+
+defineExpose({ moreBtnRef });
 </script>
 
 <template>
@@ -61,7 +67,7 @@ const props = defineProps<{
       <button type="button" class="top-bar__copy-btn" @click="props.onCopy">
         复制到公众号
       </button>
-      <button type="button" class="top-bar__icon-btn" aria-label="more" data-testid="top-bar-more-btn" @click="props.onMore?.()">...</button>
+      <button ref="moreBtnRef" type="button" class="top-bar__icon-btn" aria-label="more" data-testid="top-bar-more-btn" @click="props.onMore?.()">...</button>
     </div>
 
     <!-- User menu placeholder -->

@@ -13,10 +13,13 @@ const emit = defineEmits<{
 }>();
 
 const KEYWORD_RULE_ID = "keyword-lint";
+const READABILITY_RULE_PREFIX = "readability-";
 
-// 兼容性摘要不计入违规词诊断 —— 违规词单列一段，避免重复计数
+// 兼容性摘要不计入违规词/可读性诊断 —— 两者各自单列一段，避免重复计数
 const compatDiagnostics = computed(() =>
-  props.diagnostics.diagnostics.filter((d) => d.ruleId !== KEYWORD_RULE_ID)
+  props.diagnostics.diagnostics.filter(
+    (d) => d.ruleId !== KEYWORD_RULE_ID && !d.ruleId?.startsWith(READABILITY_RULE_PREFIX)
+  )
 );
 
 const errorCount = computed(
@@ -66,6 +69,32 @@ const violationColor = computed<"error" | "warning" | "muted">(() => {
 });
 
 const violationTooltip = computed(() => `违规词 ${violationCount.value}`);
+
+const readabilityIssues = computed(() =>
+  props.diagnostics.diagnostics.filter(
+    (d) =>
+      d.ruleId?.startsWith(READABILITY_RULE_PREFIX) &&
+      (d.severity === "error" || d.severity === "warning")
+  )
+);
+
+const readabilityColor = computed<"error" | "warning" | "safe">(() => {
+  if (readabilityIssues.value.some((d) => d.severity === "error")) return "error";
+  if (readabilityIssues.value.length > 0) return "warning";
+  return "safe";
+});
+
+const readabilityText = computed(() =>
+  readabilityIssues.value.length === 0
+    ? "可读性 良好"
+    : `可读性 ${readabilityIssues.value.length} 项`
+);
+
+const readabilityTooltip = computed(() =>
+  readabilityIssues.value.length === 0
+    ? "可读性良好"
+    : readabilityIssues.value.map((d) => d.message).join("；")
+);
 
 const nightRiskCount = computed(() => props.diagnostics.nightRiskIssues.length);
 
@@ -128,6 +157,16 @@ function onToggleDiagnostics(): void {
     >
       ⓘ
     </button>
+
+    <span
+      class="status-bar__item status-bar__metric"
+      :class="`status-bar__metric--${readabilityColor}`"
+      :data-color="readabilityColor"
+      :title="readabilityTooltip"
+      data-testid="readability-summary"
+    >
+      {{ readabilityText }}
+    </span>
 
     <span
       v-if="!isTablet"
@@ -208,6 +247,10 @@ function onToggleDiagnostics(): void {
 .status-bar__compat--muted,
 .status-bar__metric--muted {
   color: var(--color-text-muted);
+}
+
+.status-bar__metric--safe {
+  color: var(--color-diag-safe);
 }
 
 .status-bar__compat--error,

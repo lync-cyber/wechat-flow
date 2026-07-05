@@ -50,11 +50,20 @@ function visitContainerDirectives(tree: MdastRoot, diagnostics: Diagnostic[] | u
         const { class: _cls, ...rest } = directive.attributes ?? {};
         const parsed = block.attrsSchema.safeParse(rest);
         if (!parsed.success) {
+          const detail = parsed.error.issues
+            .map((issue) => {
+              const field = issue.path.map((segment) => String(segment)).join(".");
+              const prefix = field ? `${field} ` : "";
+              if (issue.code === "invalid_type") return `${prefix}应为 ${issue.expected}`;
+              if (issue.code === "unrecognized_keys") return `含未知属性 ${issue.keys.join("、")}`;
+              return `${prefix}${issue.message}`;
+            })
+            .join("；");
           diagnostics?.push({
             source: "transform",
             severity: "warning",
             ruleId: "directive-attrs-invalid",
-            message: `block '${name}' directive attributes invalid: ${parsed.error.message}`,
+            message: `${name} 指令属性无效：${detail}`,
           });
         }
       }

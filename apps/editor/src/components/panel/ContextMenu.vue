@@ -8,10 +8,11 @@ const props = withDefaults(
     isOpen: boolean;
     isContentEmpty: boolean;
     isZhTypoDisabled?: boolean | null;
+    anchor?: HTMLElement | null;
     onClose: () => void;
     onCommand: (commandId: string) => void;
   }>(),
-  { isZhTypoDisabled: null }
+  { isZhTypoDisabled: null, anchor: null }
 );
 
 const menuItems = computed<MenuItem[]>(() => [
@@ -44,6 +45,7 @@ function handleSelect(id: string): void {
     v-if="isOpen"
     data-testid="context-menu"
     :is-open="true"
+    :anchor="anchor"
     :items="menuItems"
     :on-select="handleSelect"
     :on-close="onClose"
