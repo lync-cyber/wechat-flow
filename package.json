@@ -8,6 +8,8 @@
     "node": ">=22"
   },
   "scripts": {
+    "dev": "pnpm --filter @wechat-flow/editor dev",
+    "preview": "pnpm --filter @wechat-flow/editor preview",
     "build": "turbo run build",
     "test": "vitest run",
     "test:turbo": "turbo run test",
