@@ -39,7 +39,7 @@ const editorSession: EditorSessionDeps = {
   allowedOrigins,
 };
 
-// cataforge: wiring-placeholder — adminKeyStore is in-memory; wire E-010 DB persistence before production.
+// cataforge: allow(wiring_empty_handler, reason="adminKeyStore is in-memory; wire E-010 DB persistence before production")
 // Shared store injected into both adminApp (writes) and lookupAdminKey (reads) to guarantee consistency.
 const adminKeyStore = new Map<string, ApiKeyEntry>();
 
