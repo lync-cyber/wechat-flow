@@ -347,7 +347,7 @@ onUnmounted(() => {
 <template>
   <div class="editor-shell" :class="{ 'editor-shell--focus': isFocusMode }" data-testid="editor-shell">
     <!-- TopBar -->
-    <!-- cataforge: wiring-placeholder — onUndo/onRedo 接线延后至对应功能任务 -->
+    <!-- cataforge: allow(wiring_empty_handler, reason="onUndo/onRedo 接线延后至对应功能任务") -->
     <TopBar
       doc-title="Untitled"
       :theme-name="currentThemeName"

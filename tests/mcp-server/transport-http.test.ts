@@ -176,7 +176,7 @@ describe("GET /metrics: Prometheus text exposition of MCP server SLIs", () => {
 
 describe("R-003: HTTP transport token resolver injection (metrics endpoint unaffected)", () => {
   it("default resolver (no tokenResolver injected) allows requests with no auth header", async () => {
-    // Default passthrough resolver accepts all traffic (wiring-placeholder behavior)
+    // Default passthrough resolver accepts all traffic (placeholder until E-010 key lookup)
     const app = createHttpTransportApp();
 
     const res = await app.request("/mcp/tools/render_markdown", {

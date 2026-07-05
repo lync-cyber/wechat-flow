@@ -15,7 +15,7 @@ export interface AdminApiKeysDeps {
   guard: AdminGuard;
   /**
    * Injected key store. Defaults to a new in-memory Map per app instance.
-   * // cataforge: wiring-placeholder — replace with E-010 DB persistence before production use.
+   * cataforge: allow(wiring_empty_handler, reason="replace with E-010 DB persistence before production use")
    */
   store?: Map<string, ApiKeyEntry>;
 }
@@ -38,7 +38,7 @@ function resolveActor(c: { get: (key: string) => unknown }, keyHash: string): st
 }
 
 export function createAdminApiKeysApp(deps: AdminApiKeysDeps): Hono {
-  // cataforge: wiring-placeholder — store defaults to in-memory Map; wire E-010 DB before production.
+  // cataforge: allow(wiring_empty_handler, reason="store defaults to in-memory Map; wire E-010 DB before production")
   const { guard, store = new Map<string, ApiKeyEntry>() } = deps;
   const app = new Hono();
 

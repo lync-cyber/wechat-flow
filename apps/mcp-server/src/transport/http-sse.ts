@@ -14,8 +14,7 @@ export interface HttpTransportDeps {
   jobsClient?: JobsClient;
   /**
    * Resolves Bearer token to a scope string.
-   * // cataforge: wiring-placeholder — default resolver passes through with scope "user"
-   * pending E-010 API-key DB wiring (backlog: T-051 / SR-R2 transport-auth).
+   * cataforge: allow(wiring_empty_handler, reason="default resolver passes through with scope=user; pending E-010 API-key DB wiring, backlog T-051 / SR-R2 transport-auth")
    * Replace with a real key-lookup before exposing publicly.
    */
   tokenResolver?: TokenResolver;
@@ -42,7 +41,7 @@ function extractBearer(req: Request): string | undefined {
   return match?.[1];
 }
 
-// cataforge: wiring-placeholder — passthrough resolver; replace with E-010 lookup.
+// cataforge: allow(wiring_empty_handler, reason="passthrough resolver; replace with E-010 lookup")
 const passthroughResolver: TokenResolver = {
   resolve: async (_token) => "user",
 };
