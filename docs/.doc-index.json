@@ -1,29 +1,28 @@
 {
   "version": "1",
-  "generated_at": "2026-07-05T12:04:45.212949+00:00",
+  "generated_at": "2026-07-06T05:59:17.896418+00:00",
   "documents": {
     "arch-wechat-flow-api": {
       "file_path": "docs/arch/arch-wechat-flow-api.md",
       "doc_type": "arch",
-      "volume": "api",
       "status": "approved",
-      "total_lines": 1077,
-      "est_tokens": 12152,
-      "content_hash": "92ecf40b",
+      "total_lines": 1078,
+      "est_tokens": 12214,
+      "content_hash": "71319b23",
       "sections": {
         "3": {
           "heading": "## 3. 接口契约",
           "line_start": 27,
-          "line_end": 1077,
-          "est_tokens": 11900,
+          "line_end": 1078,
+          "est_tokens": 11962,
           "deps": [],
           "level": 2,
           "items": {
             "3.1": {
               "heading": "### 3.1 MCP Tool 契约 (API-001..API-016, API-033..API-034)",
               "line_start": 71,
-              "line_end": 519,
-              "est_tokens": 4848,
+              "line_end": 520,
+              "est_tokens": 4910,
               "deps": []
             },
             "API-001": {
@@ -58,251 +57,250 @@
               "heading": "#### API-005: list_blocks",
               "line_start": 148,
               "line_end": 161,
-              "est_tokens": 105,
+              "est_tokens": 127,
               "deps": []
             },
             "API-006": {
               "heading": "#### API-006: describe_block",
               "line_start": 162,
-              "line_end": 179,
-              "est_tokens": 153,
+              "line_end": 180,
+              "est_tokens": 192,
               "deps": []
             },
             "API-007": {
               "heading": "#### API-007: list_marks",
-              "line_start": 180,
-              "line_end": 191,
+              "line_start": 181,
+              "line_end": 192,
               "est_tokens": 58,
               "deps": []
             },
             "API-008": {
               "heading": "#### API-008: describe_mark",
-              "line_start": 192,
-              "line_end": 208,
+              "line_start": 193,
+              "line_end": 209,
               "est_tokens": 111,
               "deps": []
             },
             "API-009": {
               "heading": "#### API-009: list_tokens / describe_token",
-              "line_start": 209,
-              "line_end": 235,
+              "line_start": 210,
+              "line_end": 236,
               "est_tokens": 235,
               "deps": []
             },
             "API-010": {
               "heading": "#### API-010: list_block_variants",
-              "line_start": 236,
-              "line_end": 249,
+              "line_start": 237,
+              "line_end": 250,
               "est_tokens": 103,
               "deps": []
             },
             "API-011": {
               "heading": "#### API-011: describe_variant",
-              "line_start": 250,
-              "line_end": 268,
+              "line_start": 251,
+              "line_end": 269,
               "est_tokens": 136,
               "deps": []
             },
             "API-012": {
               "heading": "#### API-012: derive_palette",
-              "line_start": 269,
-              "line_end": 286,
+              "line_start": 270,
+              "line_end": 287,
               "est_tokens": 181,
               "deps": []
             },
             "API-013": {
               "heading": "#### API-013: apply_zh_typo",
-              "line_start": 287,
-              "line_end": 303,
+              "line_start": 288,
+              "line_end": 304,
               "est_tokens": 155,
               "deps": []
             },
             "API-014": {
               "heading": "#### API-014: simulate_paste",
-              "line_start": 304,
-              "line_end": 319,
+              "line_start": 305,
+              "line_end": 320,
               "est_tokens": 137,
               "deps": []
             },
             "API-015": {
               "heading": "#### API-015: export_clipboard_payload",
-              "line_start": 320,
-              "line_end": 335,
+              "line_start": 321,
+              "line_end": 336,
               "est_tokens": 139,
               "deps": []
             },
             "API-016": {
               "heading": "#### API-016: 异步长任务 Tool 簇 + get_job + get_ruleset_version",
-              "line_start": 336,
-              "line_end": 423,
+              "line_start": 337,
+              "line_end": 424,
               "est_tokens": 990,
               "deps": []
             },
             "API-033": {
               "heading": "#### API-033: describe_template",
-              "line_start": 424,
-              "line_end": 475,
+              "line_start": 425,
+              "line_end": 476,
               "est_tokens": 730,
               "deps": []
             },
             "API-034": {
               "heading": "#### API-034: register_variant",
-              "line_start": 476,
-              "line_end": 519,
+              "line_start": 477,
+              "line_end": 520,
               "est_tokens": 720,
               "deps": []
             },
             "3.2": {
               "heading": "### 3.2 Relay REST/SSE 接口 (API-017..API-021)",
-              "line_start": 520,
-              "line_end": 710,
+              "line_start": 521,
+              "line_end": 711,
               "est_tokens": 1941,
               "deps": []
             },
             "API-017": {
               "heading": "#### API-017: POST /api/v1/images/upload",
-              "line_start": 522,
-              "line_end": 554,
+              "line_start": 523,
+              "line_end": 555,
               "est_tokens": 438,
               "deps": []
             },
             "API-018": {
               "heading": "#### API-018: POST /api/v1/wechat-assets/upload",
-              "line_start": 555,
-              "line_end": 580,
+              "line_start": 556,
+              "line_end": 581,
               "est_tokens": 235,
               "deps": []
             },
             "API-019": {
               "heading": "#### API-019: POST /api/v1/renders/long-image  &  POST /api/v1/renders/cover",
-              "line_start": 581,
-              "line_end": 620,
+              "line_start": 582,
+              "line_end": 621,
               "est_tokens": 264,
               "deps": []
             },
             "API-020": {
               "heading": "#### API-020: GET /api/v1/jobs/:jobId  &  SSE /api/v1/jobs/:jobId/events",
-              "line_start": 621,
-              "line_end": 667,
+              "line_start": 622,
+              "line_end": 668,
               "est_tokens": 520,
               "deps": []
             },
             "API-021": {
               "heading": "#### API-021: POST /api/v1/mcp (HTTP/SSE transport)",
-              "line_start": 668,
-              "line_end": 710,
+              "line_start": 669,
+              "line_end": 711,
               "est_tokens": 465,
               "deps": []
             },
             "3.3": {
               "heading": "### 3.3 CLI 命令契约 (API-022..API-025)",
-              "line_start": 711,
-              "line_end": 774,
+              "line_start": 712,
+              "line_end": 775,
               "est_tokens": 619,
               "deps": []
             },
             "API-022": {
               "heading": "#### API-022: wechat-flow init",
-              "line_start": 713,
-              "line_end": 726,
+              "line_start": 714,
+              "line_end": 727,
               "est_tokens": 103,
               "deps": []
             },
             "API-023": {
               "heading": "#### API-023: wechat-flow dev",
-              "line_start": 727,
-              "line_end": 738,
+              "line_start": 728,
+              "line_end": 739,
               "est_tokens": 114,
               "deps": []
             },
             "API-024": {
               "heading": "#### API-024: wechat-flow validate",
-              "line_start": 739,
-              "line_end": 753,
+              "line_start": 740,
+              "line_end": 754,
               "est_tokens": 142,
               "deps": []
             },
             "API-025": {
               "heading": "#### API-025: wechat-flow publish & 渲染壳命令",
-              "line_start": 754,
-              "line_end": 774,
+              "line_start": 755,
+              "line_end": 775,
               "est_tokens": 246,
               "deps": []
             },
             "3.4": {
               "heading": "### 3.4 Yjs 同步接口 (API-026..API-027)",
-              "line_start": 775,
-              "line_end": 868,
+              "line_start": 776,
+              "line_end": 869,
               "est_tokens": 998,
               "deps": []
             },
             "API-026": {
               "heading": "#### API-026: WS /api/v1/yjs/:docId",
-              "line_start": 777,
-              "line_end": 812,
+              "line_start": 778,
+              "line_end": 813,
               "est_tokens": 492,
               "deps": []
             },
             "API-027": {
               "heading": "#### API-027: GET/POST /api/v1/yjs/:docId/snapshots",
-              "line_start": 813,
-              "line_end": 868,
+              "line_start": 814,
+              "line_end": 869,
               "est_tokens": 493,
               "deps": []
             },
             "3.5": {
               "heading": "### 3.5 Admin API key 管理 (API-028..API-031)",
-              "line_start": 869,
-              "line_end": 1025,
+              "line_start": 870,
+              "line_end": 1026,
               "est_tokens": 1810,
               "deps": []
             },
             "API-028": {
               "heading": "#### API-028: POST /api/v1/admin/api-keys",
-              "line_start": 889,
-              "line_end": 926,
+              "line_start": 890,
+              "line_end": 927,
               "est_tokens": 454,
               "deps": []
             },
             "API-029": {
               "heading": "#### API-029: GET /api/v1/admin/api-keys",
-              "line_start": 927,
-              "line_end": 965,
+              "line_start": 928,
+              "line_end": 966,
               "est_tokens": 421,
               "deps": []
             },
             "API-030": {
               "heading": "#### API-030: PATCH /api/v1/admin/api-keys/:keyId/rotate",
-              "line_start": 966,
-              "line_end": 1001,
+              "line_start": 967,
+              "line_end": 1002,
               "est_tokens": 375,
               "deps": []
             },
             "API-031": {
               "heading": "#### API-031: DELETE /api/v1/admin/api-keys/:keyId",
-              "line_start": 1002,
-              "line_end": 1025,
+              "line_start": 1003,
+              "line_end": 1026,
               "est_tokens": 222,
               "deps": []
             },
             "3.6": {
               "heading": "### 3.6 Editor Session 鉴权 (API-032)",
-              "line_start": 1026,
-              "line_end": 1077,
+              "line_start": 1027,
+              "line_end": 1078,
               "est_tokens": 974,
               "deps": []
             },
             "API-032": {
               "heading": "#### API-032: POST /api/v1/editor/session",
-              "line_start": 1030,
-              "line_end": 1077,
+              "line_start": 1031,
+              "line_end": 1078,
               "est_tokens": 878,
               "deps": []
             }
           }
         }
       },
-      "split_from": "arch-wechat-flow",
       "deps": [
         "prd-wechat-flow",
         "prd-wechat-flow-f001-f014"
@@ -315,7 +313,6 @@
     "arch-wechat-flow-data": {
       "file_path": "docs/arch/arch-wechat-flow-data.md",
       "doc_type": "arch",
-      "volume": "data",
       "status": "approved",
       "total_lines": 455,
       "est_tokens": 5987,
@@ -423,7 +420,6 @@
           }
         }
       },
-      "split_from": "arch-wechat-flow",
       "deps": [
         "prd-wechat-flow",
         "prd-wechat-flow-f001-f014"
@@ -436,17 +432,16 @@
     "arch-wechat-flow-modules": {
       "file_path": "docs/arch/arch-wechat-flow-modules.md",
       "doc_type": "arch",
-      "volume": "modules",
       "status": "approved",
-      "total_lines": 398,
-      "est_tokens": 10858,
-      "content_hash": "9d95d99c",
+      "total_lines": 437,
+      "est_tokens": 11640,
+      "content_hash": "d8991e87",
       "sections": {
         "2": {
           "heading": "## 2. 模块划分",
           "line_start": 21,
-          "line_end": 398,
-          "est_tokens": 10702,
+          "line_end": 437,
+          "est_tokens": 11485,
           "deps": [],
           "level": 2,
           "items": {
@@ -481,70 +476,69 @@
             "M-005": {
               "heading": "### M-005: 主题与组件注册中心",
               "line_start": 142,
-              "line_end": 208,
-              "est_tokens": 1823,
+              "line_end": 247,
+              "est_tokens": 2606,
               "deps": []
             },
             "M-006": {
               "heading": "### M-006: 调色板派生",
-              "line_start": 209,
-              "line_end": 220,
+              "line_start": 248,
+              "line_end": 259,
               "est_tokens": 184,
               "deps": []
             },
             "M-007": {
               "heading": "### M-007: 插件沙箱与 plugin-api",
-              "line_start": 221,
-              "line_end": 251,
+              "line_start": 260,
+              "line_end": 290,
               "est_tokens": 758,
               "deps": []
             },
             "M-008": {
               "heading": "### M-008: 应用层 use case",
-              "line_start": 252,
-              "line_end": 265,
+              "line_start": 291,
+              "line_end": 304,
               "est_tokens": 462,
               "deps": []
             },
             "M-009": {
               "heading": "### M-009: MCP server",
-              "line_start": 266,
-              "line_end": 282,
+              "line_start": 305,
+              "line_end": 321,
               "est_tokens": 688,
               "deps": []
             },
             "M-010": {
               "heading": "### M-010: 中继服务",
-              "line_start": 283,
-              "line_end": 305,
+              "line_start": 322,
+              "line_end": 344,
               "est_tokens": 947,
               "deps": []
             },
             "M-011": {
               "heading": "### M-011: CLI",
-              "line_start": 306,
-              "line_end": 319,
+              "line_start": 345,
+              "line_end": 358,
               "est_tokens": 287,
               "deps": []
             },
             "M-012": {
               "heading": "### M-012: schema 契约层",
-              "line_start": 320,
-              "line_end": 341,
+              "line_start": 359,
+              "line_end": 380,
               "est_tokens": 846,
               "deps": []
             },
             "M-013": {
               "heading": "### M-013: 浏览器端持久化与同步",
-              "line_start": 342,
-              "line_end": 398,
+              "line_start": 381,
+              "line_end": 437,
               "est_tokens": 1097,
               "deps": []
             }
           }
         }
       },
-      "split_from": "arch-wechat-flow",
       "deps": [
         "prd-wechat-flow",
         "prd-wechat-flow-f001-f014"
@@ -557,7 +551,6 @@
     "arch-wechat-flow": {
       "file_path": "docs/arch/arch-wechat-flow.md",
       "doc_type": "arch",
-      "volume": "main",
       "status": "approved",
       "total_lines": 463,
       "est_tokens": 11997,
@@ -786,7 +779,6 @@
     "changelog-wechat-flow": {
       "file_path": "docs/changelog/changelog-wechat-flow.md",
       "doc_type": "changelog",
-      "volume": "main",
       "status": "draft",
       "total_lines": 41,
       "est_tokens": 832,
@@ -796,7 +788,6 @@
     "deploy-spec-wechat-flow": {
       "file_path": "docs/deploy-spec/deploy-spec-wechat-flow.md",
       "doc_type": "deploy-spec",
-      "volume": "main",
       "status": "approved",
       "total_lines": 277,
       "est_tokens": 6587,
@@ -989,8 +980,8 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "9d95d99c",
-        "arch-wechat-flow-api": "92ecf40b",
+        "arch-wechat-flow-modules": "d8991e87",
+        "arch-wechat-flow-api": "71319b23",
         "arch-wechat-flow-data": "dfad5fc1",
         "prd-wechat-flow": "0e15bcb3",
         "test-report-wechat-flow": "46047a0b"
@@ -999,7 +990,6 @@
     "dev-plan-wechat-flow-s0": {
       "file_path": "docs/dev-plan/dev-plan-wechat-flow-s0.md",
       "doc_type": "dev-plan",
-      "volume": "sprint",
       "status": "approved",
       "total_lines": 204,
       "est_tokens": 3495,
@@ -1058,20 +1048,18 @@
           }
         }
       },
-      "split_from": "dev-plan-wechat-flow",
       "deps": [
         "arch-wechat-flow",
         "ui-spec-wechat-flow"
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "ui-spec-wechat-flow": "201bf6f6"
+        "ui-spec-wechat-flow": "659ef13e"
       }
     },
     "dev-plan-wechat-flow-s1": {
       "file_path": "docs/dev-plan/dev-plan-wechat-flow-s1.md",
       "doc_type": "dev-plan",
-      "volume": "sprint",
       "status": "approved",
       "total_lines": 367,
       "est_tokens": 6099,
@@ -1172,7 +1160,6 @@
           }
         }
       },
-      "split_from": "dev-plan-wechat-flow",
       "deps": [
         "arch-wechat-flow",
         "arch-wechat-flow-modules",
@@ -1182,16 +1169,15 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "9d95d99c",
-        "ui-spec-wechat-flow": "201bf6f6",
-        "ui-spec-wechat-flow-uc001-uc014": "e4c310da",
+        "arch-wechat-flow-modules": "d8991e87",
+        "ui-spec-wechat-flow": "659ef13e",
+        "ui-spec-wechat-flow-uc001-uc014": "485d2b93",
         "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
     },
     "dev-plan-wechat-flow-s2": {
       "file_path": "docs/dev-plan/dev-plan-wechat-flow-s2.md",
       "doc_type": "dev-plan",
-      "volume": "sprint",
       "status": "approved",
       "total_lines": 366,
       "est_tokens": 6438,
@@ -1285,7 +1271,6 @@
           }
         }
       },
-      "split_from": "dev-plan-wechat-flow",
       "deps": [
         "arch-wechat-flow",
         "arch-wechat-flow-modules",
@@ -1294,15 +1279,14 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "9d95d99c",
-        "ui-spec-wechat-flow": "201bf6f6",
-        "ui-spec-wechat-flow-uc001-uc014": "e4c310da"
+        "arch-wechat-flow-modules": "d8991e87",
+        "ui-spec-wechat-flow": "659ef13e",
+        "ui-spec-wechat-flow-uc001-uc014": "485d2b93"
       }
     },
     "dev-plan-wechat-flow-s3": {
       "file_path": "docs/dev-plan/dev-plan-wechat-flow-s3.md",
       "doc_type": "dev-plan",
-      "volume": "sprint",
       "status": "approved",
       "total_lines": 443,
       "est_tokens": 7029,
@@ -1417,7 +1401,6 @@
           }
         }
       },
-      "split_from": "dev-plan-wechat-flow",
       "deps": [
         "arch-wechat-flow",
         "arch-wechat-flow-modules",
@@ -1426,15 +1409,14 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "9d95d99c",
-        "ui-spec-wechat-flow": "201bf6f6",
-        "ui-spec-wechat-flow-uc001-uc014": "e4c310da"
+        "arch-wechat-flow-modules": "d8991e87",
+        "ui-spec-wechat-flow": "659ef13e",
+        "ui-spec-wechat-flow-uc001-uc014": "485d2b93"
       }
     },
     "dev-plan-wechat-flow-s4": {
       "file_path": "docs/dev-plan/dev-plan-wechat-flow-s4.md",
       "doc_type": "dev-plan",
-      "volume": "sprint",
       "status": "approved",
       "total_lines": 799,
       "est_tokens": 15469,
@@ -1626,7 +1608,6 @@
           }
         }
       },
-      "split_from": "dev-plan-wechat-flow",
       "deps": [
         "arch-wechat-flow",
         "arch-wechat-flow-modules",
@@ -1638,18 +1619,17 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "9d95d99c",
-        "arch-wechat-flow-api": "92ecf40b",
+        "arch-wechat-flow-modules": "d8991e87",
+        "arch-wechat-flow-api": "71319b23",
         "arch-wechat-flow-data": "dfad5fc1",
-        "ui-spec-wechat-flow": "201bf6f6",
-        "ui-spec-wechat-flow-uc001-uc014": "e4c310da",
+        "ui-spec-wechat-flow": "659ef13e",
+        "ui-spec-wechat-flow-uc001-uc014": "485d2b93",
         "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
     },
     "dev-plan-wechat-flow-s5": {
       "file_path": "docs/dev-plan/dev-plan-wechat-flow-s5.md",
       "doc_type": "dev-plan",
-      "volume": "sprint",
       "status": "approved",
       "total_lines": 911,
       "est_tokens": 15808,
@@ -1869,7 +1849,6 @@
           }
         }
       },
-      "split_from": "dev-plan-wechat-flow",
       "deps": [
         "arch-wechat-flow",
         "arch-wechat-flow-modules",
@@ -1878,15 +1857,14 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "9d95d99c",
-        "ui-spec-wechat-flow": "201bf6f6",
+        "arch-wechat-flow-modules": "d8991e87",
+        "ui-spec-wechat-flow": "659ef13e",
         "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
     },
     "dev-plan-wechat-flow-s6": {
       "file_path": "docs/dev-plan/dev-plan-wechat-flow-s6.md",
       "doc_type": "dev-plan",
-      "volume": "sprint",
       "status": "approved",
       "total_lines": 1017,
       "est_tokens": 24140,
@@ -2109,7 +2087,6 @@
           }
         }
       },
-      "split_from": "dev-plan-wechat-flow",
       "deps": [
         "arch-wechat-flow",
         "arch-wechat-flow-modules",
@@ -2120,17 +2097,263 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "9d95d99c",
-        "arch-wechat-flow-api": "92ecf40b",
-        "ui-spec-wechat-flow": "201bf6f6",
-        "ui-spec-wechat-flow-uc001-uc014": "e4c310da",
+        "arch-wechat-flow-modules": "d8991e87",
+        "arch-wechat-flow-api": "71319b23",
+        "ui-spec-wechat-flow": "659ef13e",
+        "ui-spec-wechat-flow-uc001-uc014": "485d2b93",
+        "ui-spec-wechat-flow-p001-p005": "3b7254c0"
+      }
+    },
+    "dev-plan-wechat-flow-s7": {
+      "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md",
+      "doc_type": "dev-plan",
+      "status": "draft",
+      "total_lines": 918,
+      "est_tokens": 16977,
+      "content_hash": "11683e22",
+      "sections": {
+        "1": {
+          "heading": "## 1. 迭代目标",
+          "line_start": 32,
+          "line_end": 41,
+          "est_tokens": 337,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        },
+        "2": {
+          "heading": "## 2. 依赖图",
+          "line_start": 42,
+          "line_end": 123,
+          "est_tokens": 611,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        },
+        "3": {
+          "heading": "## 3. 任务卡详细",
+          "line_start": 124,
+          "line_end": 918,
+          "est_tokens": 15810,
+          "deps": [],
+          "level": 2,
+          "items": {
+            "T-132": {
+              "heading": "### T-132: BlockCategory 枚举 + BlockDefinition.category required + BlockVariant.baseStyle 契约",
+              "line_start": 126,
+              "line_end": 152,
+              "est_tokens": 503,
+              "deps": []
+            },
+            "T-133": {
+              "heading": "### T-133: defineBlock 工厂签名升级 + 40 内置 Block 补 category",
+              "line_start": 153,
+              "line_end": 181,
+              "est_tokens": 605,
+              "deps": []
+            },
+            "T-134": {
+              "heading": "### T-134: getBlockBaseStyle 四步解析补全",
+              "line_start": 182,
+              "line_end": 208,
+              "est_tokens": 565,
+              "deps": []
+            },
+            "T-135": {
+              "heading": "### T-135: 破坏性变更影响面修复（contracts / mcp-server / plugin-api / 既有测试）",
+              "line_start": 209,
+              "line_end": 244,
+              "est_tokens": 926,
+              "deps": []
+            },
+            "T-136": {
+              "heading": "### T-136: 新增 token `--color-code-block-bg`（×5 主题）",
+              "line_start": 245,
+              "line_end": 272,
+              "est_tokens": 472,
+              "deps": []
+            },
+            "T-137": {
+              "heading": "### T-137: UC-015 InsertDrawer 分类 Tab 数据驱动 + 搜索框 + UC-021 同步",
+              "line_start": 273,
+              "line_end": 310,
+              "est_tokens": 906,
+              "deps": []
+            },
+            "T-138": {
+              "heading": "### T-138: [DESIGN] PS-011 InsertDrawer 6 分类 Tab Penpot 帧追平",
+              "line_start": 311,
+              "line_end": 334,
+              "est_tokens": 455,
+              "deps": []
+            },
+            "T-139": {
+              "heading": "### T-139: [DESIGN] Layer 1 基础元素排版 Penpot 视觉样张（5 主题对照）",
+              "line_start": 335,
+              "line_end": 358,
+              "est_tokens": 501,
+              "deps": []
+            },
+            "T-140": {
+              "heading": "### T-140: [DESIGN] Layer 2 Block 变体 Penpot 视觉样张（9 组件）",
+              "line_start": 359,
+              "line_end": 384,
+              "est_tokens": 508,
+              "deps": []
+            },
+            "T-141": {
+              "heading": "### T-141: 表格（table/th/td）5 主题排版实现",
+              "line_start": 385,
+              "line_end": 418,
+              "est_tokens": 704,
+              "deps": []
+            },
+            "T-142": {
+              "heading": "### T-142: 引用块（blockquote）差异化 5 主题实现",
+              "line_start": 419,
+              "line_end": 451,
+              "est_tokens": 635,
+              "deps": []
+            },
+            "T-143": {
+              "heading": "### T-143: `strong` 字重梯度 5 主题实现",
+              "line_start": 452,
+              "line_end": 483,
+              "est_tokens": 437,
+              "deps": []
+            },
+            "T-144": {
+              "heading": "### T-144: 代码块（pre）主题感知底色实现",
+              "line_start": 484,
+              "line_end": 514,
+              "est_tokens": 577,
+              "deps": []
+            },
+            "T-146": {
+              "heading": "### T-146: Heading Accent（h2 左竖条）实现",
+              "line_start": 515,
+              "line_end": 545,
+              "est_tokens": 499,
+              "deps": []
+            },
+            "T-147": {
+              "heading": "### T-147: 首字下沉（dropcap）可选 paragraph variant",
+              "line_start": 546,
+              "line_end": 575,
+              "est_tokens": 538,
+              "deps": []
+            },
+            "T-148": {
+              "heading": "### T-148: callout 四态形态差异化（tip/warning/info/danger）",
+              "line_start": 576,
+              "line_end": 606,
+              "est_tokens": 659,
+              "deps": []
+            },
+            "T-149": {
+              "heading": "### T-149: divider SVG 装饰变体（wave/dots/flower）+ sanitize schema 安全审查",
+              "line_start": 607,
+              "line_end": 640,
+              "est_tokens": 989,
+              "deps": []
+            },
+            "T-150": {
+              "heading": "### T-150: pull-quote decorated 变体（装饰引号 + 署名行）",
+              "line_start": 641,
+              "line_end": 667,
+              "est_tokens": 496,
+              "deps": []
+            },
+            "T-151": {
+              "heading": "### T-151: steps card 变体（step-card 卡片形态）",
+              "line_start": 668,
+              "line_end": 694,
+              "est_tokens": 437,
+              "deps": []
+            },
+            "T-152": {
+              "heading": "### T-152: quote large-quote-mark + dropcap 变体（原 magazine/literary 重命名）",
+              "line_start": 695,
+              "line_end": 722,
+              "est_tokens": 551,
+              "deps": []
+            },
+            "T-153": {
+              "heading": "### T-153: compare ledger 变体（双色账本，原 color-coded 重命名）",
+              "line_start": 723,
+              "line_end": 751,
+              "est_tokens": 530,
+              "deps": []
+            },
+            "T-154": {
+              "heading": "### T-154: dialog chat-bubbles 变体（原 bubble 重命名）",
+              "line_start": 752,
+              "line_end": 781,
+              "est_tokens": 571,
+              "deps": []
+            },
+            "T-155": {
+              "heading": "### T-155: announcement danger-bar/compact/default 变体",
+              "line_start": 782,
+              "line_end": 810,
+              "est_tokens": 550,
+              "deps": []
+            },
+            "T-156": {
+              "heading": "### T-156: gallery duo/triptych 变体 + 既有 grid/masonry/carousel 降级 fallback",
+              "line_start": 811,
+              "line_end": 843,
+              "est_tokens": 775,
+              "deps": []
+            },
+            "T-157": {
+              "heading": "### T-157: [VALIDATION] 微信平台粘贴兼容回归",
+              "line_start": 844,
+              "line_end": 872,
+              "est_tokens": 622,
+              "deps": []
+            },
+            "T-158": {
+              "heading": "### T-158: doc-ops：ui-spec 主卷 P-001..P-003 图导出漂移修复",
+              "line_start": 873,
+              "line_end": 896,
+              "est_tokens": 341,
+              "deps": []
+            },
+            "T-159": {
+              "heading": "### T-159: [VALIDATION] Sprint 7（视觉升级批）验证",
+              "line_start": 897,
+              "line_end": 918,
+              "est_tokens": 437,
+              "deps": []
+            }
+          }
+        }
+      },
+      "deps": [
+        "arch-wechat-flow",
+        "arch-wechat-flow-modules",
+        "arch-wechat-flow-api",
+        "ui-spec-wechat-flow",
+        "ui-spec-wechat-flow-block-taxonomy",
+        "ui-spec-wechat-flow-content-elements",
+        "ui-spec-wechat-flow-block-variants",
+        "ui-spec-wechat-flow-p001-p005"
+      ],
+      "dep_hashes": {
+        "arch-wechat-flow": "10499df8",
+        "arch-wechat-flow-modules": "d8991e87",
+        "arch-wechat-flow-api": "71319b23",
+        "ui-spec-wechat-flow": "659ef13e",
+        "ui-spec-wechat-flow-block-taxonomy": "290132ef",
+        "ui-spec-wechat-flow-content-elements": "e16f9c9c",
+        "ui-spec-wechat-flow-block-variants": "0e19dbad",
         "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
     },
     "dev-plan-wechat-flow": {
       "file_path": "docs/dev-plan/dev-plan-wechat-flow.md",
       "doc_type": "dev-plan",
-      "volume": "main",
       "status": "approved",
       "total_lines": 510,
       "est_tokens": 9204,
@@ -2224,18 +2447,17 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "9d95d99c",
-        "arch-wechat-flow-api": "92ecf40b",
+        "arch-wechat-flow-modules": "d8991e87",
+        "arch-wechat-flow-api": "71319b23",
         "arch-wechat-flow-data": "dfad5fc1",
-        "ui-spec-wechat-flow": "201bf6f6",
-        "ui-spec-wechat-flow-uc001-uc014": "e4c310da",
+        "ui-spec-wechat-flow": "659ef13e",
+        "ui-spec-wechat-flow-uc001-uc014": "485d2b93",
         "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
     },
     "feedback-bug-0-11-0-scaffold-skill-md-cataforge-docs-out-of-the-box-doctor-3-fail": {
       "file_path": "docs/feedback/bug-deprecated-skill-cmd-refs-20260615.md",
       "doc_type": "framework-feedback",
-      "volume": "main",
       "status": "approved",
       "total_lines": 213,
       "est_tokens": 2478,
@@ -2245,7 +2467,6 @@
     "feedback-bug-feedback-aggregator-cataforge-core-feedback-feedback_corre": {
       "file_path": "docs/feedback/bug-feedback-aggregator-paren-20260623.md",
       "doc_type": "framework-feedback",
-      "volume": "main",
       "status": "approved",
       "total_lines": 203,
       "est_tokens": 3183,
@@ -2255,7 +2476,6 @@
     "feedback-bug-kg-迁移三个正交-bug-在-0-8-0-main-1c7bbca-仍未修复-修复曾落在-cataforge-本地": {
       "file_path": "docs/feedback/bug-kg-migration-three-bugs-20260611.md",
       "doc_type": "framework-feedback",
-      "volume": "main",
       "status": "approved",
       "total_lines": 179,
       "est_tokens": 3326,
@@ -2265,7 +2485,6 @@
     "feedback-bug-sprint-review-layer-1-builtins-与-dev-plan-模板格式失配-跨-sprint-复": {
       "file_path": "docs/feedback/bug-sprint-review-layer1-20260611.md",
       "doc_type": "framework-feedback",
-      "volume": "main",
       "status": "approved",
       "total_lines": 185,
       "est_tokens": 3236,
@@ -2275,7 +2494,6 @@
     "feedback-suggest-context-generate-md-cataforge-docs-mdkg-ingest-skill": {
       "file_path": "docs/feedback/fb-context-finalize-gap.md",
       "doc_type": "framework-feedback",
-      "volume": "main",
       "status": "approved",
       "total_lines": 43,
       "est_tokens": 606,
@@ -2285,7 +2503,6 @@
     "fb-dev-plan-path-drift-writeback": {
       "file_path": "docs/feedback/fb-dev-plan-path-drift-writeback-20260701.md",
       "doc_type": "framework-feedback",
-      "volume": "main",
       "status": "approved",
       "total_lines": 55,
       "est_tokens": 1041,
@@ -2332,7 +2549,6 @@
     "feedback-bug-framework-update0-11-00-11-1": {
       "file_path": "docs/feedback/fb-framework-update-0_11_1-20260615.md",
       "doc_type": "framework-feedback",
-      "volume": "main",
       "status": "approved",
       "total_lines": 193,
       "est_tokens": 3327,
@@ -2342,7 +2558,6 @@
     "feedback-bug-kg-drift-content_hash-repair-ghost_sections-kg-delete-section-id": {
       "file_path": "docs/feedback/fb-kg-drift-toolchain.md",
       "doc_type": "framework-feedback",
-      "volume": "main",
       "status": "approved",
       "total_lines": 209,
       "est_tokens": 3485,
@@ -2352,7 +2567,6 @@
     "feedback-bug-kg-first-title-trace-part_of-0-9-1": {
       "file_path": "docs/feedback/fb-kg-entity-read-chain.md",
       "doc_type": "framework-feedback",
-      "volume": "main",
       "status": "approved",
       "total_lines": 208,
       "est_tokens": 3438,
@@ -2362,7 +2576,6 @@
     "feedback-kg-reconcile-blindspot-0-11-2": {
       "file_path": "docs/feedback/fb-kg-reconcile-blindspot-0_11_2-20260616.md",
       "doc_type": "framework-feedback",
-      "volume": "main",
       "status": "approved",
       "total_lines": 27,
       "est_tokens": 640,
@@ -2372,7 +2585,6 @@
     "feedback-suggest-dogfood-wechat-flow-sprint-4-4-framework-hygiene-protocol-gaps": {
       "file_path": "docs/feedback/framework-feedback-20260624-s4-dogfood.md",
       "doc_type": "framework-feedback",
-      "volume": "main",
       "status": "approved",
       "total_lines": 63,
       "est_tokens": 1151,
@@ -2419,7 +2631,6 @@
     "feedback-suggest-四项框架改进建议-来自-wechat-flow-项目-sprint-0-3-运行学习-1-tdd-engine": {
       "file_path": "docs/feedback/suggest-runtime-learnings-20260611.md",
       "doc_type": "framework-feedback",
-      "volume": "main",
       "status": "approved",
       "total_lines": 27,
       "est_tokens": 423,
@@ -2429,7 +2640,6 @@
     "feedback-correction-export-2-upstream-gap-signals": {
       "file_path": "docs/feedback/upstream-gap-20260623.md",
       "doc_type": "framework-feedback",
-      "volume": "main",
       "status": "approved",
       "total_lines": 38,
       "est_tokens": 629,
@@ -2439,7 +2649,6 @@
     "prd-wechat-flow-f001-f014": {
       "file_path": "docs/prd/prd-wechat-flow-f001-f014.md",
       "doc_type": "prd",
-      "volume": "features",
       "status": "approved",
       "total_lines": 319,
       "est_tokens": 6294,
@@ -2554,7 +2763,6 @@
           }
         }
       },
-      "split_from": "prd-wechat-flow",
       "deps": [
         "prd-wechat-flow"
       ],
@@ -2565,7 +2773,6 @@
     "prd-wechat-flow": {
       "file_path": "docs/prd/prd-wechat-flow.md",
       "doc_type": "prd",
-      "volume": "main",
       "status": "approved",
       "total_lines": 215,
       "est_tokens": 3302,
@@ -2679,7 +2886,6 @@
     "rn-006-css-inlining": {
       "file_path": "docs/research/tech-eval-css-inlining.md",
       "doc_type": "research",
-      "volume": "main",
       "status": "approved",
       "total_lines": 71,
       "est_tokens": 1120,
@@ -2697,7 +2903,6 @@
     "rn-007-patch-dsl": {
       "file_path": "docs/research/tech-eval-patch-dsl.md",
       "doc_type": "research",
-      "volume": "main",
       "status": "approved",
       "total_lines": 82,
       "est_tokens": 981,
@@ -2715,7 +2920,6 @@
     "rn-003-backend-framework": {
       "file_path": "docs/research/tech-eval-stack-backend.md",
       "doc_type": "research",
-      "volume": "main",
       "status": "approved",
       "total_lines": 103,
       "est_tokens": 1108,
@@ -2731,7 +2935,6 @@
     "rn-002-frontend-framework": {
       "file_path": "docs/research/tech-eval-stack-frontend.md",
       "doc_type": "research",
-      "volume": "main",
       "status": "approved",
       "total_lines": 94,
       "est_tokens": 1016,
@@ -2747,7 +2950,6 @@
     "rn-001-monorepo-toolchain": {
       "file_path": "docs/research/tech-eval-stack-monorepo.md",
       "doc_type": "research",
-      "volume": "main",
       "status": "approved",
       "total_lines": 92,
       "est_tokens": 1064,
@@ -2763,7 +2965,6 @@
     "rn-005-sanitizer": {
       "file_path": "docs/research/tech-eval-stack-sanitizer.md",
       "doc_type": "research",
-      "volume": "main",
       "status": "approved",
       "total_lines": 133,
       "est_tokens": 1821,
@@ -2781,7 +2982,6 @@
     "rn-004-sync-protocol": {
       "file_path": "docs/research/tech-eval-stack-sync-protocol.md",
       "doc_type": "research",
-      "volume": "main",
       "status": "approved",
       "total_lines": 117,
       "est_tokens": 1275,
@@ -2797,7 +2997,6 @@
     "corrections-log": {
       "file_path": "docs/reviews/CORRECTIONS-LOG.md",
       "doc_type": "correction-log",
-      "volume": "main",
       "status": "approved",
       "total_lines": 74,
       "est_tokens": 882,
@@ -2807,7 +3006,6 @@
     "code-review-T-008-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-008-r1.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 180,
       "est_tokens": 3239,
@@ -2820,7 +3018,6 @@
     "code-review-T-009-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-009-r1.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 91,
       "est_tokens": 1576,
@@ -2833,7 +3030,6 @@
     "code-review-T-010-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-010-r1.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 117,
       "est_tokens": 2059,
@@ -2846,7 +3042,6 @@
     "code-review-T-011-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-011-r1.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 131,
       "est_tokens": 2383,
@@ -2859,7 +3054,6 @@
     "code-review-t-011-r2": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-011-r2.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 26,
       "est_tokens": 449,
@@ -2872,7 +3066,6 @@
     "code-review-T-016-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-016-r1.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 170,
       "est_tokens": 2956,
@@ -2885,7 +3078,6 @@
     "code-review-T-016-r2": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-016-r2.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 101,
       "est_tokens": 1221,
@@ -2898,7 +3090,6 @@
     "code-review-t-033-adapters-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-033-adapters-r1.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 116,
       "est_tokens": 1595,
@@ -2911,7 +3102,6 @@
     "code-review-t-033-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-033-r1.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 138,
       "est_tokens": 2483,
@@ -2924,7 +3114,6 @@
     "code-review-t-033-r2": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-033-r2.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 125,
       "est_tokens": 1544,
@@ -2937,7 +3126,6 @@
     "code-review-T-036-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-036-r1.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 100,
       "est_tokens": 1761,
@@ -2950,7 +3138,6 @@
     "code-review-T-036-r2": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-036-r2.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 153,
       "est_tokens": 2026,
@@ -2963,7 +3150,6 @@
     "code-review-T-042-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-042-r1.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 125,
       "est_tokens": 2521,
@@ -2976,7 +3162,6 @@
     "code-review-T-047-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-047-r1.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 60,
       "est_tokens": 755,
@@ -2989,7 +3174,6 @@
     "code-review-T-051-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-051-r1.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 111,
       "est_tokens": 1941,
@@ -3002,7 +3186,6 @@
     "code-review-T-077-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-077-r1.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 60,
       "est_tokens": 843,
@@ -3015,7 +3198,6 @@
     "code-review-t-091-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-091-r1.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 129,
       "est_tokens": 2172,
@@ -3028,7 +3210,6 @@
     "code-review-t-091-r2": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-091-r2.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 146,
       "est_tokens": 2000,
@@ -3041,7 +3222,6 @@
     "code-review-T-092-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-092-r1.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 125,
       "est_tokens": 2691,
@@ -3064,7 +3244,6 @@
     "code-review-T-094-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-094-r1.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 142,
       "est_tokens": 2409,
@@ -3077,7 +3256,6 @@
     "code-review-T-094-r2": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-094-r2.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 153,
       "est_tokens": 1673,
@@ -3090,7 +3268,6 @@
     "code-review-T-118-T-122-cluster-d-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-118-T-122-cluster-d-r1.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 102,
       "est_tokens": 2206,
@@ -3107,7 +3284,6 @@
     "code-review-T-124-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-124-r1.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 219,
       "est_tokens": 3181,
@@ -3120,7 +3296,6 @@
     "code-review-T-125-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-125-r1.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 113,
       "est_tokens": 2314,
@@ -3133,7 +3308,6 @@
     "code-review-T-126-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T-126-r1.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 174,
       "est_tokens": 2854,
@@ -3146,7 +3320,6 @@
     "code-review-T034-T035-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T034-T035-r1.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 137,
       "est_tokens": 2518,
@@ -3160,7 +3333,6 @@
     "code-review-t131-b1-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-t131-b1-r1.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 75,
       "est_tokens": 1805,
@@ -3173,7 +3345,6 @@
     "code-review-zh-typo-vertical-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-zh-typo-vertical-r1.md",
       "doc_type": "code-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 136,
       "est_tokens": 2681,
@@ -3189,7 +3360,6 @@
     "design-review-s1-ui-shell-r1": {
       "file_path": "docs/reviews/design/DESIGN-REVIEW-s1-ui-shell-r1.md",
       "doc_type": "design-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 87,
       "est_tokens": 1368,
@@ -3204,13 +3374,12 @@
         "ui-spec-wechat-flow-uc001-uc014"
       ],
       "dep_hashes": {
-        "ui-spec-wechat-flow-uc001-uc014": "e4c310da"
+        "ui-spec-wechat-flow-uc001-uc014": "485d2b93"
       }
     },
     "review-arch-wechat-flow-r1": {
       "file_path": "docs/reviews/doc/REVIEW-arch-wechat-flow-r1.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 185,
       "est_tokens": 3333,
@@ -3224,15 +3393,14 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "9d95d99c",
-        "arch-wechat-flow-api": "92ecf40b",
+        "arch-wechat-flow-modules": "d8991e87",
+        "arch-wechat-flow-api": "71319b23",
         "arch-wechat-flow-data": "dfad5fc1"
       }
     },
     "review-arch-wechat-flow-r2": {
       "file_path": "docs/reviews/doc/REVIEW-arch-wechat-flow-r2.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 153,
       "est_tokens": 2652,
@@ -3246,15 +3414,14 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "9d95d99c",
-        "arch-wechat-flow-api": "92ecf40b",
+        "arch-wechat-flow-modules": "d8991e87",
+        "arch-wechat-flow-api": "71319b23",
         "arch-wechat-flow-data": "dfad5fc1"
       }
     },
     "review-arch-wechat-flow-r3": {
       "file_path": "docs/reviews/doc/REVIEW-arch-wechat-flow-r3.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 156,
       "est_tokens": 1585,
@@ -3268,15 +3435,14 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "9d95d99c",
-        "arch-wechat-flow-api": "92ecf40b",
+        "arch-wechat-flow-modules": "d8991e87",
+        "arch-wechat-flow-api": "71319b23",
         "arch-wechat-flow-data": "dfad5fc1"
       }
     },
     "review-arch-wechat-flow-r4": {
       "file_path": "docs/reviews/doc/REVIEW-arch-wechat-flow-r4.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 161,
       "est_tokens": 2391,
@@ -3290,15 +3456,14 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "9d95d99c",
-        "arch-wechat-flow-api": "92ecf40b",
+        "arch-wechat-flow-modules": "d8991e87",
+        "arch-wechat-flow-api": "71319b23",
         "arch-wechat-flow-data": "dfad5fc1"
       }
     },
     "review-arch-wechat-flow-r5": {
       "file_path": "docs/reviews/doc/REVIEW-arch-wechat-flow-r5.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 240,
       "est_tokens": 4078,
@@ -3312,15 +3477,14 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "9d95d99c",
-        "arch-wechat-flow-api": "92ecf40b",
+        "arch-wechat-flow-modules": "d8991e87",
+        "arch-wechat-flow-api": "71319b23",
         "arch-wechat-flow-data": "dfad5fc1"
       }
     },
     "review-arch-wechat-flow-r6": {
       "file_path": "docs/reviews/doc/REVIEW-arch-wechat-flow-r6.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 156,
       "est_tokens": 2737,
@@ -3335,8 +3499,8 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "9d95d99c",
-        "arch-wechat-flow-api": "92ecf40b",
+        "arch-wechat-flow-modules": "d8991e87",
+        "arch-wechat-flow-api": "71319b23",
         "prd-wechat-flow": "0e15bcb3",
         "prd-wechat-flow-f001-f014": "aa0c9b68"
       }
@@ -3344,7 +3508,6 @@
     "review-arch-wechat-flow-r7": {
       "file_path": "docs/reviews/doc/REVIEW-arch-wechat-flow-r7.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 131,
       "est_tokens": 1801,
@@ -3357,14 +3520,30 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-api": "92ecf40b",
+        "arch-wechat-flow-api": "71319b23",
         "prd-wechat-flow-f001-f014": "aa0c9b68"
+      }
+    },
+    "review-arch-wechat-flow-r8": {
+      "file_path": "docs/reviews/doc/REVIEW-arch-wechat-flow-r8.md",
+      "doc_type": "review",
+      "status": "approved",
+      "total_lines": 64,
+      "est_tokens": 1240,
+      "content_hash": "ccf36f44",
+      "sections": {},
+      "deps": [
+        "arch-wechat-flow-modules",
+        "arch-wechat-flow-api"
+      ],
+      "dep_hashes": {
+        "arch-wechat-flow-modules": "d8991e87",
+        "arch-wechat-flow-api": "71319b23"
       }
     },
     "review-deploy-spec-wechat-flow-r1": {
       "file_path": "docs/reviews/doc/REVIEW-deploy-spec-wechat-flow-r1.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 116,
       "est_tokens": 4130,
@@ -3380,7 +3559,6 @@
     "review-deploy-spec-wechat-flow-r2": {
       "file_path": "docs/reviews/doc/REVIEW-deploy-spec-wechat-flow-r2.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 145,
       "est_tokens": 2490,
@@ -3396,7 +3574,6 @@
     "review-dev-plan-wechat-flow-r1": {
       "file_path": "docs/reviews/doc/REVIEW-dev-plan-wechat-flow-r1.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 93,
       "est_tokens": 1489,
@@ -3426,7 +3603,6 @@
     "review-dev-plan-wechat-flow-r2": {
       "file_path": "docs/reviews/doc/REVIEW-dev-plan-wechat-flow-r2.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 112,
       "est_tokens": 1811,
@@ -3456,7 +3632,6 @@
     "review-dev-plan-wechat-flow-r3": {
       "file_path": "docs/reviews/doc/REVIEW-dev-plan-wechat-flow-r3.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 178,
       "est_tokens": 2844,
@@ -3490,7 +3665,6 @@
     "review-dev-plan-wechat-flow-r4": {
       "file_path": "docs/reviews/doc/REVIEW-dev-plan-wechat-flow-r4.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 230,
       "est_tokens": 3873,
@@ -3520,13 +3694,12 @@
         "dev-plan-wechat-flow-s6": "125772c5",
         "prd-wechat-flow": "0e15bcb3",
         "arch-wechat-flow": "10499df8",
-        "ui-spec-wechat-flow": "201bf6f6"
+        "ui-spec-wechat-flow": "659ef13e"
       }
     },
     "review-dev-plan-wechat-flow-r5": {
       "file_path": "docs/reviews/doc/REVIEW-dev-plan-wechat-flow-r5.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 113,
       "est_tokens": 1606,
@@ -3542,7 +3715,6 @@
     "review-dev-plan-wechat-flow-r6": {
       "file_path": "docs/reviews/doc/REVIEW-dev-plan-wechat-flow-r6.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 106,
       "est_tokens": 1263,
@@ -3555,10 +3727,24 @@
         "dev-plan-wechat-flow": "cdcb83d2"
       }
     },
+    "review-dev-plan-wechat-flow-r7": {
+      "file_path": "docs/reviews/doc/REVIEW-dev-plan-wechat-flow-r7.md",
+      "doc_type": "review",
+      "status": "approved",
+      "total_lines": 118,
+      "est_tokens": 2461,
+      "content_hash": "6d3cda01",
+      "sections": {},
+      "deps": [
+        "dev-plan-wechat-flow-s7"
+      ],
+      "dep_hashes": {
+        "dev-plan-wechat-flow-s7": "11683e22"
+      }
+    },
     "review-prd-wechat-flow-r1": {
       "file_path": "docs/reviews/doc/REVIEW-prd-wechat-flow-r1.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 207,
       "est_tokens": 2771,
@@ -3576,7 +3762,6 @@
     "review-prd-wechat-flow-r2": {
       "file_path": "docs/reviews/doc/REVIEW-prd-wechat-flow-r2.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 186,
       "est_tokens": 2477,
@@ -3594,7 +3779,6 @@
     "review-prd-wechat-flow-r3": {
       "file_path": "docs/reviews/doc/REVIEW-prd-wechat-flow-r3.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 119,
       "est_tokens": 959,
@@ -3612,7 +3796,6 @@
     "review-prd-wechat-flow-r4": {
       "file_path": "docs/reviews/doc/REVIEW-prd-wechat-flow-r4.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 221,
       "est_tokens": 3216,
@@ -3630,7 +3813,6 @@
     "review-prd-wechat-flow-r5": {
       "file_path": "docs/reviews/doc/REVIEW-prd-wechat-flow-r5.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 81,
       "est_tokens": 1274,
@@ -3648,7 +3830,6 @@
     "review-test-report-wechat-flow-r1": {
       "file_path": "docs/reviews/doc/REVIEW-test-report-wechat-flow-r1.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 113,
       "est_tokens": 2993,
@@ -3664,7 +3845,6 @@
     "review-ui-spec-wechat-flow-r1": {
       "file_path": "docs/reviews/doc/REVIEW-ui-spec-wechat-flow-r1.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 207,
       "est_tokens": 3919,
@@ -3676,15 +3856,14 @@
         "ui-spec-wechat-flow-p001-p005"
       ],
       "dep_hashes": {
-        "ui-spec-wechat-flow": "201bf6f6",
-        "ui-spec-wechat-flow-uc001-uc014": "e4c310da",
+        "ui-spec-wechat-flow": "659ef13e",
+        "ui-spec-wechat-flow-uc001-uc014": "485d2b93",
         "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
     },
     "review-ui-spec-wechat-flow-r2": {
       "file_path": "docs/reviews/doc/REVIEW-ui-spec-wechat-flow-r2.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 199,
       "est_tokens": 4200,
@@ -3696,15 +3875,14 @@
         "ui-spec-wechat-flow-p001-p005"
       ],
       "dep_hashes": {
-        "ui-spec-wechat-flow": "201bf6f6",
-        "ui-spec-wechat-flow-uc001-uc014": "e4c310da",
+        "ui-spec-wechat-flow": "659ef13e",
+        "ui-spec-wechat-flow-uc001-uc014": "485d2b93",
         "ui-spec-wechat-flow-p001-p005": "3b7254c0"
       }
     },
     "review-ui-spec-wechat-flow-r3": {
       "file_path": "docs/reviews/doc/REVIEW-ui-spec-wechat-flow-r3.md",
       "doc_type": "review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 189,
       "est_tokens": 3064,
@@ -3716,15 +3894,56 @@
         "ui-spec-wechat-flow-p001-p005"
       ],
       "dep_hashes": {
-        "ui-spec-wechat-flow": "201bf6f6",
-        "ui-spec-wechat-flow-uc001-uc014": "e4c310da",
+        "ui-spec-wechat-flow": "659ef13e",
+        "ui-spec-wechat-flow-uc001-uc014": "485d2b93",
         "ui-spec-wechat-flow-p001-p005": "3b7254c0"
+      }
+    },
+    "review-ui-spec-wechat-flow-r4": {
+      "file_path": "docs/reviews/doc/REVIEW-ui-spec-wechat-flow-r4.md",
+      "doc_type": "review",
+      "status": "approved",
+      "total_lines": 97,
+      "est_tokens": 1982,
+      "content_hash": "b5ec566f",
+      "sections": {},
+      "deps": [
+        "ui-spec-wechat-flow",
+        "ui-spec-wechat-flow-uc001-uc014",
+        "ui-spec-wechat-flow-block-taxonomy",
+        "ui-spec-wechat-flow-content-elements",
+        "ui-spec-wechat-flow-block-variants"
+      ],
+      "dep_hashes": {
+        "ui-spec-wechat-flow": "659ef13e",
+        "ui-spec-wechat-flow-uc001-uc014": "485d2b93",
+        "ui-spec-wechat-flow-block-taxonomy": "290132ef",
+        "ui-spec-wechat-flow-content-elements": "e16f9c9c",
+        "ui-spec-wechat-flow-block-variants": "0e19dbad"
+      }
+    },
+    "review-ui-spec-wechat-flow-r5": {
+      "file_path": "docs/reviews/doc/REVIEW-ui-spec-wechat-flow-r5.md",
+      "doc_type": "review",
+      "status": "approved",
+      "total_lines": 73,
+      "est_tokens": 1183,
+      "content_hash": "2445c4e3",
+      "sections": {},
+      "deps": [
+        "ui-spec-wechat-flow",
+        "ui-spec-wechat-flow-block-taxonomy",
+        "ui-spec-wechat-flow-block-variants"
+      ],
+      "dep_hashes": {
+        "ui-spec-wechat-flow": "659ef13e",
+        "ui-spec-wechat-flow-block-taxonomy": "290132ef",
+        "ui-spec-wechat-flow-block-variants": "0e19dbad"
       }
     },
     "retro-wechat-flow-20260702": {
       "file_path": "docs/reviews/retro/RETRO-wechat-flow-20260702.md",
       "doc_type": "retrospective",
-      "volume": "main",
       "status": "draft",
       "total_lines": 249,
       "est_tokens": 4324,
@@ -3734,7 +3953,6 @@
     "skill-improve-tech-lead": {
       "file_path": "docs/reviews/retro/SKILL-IMPROVE-tech-lead.md",
       "doc_type": "skill-improvement",
-      "volume": "main",
       "status": "draft",
       "total_lines": 185,
       "est_tokens": 1818,
@@ -3744,7 +3962,6 @@
     "skill-improve-test-writer": {
       "file_path": "docs/reviews/retro/SKILL-IMPROVE-test-writer.md",
       "doc_type": "skill-improvement",
-      "volume": "main",
       "status": "draft",
       "total_lines": 62,
       "est_tokens": 679,
@@ -3754,7 +3971,6 @@
     "upstream-feedback-20260702": {
       "file_path": "docs/reviews/retro/upstream-feedback-20260702.md",
       "doc_type": "feedback",
-      "volume": "main",
       "status": "draft",
       "total_lines": 355,
       "est_tokens": 2934,
@@ -3764,7 +3980,6 @@
     "sprint-review-s0-r1": {
       "file_path": "docs/reviews/sprint/SPRINT-REVIEW-s0-r1.md",
       "doc_type": "sprint-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 249,
       "est_tokens": 3862,
@@ -3982,7 +4197,6 @@
     "sprint-review-s1-r1": {
       "file_path": "docs/reviews/sprint/SPRINT-REVIEW-s1-r1.md",
       "doc_type": "sprint-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 302,
       "est_tokens": 5837,
@@ -4006,7 +4220,6 @@
     "sprint-review-s2-r1": {
       "file_path": "docs/reviews/sprint/SPRINT-REVIEW-s2-r1.md",
       "doc_type": "sprint-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 207,
       "est_tokens": 3786,
@@ -4123,7 +4336,6 @@
     "sprint-review-s2-r2": {
       "file_path": "docs/reviews/sprint/SPRINT-REVIEW-s2-r2.md",
       "doc_type": "sprint-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 130,
       "est_tokens": 1353,
@@ -4205,7 +4417,6 @@
     "sprint-review-s3-r1": {
       "file_path": "docs/reviews/sprint/SPRINT-REVIEW-s3-r1.md",
       "doc_type": "sprint-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 160,
       "est_tokens": 3132,
@@ -4223,7 +4434,6 @@
     "sprint-review-s4-r1": {
       "file_path": "docs/reviews/sprint/SPRINT-REVIEW-s4-r1.md",
       "doc_type": "sprint-review",
-      "volume": "main",
       "status": "draft",
       "total_lines": 190,
       "est_tokens": 4399,
@@ -4238,14 +4448,13 @@
       "dep_hashes": {
         "dev-plan-wechat-flow": "cdcb83d2",
         "dev-plan-wechat-flow-s4": "e4f79fea",
-        "arch-wechat-flow-modules": "9d95d99c",
-        "arch-wechat-flow-api": "92ecf40b"
+        "arch-wechat-flow-modules": "d8991e87",
+        "arch-wechat-flow-api": "71319b23"
       }
     },
     "sprint-review-s4-r2": {
       "file_path": "docs/reviews/sprint/SPRINT-REVIEW-s4-r2.md",
       "doc_type": "sprint-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 338,
       "est_tokens": 6236,
@@ -4259,15 +4468,14 @@
       ],
       "dep_hashes": {
         "dev-plan-wechat-flow-s4": "e4f79fea",
-        "arch-wechat-flow-modules": "9d95d99c",
-        "arch-wechat-flow-api": "92ecf40b",
+        "arch-wechat-flow-modules": "d8991e87",
+        "arch-wechat-flow-api": "71319b23",
         "dev-plan-wechat-flow": "cdcb83d2"
       }
     },
     "sprint-review-s5-r1": {
       "file_path": "docs/reviews/sprint/SPRINT-REVIEW-s5-r1.md",
       "doc_type": "sprint-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 159,
       "est_tokens": 3355,
@@ -4283,7 +4491,6 @@
     "sprint-review-s6-r1": {
       "file_path": "docs/reviews/sprint/SPRINT-REVIEW-s6-r1.md",
       "doc_type": "sprint-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 174,
       "est_tokens": 3881,
@@ -4299,7 +4506,6 @@
     "sprint-review-s6-r2": {
       "file_path": "docs/reviews/sprint/SPRINT-REVIEW-s6-r2.md",
       "doc_type": "sprint-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 36,
       "est_tokens": 666,
@@ -4315,7 +4521,6 @@
     "sprint-review-s6-r3": {
       "file_path": "docs/reviews/sprint/SPRINT-REVIEW-s6-r3.md",
       "doc_type": "sprint-review",
-      "volume": "main",
       "status": "approved",
       "total_lines": 69,
       "est_tokens": 1802,
@@ -4341,7 +4546,6 @@
     "test-report-wechat-flow": {
       "file_path": "docs/test-report/test-report-wechat-flow.md",
       "doc_type": "test-report",
-      "volume": "main",
       "status": "approved",
       "total_lines": 199,
       "est_tokens": 5424,
@@ -4467,10 +4671,245 @@
         "dev-plan-wechat-flow": "cdcb83d2"
       }
     },
+    "ui-spec-wechat-flow-block-taxonomy": {
+      "file_path": "docs/ui-spec/ui-spec-wechat-flow-block-taxonomy.md",
+      "doc_type": "ui-spec",
+      "status": "approved",
+      "total_lines": 90,
+      "est_tokens": 1373,
+      "content_hash": "290132ef",
+      "sections": {
+        "8": {
+          "heading": "## 8. Block 分类冻结映射",
+          "line_start": 22,
+          "line_end": 90,
+          "est_tokens": 1204,
+          "deps": [],
+          "level": 2,
+          "items": {
+            "8.1": {
+              "heading": "### 8.1 分类 Tab 标签映射",
+              "line_start": 26,
+              "line_end": 40,
+              "est_tokens": 211,
+              "deps": []
+            },
+            "8.2": {
+              "heading": "### 8.2 40 Block 冻结分类表",
+              "line_start": 41,
+              "line_end": 87,
+              "est_tokens": 725,
+              "deps": []
+            },
+            "8.3": {
+              "heading": "### 8.3 与 ARCH M-005 的对齐说明",
+              "line_start": 88,
+              "line_end": 90,
+              "est_tokens": 155,
+              "deps": []
+            }
+          }
+        }
+      },
+      "deps": [
+        "prd-wechat-flow",
+        "prd-wechat-flow-f001-f014",
+        "arch-wechat-flow",
+        "arch-wechat-flow-modules"
+      ],
+      "dep_hashes": {
+        "prd-wechat-flow": "0e15bcb3",
+        "prd-wechat-flow-f001-f014": "aa0c9b68",
+        "arch-wechat-flow": "10499df8",
+        "arch-wechat-flow-modules": "d8991e87"
+      }
+    },
+    "ui-spec-wechat-flow-block-variants": {
+      "file_path": "docs/ui-spec/ui-spec-wechat-flow-block-variants.md",
+      "doc_type": "ui-spec",
+      "status": "approved",
+      "total_lines": 126,
+      "est_tokens": 2969,
+      "content_hash": "0e19dbad",
+      "sections": {
+        "10": {
+          "heading": "## 10. Block 变体视觉规格",
+          "line_start": 24,
+          "line_end": 126,
+          "est_tokens": 2740,
+          "deps": [],
+          "level": 2,
+          "items": {
+            "10.1": {
+              "heading": "### 10.1 callout（提示框）— 四态形态差异化",
+              "line_start": 28,
+              "line_end": 53,
+              "est_tokens": 564,
+              "deps": []
+            },
+            "10.2": {
+              "heading": "### 10.2 divider（分隔线）— 装饰变体",
+              "line_start": 54,
+              "line_end": 63,
+              "est_tokens": 301,
+              "deps": []
+            },
+            "10.3": {
+              "heading": "### 10.3 pull-quote（摘引）— 装饰引号 + 署名行",
+              "line_start": 64,
+              "line_end": 72,
+              "est_tokens": 223,
+              "deps": []
+            },
+            "10.4": {
+              "heading": "### 10.4 steps（步骤）— step-card 卡片变体",
+              "line_start": 73,
+              "line_end": 78,
+              "est_tokens": 128,
+              "deps": []
+            },
+            "10.5": {
+              "heading": "### 10.5 quote（引用）— 大引号 / 首字下沉装饰变体",
+              "line_start": 79,
+              "line_end": 87,
+              "est_tokens": 299,
+              "deps": []
+            },
+            "10.6": {
+              "heading": "### 10.6 compare（对比）— ledger 双色账本",
+              "line_start": 88,
+              "line_end": 97,
+              "est_tokens": 283,
+              "deps": []
+            },
+            "10.7": {
+              "heading": "### 10.7 dialog（对话）— chat-bubbles 聊天气泡",
+              "line_start": 98,
+              "line_end": 108,
+              "est_tokens": 234,
+              "deps": []
+            },
+            "10.8": {
+              "heading": "### 10.8 announcement（公告）— danger-bar 等变体",
+              "line_start": 109,
+              "line_end": 118,
+              "est_tokens": 237,
+              "deps": []
+            },
+            "10.9": {
+              "heading": "### 10.9 gallery（图集）— duo / triptych 变体",
+              "line_start": 119,
+              "line_end": 126,
+              "est_tokens": 350,
+              "deps": []
+            }
+          }
+        }
+      },
+      "deps": [
+        "prd-wechat-flow",
+        "prd-wechat-flow-f001-f014",
+        "arch-wechat-flow",
+        "arch-wechat-flow-modules"
+      ],
+      "dep_hashes": {
+        "prd-wechat-flow": "0e15bcb3",
+        "prd-wechat-flow-f001-f014": "aa0c9b68",
+        "arch-wechat-flow": "10499df8",
+        "arch-wechat-flow-modules": "d8991e87"
+      }
+    },
+    "ui-spec-wechat-flow-content-elements": {
+      "file_path": "docs/ui-spec/ui-spec-wechat-flow-content-elements.md",
+      "doc_type": "ui-spec",
+      "status": "approved",
+      "total_lines": 179,
+      "est_tokens": 2883,
+      "content_hash": "e16f9c9c",
+      "sections": {
+        "9": {
+          "heading": "## 9. Markdown 基础元素排版规格",
+          "line_start": 24,
+          "line_end": 179,
+          "est_tokens": 2631,
+          "deps": [],
+          "level": 2,
+          "items": {
+            "9.1": {
+              "heading": "### 9.1 微信平台硬约束通则",
+              "line_start": 28,
+              "line_end": 40,
+              "est_tokens": 262,
+              "deps": []
+            },
+            "9.2": {
+              "heading": "### 9.2 表格（table / th / td）",
+              "line_start": 41,
+              "line_end": 79,
+              "est_tokens": 596,
+              "deps": []
+            },
+            "9.3": {
+              "heading": "### 9.3 引用块（blockquote）差异化",
+              "line_start": 80,
+              "line_end": 115,
+              "est_tokens": 426,
+              "deps": []
+            },
+            "9.4": {
+              "heading": "### 9.4 `strong` 字重梯度",
+              "line_start": 116,
+              "line_end": 127,
+              "est_tokens": 139,
+              "deps": []
+            },
+            "9.5": {
+              "heading": "### 9.5 代码块（pre / code）主题感知",
+              "line_start": 128,
+              "line_end": 141,
+              "est_tokens": 421,
+              "deps": []
+            },
+            "9.6": {
+              "heading": "### 9.6 列表 marker 主题色设计",
+              "line_start": 142,
+              "line_end": 148,
+              "est_tokens": 183,
+              "deps": []
+            },
+            "9.7": {
+              "heading": "### 9.7 Heading Accent（h2 左竖条）",
+              "line_start": 149,
+              "line_end": 162,
+              "est_tokens": 248,
+              "deps": []
+            },
+            "9.8": {
+              "heading": "### 9.8 首字下沉（可选 variant，低优先级）",
+              "line_start": 163,
+              "line_end": 179,
+              "est_tokens": 256,
+              "deps": []
+            }
+          }
+        }
+      },
+      "deps": [
+        "prd-wechat-flow",
+        "prd-wechat-flow-f001-f014",
+        "arch-wechat-flow",
+        "arch-wechat-flow-modules"
+      ],
+      "dep_hashes": {
+        "prd-wechat-flow": "0e15bcb3",
+        "prd-wechat-flow-f001-f014": "aa0c9b68",
+        "arch-wechat-flow": "10499df8",
+        "arch-wechat-flow-modules": "d8991e87"
+      }
+    },
     "ui-spec-wechat-flow-p001-p005": {
       "file_path": "docs/ui-spec/ui-spec-wechat-flow-p001-p005.md",
       "doc_type": "ui-spec",
-      "volume": "pages",
       "status": "approved",
       "total_lines": 353,
       "est_tokens": 4887,
@@ -4522,7 +4961,6 @@
           }
         }
       },
-      "split_from": "ui-spec-wechat-flow",
       "deps": [
         "prd-wechat-flow",
         "prd-wechat-flow-f001-f014",
@@ -4533,23 +4971,22 @@
         "prd-wechat-flow": "0e15bcb3",
         "prd-wechat-flow-f001-f014": "aa0c9b68",
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "9d95d99c"
+        "arch-wechat-flow-modules": "d8991e87"
       }
     },
     "ui-spec-wechat-flow-uc001-uc014": {
       "file_path": "docs/ui-spec/ui-spec-wechat-flow-uc001-uc014.md",
       "doc_type": "ui-spec",
-      "volume": "components",
       "status": "approved",
-      "total_lines": 867,
-      "est_tokens": 12727,
-      "content_hash": "e4c310da",
+      "total_lines": 868,
+      "est_tokens": 12908,
+      "content_hash": "485d2b93",
       "sections": {
         "2": {
           "heading": "## 2. 组件清单",
           "line_start": 22,
-          "line_end": 867,
-          "est_tokens": 12566,
+          "line_end": 868,
+          "est_tokens": 12734,
           "deps": [],
           "level": 2,
           "items": {
@@ -4654,132 +5091,132 @@
             "UC-015": {
               "heading": "### UC-015: InsertDrawer（「+」插入抽屉）",
               "line_start": 543,
-              "line_end": 572,
-              "est_tokens": 517,
+              "line_end": 573,
+              "est_tokens": 617,
               "deps": []
             },
             "UC-016": {
               "heading": "### UC-016: ContextMenu（「...」次级菜单）",
-              "line_start": 573,
-              "line_end": 617,
+              "line_start": 574,
+              "line_end": 618,
               "est_tokens": 692,
               "deps": []
             },
             "UC-017": {
               "heading": "### UC-017: 中文排版修订对话框（ZhTypoReviseDialog）",
-              "line_start": 618,
-              "line_end": 661,
+              "line_start": 619,
+              "line_end": 662,
               "est_tokens": 500,
               "deps": []
             },
             "UC-018": {
               "heading": "### UC-018: 图片上传浮层（ImageUploadOverlay）",
-              "line_start": 662,
-              "line_end": 687,
+              "line_start": 663,
+              "line_end": 688,
               "est_tokens": 412,
               "deps": []
             },
             "UC-019": {
               "heading": "### UC-019: 自定义配色抽屉（PaintDrawer）",
-              "line_start": 688,
-              "line_end": 724,
+              "line_start": 689,
+              "line_end": 725,
               "est_tokens": 539,
               "deps": []
             },
             "UC-020": {
               "heading": "### UC-020: 调色板派生 Modal（BaseColorDeriveModal）",
-              "line_start": 725,
-              "line_end": 761,
+              "line_start": 726,
+              "line_end": 762,
               "est_tokens": 552,
               "deps": []
             },
             "UC-021": {
               "heading": "### UC-021: Directive 内联补全 Popover（DirectiveAutocompletePopover）",
-              "line_start": 762,
-              "line_end": 798,
-              "est_tokens": 544,
+              "line_start": 763,
+              "line_end": 799,
+              "est_tokens": 613,
               "deps": []
             },
             "UC-022": {
               "heading": "### UC-022: 主题模板卡片（TemplateThemeCard）",
-              "line_start": 799,
-              "line_end": 831,
+              "line_start": 800,
+              "line_end": 832,
               "est_tokens": 477,
               "deps": []
             },
             "UC-023": {
               "heading": "### UC-023: 底部状态栏（StatusBar）",
-              "line_start": 832,
-              "line_end": 867,
+              "line_start": 833,
+              "line_end": 868,
               "est_tokens": 378,
               "deps": []
             }
           }
         }
       },
-      "split_from": "ui-spec-wechat-flow",
       "deps": [
         "prd-wechat-flow",
         "prd-wechat-flow-f001-f014",
         "arch-wechat-flow",
-        "arch-wechat-flow-modules"
+        "arch-wechat-flow-modules",
+        "ui-spec-wechat-flow-block-taxonomy"
       ],
       "dep_hashes": {
         "prd-wechat-flow": "0e15bcb3",
         "prd-wechat-flow-f001-f014": "aa0c9b68",
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "9d95d99c"
+        "arch-wechat-flow-modules": "d8991e87",
+        "ui-spec-wechat-flow-block-taxonomy": "290132ef"
       }
     },
     "ui-spec-wechat-flow": {
       "file_path": "docs/ui-spec/ui-spec-wechat-flow.md",
       "doc_type": "ui-spec",
-      "volume": "main",
       "status": "approved",
-      "total_lines": 547,
-      "est_tokens": 6271,
-      "content_hash": "201bf6f6",
+      "total_lines": 557,
+      "est_tokens": 6709,
+      "content_hash": "659ef13e",
       "sections": {
         "0": {
           "heading": "## 0. 设计方向",
-          "line_start": 30,
-          "line_end": 92,
+          "line_start": 31,
+          "line_end": 93,
           "est_tokens": 959,
           "deps": [],
           "level": 2,
           "items": {
             "0.1": {
               "heading": "### 0.1 产品调性",
-              "line_start": 32,
-              "line_end": 44,
+              "line_start": 33,
+              "line_end": 45,
               "est_tokens": 117,
               "deps": []
             },
             "0.2": {
               "heading": "### 0.2 核心原则",
-              "line_start": 45,
-              "line_end": 52,
+              "line_start": 46,
+              "line_end": 53,
               "est_tokens": 96,
               "deps": []
             },
             "0.3": {
               "heading": "### 0.3 可访问性基线 (a11y baseline)",
-              "line_start": 53,
-              "line_end": 63,
+              "line_start": 54,
+              "line_end": 64,
               "est_tokens": 164,
               "deps": []
             },
             "0.4": {
               "heading": "### 0.4 视觉语言摘要",
-              "line_start": 64,
-              "line_end": 75,
+              "line_start": 65,
+              "line_end": 76,
               "est_tokens": 156,
               "deps": []
             },
             "0.5": {
               "heading": "### 0.5 决策记录",
-              "line_start": 76,
-              "line_end": 92,
+              "line_start": 77,
+              "line_end": 93,
               "est_tokens": 419,
               "deps": []
             }
@@ -4787,51 +5224,51 @@
         },
         "1": {
           "heading": "## 1. 设计系统",
-          "line_start": 93,
-          "line_end": 305,
+          "line_start": 94,
+          "line_end": 306,
           "est_tokens": 2114,
           "deps": [],
           "level": 2,
           "items": {
             "1.1": {
               "heading": "#### 1.1.7 诊断分级色（Diagnostics）",
-              "line_start": 162,
-              "line_end": 171,
+              "line_start": 163,
+              "line_end": 172,
               "est_tokens": 85,
               "deps": []
             },
             "1.2": {
               "heading": "#### 1.2.4 字重",
-              "line_start": 213,
-              "line_end": 221,
+              "line_start": 214,
+              "line_end": 222,
               "est_tokens": 75,
               "deps": []
             },
             "1.3": {
               "heading": "#### 1.3.2 圆角",
-              "line_start": 239,
-              "line_end": 249,
+              "line_start": 240,
+              "line_end": 250,
               "est_tokens": 101,
               "deps": []
             },
             "1.4": {
               "heading": "### 1.4 阴影与层叠 Token",
-              "line_start": 250,
-              "line_end": 270,
+              "line_start": 251,
+              "line_end": 271,
               "est_tokens": 260,
               "deps": []
             },
             "1.5": {
               "heading": "### 1.5 动效 Token",
-              "line_start": 271,
-              "line_end": 284,
+              "line_start": 272,
+              "line_end": 285,
               "est_tokens": 188,
               "deps": []
             },
             "1.6": {
               "heading": "### 1.6 断点 Token",
-              "line_start": 285,
-              "line_end": 305,
+              "line_start": 286,
+              "line_end": 306,
               "est_tokens": 113,
               "deps": []
             }
@@ -4839,17 +5276,25 @@
         },
         "2": {
           "heading": "## 2. 组件清单",
-          "line_start": 306,
-          "line_end": 336,
-          "est_tokens": 279,
+          "line_start": 307,
+          "line_end": 345,
+          "est_tokens": 456,
           "deps": [],
           "level": 2,
-          "items": {}
+          "items": {
+            "2.1": {
+              "heading": "### 2.1 Block 内容视觉系统（分卷索引）",
+              "line_start": 336,
+              "line_end": 345,
+              "est_tokens": 178,
+              "deps": []
+            }
+          }
         },
         "3": {
           "heading": "## 3. 页面布局",
-          "line_start": 337,
-          "line_end": 349,
+          "line_start": 346,
+          "line_end": 358,
           "est_tokens": 79,
           "deps": [],
           "level": 2,
@@ -4857,30 +5302,30 @@
         },
         "4": {
           "heading": "## 4. 导航与路由",
-          "line_start": 350,
-          "line_end": 383,
+          "line_start": 359,
+          "line_end": 392,
           "est_tokens": 262,
           "deps": [],
           "level": 2,
           "items": {
             "4.1": {
               "heading": "### 4.1 路由表",
-              "line_start": 352,
-              "line_end": 366,
+              "line_start": 361,
+              "line_end": 375,
               "est_tokens": 151,
               "deps": []
             },
             "4.2": {
               "heading": "### 4.2 导航行为",
-              "line_start": 367,
-              "line_end": 373,
+              "line_start": 376,
+              "line_end": 382,
               "est_tokens": 52,
               "deps": []
             },
             "4.3": {
               "heading": "### 4.3 左侧面板 Tab 序列",
-              "line_start": 374,
-              "line_end": 383,
+              "line_start": 383,
+              "line_end": 392,
               "est_tokens": 54,
               "deps": []
             }
@@ -4888,30 +5333,30 @@
         },
         "5": {
           "heading": "## 5. 响应式策略",
-          "line_start": 384,
-          "line_end": 507,
+          "line_start": 393,
+          "line_end": 516,
           "est_tokens": 1114,
           "deps": [],
           "level": 2,
           "items": {
             "5.1": {
               "heading": "### 5.1 桌面档（≥1280px）",
-              "line_start": 386,
-              "line_end": 425,
+              "line_start": 395,
+              "line_end": 434,
               "est_tokens": 452,
               "deps": []
             },
             "5.2": {
               "heading": "### 5.2 平板档（768px ≤ vw < 1280px）",
-              "line_start": 426,
-              "line_end": 466,
+              "line_start": 435,
+              "line_end": 475,
               "est_tokens": 373,
               "deps": []
             },
             "5.3": {
               "heading": "### 5.3 移动端档（vw < 768px）",
-              "line_start": 467,
-              "line_end": 507,
+              "line_start": 476,
+              "line_end": 516,
               "est_tokens": 284,
               "deps": []
             }
@@ -4919,18 +5364,18 @@
         },
         "6": {
           "heading": "## 6. 假设清单",
-          "line_start": 508,
-          "line_end": 531,
-          "est_tokens": 849,
+          "line_start": 517,
+          "line_end": 540,
+          "est_tokens": 930,
           "deps": [],
           "level": 2,
           "items": {}
         },
         "7": {
           "heading": "## 7. Penpot 同步任务清单",
-          "line_start": 532,
-          "line_end": 547,
-          "est_tokens": 369,
+          "line_start": 541,
+          "line_end": 557,
+          "est_tokens": 446,
           "deps": [],
           "level": 2,
           "items": {}
@@ -4940,13 +5385,19 @@
         "prd-wechat-flow",
         "prd-wechat-flow-f001-f014",
         "arch-wechat-flow",
-        "arch-wechat-flow-modules"
+        "arch-wechat-flow-modules",
+        "ui-spec-wechat-flow-block-taxonomy",
+        "ui-spec-wechat-flow-content-elements",
+        "ui-spec-wechat-flow-block-variants"
       ],
       "dep_hashes": {
         "prd-wechat-flow": "0e15bcb3",
         "prd-wechat-flow-f001-f014": "aa0c9b68",
         "arch-wechat-flow": "10499df8",
-        "arch-wechat-flow-modules": "9d95d99c"
+        "arch-wechat-flow-modules": "d8991e87",
+        "ui-spec-wechat-flow-block-taxonomy": "290132ef",
+        "ui-spec-wechat-flow-content-elements": "e16f9c9c",
+        "ui-spec-wechat-flow-block-variants": "0e19dbad"
       }
     }
   },
@@ -6305,6 +6756,195 @@
         "doc_id": "dev-plan-wechat-flow-s6",
         "section": "4",
         "file_path": "docs/dev-plan/dev-plan-wechat-flow-s6.md"
+      }
+    ],
+    "T-132": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-133": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-134": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-135": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-136": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-137": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-138": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-139": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-140": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-141": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-142": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-143": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-144": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-146": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-147": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-148": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-149": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-150": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-151": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-152": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-153": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-154": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-155": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-156": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-157": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-158": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-159": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
       }
     ],
     "F-001": [

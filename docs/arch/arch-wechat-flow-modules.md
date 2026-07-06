@@ -1,6 +1,6 @@
 ---
 id: "arch-wechat-flow-modules"
-version: "0.6.1"
+version: "0.7.2"
 doc_type: arch
 author: architect
 status: approved
@@ -141,10 +141,10 @@ required_sections:
 
 ### M-005: 主题与组件注册中心
 
-- **职责**: 内置主题、Block / Mark / Variant / Token、主题装饰资产的注册与查询；Block base-style（§8.2 Q3.15 L1 层）随 `defineBlock` 注册持有、按 (blockId, variantId) 查询供 M-002 stage 5 合成；自定义样式容器 variant 双路径注册（plugin-api `defineVariant` 与 MCP API-034 `register_variant`，共享 `registry/variant.ts` 存储与 F-010 AC-005 校验链路，进程内生命周期，§8.2 Q3.16）；主题守护 9 维静态校验（含「内置 template 完整性」维度，F-011 AC-009）；主题热切换；template 作为主题命名空间下的预设变体登记（F-008）；扩展点支持第三方主题与 template pack 注册
+- **职责**: 内置主题、Block / Mark / Variant / Token、主题装饰资产的注册与查询；Block 携带 `category` 功能分类（驱动 UC-015 InsertDrawer 分类 tab 数据化）与 base-style（§8.2 Q3.15 L1 层）——base-style 随 `defineBlock` 注册持有，按 (blockId, variantId) 查询供 M-002 stage 5 合成，内置 variant 与 `default` variant 均可携带静态 base-style；自定义样式容器 variant 双路径注册（plugin-api `defineVariant` 与 MCP API-034 `register_variant`，共享 `registry/variant.ts` 存储与 F-010 AC-005 校验链路，进程内生命周期，§8.2 Q3.16）；主题守护 9 维静态校验（含「内置 template 完整性」维度，F-011 AC-009）；主题热切换；template 作为主题命名空间下的预设变体登记（F-008）；扩展点支持第三方主题与 template pack 注册
 - **映射功能**: F-003 (AC-001..AC-012) / F-008 (AC-001 注册, AC-002 白名单覆盖, AC-003 frontmatter 语义, AC-004 describe_theme/describe_template) / F-009 (AC-001 继承 + AC-002 品牌包) / F-011 (AC-003 主题守护 9 维 / AC-009 template 完整性)
 - **对外接口**: 包级 API：
-  - 主题层：`registerTheme(definition)`、`listThemes()`、`describeTheme(id)`、`listBlocks()`、`describeBlock(id)`、`listBlockVariants(blockId)`、`registerVariant({ blockId, id, label, style }) → void`（style 即该 variant 的 base-style；校验失败抛结构化错误，含被拒绝声明清单）、`getBlockBaseStyle(blockId, variantId) → Record<string, string>`（M-002 stage 5 合成入口）、`derivePalette(seed)`、`validateThemeGuard(theme) → GuardResult`
+  - 主题层：`registerTheme(definition)`、`listThemes()`、`describeTheme(id)`、`listBlocks()`、`describeBlock(id)`、`listBlockVariants(blockId)`、`registerVariant({ blockId, id, label, style }) → void`（style 即该 variant 的 base-style；校验失败抛结构化错误，含被拒绝声明清单）、`getBlockBaseStyle(blockId, variantId) → Record<string, string>`（M-002 stage 5 合成入口；解析顺序见「Block / Variant 注册契约」）、`derivePalette(seed)`、`validateThemeGuard(theme) → GuardResult`
   - **template 层（主题命名空间隔离）**：
     - `defineTemplate({ themeId, templateId, render }) → void` — 独立注册 API；与 `defineTheme.templates` 字段语义等价
     - `listThemeTemplates(themeId: string): TemplateMeta[]` — 返回该主题已注册的全部 template 元数据（轻量，不含 Markdown 正文）
@@ -191,6 +191,45 @@ required_sections:
     failingTemplates: string[];  // pass=false 的 templateId 集合
   }
   ```
+- **Block / Variant 注册契约**（schema 单源在 M-012；实现位于 `registry/block.ts` 与 `registry/variant.ts`）：
+
+  ```ts
+  type BlockCategory =
+    | 'text'        // 正文类：段落、标题、列表、引用、分隔线、代码块、表格、定义列表 等基础排版
+    | 'media'       // 媒体类：图片、图注、图集、视频、音频、二维码 等
+    | 'emphasis'    // 强调类：提示框、高亮块、警示、小技巧、拉引、免责声明 等注意力容器
+    | 'structured'  // 结构类：卡片、步骤、时间线、对比、问答 等信息骨架
+    | 'marketing'   // 营销类：CTA、订阅、推荐、小程序卡、广告卡、社交引导 等公众号运营组件
+    | 'meta';       // 元信息类：作者卡、页脚、脚注、引用出处、阅读时长 等文末/边栏元数据
+
+  interface BlockVariant {
+    id: string;
+    label?: string;
+    baseStyle?: Record<string, Record<string, string>>;  // 该内置 variant 的静态样式（slot → cssProp → cssValue），与 registerVariant 提交的 style 同构；缺省时该 variant 无 L1 静态样式
+  }
+
+  interface BlockDefinition {
+    id: string;
+    name: string;
+    category: BlockCategory;                              // required，无默认值；全部 40 个内置 block 必须声明，驱动 UC-015 InsertDrawer 分类 tab 数据化（落地 A-014 从占位约定到冻结决策，取代旧「行内 / 块级 / 标注 / 封面」4 分类临时占位）
+    attrsSchema: ZodType;
+    variants: BlockVariant[];
+    baseStyle?: Record<string, Record<string, string>>;  // block 级 default variant 的静态样式；含 baseStyle 时必含 `root` slot
+    slots: string[];                                     // 必含 `root`
+  }
+  ```
+
+  `getBlockBaseStyle(blockId, variantId)` 的 L1 base-style 解析顺序（M-002 stage 5 合成入口，与 §8.2 Q3.15 三层合成语义一致，仅解析 L1）：
+
+  1. `variantId === 'default'` → 读 `blockDef.baseStyle.root`；
+  2. `variantId` 命中 `blockDef.variants` 中某内置 variant 且该 variant 带 `baseStyle` → 读 `variant.baseStyle.root`；
+  3. 否则回退 `registry/variant.ts` 运行时 store（`registerVariant` / `defineVariant` 注册的动态样式容器 variant）→ 读 `entry.style.root`；
+  4. 均未命中 → `{}`。
+
+  内置静态 base-style 与 `registerVariant` 运行时动态样式容器 variant 两路径并存：前者在 block 定义时随 `defineBlock` 声明，后者在进程内动态注册（§8.2 Q3.16），二者经同一 `css-attr-filter` 白名单校验，L1 合成入口统一为 `getBlockBaseStyle`。
+
+- **主题 token 契约**: token 字典契约由 E-002 承载（五大类别 open record，`ThemeTokens = Record<string, string>`；个别 token 名不在 arch 层枚举，落在各主题包 `packages/themes/{theme}/src/tokens.ts`）。现有 token 字典已含 `--font-size-h1..h6`、`--color-code-bg` / `--color-code-text`（inline code）、`--font-size-sm` / `--align-text-caption`（caption 小字复用）等完整视觉槽位；Block / Markdown 基础元素视觉升级在此 open record 内新增 token 属非破坏性变更，不改 E-002 契约结构，不在 arch 层新增 token 名。
+
 - **template 命名空间隔离语义**: 主题是 template 的命名空间；同名 templateId（如各内置主题均提供的 `starter`）在不同主题下独立定义且渲染产物不同；frontmatter `theme: tech` + `template: starter` 解析为 (themeId=tech, templateId=starter) 复合键，运行时仅作为审计标记不参与渲染（PRD F-008 AC-003）
 - **内置 template 完整性下限**: 每内置主题（default / magazine / literary / business / tech）须 ≥ 1 预设 template；每 template 须 mdast 覆盖 F-003 AC-012 白名单 9 基础元素 + ≥ 6 核心 Block 容器；不达标由 `guard/nine-dimensions.ts` 在 CI 阻断发布（F-011 AC-009）
 - **内置 template 清单**: 每内置主题 `templates/` 目录下提供一份通用起步模板 `starter` 加一份场景化模板，文件名即 templateId：

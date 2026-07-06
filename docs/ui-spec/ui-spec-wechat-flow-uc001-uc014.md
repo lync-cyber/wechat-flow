@@ -1,10 +1,10 @@
 ---
 id: "ui-spec-wechat-flow-uc001-uc014"
-version: "0.2.1"
+version: "0.3.0"
 doc_type: ui-spec
 author: ui-designer
 status: approved
-deps: ["prd-wechat-flow", "prd-wechat-flow-f001-f014", "arch-wechat-flow", "arch-wechat-flow-modules"]
+deps: ["prd-wechat-flow", "prd-wechat-flow-f001-f014", "arch-wechat-flow", "arch-wechat-flow-modules", "ui-spec-wechat-flow-block-taxonomy"]
 consumers: [tech-lead, developer]
 volume: components
 volume_type: components
@@ -550,8 +550,9 @@ before/after HTML 片段由 M-003 过滤规则集引擎在执行过滤时记录�
 
 **内部结构**：
 - 标题行（高 `48px`）：「插入组件」标题（16px, semibold）+ 右侧关闭按钮（UC-003 ghost）
-- 分类 Tab 行（高 `40px`）：`[ASSUMPTION]` 按 directive 类型分四组「行内」/「块级」/「标注」/「封面」 — 分组依据为 directive 在编辑器内的渲染位置（inline / block / mark / cover），与 ARCH M-001 BlockRegistry 实际类型枚举可能存在偏差，dev-plan T-024 BlockRegistry 冻结后修订本字段；当前 4 分类为临时占位，不应硬编码到代码
-- 组件列表（剩余高度，可滚动）：每项为 UC-008 BlockLibItem 规格，含图标 + 名称 + 简述
+- 搜索框（高 `36px`）：跨分类过滤 Block 列表，占位符「搜索组件…」，与分类 Tab 联动（搜索时不切换当前 Tab，在当前 Tab 结果内过滤；清空搜索恢复该 Tab 全量列表）
+- 分类 Tab 行（高 `40px`）：6 个分类 Tab，数据驱动自 `BlockDefinition.category`（`BlockCategory` 6 值枚举），前端仅硬编码 `category` → 中文标签映射，不硬编码分类清单本身。Tab 顺序即枚举声明顺序：`text`「基础排版」/ `media`「图文媒体」/ `emphasis`「强调提示」/ `structured`「结构化」/ `marketing`「运营引流」/ `meta`「元信息」；无「全部」Tab（6 分类已完整覆盖全部 40 个内置 Block，搜索框承担跨分类检索需求）；默认选中第一个 Tab（`text`）；切换 Tab 即时过滤下方组件列表，不做加载态（本地静态数据，无网络延迟）。权威分类映射表见 `ui-spec-wechat-flow-block-taxonomy#§8`
+- 组件列表（剩余高度，可滚动）：每项为 UC-008 BlockLibItem 规格，含图标 + 名称 + 简述，仅展示当前选中 Tab 对应 `category` 的 Block（叠加搜索框过滤条件）
 - 底部参数表单区（高度 auto，当选中某组件后展开）：显示该 directive 的可配置参数（key-value 表单行，UC-003 风格的输入控件）+ 实时预览（小型 iframe 沙箱，宽度适配抽屉，高 `120px`，展示该组件当前参数下的渲染效果）
 
 **状态**：
@@ -774,7 +775,7 @@ before/after HTML 片段由 M-003 过滤规则集引擎在执行过滤时记录�
 
 **内部结构**：
 - 顶部搜索框（高 `36px`，与编辑器当前输入同步过滤，`--font-mono`）
-- 分类标签行（高 `32px`，水平滚动）：`[ASSUMPTION]` 行内 / 块级 / 标注 / 封面 — 依 BlockRegistry 冻结后修订
+- 分类标签行（高 `32px`，水平滚动）：6 个分类标签，数据驱动自 `BlockDefinition.category`，与 UC-015 InsertDrawer 共用同一 `category` → 中文标签映射与顺序（`text`「基础排版」/ `media`「图文媒体」/ `emphasis`「强调提示」/ `structured`「结构化」/ `marketing`「运营引流」/ `meta`「元信息」）；点击标签过滤下方组件列表，与顶部搜索框叠加生效；权威分类映射表见 `ui-spec-wechat-flow-block-taxonomy#§8`
 - 组件列表（可滚动）：每项（高 `36px`）= Block 类型图标（16px）+ Block 名称（14px）+ variant 数量角标
 - 选中某 Block 后展开二级 variant 选择（替换列表区）：variant 名列表 + 实时参数表单（key-value 输入，最多 3 项；超过 3 项自动附加「在 InsertDrawer 中配置」链接）
 
