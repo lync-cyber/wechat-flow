@@ -61,7 +61,7 @@ export {
   onRegistryReset,
   resetBlockRegistry,
 } from "./registry/block.ts";
-export type { BlockDefinition, BlockVariant } from "./registry/block.ts";
+export type { BlockCategory, BlockDefinition, BlockVariant } from "./registry/block.ts";
 export {
   registerMark,
   listMarks,
