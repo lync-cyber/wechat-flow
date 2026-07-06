@@ -12,7 +12,9 @@ export const divider = defineBlock(
   [
     { id: "default", label: "细线分隔" },
     { id: "thick", label: "粗线分隔" },
-    { id: "decorative", label: "装饰分隔" },
+    { id: "wave", label: "波浪分隔" },
+    { id: "dots", label: "圆点分隔" },
+    { id: "flower", label: "花饰分隔" },
     { id: "dotted", label: "点线分隔" },
     { id: "dashed", label: "虚线分隔" },
   ]

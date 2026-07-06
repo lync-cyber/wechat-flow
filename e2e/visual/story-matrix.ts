@@ -147,7 +147,7 @@ const COMPOSITE_MARKDOWNS: readonly string[] = [
 
   // 7: divider + paragraph + quote + card
   [
-    ":::divider{class=decorative}",
+    ":::divider{class=wave}",
     ":::",
     "",
     "Introductory paragraph before the quote.",

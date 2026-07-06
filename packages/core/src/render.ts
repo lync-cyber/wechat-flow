@@ -3,6 +3,7 @@ import { applyRuleset, builtinRules, getRulesetVersion } from "@wechat-flow/rule
 import { contextAwareRender } from "./pipeline/context-aware-renderer.ts";
 import { applyCustomCss } from "./pipeline/custom-css.ts";
 import { injectDecorations } from "./pipeline/decoration-injector.ts";
+import { injectDividerDecorations } from "./pipeline/divider-decoration.ts";
 import { parseFrontmatter } from "./pipeline/frontmatter.ts";
 import { inlineStyle } from "./pipeline/inline-style.ts";
 import { injectNodeIds } from "./pipeline/node-id-injector.ts";
@@ -58,6 +59,7 @@ export async function renderMarkdown(
   const mdast = parseMarkdown(content);
   const transformDiagnostics: Diagnostic[] = [];
   let hast = transformToHast(mdast, transformDiagnostics);
+  hast = injectDividerDecorations(hast, effectiveTheme);
   hast = sanitizeHast(hast, wechatFlowSanitizeSchema);
 
   const rules = options?.rules !== undefined ? options.rules : builtinRules;
