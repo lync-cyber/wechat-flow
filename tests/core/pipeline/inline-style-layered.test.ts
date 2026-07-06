@@ -72,10 +72,10 @@ describe("AC-T120-002 regression-guard: tag-path 字节不变（无 customCss，
   // representative markdown does not use container directives. Any change here means
   // the L1⊕L2 refactor has broken the tag-path output — that is a bug, not a feature.
   const BASELINE_HASHES: Record<string, string> = {
-    default: "726c9149c24c23b30f9c93a30241ed5bfeb54ea5b9499cad0b29cd5788b75ee8",
+    default: "95b8ef48c3213ff424f0b6f1d89e33eb22eaa80474823a48cf1e0e911333cf14",
     magazine: "68aaa0da5ed43ab5e3d36d662c4ab60b2042274bc7fd9d802b510637a52fce91",
-    literary: "352adc89235d3c310fb8f61c82cf6536753f52da3aad3979f06dda73717460ad",
-    business: "d4f1f2ce1dd2048810cae287504eb71713e9aae07e7d0b06e2de3980ba2267da",
+    literary: "08b331e97fa36f8850970814b0065075123e0b83f071808a291f5ee0d1bf466c",
+    business: "d0748dd5b09e48b3a77c6feb94735b8ea76fbd33a028263c31197299278e3ea7",
     tech: "f911dfec755b57315d47e75368d02f80a6bffa524e9430d1015a56bfe3047834",
   };
 

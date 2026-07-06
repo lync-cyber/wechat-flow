@@ -1,4 +1,5 @@
 import type { Element, Root as HastRoot, Properties } from "hast";
+import { describeBlock } from "../registry/block.ts";
 import { getBlockBaseStyle } from "../registry/variant.ts";
 import { sortedEntries } from "../utils/deterministic.ts";
 import { filterCssAttrs } from "./css-attr-filter.ts";
@@ -73,6 +74,12 @@ const DEFAULT_TOKENS: BlockStyleTable = {
   },
 };
 
+function getPullQuoteSlotStyle(slot: string): Record<string, string> {
+  const def = describeBlock("pull-quote");
+  const decorated = def?.variants.find((v) => v.id === "decorated");
+  return decorated?.baseStyle?.[slot] ?? {};
+}
+
 function stripClassFromProperties(props: Properties): Properties {
   const next: Properties = {};
   for (const [key, val] of Object.entries(props)) {
@@ -102,8 +109,12 @@ function applyInlineStyles(
 
     let tagStyle: string;
 
+    const pullQuoteSlot = propsWithoutClass["data-pull-quote-slot"];
     const dataBlock = propsWithoutClass["data-block"];
-    if (typeof dataBlock === "string" && dataBlock.length > 0) {
+    if (typeof pullQuoteSlot === "string" && pullQuoteSlot.length > 0) {
+      const slotStyle = getPullQuoteSlotStyle(pullQuoteSlot);
+      tagStyle = Object.keys(slotStyle).length > 0 ? serializeDeclarations(slotStyle) : "";
+    } else if (typeof dataBlock === "string" && dataBlock.length > 0) {
       // Container block path: L1 ⊕ L2
       const variantId =
         typeof propsWithoutClass["data-variant"] === "string"
@@ -136,6 +147,9 @@ function applyInlineStyles(
     const filteredStyle = mergedStyle ? filterCssAttrs(mergedStyle) : "";
 
     const newProps: Properties = { ...propsWithoutClass };
+    if (typeof pullQuoteSlot === "string" && pullQuoteSlot.length > 0) {
+      newProps["data-pull-quote-slot"] = undefined;
+    }
     if (filteredStyle) {
       newProps.style = filteredStyle;
     } else {

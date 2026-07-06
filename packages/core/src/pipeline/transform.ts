@@ -1,5 +1,5 @@
 import type { Diagnostic } from "@wechat-flow/contracts";
-import type { Root as HastRoot } from "hast";
+import type { Element, Root as HastRoot } from "hast";
 import type { Root as MdastRoot, Node } from "mdast";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
@@ -75,6 +75,14 @@ function visitContainerDirectives(tree: MdastRoot, diagnostics: Diagnostic[] | u
         "data-block": name,
         "data-variant": variant,
       };
+
+      if (name === "pull-quote" && variant === "decorated") {
+        const author = directive.attributes?.author;
+        if (typeof author === "string" && author.trim() !== "") {
+          (directive.data.hProperties as Record<string, unknown>)["data-pull-quote-author"] =
+            author;
+        }
+      }
     }
     const parent = node as { children?: Node[] };
     if (parent.children) {
@@ -88,8 +96,60 @@ function visitContainerDirectives(tree: MdastRoot, diagnostics: Diagnostic[] | u
 
 const rehypeProcessor = unified().use(remarkRehype, { allowDangerousHtml: false }).freeze();
 
+function buildPullQuoteDecoration(authorText: string): [quoteMark: Element, author: Element] {
+  const quoteMark: Element = {
+    type: "element",
+    tagName: "span",
+    properties: { "data-pull-quote-slot": "quote-mark" },
+    children: [{ type: "text", value: "「" }],
+  };
+
+  const author: Element = {
+    type: "element",
+    tagName: "div",
+    properties: { "data-pull-quote-slot": "author" },
+    children: [{ type: "text", value: authorText }],
+  };
+
+  return [quoteMark, author];
+}
+
+function injectPullQuoteDecorations(hast: HastRoot): HastRoot {
+  function walk(node: Element): Element {
+    const props = node.properties ?? {};
+    const authorText = props["data-pull-quote-author"];
+    const newChildren = node.children.map((child) =>
+      child.type === "element" ? walk(child as Element) : child
+    );
+
+    if (
+      props["data-block"] === "pull-quote" &&
+      props["data-variant"] === "decorated" &&
+      typeof authorText === "string"
+    ) {
+      const [quoteMark, author] = buildPullQuoteDecoration(authorText);
+      const { "data-pull-quote-author": _stash, ...restProps } = props;
+      return {
+        ...node,
+        properties: restProps,
+        children: [quoteMark, ...newChildren, author],
+      };
+    }
+
+    return { ...node, children: newChildren };
+  }
+
+  return {
+    ...hast,
+    children: hast.children.map((child) =>
+      child.type === "element" ? walk(child as Element) : child
+    ),
+  };
+}
+
 export function transformToHast(mdast: MdastRoot, diagnostics?: Diagnostic[]): HastRoot {
   visitTextDirectives(mdast);
   visitContainerDirectives(mdast, diagnostics);
-  return rehypeProcessor.runSync(mdast) as HastRoot;
+  const hast = rehypeProcessor.runSync(mdast) as HastRoot;
+  return injectPullQuoteDecorations(hast);
 }

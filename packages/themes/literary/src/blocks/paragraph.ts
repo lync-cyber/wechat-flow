@@ -12,12 +12,6 @@ export const paragraphBlocks: ThemeBlocks = {
       "text-align": "justify",
     },
   },
-  strong: {
-    default: {
-      "font-weight": "700",
-      color: "#2C1F0A",
-    },
-  },
   em: {
     default: {
       "font-style": "italic",

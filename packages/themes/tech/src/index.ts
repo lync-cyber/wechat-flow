@@ -1,6 +1,7 @@
 import type { ThemeDefinition } from "@wechat-flow/contracts";
 import { codeBlocks } from "./blocks/code-block.ts";
 import { dividerBlocks } from "./blocks/divider.ts";
+import { emphasisBlocks } from "./blocks/emphasis.ts";
 import { headingBlocks } from "./blocks/heading.ts";
 import { listBlocks } from "./blocks/list.ts";
 import { mediaBlocks } from "./blocks/media.ts";
@@ -17,6 +18,7 @@ const techTheme: ThemeDefinition = {
   blocks: {
     ...headingBlocks,
     ...paragraphBlocks,
+    ...emphasisBlocks,
     ...quoteBlocks,
     ...codeBlocks,
     ...dividerBlocks,

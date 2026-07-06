@@ -1,4 +1,5 @@
 import type { ThemeBlocks } from "@wechat-flow/contracts";
+import { tokens } from "../tokens.ts";
 
 export const codeBlocks: ThemeBlocks = {
   code: {
@@ -14,7 +15,9 @@ export const codeBlocks: ThemeBlocks = {
   pre: {
     default: {
       "font-family": "'JetBrains Mono', 'Fira Code', monospace",
-      "background-color": "#EEF2F7",
+      get "background-color"() {
+        return tokens["--color-code-block-bg"];
+      },
       color: "#0D1B2A",
       padding: "12px 16px",
       "border-radius": "4px",

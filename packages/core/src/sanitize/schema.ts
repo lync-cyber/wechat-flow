@@ -5,7 +5,13 @@ export const wechatFlowSanitizeSchema: Schema = {
   ...defaultSchema,
   attributes: {
     ...defaultSchema.attributes,
-    "*": [...(defaultSchema.attributes?.["*"] ?? []), "style", "data-block", "data-variant"],
+    "*": [
+      ...(defaultSchema.attributes?.["*"] ?? []),
+      "style",
+      "data-block",
+      "data-variant",
+      "data-pull-quote-slot",
+    ],
   },
 };
 
