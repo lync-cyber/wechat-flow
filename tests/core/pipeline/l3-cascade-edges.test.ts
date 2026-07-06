@@ -45,6 +45,7 @@ describe("M-005 注册守护边界", () => {
       registerBlock({
         id: "edge-block",
         name: "Edge",
+        category: "structured",
         attrsSchema: z.object({}),
         variants: [{ id: "default" }],
         baseStyle: { title: { color: "#000000" } },
@@ -90,6 +91,7 @@ describe("inline-style 容器路径边界", () => {
     registerBlock({
       id: "edge-blk",
       name: "EdgeBlk",
+      category: "structured",
       attrsSchema: z.object({}),
       variants: [{ id: "default" }],
       baseStyle: { root: { color: "#abcdef" } },
@@ -110,6 +112,7 @@ describe("inline-style 容器路径边界", () => {
     registerBlock({
       id: "edge-blk2",
       name: "EdgeBlk2",
+      category: "structured",
       attrsSchema: z.object({}),
       variants: [{ id: "default" }],
       baseStyle: { root: { color: "#111111", padding: "8px" } },

@@ -8,6 +8,7 @@ export function describeBlockTool(args: Record<string, unknown>) {
   return {
     id: block.id,
     name: block.name,
+    category: block.category,
     attrsSchema: z.toJSONSchema(block.attrsSchema),
     variants: block.variants,
     baseStyle: block.baseStyle,

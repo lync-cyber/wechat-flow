@@ -277,6 +277,7 @@ describe("AC-004: BlockLibItem onInsert 回调", () => {
     const block = {
       id: "heading",
       name: "标题",
+      category: "text" as const,
       attrsSchema: z.object({}),
       variants: [],
       slots: ["root"],
@@ -298,6 +299,7 @@ describe("AC-004: BlockLibItem onInsert 回调", () => {
     const block = {
       id: "heading",
       name: "标题块",
+      category: "text" as const,
       attrsSchema: z.object({}),
       variants: [
         { id: "v1", label: "皮肤1" },
@@ -319,6 +321,7 @@ describe("AC-004: BlockLibItem onInsert 回调", () => {
     const block = {
       id: "heading",
       name: "标题",
+      category: "text" as const,
       attrsSchema: z.object({}),
       variants: [{ id: "v1" }, { id: "v2" }, { id: "v3" }],
       slots: ["root"],
@@ -341,6 +344,7 @@ describe("AC-004: LeftPanelTabs 内 BlockLibItem 插入接线", () => {
     registerBlock({
       id: "heading",
       name: "标题",
+      category: "text",
       attrsSchema: z.object({}),
       variants: [],
       slots: ["root"],

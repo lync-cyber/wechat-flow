@@ -120,6 +120,27 @@ describe("describe_mark / lint_markdown 边界路径", () => {
   });
 });
 
+// ---- AC-002 (T-135): describe_block(callout) → category 字段与注册值一致 ----
+
+describe("AC-002: describe_block(callout) includes category matching registration", () => {
+  it("describeBlockTool({ blockId: 'callout' }) has category 'emphasis'", () => {
+    const result = describeBlockTool({ blockId: "callout" }) as Record<string, unknown>;
+    expect(result).toHaveProperty("category");
+    expect(result.category).toBe("emphasis");
+  });
+});
+
+// ---- AC-003 (T-135): describe_block 未注册 blockId → E_NOT_FOUND 结构不受 category 新增影响 ----
+
+describe("AC-003: describe_block unknown blockId still returns E_NOT_FOUND shape", () => {
+  it("describeBlockTool({ blockId: 'no-such-block' }) returns { code: 'E_NOT_FOUND', blockId }", () => {
+    const result = describeBlockTool({ blockId: "no-such-block" }) as Record<string, unknown>;
+    expect(result.code).toBe("E_NOT_FOUND");
+    expect(result.blockId).toBe("no-such-block");
+    expect(result).not.toHaveProperty("category");
+  });
+});
+
 // ---- E2E: list_themes via callTool → content 解析后数组≥5 ----
 
 describe("E2E: list_themes via InMemoryTransport + callTool", () => {
