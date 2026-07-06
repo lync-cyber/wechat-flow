@@ -3,8 +3,8 @@ import type { Element, Root as HastRoot } from "hast";
 
 const DIVIDER_SVG_VARIANTS = new Set(["wave", "dots", "flower"]);
 
-function svgStyle(margin: string): string {
-  return `display: block; margin: ${margin} auto`;
+function svgStyle(verticalMargin: string): string {
+  return `display: block; margin: ${verticalMargin} auto`;
 }
 
 function buildWaveSvg(colorBorder: string): Element {
@@ -13,7 +13,7 @@ function buildWaveSvg(colorBorder: string): Element {
     tagName: "svg",
     properties: {
       viewBox: "0 0 240 20",
-      style: svgStyle("24px 0"),
+      style: svgStyle("24px"),
     },
     children: [
       {
@@ -37,7 +37,7 @@ function buildDotsSvg(colorBorderStrong: string): Element {
     tagName: "svg",
     properties: {
       viewBox: "0 0 60 10",
-      style: svgStyle("20px 0"),
+      style: svgStyle("20px"),
     },
     children: [20, 30, 40].map((cx) => ({
       type: "element",
@@ -54,7 +54,7 @@ function buildFlowerSvg(colorBorder: string, colorBrand: string): Element {
     tagName: "svg",
     properties: {
       viewBox: "0 0 200 20",
-      style: svgStyle("24px 0"),
+      style: svgStyle("24px"),
     },
     children: [
       {

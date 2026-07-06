@@ -3,7 +3,7 @@ import type { BlockCategory, BlockDefinition } from "@wechat-flow/core";
 import { listBlocks } from "@wechat-flow/core";
 import { computed, ref, watch } from "vue";
 import BlockLibItem from "./BlockLibItem.vue";
-import { CATEGORY_LABELS, CATEGORY_ORDER } from "./CATEGORY_LABELS.ts";
+import { CATEGORY_LABELS, CATEGORY_ORDER } from "./category-labels.ts";
 
 const props = defineProps<{
   isOpen: boolean;

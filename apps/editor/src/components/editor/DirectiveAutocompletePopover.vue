@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import type { BlockDefinition } from "@wechat-flow/core";
+import type { BlockCategory, BlockDefinition } from "@wechat-flow/core";
 import type { MarkDefinition } from "@wechat-flow/core";
 import { computed, ref, watch } from "vue";
 import type { SnippetOptions } from "../../editor/extensions/directive-completion.ts";
 import { buildCandidates } from "../../editor/extensions/directive-completion.ts";
 import { blockGlyph } from "../common/block-glyphs.ts";
+import { CATEGORY_LABELS, CATEGORY_ORDER } from "../panel/category-labels.ts";
 
 const props = defineProps<{
   isOpen: boolean;
@@ -24,6 +25,7 @@ const activeTab = ref<"block" | "inline">(props.triggerType);
 const selectedBlock = ref<BlockDefinition | null>(null);
 const selectedVariantId = ref<string | null>(null);
 const paramValues = ref<Record<string, string>>({});
+const activeCategory = ref<BlockCategory | null>(null);
 
 function resetSelection(): void {
   selectedBlock.value = null;
@@ -35,6 +37,7 @@ watch(
   () => props.triggerType,
   (triggerType) => {
     activeTab.value = triggerType;
+    activeCategory.value = null;
     resetSelection();
   }
 );
@@ -52,6 +55,7 @@ watch(
     if (!open) {
       resetSelection();
       activeTab.value = props.triggerType;
+      activeCategory.value = null;
     }
   }
 );
@@ -64,8 +68,23 @@ const tabs = computed<Array<{ id: "block" | "inline"; label: string }>>(() => {
   return result;
 });
 
+const availableCategories = computed<BlockCategory[]>(() => {
+  const present = new Set(props.blocks.map((b) => b.category));
+  return CATEGORY_ORDER.filter((c) => present.has(c));
+});
+
+function selectCategory(category: BlockCategory): void {
+  activeCategory.value = activeCategory.value === category ? null : category;
+}
+
+const categoryFilteredBlocks = computed(() =>
+  activeCategory.value === null
+    ? props.blocks
+    : props.blocks.filter((b) => b.category === activeCategory.value)
+);
+
 const candidates = computed(() =>
-  buildCandidates(activeTab.value, props.currentInput, props.blocks, props.marks)
+  buildCandidates(activeTab.value, props.currentInput, categoryFilteredBlocks.value, props.marks)
 );
 
 watch(candidates, () => {
@@ -181,6 +200,24 @@ function handleOpenInsertDrawer(): void {
           @click="activeTab = tab.id"
         >
           {{ tab.label }}
+        </button>
+      </div>
+      <div
+        v-if="activeTab === 'block'"
+        class="dap__category-row"
+        data-testid="autocomplete-category-row"
+        :style="{ height: '32px' }"
+      >
+        <button
+          v-for="category in availableCategories"
+          :key="category"
+          type="button"
+          class="dap__category-tab"
+          :class="{ 'dap__category-tab--active': activeCategory === category }"
+          :data-testid="`autocomplete-category-tab-${category}`"
+          @click="selectCategory(category)"
+        >
+          {{ CATEGORY_LABELS[category] }}
         </button>
       </div>
       <div class="dap__list">
@@ -331,6 +368,34 @@ function handleOpenInsertDrawer(): void {
   font-size: var(--font-size-sm, 13px);
   color: var(--color-text-secondary, #8a7d6b);
   white-space: nowrap;
+}
+
+.dap__category-row {
+  height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  padding: 0 var(--space-3, 12px);
+  border-bottom: 1px solid var(--color-border-subtle, #e8e4dc);
+  overflow-x: auto;
+}
+
+.dap__category-tab {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: 0 var(--space-1, 4px);
+  height: 100%;
+  cursor: pointer;
+  font-size: var(--font-size-xs, 11px);
+  color: var(--color-text-secondary, #8a7d6b);
+  white-space: nowrap;
+}
+
+.dap__category-tab--active {
+  color: var(--color-brand, #2d5a4e);
+  font-weight: var(--font-weight-semibold, 600);
 }
 
 .dap__tab--active {

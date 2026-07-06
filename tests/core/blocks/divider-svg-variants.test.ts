@@ -148,24 +148,65 @@ describe("AC-006: 三变体 <svg> 外层计算样式 display=block 且 margin �
     return svgMatch?.[1] ?? "";
   }
 
-  it("wave 变体 <svg> 计算样式 display=block 且 margin=24px 0", async () => {
+  it("wave 变体 <svg> 计算样式精确等于 display: block; margin: 24px auto", async () => {
     const html = await renderDivider("wave");
     const style = extractSvgStyle(html);
-    expect(style).toContain("display: block");
-    expect(style).toContain("margin: 24px 0");
+    expect(style).toBe("display: block; margin: 24px auto");
   });
 
-  it("dots 变体 <svg> 计算样式 display=block 且 margin=20px 0", async () => {
+  it("dots 变体 <svg> 计算样式精确等于 display: block; margin: 20px auto", async () => {
     const html = await renderDivider("dots");
     const style = extractSvgStyle(html);
-    expect(style).toContain("display: block");
-    expect(style).toContain("margin: 20px 0");
+    expect(style).toBe("display: block; margin: 20px auto");
   });
 
-  it("flower 变体 <svg> 计算样式 display=block 且 margin=24px 0", async () => {
+  it("flower 变体 <svg> 计算样式精确等于 display: block; margin: 24px auto", async () => {
     const html = await renderDivider("flower");
     const style = extractSvgStyle(html);
-    expect(style).toContain("display: block");
-    expect(style).toContain("margin: 24px 0");
+    expect(style).toBe("display: block; margin: 24px auto");
+  });
+});
+
+describe("R-002: 非 SVG 变体不受 divider-decoration stage 影响", () => {
+  it.each(["default", "thick"] as const)("%s 变体渲染结果不含 <svg> 标签", async (variantId) => {
+    const html = await renderDivider(variantId);
+    const container = extractDividerContainer(html);
+    expect(container).not.toBeNull();
+    expect(container).not.toContain("<svg");
+  });
+});
+
+describe("R-002: 无主题时 SVG 变体使用硬编码 fallback 色值", () => {
+  async function renderDividerWithoutTheme(variantId: string): Promise<string> {
+    const result = await renderMarkdown(`:::divider{.${variantId}}\n:::`);
+    return result.html;
+  }
+
+  it("省略 themeId 渲染 wave 变体，path stroke 等于 fallback --color-border #D6D3CE", async () => {
+    const html = await renderDividerWithoutTheme("wave");
+    const container = extractDividerContainer(html) ?? "";
+    const pathMatch = container.match(/<path[^>]*d="M0,10 C40,2[^"]*"[^>]*>/);
+    expect(pathMatch).not.toBeNull();
+    const strokeMatch = pathMatch?.[0].match(/stroke="([^"]*)"/);
+    expect(strokeMatch?.[1]).toBe(DEFAULT_COLOR_BORDER);
+  });
+
+  it("省略 themeId 渲染 dots 变体，circle fill 等于 fallback --color-border-strong #A8A29E", async () => {
+    const html = await renderDividerWithoutTheme("dots");
+    const container = extractDividerContainer(html) ?? "";
+    const circleMatches = container.match(/<circle[^>]*>/g) ?? [];
+    expect(circleMatches.length).toBe(3);
+    for (const tag of circleMatches) {
+      expect(tag.match(/fill="([^"]*)"/)?.[1]).toBe(DEFAULT_COLOR_BORDER_STRONG);
+    }
+  });
+
+  it("省略 themeId 渲染 flower 变体，花瓣 fill 等于 fallback --color-brand #2D5A4E", async () => {
+    const html = await renderDividerWithoutTheme("flower");
+    const container = extractDividerContainer(html) ?? "";
+    const petalMatches = container.match(/<(path|polygon)[^>]*>/g) ?? [];
+    expect(petalMatches.length).toBe(1);
+    const petalTag = petalMatches[0] ?? "";
+    expect(petalTag.match(/fill="([^"]*)"/)?.[1]).toBe(DEFAULT_COLOR_BRAND);
   });
 });

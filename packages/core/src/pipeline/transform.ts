@@ -321,6 +321,80 @@ function buildStepsCardList(ul: Element): Element[] {
   return listItems.map((li, index) => buildStepCard(li, index === listItems.length - 1));
 }
 
+const GALLERY_COLUMNS_BY_VARIANT: Record<string, number> = {
+  duo: 2,
+  triptych: 3,
+  grid: 2,
+  masonry: 3,
+  carousel: 3,
+};
+
+function buildGalleryCell(img: Element): Element {
+  const props = img.properties ?? {};
+  const caption = props.title;
+
+  const imageEl: Element = {
+    type: "element",
+    tagName: "img",
+    properties: { "data-block-slot": "image", src: props.src, alt: props.alt ?? "" },
+    children: [],
+  };
+
+  const cellChildren: Element[] = [imageEl];
+  if (typeof caption === "string" && caption.trim() !== "") {
+    cellChildren.push({
+      type: "element",
+      tagName: "div",
+      properties: { "data-block-slot": "caption" },
+      children: [{ type: "text", value: caption }],
+    });
+  }
+
+  return {
+    type: "element",
+    tagName: "div",
+    properties: { "data-block-slot": "cell" },
+    children: cellChildren,
+  };
+}
+
+function extractGalleryImages(ul: Element): Element[] {
+  const listItems = ul.children.filter(
+    (child): child is Element => child.type === "element" && child.tagName === "li"
+  );
+  const images: Element[] = [];
+  for (const li of listItems) {
+    for (const child of li.children) {
+      if (child.type === "element" && child.tagName === "img") {
+        images.push(child);
+      } else if (child.type === "element" && child.tagName === "p") {
+        const nestedImg = child.children.find(
+          (grandchild): grandchild is Element =>
+            grandchild.type === "element" && grandchild.tagName === "img"
+        );
+        if (nestedImg) images.push(nestedImg);
+      }
+    }
+  }
+  return images;
+}
+
+function buildGalleryRows(ul: Element, variant: string): Element[] {
+  const columns = GALLERY_COLUMNS_BY_VARIANT[variant] ?? 2;
+  const images = extractGalleryImages(ul);
+  const rows: Element[] = [];
+  for (let i = 0; i < images.length; i += columns) {
+    const group = images.slice(i, i + columns);
+    rows.push({
+      type: "element",
+      tagName: "div",
+      properties: { "data-block-slot": "row" },
+      children: group.map((img) => buildGalleryCell(img)),
+    });
+  }
+  return rows;
+}
+
 type DialogSide = "left" | "right";
 
 function buildDialogAvatar(src: string, side: DialogSide): Element {
@@ -390,6 +464,24 @@ function injectContainerDecorations(hast: HastRoot): HastRoot {
     const authorText = props["data-pull-quote-author"];
     const quoteDecoration = props["data-quote-decoration"];
     const paragraphDecoration = props["data-paragraph-decoration"];
+
+    if (props["data-block"] === "gallery" && typeof props["data-variant"] === "string") {
+      const authoredVariant = props["data-variant"];
+      const effectiveVariant =
+        GALLERY_COLUMNS_BY_VARIANT[authoredVariant] === 3 ? "triptych" : "duo";
+      const ul = node.children.find(
+        (child): child is Element => child.type === "element" && child.tagName === "ul"
+      );
+      if (ul) {
+        const rows = buildGalleryRows(ul, authoredVariant);
+        const { "data-block": _block, "data-variant": _variant, ...restProps } = props;
+        return {
+          ...node,
+          properties: { ...restProps, "data-block": "gallery", "data-variant": effectiveVariant },
+          children: rows,
+        };
+      }
+    }
 
     if (props["data-block"] === "steps" && props["data-variant"] === "card") {
       const ul = node.children.find(

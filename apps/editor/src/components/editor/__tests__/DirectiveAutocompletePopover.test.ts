@@ -3,6 +3,7 @@ import type { BlockDefinition, MarkDefinition } from "@wechat-flow/core";
 import { describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
 import { z } from "zod";
+import { CATEGORY_LABELS, CATEGORY_ORDER } from "../../panel/category-labels.ts";
 import DirectiveAutocompletePopover from "../DirectiveAutocompletePopover.vue";
 
 const BLOCKS: BlockDefinition[] = [
@@ -17,6 +18,14 @@ const BLOCKS: BlockDefinition[] = [
   {
     id: "heading",
     name: "标题",
+    category: "text",
+    attrsSchema: z.object({ text: z.string() }),
+    variants: [],
+    slots: ["root"],
+  },
+  {
+    id: "quote",
+    name: "引用",
     category: "text",
     attrsSchema: z.object({ text: z.string() }),
     variants: [],
@@ -62,6 +71,137 @@ describe("UC-021 守护: block/inline 触发类型行为不因 UC-015 InsertDraw
 
     const items = wrapper.findAll('[data-testid="autocomplete-item"]');
     expect(items.length).toBe(MARKS.length);
+    wrapper.unmount();
+  });
+});
+
+describe("UC-021 分类标签行: 数据驱动派生、点击过滤、与搜索叠加", () => {
+  it("triggerType=block 时渲染分类标签行，标签集合仅含 blocks 实际出现的 category（顺序=CATEGORY_ORDER）", async () => {
+    const wrapper = mount(DirectiveAutocompletePopover, { props: defaultProps() });
+    await nextTick();
+
+    const row = wrapper.find('[data-testid="autocomplete-category-row"]');
+    expect(row.exists()).toBe(true);
+
+    const present = new Set(BLOCKS.map((b) => b.category));
+    const expectedOrder = CATEGORY_ORDER.filter((c) => present.has(c));
+    const tabs = wrapper.findAll('[data-testid^="autocomplete-category-tab-"]');
+    const order = tabs.map((t) =>
+      t.attributes("data-testid")?.replace("autocomplete-category-tab-", "")
+    );
+    expect(order).toEqual(expectedOrder);
+    wrapper.unmount();
+  });
+
+  it("分类标签文案取自与 UC-015 共用的 CATEGORY_LABELS 映射", async () => {
+    const wrapper = mount(DirectiveAutocompletePopover, { props: defaultProps() });
+    await nextTick();
+
+    const textTab = wrapper.find('[data-testid="autocomplete-category-tab-text"]');
+    expect(textTab.exists()).toBe(true);
+    expect(textTab.text()).toContain(CATEGORY_LABELS.text);
+
+    const emphasisTab = wrapper.find('[data-testid="autocomplete-category-tab-emphasis"]');
+    expect(emphasisTab.exists()).toBe(true);
+    expect(emphasisTab.text()).toContain(CATEGORY_LABELS.emphasis);
+    wrapper.unmount();
+  });
+
+  it("分类标签行高 32px", async () => {
+    const wrapper = mount(DirectiveAutocompletePopover, { props: defaultProps() });
+    await nextTick();
+
+    const row = wrapper.find('[data-testid="autocomplete-category-row"]');
+    const el = row.element as HTMLElement;
+    const height = el.style.height || getComputedStyle(el).height;
+    expect(height).toBe("32px");
+    wrapper.unmount();
+  });
+
+  it("默认不过滤分类，列表显示全部 block 候选", async () => {
+    const wrapper = mount(DirectiveAutocompletePopover, { props: defaultProps() });
+    await nextTick();
+
+    const items = wrapper.findAll('[data-testid="autocomplete-item"]');
+    expect(items.length).toBe(BLOCKS.length);
+    wrapper.unmount();
+  });
+
+  it("点击某分类标签后列表仅显示该分类 block，标签呈激活态", async () => {
+    const wrapper = mount(DirectiveAutocompletePopover, { props: defaultProps() });
+    await nextTick();
+
+    await wrapper.find('[data-testid="autocomplete-category-tab-text"]').trigger("click");
+    await nextTick();
+
+    const textTab = wrapper.find('[data-testid="autocomplete-category-tab-text"]');
+    expect(textTab.classes()).toContain("dap__category-tab--active");
+
+    const items = wrapper.findAll('[data-testid="autocomplete-item"]');
+    expect(items.length).toBe(2);
+    const names = items.map((i) => i.text());
+    expect(names.some((n) => n.includes("标题"))).toBe(true);
+    expect(names.some((n) => n.includes("引用"))).toBe(true);
+    expect(names.some((n) => n.includes("提示框"))).toBe(false);
+    wrapper.unmount();
+  });
+
+  it("再次点击已激活分类标签取消过滤，恢复全量列表", async () => {
+    const wrapper = mount(DirectiveAutocompletePopover, { props: defaultProps() });
+    await nextTick();
+
+    await wrapper.find('[data-testid="autocomplete-category-tab-text"]').trigger("click");
+    await nextTick();
+    expect(wrapper.findAll('[data-testid="autocomplete-item"]').length).toBe(2);
+
+    await wrapper.find('[data-testid="autocomplete-category-tab-text"]').trigger("click");
+    await nextTick();
+
+    const textTab = wrapper.find('[data-testid="autocomplete-category-tab-text"]');
+    expect(textTab.classes()).not.toContain("dap__category-tab--active");
+    expect(wrapper.findAll('[data-testid="autocomplete-item"]').length).toBe(BLOCKS.length);
+    wrapper.unmount();
+  });
+
+  it("分类过滤与搜索框过滤叠加生效（AND 语义）", async () => {
+    const wrapper = mount(DirectiveAutocompletePopover, {
+      props: { ...defaultProps(), currentInput: "引用" },
+    });
+    await nextTick();
+
+    await wrapper.find('[data-testid="autocomplete-category-tab-text"]').trigger("click");
+    await nextTick();
+
+    const items = wrapper.findAll('[data-testid="autocomplete-item"]');
+    expect(items.length).toBe(1);
+    expect(items[0]?.text()).toContain("引用");
+    wrapper.unmount();
+  });
+
+  it("triggerType=inline 时不渲染分类标签行（marks 无 category 维度）", async () => {
+    const wrapper = mount(DirectiveAutocompletePopover, {
+      props: { ...defaultProps(), triggerType: "inline" },
+    });
+    await nextTick();
+
+    expect(wrapper.find('[data-testid="autocomplete-category-row"]').exists()).toBe(false);
+    wrapper.unmount();
+  });
+
+  it("从 block 切到 inline 再切回 block 时分类过滤态被重置为不过滤", async () => {
+    const wrapper = mount(DirectiveAutocompletePopover, { props: defaultProps() });
+    await nextTick();
+
+    await wrapper.find('[data-testid="autocomplete-category-tab-text"]').trigger("click");
+    await nextTick();
+    expect(wrapper.findAll('[data-testid="autocomplete-item"]').length).toBe(2);
+
+    await wrapper.setProps({ triggerType: "inline" });
+    await nextTick();
+    await wrapper.setProps({ triggerType: "block" });
+    await nextTick();
+
+    expect(wrapper.findAll('[data-testid="autocomplete-item"]').length).toBe(BLOCKS.length);
     wrapper.unmount();
   });
 });

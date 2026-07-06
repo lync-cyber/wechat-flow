@@ -4,9 +4,9 @@ import { type Schema, defaultSchema } from "hast-util-sanitize";
 const DIVIDER_SVG_TAG_NAMES = ["svg", "path", "circle", "line"];
 
 const DIVIDER_SVG_ATTRIBUTES: NonNullable<Schema["attributes"]> = {
-  svg: ["viewBox", "style"],
+  svg: ["viewBox"],
   path: ["d", "stroke", "fill", "strokeWidth"],
-  circle: ["cx", "cy", "r", "fill", "stroke"],
+  circle: ["cx", "cy", "r", "fill"],
   line: ["x1", "y1", "x2", "y2", "stroke"],
 };
 
