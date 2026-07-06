@@ -706,3 +706,6 @@
 {"ts": "2026-07-06T14:58:09+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD RED: T-137"}
 {"ts": "2026-07-06T15:12:16+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-147"}
 {"ts": "2026-07-06T15:12:17+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD GREEN: T-137"}
+{"ts": "2026-07-06T15:34:13+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-154"}
+{"ts": "2026-07-06T15:34:14+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD REFACTOR: T-149"}
+{"ts": "2026-07-06T15:43:27+00:00", "event": "state_change", "phase": "development", "detail": "T-149 REFACTOR completed: 三装饰路径（divider-decoration pre-sanitize/decoration-injector post-sanitize/injectContainerDecorations pre-theme）分叉为真实时机与依赖差异，现状即最优；仅局部去重尝试后按类型安全回退。26/26+788/788 全绿"}

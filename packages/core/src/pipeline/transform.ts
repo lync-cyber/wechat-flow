@@ -103,6 +103,19 @@ function visitContainerDirectives(tree: MdastRoot, diagnostics: Diagnostic[] | u
           }
         }
       }
+
+      if (name === "dialog" && variant === "chat-bubbles") {
+        const attrs = directive.attributes ?? {};
+        const props = directive.data.hProperties as Record<string, unknown>;
+        const speaker = attrs.speaker;
+        if (typeof speaker === "string" && speaker.trim() !== "") {
+          props["data-dialog-speaker"] = speaker;
+        }
+        const avatar = attrs.avatar;
+        if (typeof avatar === "string" && avatar.trim() !== "") {
+          props["data-dialog-avatar-src"] = avatar;
+        }
+      }
     }
     const parent = node as { children?: Node[] };
     if (parent.children) {
@@ -308,7 +321,70 @@ function buildStepsCardList(ul: Element): Element[] {
   return listItems.map((li, index) => buildStepCard(li, index === listItems.length - 1));
 }
 
+type DialogSide = "left" | "right";
+
+function buildDialogAvatar(src: string, side: DialogSide): Element {
+  return {
+    type: "element",
+    tagName: "img",
+    properties: {
+      src,
+      alt: "",
+      width: 24,
+      height: 24,
+      "data-dialog-avatar": side,
+      style: "border-radius: 50%",
+    },
+    children: [],
+  };
+}
+
+function buildDialogBubble(node: Element, side: DialogSide): Element {
+  const props = node.properties ?? {};
+  const avatarSrc = props["data-dialog-avatar-src"];
+
+  const bubble: Element = {
+    type: "element",
+    tagName: "div",
+    properties: { "data-block-slot": side === "left" ? "bubble-left" : "bubble-right" },
+    children: node.children,
+  };
+
+  const rowChildren: Element[] =
+    typeof avatarSrc === "string" && avatarSrc.trim() !== ""
+      ? side === "left"
+        ? [buildDialogAvatar(avatarSrc, side), bubble]
+        : [bubble, buildDialogAvatar(avatarSrc, side)]
+      : [bubble];
+
+  const {
+    "data-dialog-speaker": _speaker,
+    "data-dialog-avatar-src": _avatar,
+    ...restProps
+  } = props;
+
+  return {
+    type: "element",
+    tagName: "div",
+    properties: restProps,
+    children: rowChildren,
+  };
+}
+
 function injectContainerDecorations(hast: HastRoot): HastRoot {
+  const dialogSpeakerSides = new Map<string, DialogSide>();
+  let nextDialogSide: DialogSide = "left";
+
+  function resolveDialogSide(speaker: string | undefined): DialogSide {
+    const key = typeof speaker === "string" ? speaker : "";
+    const existing = dialogSpeakerSides.get(key);
+    if (existing) return existing;
+    const assigned = nextDialogSide;
+    dialogSpeakerSides.set(key, assigned);
+    nextDialogSide = nextDialogSide === "left" ? "right" : "left";
+    return assigned;
+  }
+
   function walk(node: Element): Element {
     const props = node.properties ?? {};
     const authorText = props["data-pull-quote-author"];
@@ -336,6 +412,12 @@ function injectContainerDecorations(hast: HastRoot): HastRoot {
         ...restProps
       } = props;
       return { ...node, properties: restProps, children: buildCompareLedgerChildren(props) };
+    }
+
+    if (props["data-block"] === "dialog" && props["data-variant"] === "chat-bubbles") {
+      const speaker = props["data-dialog-speaker"];
+      const side = resolveDialogSide(typeof speaker === "string" ? speaker : undefined);
+      return buildDialogBubble(node, side);
     }
 
     const newChildren = node.children.map((child) =>

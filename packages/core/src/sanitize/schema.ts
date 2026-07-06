@@ -24,6 +24,7 @@ export const wechatFlowSanitizeSchema: Schema = {
       "data-block-slot",
       "data-block-slot-last",
       "data-steps-item",
+      "data-dialog-avatar",
     ],
   },
 };
