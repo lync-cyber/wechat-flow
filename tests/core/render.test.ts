@@ -1,5 +1,8 @@
-import { describe, expect, it } from "vitest";
+import type { ThemeDefinition } from "@wechat-flow/contracts";
+import { beforeEach, describe, expect, it } from "vitest";
 import { renderMarkdown } from "../../packages/core/src/index.ts";
+import { registerTheme, resetThemeRegistry } from "../../packages/core/src/registry/theme.ts";
+import { wcagContrast } from "../../packages/palette/src/index.ts";
 
 describe("AC-001: renderMarkdown basic heading and paragraph", () => {
   it("returns html containing h1 and p elements", async () => {
@@ -79,5 +82,48 @@ describe("AC-001 inline-style integration: renderMarkdown 产出 html 含 style 
     const result = await renderMarkdown("# 标题");
     expect(result.html).toMatch(/<h1[^>]+style="/);
     expect(result.html).not.toMatch(/<h1[^>]+class="/);
+  });
+});
+
+describe("AC-002 集成: 默认色渲染无夜间风险问题", () => {
+  it("result.report.nightRiskIssues 为空数组（默认配色对比度合规）", async () => {
+    const result = await renderMarkdown("# 标题\n\n正文");
+    expect(result.report.nightRiskIssues).toEqual([]);
+  });
+});
+
+describe("AC-003 集成: paint 覆盖产生低对比前景后被 nightRiskIssues 捕获", () => {
+  const LOW_CONTRAST_COLOR = "#EEEEEE";
+  const BRAND_TOKEN = "--color-brand";
+
+  const lowContrastTheme: ThemeDefinition = {
+    id: "night-risk-test",
+    name: "Night Risk Test",
+    tokens: { [BRAND_TOKEN]: "#333333" },
+    blocks: {
+      p: { default: { color: "#333333", "font-size": "15px" } },
+    },
+    paintable: [BRAND_TOKEN],
+    assets: {},
+    meta: { author: "t", version: "1.0.0", wcagContrast: { checked: true, minRatio: 4.5 } },
+  };
+
+  beforeEach(() => {
+    resetThemeRegistry();
+    registerTheme(lowContrastTheme);
+  });
+
+  it("paint 覆盖 p 前景色为浅灰后，report.nightRiskIssues 非空且含该节点", async () => {
+    // sanity: 覆盖色确实低于 WCAG AA（默认白色背景）
+    expect(wcagContrast(LOW_CONTRAST_COLOR, "#FFFFFF")).toBeLessThan(4.5);
+
+    const md = `---\ntheme: night-risk-test\npaint:\n  '${BRAND_TOKEN}': '${LOW_CONTRAST_COLOR}'\n---\nHello world`;
+    const result = await renderMarkdown(md);
+
+    expect(result.report.nightRiskIssues.length).toBeGreaterThanOrEqual(1);
+    const entry = result.report.nightRiskIssues[0];
+    expect(entry.contrastRatio).toBeLessThan(4.5);
+    expect(entry.foreground.toLowerCase()).toBe(LOW_CONTRAST_COLOR.toLowerCase());
+    expect(entry.nodeSelector).toMatch(/p/);
   });
 });

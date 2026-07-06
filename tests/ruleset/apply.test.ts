@@ -26,24 +26,21 @@ describe("AC-001: applyRuleset with empty ruleset", () => {
     expect(JSON.stringify(result.hast)).toBe(original);
   });
 
-  it("returns a DiagnosticReport with empty diagnostics, nodeChangeRecords, and nightRiskIssues", () => {
+  it("returns empty diagnostics and nodeChangeRecords arrays directly on the result", () => {
     const hast = makeHast([makeElement("p", {})]);
 
     const result = applyRuleset(hast, []);
 
-    expect(result.report.diagnostics).toEqual([]);
-    expect(result.report.nodeChangeRecords).toEqual([]);
-    expect(result.report.nightRiskIssues).toEqual([]);
+    expect(result.diagnostics).toEqual([]);
+    expect(result.nodeChangeRecords).toEqual([]);
   });
 
-  it("returns a versionTriple with string fields in report", () => {
+  it("result shape has exactly hast, diagnostics, and nodeChangeRecords keys — no report/nightRiskIssues/versionTriple", () => {
     const hast = makeHast([]);
 
     const result = applyRuleset(hast, []);
 
-    expect(typeof result.report.versionTriple.rulesetVersion).toBe("string");
-    expect(typeof result.report.versionTriple.coreVersion).toBe("string");
-    expect(typeof result.report.versionTriple.themeVersion).toBe("string");
+    expect(Object.keys(result).sort()).toEqual(["diagnostics", "hast", "nodeChangeRecords"]);
   });
 });
 
@@ -75,7 +72,7 @@ describe("AC-002: strip scope rule removes style attributes", () => {
     expect(p.properties).toHaveProperty("id", "p1");
   });
 
-  it("records nodeChangeRecords with triggerRuleId for each transformed node", () => {
+  it("records nodeChangeRecords directly on result.nodeChangeRecords for each transformed node", () => {
     const hast = makeHast([makeElement("p", { style: "color:red" })]);
 
     const stripStyleRule: RuleDefinition = {
@@ -92,8 +89,8 @@ describe("AC-002: strip scope rule removes style attributes", () => {
 
     const result = applyRuleset(hast, [stripStyleRule]);
 
-    expect(result.report.nodeChangeRecords.length).toBeGreaterThanOrEqual(1);
-    const record = result.report.nodeChangeRecords[0];
+    expect(result.nodeChangeRecords.length).toBeGreaterThanOrEqual(1);
+    const record = result.nodeChangeRecords[0];
     expect(record.triggerRuleId).toBe("strip-style");
   });
 });

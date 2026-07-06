@@ -1,4 +1,4 @@
-import type { DiagnosticReport } from "@wechat-flow/contracts";
+import type { Diagnostic, NodeChangeRecord } from "@wechat-flow/contracts";
 import type { Root } from "hast";
 import type { RuleDefinition } from "./rules/registry.ts";
 import { executeClamp } from "./rules/scope/clamp.ts";
@@ -6,29 +6,19 @@ import { executeLint } from "./rules/scope/lint.ts";
 import { executePatch } from "./rules/scope/patch.ts";
 import { executeStrip } from "./rules/scope/strip.ts";
 import { executeTransform } from "./rules/scope/transform.ts";
-import { rulesetVersion } from "./version/manifest.ts";
 
 export interface ApplyRulesetResult {
   hast: Root;
-  report: DiagnosticReport;
+  diagnostics: Diagnostic[];
+  nodeChangeRecords: NodeChangeRecord[];
 }
 
 export function applyRuleset(hast: Root, ruleset: RuleDefinition[]): ApplyRulesetResult {
-  const versionTriple = {
-    rulesetVersion,
-    coreVersion: "0.0.0",
-    themeVersion: "0.0.0",
-  };
-
   if (ruleset.length === 0) {
     return {
       hast,
-      report: {
-        diagnostics: [],
-        nodeChangeRecords: [],
-        nightRiskIssues: [],
-        versionTriple,
-      },
+      diagnostics: [],
+      nodeChangeRecords: [],
     };
   }
 
@@ -46,11 +36,7 @@ export function applyRuleset(hast: Root, ruleset: RuleDefinition[]): ApplyRulese
 
   return {
     hast: lintResult.hast,
-    report: {
-      diagnostics: lintResult.diagnostics,
-      nodeChangeRecords: [...stripResult.nodeChangeRecords, ...transformResult.nodeChangeRecords],
-      nightRiskIssues: [],
-      versionTriple,
-    },
+    diagnostics: lintResult.diagnostics,
+    nodeChangeRecords: [...stripResult.nodeChangeRecords, ...transformResult.nodeChangeRecords],
   };
 }

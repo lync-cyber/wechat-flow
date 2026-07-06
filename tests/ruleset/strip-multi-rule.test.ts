@@ -37,7 +37,7 @@ describe("strip scope: multiple rules apply to the same node", () => {
     const hast = makeHast([el]);
 
     const result = applyRuleset(hast, rules);
-    const records = result.report.nodeChangeRecords;
+    const records = result.nodeChangeRecords;
 
     expect(records).toHaveLength(2);
     const ruleIds = records.map((r) => r.triggerRuleId);
@@ -74,7 +74,7 @@ describe("strip scope: multiple rules apply to the same node", () => {
     expect(children).toHaveLength(0);
     expect(followupCalled).toHaveLength(0);
 
-    const records = result.report.nodeChangeRecords;
+    const records = result.nodeChangeRecords;
     expect(records).toHaveLength(1);
     expect(records[0].triggerRuleId).toBe("strip-delete");
     expect(records[0].after).toBe("null");

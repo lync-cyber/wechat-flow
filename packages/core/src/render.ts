@@ -7,6 +7,7 @@ import { parseFrontmatter } from "./pipeline/frontmatter.ts";
 import { inlineStyle } from "./pipeline/inline-style.ts";
 import { injectNodeIds } from "./pipeline/node-id-injector.ts";
 import { parseMarkdown } from "./pipeline/parse.ts";
+import { collectNightRiskIssues } from "./pipeline/readability.ts";
 import { sanitizeHast } from "./pipeline/sanitize.ts";
 import { serializeHast } from "./pipeline/serialize.ts";
 import { applyBaseColorToBlocks, applyPaintToBlocks } from "./pipeline/theme-override.ts";
@@ -60,7 +61,11 @@ export async function renderMarkdown(
   hast = sanitizeHast(hast, wechatFlowSanitizeSchema);
 
   const rules = options?.rules !== undefined ? options.rules : builtinRules;
-  const { hast: rulesetHast, report } = applyRuleset(hast, rules);
+  const {
+    hast: rulesetHast,
+    diagnostics: rulesetDiagnostics,
+    nodeChangeRecords,
+  } = applyRuleset(hast, rules);
   hast = rulesetHast;
 
   if (options?.injectNodeIds) {
@@ -69,11 +74,12 @@ export async function renderMarkdown(
 
   const themeTokens = effectiveTheme?.blocks;
   const styledHast = inlineStyle(hast, themeTokens);
+  const nightRiskIssues = collectNightRiskIssues(styledHast);
   let decorated = contextAwareRender(styledHast, effectiveTheme);
   decorated = injectDecorations(decorated, effectiveTheme);
   const html = serializeHast(decorated);
 
-  const allDiagnostics = [...paintDiagnostics, ...transformDiagnostics, ...report.diagnostics];
+  const allDiagnostics = [...paintDiagnostics, ...transformDiagnostics, ...rulesetDiagnostics];
 
   let finalHtml = html;
   const customCss = options?.customCss;
@@ -90,6 +96,15 @@ export async function renderMarkdown(
     themeVersion: effectiveTheme?.meta?.version ?? "0.0.0",
     postPaste: false,
     coreVersion,
-    report: { ...report, diagnostics: allDiagnostics },
+    report: {
+      diagnostics: allDiagnostics,
+      nodeChangeRecords,
+      nightRiskIssues,
+      versionTriple: {
+        rulesetVersion: getRulesetVersion(),
+        coreVersion,
+        themeVersion: effectiveTheme?.meta?.version ?? "0.0.0",
+      },
+    },
   };
 }

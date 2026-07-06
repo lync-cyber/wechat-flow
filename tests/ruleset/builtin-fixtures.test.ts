@@ -89,7 +89,7 @@ describe("T-014 AC-005 + T-015 AC-005 + SR-003: builtin fixture suite (all 42 ru
 
         if (metadata.expectedDiagnostics && metadata.expectedDiagnostics.length > 0) {
           for (const expected of metadata.expectedDiagnostics) {
-            const match = result.report.diagnostics.find(
+            const match = result.diagnostics.find(
               (d) => d.ruleId === expected.ruleId && d.severity === expected.severity
             );
             expect(match).toBeDefined();
