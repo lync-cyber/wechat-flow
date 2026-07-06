@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { themeThumbnailVars } from "../../lib/theme-thumbnail-vars.ts";
+import ThemeThumbnail from "../common/ThemeThumbnail.vue";
 
 const props = defineProps<{
   themeId: string;
@@ -14,12 +16,7 @@ const props = defineProps<{
   onUseTemplate: (themeId: string, templateId: string) => void;
 }>();
 
-const thumbnailStyle = computed(() => ({
-  "--card-accent": props.accentColor || "var(--color-brand)",
-  "--thumbnail-bg": props.themeTokens?.["--color-background"] ?? "var(--color-surface)",
-  "--thumbnail-surface": props.themeTokens?.["--color-surface"] ?? "var(--color-surface-sunken)",
-  "--thumbnail-border": props.themeTokens?.["--color-border"] ?? "var(--color-border)",
-}));
+const thumbnailStyle = computed(() => themeThumbnailVars(props.themeTokens, props.accentColor));
 </script>
 
 <template>
@@ -33,15 +30,7 @@ const thumbnailStyle = computed(() => ({
       data-testid="thumbnail"
       :style="thumbnailStyle"
     >
-      <div class="template-theme-card__thumbnail-skeleton" aria-hidden="true">
-        <div class="template-theme-card__skeleton-title" />
-        <div class="template-theme-card__skeleton-line" />
-        <div class="template-theme-card__skeleton-line" />
-        <div class="template-theme-card__skeleton-line template-theme-card__skeleton-line--short" />
-        <div class="template-theme-card__skeleton-quote">
-          <div class="template-theme-card__skeleton-line" />
-        </div>
-      </div>
+      <ThemeThumbnail />
 
       <span
         v-if="isActive"
@@ -105,48 +94,9 @@ const thumbnailStyle = computed(() => ({
 .template-theme-card__thumbnail {
   position: relative;
   height: 160px;
-  padding: 16px;
-  background: var(--thumbnail-bg, var(--color-surface, #fff));
   border-radius: var(--radius-sm, 4px) var(--radius-sm, 4px) 0 0;
   border-bottom: 1px solid var(--color-border-subtle);
-}
-
-.template-theme-card__thumbnail-skeleton {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.template-theme-card__skeleton-title {
-  width: 60%;
-  height: 12px;
-  border-radius: 3px;
-  background: var(--card-accent);
-}
-
-.template-theme-card__skeleton-line {
-  width: 100%;
-  height: 8px;
-  border-radius: 3px;
-  background: var(--thumbnail-border, var(--color-border, #d9d9d9));
-}
-
-.template-theme-card__skeleton-line--short {
-  width: 70%;
-}
-
-.template-theme-card__skeleton-quote {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 8px;
-  margin-top: 4px;
-  border-left: 3px solid var(--card-accent);
-  background: var(--thumbnail-surface, var(--color-surface-sunken, #f5f5f5));
-}
-
-.template-theme-card__skeleton-quote .template-theme-card__skeleton-line {
-  margin: 0;
+  overflow: hidden;
 }
 
 .template-theme-card__body {

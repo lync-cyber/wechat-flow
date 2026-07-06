@@ -202,7 +202,7 @@ describe("TemplateThemeCard — 骨架缩略图与主题色", () => {
       },
     });
     await nextTick();
-    const skeleton = wrapper.find(".template-theme-card__thumbnail-skeleton");
+    const skeleton = wrapper.find('[data-testid="theme-thumbnail"]');
     expect(skeleton.attributes("aria-hidden")).toBe("true");
   });
 

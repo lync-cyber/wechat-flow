@@ -379,6 +379,64 @@ describe("BC-4 UC-023: 违规词指标段", () => {
   });
 });
 
+describe("F-003 UC-023: 可读性指标段", () => {
+  beforeEach(() => setViewportWidth(1440));
+  afterEach(() => setViewportWidth(1440));
+
+  function reportWithReadability(count: number, severity: "warning" | "error"): DiagnosticReport {
+    return {
+      diagnostics: Array.from({ length: count }, (_, i) => ({
+        severity,
+        ruleId: "readability-font-size-min",
+        message: `可读性问题 ${i + 1}`,
+      })),
+      nodeChangeRecords: [],
+      nightRiskIssues: [],
+      versionTriple: { coreVersion: "0.0.0", themeVersion: "0.0.0", rulesetVersion: "0.0.0" },
+    };
+  }
+
+  it("无可读性问题时显示「可读性 良好」+ safe 色", () => {
+    const wrapper = mount(StatusBar, {
+      props: {
+        metrics: { chineseChars: 100, totalChars: 100, readMinutes: 1 },
+        diagnostics: emptyReport(),
+        isDiagnosticsExpanded: false,
+      },
+    });
+    const seg = wrapper.find('[data-testid="readability-summary"]');
+    expect(seg.exists()).toBe(true);
+    expect(seg.text()).toContain("可读性 良好");
+    expect((seg.element as HTMLElement).getAttribute("data-color")).toBe("safe");
+  });
+
+  it("有可读性 warning 时显示计数 + warning 色", () => {
+    const wrapper = mount(StatusBar, {
+      props: {
+        metrics: { chineseChars: 100, totalChars: 100, readMinutes: 1 },
+        diagnostics: reportWithReadability(2, "warning"),
+        isDiagnosticsExpanded: false,
+      },
+    });
+    const seg = wrapper.find('[data-testid="readability-summary"]');
+    expect(seg.text()).toContain("可读性 2 项");
+    expect((seg.element as HTMLElement).getAttribute("data-color")).toBe("warning");
+  });
+
+  it("兼容性摘要不把可读性诊断计入", () => {
+    const wrapper = mount(StatusBar, {
+      props: {
+        metrics: { chineseChars: 100, totalChars: 100, readMinutes: 1 },
+        diagnostics: reportWithReadability(3, "warning"),
+        isDiagnosticsExpanded: false,
+      },
+    });
+    const compat = wrapper.find('[data-testid="compat-summary"]');
+    expect(compat.text()).toContain("无风险");
+    expect(wrapper.find('[data-testid="status-bar-root"]').classes()).toContain("status-bar--idle");
+  });
+});
+
 describe("BC-4 UC-023: 夜间风险指标段", () => {
   beforeEach(() => setViewportWidth(1440));
   afterEach(() => setViewportWidth(1440));

@@ -120,6 +120,8 @@ const diffNodeSelector = ref<string | undefined>(undefined);
 const isCommandPaletteOpen = ref(false);
 const isInsertDrawerOpen = ref(false);
 const isContextMenuOpen = ref(false);
+const topBarRef = ref<{ moreBtnRef: HTMLButtonElement | null } | null>(null);
+const contextMenuAnchor = computed<HTMLElement | null>(() => topBarRef.value?.moreBtnRef ?? null);
 const isPaintDrawerOpen = ref(false);
 const isShortcutsModalOpen = ref(false);
 const isPaletteDeriveOpen = ref(false);
@@ -349,6 +351,7 @@ onUnmounted(() => {
     <!-- TopBar -->
     <!-- cataforge: allow(wiring_empty_handler, reason="onUndo/onRedo 接线延后至对应功能任务") -->
     <TopBar
+      ref="topBarRef"
       doc-title="Untitled"
       :theme-name="currentThemeName"
       :theme-accent-color="currentThemeAccent"
@@ -492,6 +495,7 @@ onUnmounted(() => {
     <!-- Context Menu -->
     <ContextMenu
       :is-open="isContextMenuOpen"
+      :anchor="contextMenuAnchor"
       :is-content-empty="editorStore.content.trim() === ''"
       :is-zh-typo-disabled="editorStore.content.trim() === '' || !zhTypo.hasZhTypoIssues(editorStore.content)"
       :on-close="() => { isContextMenuOpen = false; }"
