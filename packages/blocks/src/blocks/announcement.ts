@@ -9,6 +9,7 @@ export const announcement = defineBlock(
     title: z.string().optional(),
     link: z.string().optional(),
   }),
+  "emphasis",
   [
     { id: "default", label: "标准公告" },
     { id: "banner", label: "横幅公告" },

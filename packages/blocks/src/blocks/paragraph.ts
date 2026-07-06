@@ -8,6 +8,7 @@ export const paragraph = defineBlock(
     text: z.string(),
     indent: z.boolean().optional(),
   }),
+  "text",
   [
     { id: "default", label: "普通段落" },
     { id: "indented", label: "首行缩进" },

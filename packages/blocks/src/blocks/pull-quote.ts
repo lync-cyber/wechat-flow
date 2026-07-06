@@ -8,6 +8,7 @@ export const pullQuote = defineBlock(
     text: z.string(),
     author: z.string().optional(),
   }),
+  "emphasis",
   [
     { id: "default", label: "标准摘引" },
     { id: "large", label: "大字摘引" },

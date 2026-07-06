@@ -14,6 +14,7 @@ export const tipGrid = defineBlock(
     ),
     columns: z.number().int().min(1).max(4).optional(),
   }),
+  "emphasis",
   [
     { id: "default", label: "标准提示网格" },
     { id: "two-column", label: "双列提示网格" },

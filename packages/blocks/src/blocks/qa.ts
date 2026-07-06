@@ -10,6 +10,7 @@ export const qa = defineBlock(
     questionPrefix: z.string().optional(),
     answerPrefix: z.string().optional(),
   }),
+  "structured",
   [
     { id: "default", label: "标准问答" },
     { id: "bubble", label: "气泡问答" },

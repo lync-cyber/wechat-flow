@@ -9,6 +9,7 @@ export const readingTime = defineBlock(
     label: z.string().optional(),
     wordCount: z.number().int().optional(),
   }),
+  "meta",
   [
     { id: "default", label: "标准阅读时长" },
     { id: "badge", label: "徽章式阅读时长" },

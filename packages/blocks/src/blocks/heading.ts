@@ -9,6 +9,7 @@ export const heading = defineBlock(
     text: z.string(),
     align: z.enum(["left", "center", "right"]).optional(),
   }),
+  "text",
   [
     { id: "default", label: "默认标题" },
     { id: "underline", label: "下划线标题" },

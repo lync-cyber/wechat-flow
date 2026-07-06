@@ -8,6 +8,7 @@ export const highlightBlock = defineBlock(
     text: z.string(),
     color: z.string().optional(),
   }),
+  "emphasis",
   [
     { id: "default", label: "默认高亮" },
     { id: "gradient", label: "渐变高亮" },

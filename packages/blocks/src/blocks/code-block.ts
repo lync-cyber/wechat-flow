@@ -9,6 +9,7 @@ export const codeBlock = defineBlock(
     lang: z.string().optional(),
     filename: z.string().optional(),
   }),
+  "text",
   [
     { id: "default", label: "暗色代码块" },
     { id: "light", label: "亮色代码块" },

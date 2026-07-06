@@ -9,6 +9,7 @@ export const image = defineBlock(
     alt: z.string().optional(),
     width: z.number().optional(),
   }),
+  "media",
   [
     { id: "default", label: "普通图片" },
     { id: "rounded", label: "圆角图片" },

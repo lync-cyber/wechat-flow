@@ -10,6 +10,7 @@ export const card = defineBlock(
     image: z.string().optional(),
     link: z.string().optional(),
   }),
+  "structured",
   [
     { id: "default", label: "普通卡片" },
     { id: "elevated", label: "阴影卡片" },

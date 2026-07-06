@@ -14,6 +14,7 @@ export const compare = defineBlock(
     right: sideSchema,
     title: z.string().optional(),
   }),
+  "structured",
   [
     { id: "default", label: "标准对比" },
     { id: "highlight-right", label: "突出右侧" },

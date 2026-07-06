@@ -9,6 +9,7 @@ export const video = defineBlock(
     poster: z.string().optional(),
     caption: z.string().optional(),
   }),
+  "media",
   [
     { id: "default", label: "标准视频" },
     { id: "autoplay", label: "自动播放" },

@@ -12,6 +12,7 @@ export const advertCard = defineBlock(
     cta: z.string().optional(),
     tag: z.string().optional(),
   }),
+  "marketing",
   [
     { id: "default", label: "标准广告卡片" },
     { id: "horizontal", label: "横排广告卡片" },

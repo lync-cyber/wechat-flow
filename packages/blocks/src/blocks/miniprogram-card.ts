@@ -10,6 +10,7 @@ export const miniprogramCard = defineBlock(
     title: z.string(),
     thumbnail: z.string().optional(),
   }),
+  "marketing",
   [
     { id: "default", label: "标准小程序卡片" },
     { id: "large", label: "大图小程序卡片" },

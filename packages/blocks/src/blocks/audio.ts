@@ -9,6 +9,7 @@ export const audio = defineBlock(
     title: z.string().optional(),
     cover: z.string().optional(),
   }),
+  "media",
   [
     { id: "default", label: "标准音频" },
     { id: "mini", label: "迷你播放器" },

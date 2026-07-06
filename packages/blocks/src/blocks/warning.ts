@@ -9,6 +9,7 @@ export const warning = defineBlock(
     title: z.string().optional(),
     severity: z.enum(["low", "medium", "high"]).optional(),
   }),
+  "emphasis",
   [
     { id: "default", label: "标准警告" },
     { id: "banner", label: "横幅警告" },

@@ -15,6 +15,7 @@ export const relatedCards = defineBlock(
     ),
     title: z.string().optional(),
   }),
+  "marketing",
   [
     { id: "default", label: "标准相关文章" },
     { id: "compact", label: "紧凑相关文章" },

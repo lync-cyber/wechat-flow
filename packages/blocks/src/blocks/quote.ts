@@ -9,6 +9,7 @@ export const quote = defineBlock(
     author: z.string().optional(),
     source: z.string().optional(),
   }),
+  "text",
   [
     { id: "default", label: "标准引用" },
     { id: "bordered", label: "边框引用" },

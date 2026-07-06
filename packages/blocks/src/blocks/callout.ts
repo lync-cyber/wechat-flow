@@ -9,6 +9,7 @@ export const callout = defineBlock(
     text: z.string(),
     title: z.string().optional(),
   }),
+  "emphasis",
   [
     { id: "default", label: "默认提示" },
     { id: "filled", label: "填充提示" },

@@ -10,6 +10,7 @@ export const publicationSkeleton = defineBlock(
     coverImage: z.string().optional(),
     category: z.string().optional(),
   }),
+  "meta",
   [
     { id: "default", label: "标准骨架" },
     { id: "magazine", label: "杂志骨架" },
