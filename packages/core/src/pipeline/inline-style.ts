@@ -74,10 +74,14 @@ const DEFAULT_TOKENS: BlockStyleTable = {
   },
 };
 
-function getPullQuoteSlotStyle(slot: string): Record<string, string> {
-  const def = describeBlock("pull-quote");
-  const decorated = def?.variants.find((v) => v.id === "decorated");
-  return decorated?.baseStyle?.[slot] ?? {};
+function getBlockSlotStyle(
+  blockId: string,
+  variantId: string,
+  slot: string
+): Record<string, string> {
+  const def = describeBlock(blockId);
+  const variant = def?.variants.find((v) => v.id === variantId);
+  return variant?.baseStyle?.[slot] ?? {};
 }
 
 function stripClassFromProperties(props: Properties): Properties {
@@ -96,11 +100,17 @@ function serializeDeclarations(declarations: Record<string, string>): string {
     .join("; ");
 }
 
+interface AmbientBlockContext {
+  blockId: string;
+  variantId: string;
+}
+
 function applyInlineStyles(
   node: HastRoot | Element,
   styleMap: Map<string, string>,
   themeTokens: BlockStyleTable,
-  isEvenBodyRow = false
+  isEvenBodyRow = false,
+  ambientBlock?: AmbientBlockContext
 ): HastRoot | Element {
   if (node.type === "element") {
     const el = node as Element;
@@ -109,10 +119,10 @@ function applyInlineStyles(
 
     let tagStyle: string;
 
-    const pullQuoteSlot = propsWithoutClass["data-pull-quote-slot"];
+    const blockSlot = propsWithoutClass["data-block-slot"];
     const dataBlock = propsWithoutClass["data-block"];
-    if (typeof pullQuoteSlot === "string" && pullQuoteSlot.length > 0) {
-      const slotStyle = getPullQuoteSlotStyle(pullQuoteSlot);
+    if (typeof blockSlot === "string" && blockSlot.length > 0 && ambientBlock) {
+      const slotStyle = getBlockSlotStyle(ambientBlock.blockId, ambientBlock.variantId, blockSlot);
       tagStyle = Object.keys(slotStyle).length > 0 ? serializeDeclarations(slotStyle) : "";
     } else if (typeof dataBlock === "string" && dataBlock.length > 0) {
       // Container block path: L1 ⊕ L2
@@ -125,6 +135,9 @@ function applyInlineStyles(
       const l2 = themeTokens[dataBlock]?.[variantId];
 
       const merged: Record<string, string> = { ...l1, ...(l2 ?? {}) };
+      if (propsWithoutClass["data-block-slot-last"] === "true" && "margin-bottom" in merged) {
+        merged["margin-bottom"] = "0";
+      }
       tagStyle = Object.keys(merged).length > 0 ? serializeDeclarations(merged) : "";
     } else {
       // Tag path: existing behaviour, byte-identical
@@ -147,8 +160,11 @@ function applyInlineStyles(
     const filteredStyle = mergedStyle ? filterCssAttrs(mergedStyle) : "";
 
     const newProps: Properties = { ...propsWithoutClass };
-    if (typeof pullQuoteSlot === "string" && pullQuoteSlot.length > 0) {
-      newProps["data-pull-quote-slot"] = undefined;
+    if (typeof blockSlot === "string" && blockSlot.length > 0) {
+      newProps["data-block-slot"] = undefined;
+    }
+    if ("data-block-slot-last" in newProps) {
+      newProps["data-block-slot-last"] = undefined;
     }
     if (filteredStyle) {
       newProps.style = filteredStyle;
@@ -158,6 +174,17 @@ function applyInlineStyles(
 
     const isTbody = el.tagName === "tbody";
     let bodyRowCounter = 0;
+
+    const childAmbientBlock: AmbientBlockContext | undefined =
+      typeof dataBlock === "string" && dataBlock.length > 0
+        ? {
+            blockId: dataBlock,
+            variantId:
+              typeof propsWithoutClass["data-variant"] === "string"
+                ? propsWithoutClass["data-variant"]
+                : "default",
+          }
+        : ambientBlock;
 
     return {
       ...el,
@@ -170,7 +197,13 @@ function applyInlineStyles(
             childIsEvenRow = bodyRowCounter % 2 === 1;
             bodyRowCounter += 1;
           }
-          return applyInlineStyles(childEl, styleMap, themeTokens, childIsEvenRow) as Element;
+          return applyInlineStyles(
+            childEl,
+            styleMap,
+            themeTokens,
+            childIsEvenRow,
+            childAmbientBlock
+          ) as Element;
         }
         return child;
       }),
@@ -181,7 +214,13 @@ function applyInlineStyles(
     ...node,
     children: node.children.map((child) => {
       if (child.type === "element") {
-        return applyInlineStyles(child as Element, styleMap, themeTokens, isEvenBodyRow) as Element;
+        return applyInlineStyles(
+          child as Element,
+          styleMap,
+          themeTokens,
+          isEvenBodyRow,
+          ambientBlock
+        ) as Element;
       }
       return child;
     }),

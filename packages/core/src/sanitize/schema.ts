@@ -10,7 +10,9 @@ export const wechatFlowSanitizeSchema: Schema = {
       "style",
       "data-block",
       "data-variant",
-      "data-pull-quote-slot",
+      "data-block-slot",
+      "data-block-slot-last",
+      "data-steps-item",
     ],
   },
 };

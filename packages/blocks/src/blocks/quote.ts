@@ -19,8 +19,49 @@ export const quote = defineBlock(
     { id: "large", label: "大字引用" },
     { id: "italic", label: "斜体引用" },
     { id: "card", label: "卡片引用" },
-    { id: "magazine", label: "杂志风引用" },
-    { id: "literary", label: "文艺风引用" },
+    {
+      id: "large-quote-mark",
+      label: "大引号引用",
+      baseStyle: {
+        root: {
+          "border-left": "3px solid #888",
+          padding: "8px 16px",
+          margin: "16px 0",
+          color: "#555",
+        },
+        "quote-mark": {
+          "font-size": "2em",
+          color: "#2D5A4E",
+          opacity: "0.4",
+          "line-height": "0.6",
+          display: "inline-block",
+          "vertical-align": "top",
+          "margin-right": "4px",
+        },
+      },
+    },
+    {
+      id: "dropcap",
+      label: "首字下沉引用",
+      baseStyle: {
+        root: {
+          "border-left": "3px solid #888",
+          padding: "8px 16px",
+          margin: "16px 0",
+          color: "#555",
+        },
+        dropcap: {
+          "font-size": "2.2em",
+          "font-weight": "700",
+          color: "#2D5A4E",
+          display: "inline-block",
+          "vertical-align": "top",
+          "margin-right": "4px",
+          "font-family":
+            "'LXGW WenKai', 'Source Han Serif CN', 'Noto Serif CJK SC', Georgia, serif",
+        },
+      },
+    },
   ],
   {
     root: {
@@ -29,5 +70,6 @@ export const quote = defineBlock(
       margin: "16px 0",
       color: "#555",
     },
-  }
+  },
+  ["root", "quote-mark", "dropcap"]
 );

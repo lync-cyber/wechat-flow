@@ -20,7 +20,26 @@ export const steps = defineBlock(
     { id: "circle-numbered", label: "圆圈编号步骤" },
     { id: "timeline", label: "时间线步骤" },
     { id: "arrow", label: "箭头步骤" },
-    { id: "card", label: "卡片步骤" },
+    {
+      id: "card",
+      label: "卡片步骤",
+      baseStyle: {
+        root: {
+          background: "#F3F0EB",
+          border: "1px solid #D6D3CE",
+          "border-radius": "6px",
+          padding: "12px 16px",
+          "margin-bottom": "12px",
+        },
+        title: {
+          "font-weight": "600",
+        },
+        description: {
+          color: "#44403C",
+          "font-size": "13px",
+        },
+      },
+    },
     { id: "minimal", label: "简约步骤" },
     { id: "filled", label: "填充步骤" },
     { id: "compact", label: "紧凑步骤" },
@@ -30,5 +49,6 @@ export const steps = defineBlock(
       margin: "16px 0",
       padding: "0",
     },
-  }
+  },
+  ["root", "title", "description"]
 );

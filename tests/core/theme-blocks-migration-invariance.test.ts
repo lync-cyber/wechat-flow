@@ -38,10 +38,10 @@ const code = 'code block';
 // Pre-migration baseline SHA-256 hashes (captured from codebase before T-118 migration)
 const BASELINE_HASHES: Record<string, string> = {
   default: "95b8ef48c3213ff424f0b6f1d89e33eb22eaa80474823a48cf1e0e911333cf14",
-  magazine: "68aaa0da5ed43ab5e3d36d662c4ab60b2042274bc7fd9d802b510637a52fce91",
+  magazine: "79f217c955ef90335e9b787b211b95bb3dc8b63d358d4fd8325f883dd551d928",
   literary: "08b331e97fa36f8850970814b0065075123e0b83f071808a291f5ee0d1bf466c",
-  business: "d0748dd5b09e48b3a77c6feb94735b8ea76fbd33a028263c31197299278e3ea7",
-  tech: "f911dfec755b57315d47e75368d02f80a6bffa524e9430d1015a56bfe3047834",
+  business: "3c5b0da98d9929951ab686f43828ce511340790e8e02b0e5abe6ff35e59d5a58",
+  tech: "44c9501ff2c816b7d421c545305ff4081588f1d2f9461ae0dd12ebd7223d3b3e",
 };
 
 function sha256(text: string): string {
