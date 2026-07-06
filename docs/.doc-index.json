@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-06T07:47:12.792955+00:00",
+  "generated_at": "2026-07-06T12:49:57.605722+00:00",
   "documents": {
     "arch-wechat-flow-api": {
       "file_path": "docs/arch/arch-wechat-flow-api.md",
@@ -2110,7 +2110,7 @@
       "status": "draft",
       "total_lines": 918,
       "est_tokens": 16977,
-      "content_hash": "9d3d13df",
+      "content_hash": "5a4b6295",
       "sections": {
         "1": {
           "heading": "## 1. 迭代目标",
@@ -3739,7 +3739,7 @@
         "dev-plan-wechat-flow-s7"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow-s7": "9d3d13df"
+        "dev-plan-wechat-flow-s7": "5a4b6295"
       }
     },
     "review-dev-plan-wechat-flow-r8": {
@@ -3754,7 +3754,7 @@
         "dev-plan-wechat-flow-s7"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow-s7": "9d3d13df"
+        "dev-plan-wechat-flow-s7": "5a4b6295"
       }
     },
     "review-prd-wechat-flow-r1": {
