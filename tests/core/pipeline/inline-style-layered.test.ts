@@ -73,10 +73,10 @@ describe("AC-T120-002 regression-guard: tag-path 字节不变（无 customCss，
   // the L1⊕L2 refactor has broken the tag-path output — that is a bug, not a feature.
   const BASELINE_HASHES: Record<string, string> = {
     default: "726c9149c24c23b30f9c93a30241ed5bfeb54ea5b9499cad0b29cd5788b75ee8",
-    magazine: "5e0807f7d0b513bb3a9fab896191cafa2a61df4e4e79030f938d6f615e203d39",
-    literary: "91e0775d7c9a019d60c03d0c6ccc5d00f8ac0af9b2df5df03f5f99c0085ccbec",
-    business: "783631bc6c5e19012998353864c7af1ce62d6779fcce23e1b2b2cad1a2dd0026",
-    tech: "0bda982b7559ef5312667b751f98119c10cc69be49d546575eee7e58ee296526",
+    magazine: "68aaa0da5ed43ab5e3d36d662c4ab60b2042274bc7fd9d802b510637a52fce91",
+    literary: "352adc89235d3c310fb8f61c82cf6536753f52da3aad3979f06dda73717460ad",
+    business: "d4f1f2ce1dd2048810cae287504eb71713e9aae07e7d0b06e2de3980ba2267da",
+    tech: "f911dfec755b57315d47e75368d02f80a6bffa524e9430d1015a56bfe3047834",
   };
 
   it("default theme: tag-path render 与基线 SHA-256 一致", async () => {

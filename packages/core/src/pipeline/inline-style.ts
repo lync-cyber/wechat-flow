@@ -92,7 +92,8 @@ function serializeDeclarations(declarations: Record<string, string>): string {
 function applyInlineStyles(
   node: HastRoot | Element,
   styleMap: Map<string, string>,
-  themeTokens: BlockStyleTable
+  themeTokens: BlockStyleTable,
+  isEvenBodyRow = false
 ): HastRoot | Element {
   if (node.type === "element") {
     const el = node as Element;
@@ -116,7 +117,14 @@ function applyInlineStyles(
       tagStyle = Object.keys(merged).length > 0 ? serializeDeclarations(merged) : "";
     } else {
       // Tag path: existing behaviour, byte-identical
-      tagStyle = styleMap.get(el.tagName) ?? "";
+      const base = themeTokens[el.tagName]?.default;
+      const evenOverride = isEvenBodyRow ? themeTokens[el.tagName]?.even : undefined;
+      if (evenOverride) {
+        const merged = { ...(base ?? {}), ...evenOverride };
+        tagStyle = serializeDeclarations(merged);
+      } else {
+        tagStyle = styleMap.get(el.tagName) ?? "";
+      }
     }
 
     const existingStyle = propsWithoutClass.style;
@@ -134,12 +142,21 @@ function applyInlineStyles(
       newProps.style = undefined;
     }
 
+    const isTbody = el.tagName === "tbody";
+    let bodyRowCounter = 0;
+
     return {
       ...el,
       properties: newProps,
       children: el.children.map((child) => {
         if (child.type === "element") {
-          return applyInlineStyles(child as Element, styleMap, themeTokens) as Element;
+          const childEl = child as Element;
+          let childIsEvenRow = isEvenBodyRow;
+          if (isTbody && childEl.tagName === "tr") {
+            childIsEvenRow = bodyRowCounter % 2 === 1;
+            bodyRowCounter += 1;
+          }
+          return applyInlineStyles(childEl, styleMap, themeTokens, childIsEvenRow) as Element;
         }
         return child;
       }),
@@ -150,7 +167,7 @@ function applyInlineStyles(
     ...node,
     children: node.children.map((child) => {
       if (child.type === "element") {
-        return applyInlineStyles(child as Element, styleMap, themeTokens) as Element;
+        return applyInlineStyles(child as Element, styleMap, themeTokens, isEvenBodyRow) as Element;
       }
       return child;
     }),

@@ -73,39 +73,37 @@ describe("AC-001: renderStory() produces inline-styled HTML across all 5 themes"
 // produce visually distinguishable HTML (different rendered output)
 // ---------------------------------------------------------------------------
 describe("business_rules: variant distinctness invariant", () => {
-  it("callout block: 'default' and 'filled' variants produce different HTML for each theme", async () => {
+  it("callout block: 'tip' and 'warning' variants produce different HTML for each theme", async () => {
     const calloutBlock = describeBlock("callout");
-    // callout has variants: default, filled, minimal, info, success, warning, error, tip, note, important
+    // callout has variants: tip, warning, info, danger
     expect(calloutBlock).toBeDefined();
     const variantIds = (calloutBlock?.variants ?? []).map((v) => v.id);
     // Guard: both variants must be registered for this test to be meaningful
-    expect(variantIds).toContain("default");
-    expect(variantIds).toContain("filled");
+    expect(variantIds).toContain("tip");
+    expect(variantIds).toContain("warning");
 
     for (const themeId of THEME_IDS) {
-      const defaultStory: VisualStory = {
+      const tipStory: VisualStory = {
         themeId,
         blockId: "callout",
-        variantId: "default",
-        sceneName: `${themeId}-callout-default`,
+        variantId: "tip",
+        sceneName: `${themeId}-callout-tip`,
         tier: "p0",
       };
-      const filledStory: VisualStory = {
+      const warningStory: VisualStory = {
         themeId,
         blockId: "callout",
-        variantId: "filled",
-        sceneName: `${themeId}-callout-filled`,
+        variantId: "warning",
+        sceneName: `${themeId}-callout-warning`,
         tier: "p0",
       };
-      const defaultHtml = await renderStory(defaultStory);
-      const filledHtml = await renderStory(filledStory);
+      const tipHtml = await renderStory(tipStory);
+      const warningHtml = await renderStory(warningStory);
 
-      expect(defaultHtml, `theme "${themeId}" callout default must not be empty`).toMatch(
-        /style="[^"]+"/
-      );
+      expect(tipHtml, `theme "${themeId}" callout tip must not be empty`).toMatch(/style="[^"]+"/);
       expect(
-        defaultHtml !== filledHtml,
-        `theme "${themeId}" callout "default" and "filled" must render different HTML`
+        tipHtml !== warningHtml,
+        `theme "${themeId}" callout "tip" and "warning" must render different HTML`
       ).toBe(true);
     }
   });

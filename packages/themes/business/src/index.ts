@@ -6,6 +6,7 @@ import { listBlocks } from "./blocks/list.ts";
 import { mediaBlocks } from "./blocks/media.ts";
 import { paragraphBlocks } from "./blocks/paragraph.ts";
 import { quoteBlocks } from "./blocks/quote.ts";
+import { tableBlocks } from "./blocks/table.ts";
 import { templates } from "./templates/index.ts";
 import { tokens } from "./tokens.ts";
 
@@ -21,6 +22,7 @@ const businessTheme: ThemeDefinition = {
     ...dividerBlocks,
     ...listBlocks,
     ...mediaBlocks,
+    ...tableBlocks,
   },
   paintable: Object.keys(tokens).filter((key) => key.startsWith("--color-")),
   assets: {},

@@ -111,12 +111,16 @@ describe("AC-004: listAllVariants 总量 ≥ 120，核心 Block variant 配额",
   });
 
   it.each([
-    ["callout", 10],
     ["quote", 10],
     ["steps", 10],
   ] as const)("Block '%s' variants 数量 ≥ %d", (id, minCount) => {
     const def = mustDescribeBlock(id);
     expect(def.variants.length).toBeGreaterThanOrEqual(minCount);
+  });
+
+  it("Block 'callout' variants 数量恰为 4（ui-spec §10.1 收敛为 tip/warning/info/danger）", () => {
+    const def = mustDescribeBlock("callout");
+    expect(def.variants.length).toBe(4);
   });
 
   it.each([
