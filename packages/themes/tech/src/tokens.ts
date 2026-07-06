@@ -1,7 +1,7 @@
 import type { ThemeTokens } from "@wechat-flow/contracts";
 
 export const tokens: ThemeTokens = {
-  // color — 20 tokens
+  // color — 21 tokens
   "--color-background": "#0F1117",
   "--color-surface": "#161B22",
   "--color-surface-alt": "#21262D",
@@ -18,6 +18,7 @@ export const tokens: ThemeTokens = {
   "--color-border": "#30363D",
   "--color-border-strong": "#484F58",
   "--color-code-bg": "#1A1A2E",
+  "--color-code-block-bg": "#1A1A2E",
   "--color-code-text": "#E6EDF3",
   "--color-quote-border": "#58A6FF",
   "--color-quote-bg": "#21262D",
