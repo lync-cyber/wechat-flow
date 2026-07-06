@@ -9,6 +9,7 @@ export const dialog = defineBlock(
     text: z.string(),
     avatar: z.string().optional(),
   }),
+  "structured",
   [
     { id: "default", label: "标准对话" },
     { id: "bubble", label: "气泡对话" },

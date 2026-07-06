@@ -12,6 +12,7 @@ export const definitionList = defineBlock(
       })
     ),
   }),
+  "text",
   [
     { id: "default", label: "标准定义列表" },
     { id: "two-column", label: "双列定义列表" },

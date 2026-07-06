@@ -9,6 +9,7 @@ export const imageCaption = defineBlock(
     caption: z.string(),
     alt: z.string().optional(),
   }),
+  "media",
   [
     { id: "default", label: "底部说明" },
     { id: "overlay", label: "覆盖说明" },

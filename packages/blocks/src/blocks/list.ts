@@ -8,6 +8,7 @@ export const list = defineBlock(
     items: z.array(z.string()),
     ordered: z.boolean().optional(),
   }),
+  "text",
   [
     { id: "bullet", label: "圆点列表" },
     { id: "numbered", label: "编号列表" },

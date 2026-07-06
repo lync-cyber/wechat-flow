@@ -140,9 +140,13 @@ export function describeVariant(id: string): VariantDefinition | undefined {
 }
 
 export function getBlockBaseStyle(blockId: string, variantId: string): Record<string, string> {
+  const blockDef = describeBlock(blockId);
   if (variantId === "default") {
-    const blockDef = describeBlock(blockId);
     return blockDef?.baseStyle?.root ?? {};
+  }
+  const builtinVariant = blockDef?.variants.find((v) => v.id === variantId);
+  if (builtinVariant?.baseStyle) {
+    return builtinVariant.baseStyle.root ?? {};
   }
   const key = `${blockId}::${variantId}`;
   const entry = store.get(key);

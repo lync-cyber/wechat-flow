@@ -150,6 +150,7 @@ function makeBlock(id: string) {
   return {
     id,
     name: id,
+    category: "structured" as const,
     attrsSchema: z.object({}),
     variants: [],
     baseStyle: { root: {} },

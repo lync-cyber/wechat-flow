@@ -12,6 +12,7 @@ export const steps = defineBlock(
       })
     ),
   }),
+  "structured",
   [
     { id: "default", label: "竖排步骤" },
     { id: "horizontal", label: "横排步骤" },

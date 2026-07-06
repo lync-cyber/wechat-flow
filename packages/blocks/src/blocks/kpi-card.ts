@@ -11,6 +11,7 @@ export const kpiCard = defineBlock(
     trend: z.enum(["up", "down", "flat"]).optional(),
     description: z.string().optional(),
   }),
+  "structured",
   [
     { id: "default", label: "标准指标卡" },
     { id: "highlight", label: "强调指标卡" },

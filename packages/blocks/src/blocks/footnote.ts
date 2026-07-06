@@ -9,6 +9,7 @@ export const footnote = defineBlock(
     index: z.number().int().positive().optional(),
     source: z.string().optional(),
   }),
+  "meta",
   [
     { id: "default", label: "标准脚注" },
     { id: "numbered", label: "编号脚注" },

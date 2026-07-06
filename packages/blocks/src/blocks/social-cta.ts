@@ -11,6 +11,7 @@ export const socialCta = defineBlock(
     icon: z.string().optional(),
     url: z.string().optional(),
   }),
+  "marketing",
   [
     { id: "default", label: "标准社交引导" },
     { id: "icon-left", label: "图标左置引导" },

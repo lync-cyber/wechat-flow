@@ -13,6 +13,7 @@ export const timeline = defineBlock(
       })
     ),
   }),
+  "structured",
   [
     { id: "default", label: "竖向时间线" },
     { id: "horizontal", label: "横向时间线" },

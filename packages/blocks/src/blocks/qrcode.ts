@@ -9,6 +9,7 @@ export const qrcode = defineBlock(
     caption: z.string().optional(),
     size: z.number().optional(),
   }),
+  "media",
   [
     { id: "default", label: "标准二维码" },
     { id: "with-logo", label: "带 Logo 二维码" },

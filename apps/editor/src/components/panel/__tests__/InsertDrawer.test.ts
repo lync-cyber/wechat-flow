@@ -13,6 +13,7 @@ const makeBlocks = () => {
   registerBlock({
     id: "callout",
     name: "提示框",
+    category: "emphasis",
     attrsSchema: z.object({
       type: z.enum(["info", "warning", "success", "error"]).default("info"),
       text: z.string(),
@@ -24,6 +25,7 @@ const makeBlocks = () => {
   registerBlock({
     id: "heading",
     name: "标题",
+    category: "text",
     attrsSchema: z.object({
       level: z.number().int().min(1).max(6).default(2),
       text: z.string(),

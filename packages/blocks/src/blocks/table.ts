@@ -9,6 +9,7 @@ export const table = defineBlock(
     rows: z.array(z.array(z.string())),
     caption: z.string().optional(),
   }),
+  "text",
   [
     { id: "default", label: "标准表格" },
     { id: "striped", label: "条纹表格" },

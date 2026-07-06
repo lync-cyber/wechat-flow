@@ -41,6 +41,7 @@ describe("defineBlock (AC-001)", () => {
     surface.defineBlock({
       id: "my-block",
       name: "My Block",
+      category: "text",
       attrsSchema: z.object({ title: z.string() }),
       render: () => "<div>hello</div>",
     });
@@ -62,12 +63,69 @@ describe("defineBlock (AC-001)", () => {
     surface.defineBlock({
       id: "my-block-2",
       name: "Block 2",
+      category: "text",
       attrsSchema: z.object({}),
       render: () => "<span />",
     });
 
     const found = describeBlock("my-block-2");
     expect(found?.slots).toContain("root");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// AC-004 (T-135) · defineBlock propagates category into registerBlock payload
+// ---------------------------------------------------------------------------
+
+describe("defineBlock category propagation (AC-004)", () => {
+  afterEach(() => {
+    resetBlockRegistry();
+    resetVariantRegistry();
+  });
+
+  it("passes input.category through to the registerBlock call", () => {
+    let received: { category?: string } | undefined;
+    const spyRegisterBlock = (def: { category?: string }): void => {
+      received = def;
+      registerBlock(def as Parameters<typeof registerBlock>[0]);
+    };
+
+    const surface = createPluginSurface({
+      registerBlock: spyRegisterBlock as typeof registerBlock,
+      describeBlock,
+      registerVariant,
+      listBlockVariants,
+    });
+
+    surface.defineBlock({
+      id: "my-categorized-block",
+      name: "Categorized Block",
+      category: "marketing",
+      attrsSchema: z.object({ title: z.string() }),
+      render: () => "<div>hello</div>",
+    });
+
+    expect(received?.category).toBe("marketing");
+  });
+
+  it("registered block is retrievable via describeBlock with matching category", () => {
+    const surface = createPluginSurface({
+      registerBlock,
+      describeBlock,
+      registerVariant,
+      listBlockVariants,
+    });
+
+    surface.defineBlock({
+      id: "my-structured-block",
+      name: "Structured Block",
+      category: "structured",
+      attrsSchema: z.object({}),
+      render: () => "<table />",
+    });
+
+    const found = describeBlock("my-structured-block");
+    expect(found?.category).toBe("structured");
   });
 });
 
@@ -92,6 +150,7 @@ describe("defineVariant (AC-002)", () => {
     registerBlock({
       id: "callout",
       name: "Callout",
+      category: "emphasis",
       attrsSchema: z.object({}),
       variants: [],
       slots: ["root"],

@@ -11,6 +11,7 @@ export const citation = defineBlock(
     year: z.number().int().optional(),
     author: z.string().optional(),
   }),
+  "meta",
   [
     { id: "default", label: "标准学术引用" },
     { id: "footnote-style", label: "脚注式引用" },

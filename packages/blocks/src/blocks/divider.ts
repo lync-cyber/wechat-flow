@@ -8,6 +8,7 @@ export const divider = defineBlock(
     style: z.enum(["solid", "dashed", "dotted"]).optional(),
     label: z.string().optional(),
   }),
+  "text",
   [
     { id: "default", label: "细线分隔" },
     { id: "thick", label: "粗线分隔" },

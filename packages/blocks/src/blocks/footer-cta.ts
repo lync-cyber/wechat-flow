@@ -9,6 +9,7 @@ export const footerCta = defineBlock(
     url: z.string().optional(),
     buttonLabel: z.string().optional(),
   }),
+  "marketing",
   [
     { id: "default", label: "标准 CTA" },
     { id: "centered", label: "居中 CTA" },

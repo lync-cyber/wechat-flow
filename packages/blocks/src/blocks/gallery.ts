@@ -14,6 +14,7 @@ export const gallery = defineBlock(
     ),
     columns: z.number().int().min(1).max(4).optional(),
   }),
+  "media",
   [
     { id: "grid", label: "网格图集" },
     { id: "masonry", label: "瀑布流图集" },

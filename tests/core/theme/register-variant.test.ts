@@ -53,6 +53,7 @@ describe("AC-001: registerVariant 注册后 listBlockVariants 和 getBlockBaseSt
     registerBlock({
       id: "multi-slot-test",
       name: "多槽测试",
+      category: "structured",
       attrsSchema: z.object({}),
       variants: [],
       slots: ["root", "icon"],
@@ -264,6 +265,7 @@ describe("AC-005: defineBlock baseStyle 缺 root 槽位时注册抛结构化错�
       "test-no-root",
       "测试无 root",
       z.object({ text: z.string() }),
+      "structured",
       [{ id: "default", label: "默认" }],
       { title: { "font-size": "16px" } } // no 'root' key
     );
@@ -284,6 +286,7 @@ describe("AC-005: defineBlock baseStyle 缺 root 槽位时注册抛结构化错�
       "test-no-root-b",
       "测试无 root b",
       z.object({ text: z.string() }),
+      "structured",
       [{ id: "default", label: "默认" }],
       { title: { "font-size": "16px" } }
     );
@@ -315,6 +318,7 @@ describe("AC-005: defineBlock baseStyle 缺 root 槽位时注册抛结构化错�
       "test-no-root-c",
       "测试无 root c",
       z.object({ text: z.string() }),
+      "structured",
       [{ id: "default", label: "默认" }],
       { title: { "font-size": "16px" } }
     );
@@ -439,6 +443,7 @@ describe("T-122-core: registerVariant 扩展校验抛带 code 的结构化错误
       registerBlock({
         id: "no-root-slot",
         name: "无 root 槽",
+        category: "structured",
         attrsSchema: z.object({}),
         variants: [],
         baseStyle: { root: { color: "#000000" } },

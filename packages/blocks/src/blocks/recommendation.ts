@@ -14,6 +14,7 @@ export const recommendation = defineBlock(
       })
     ),
   }),
+  "marketing",
   [
     { id: "default", label: "列表推荐" },
     { id: "card", label: "卡片推荐" },

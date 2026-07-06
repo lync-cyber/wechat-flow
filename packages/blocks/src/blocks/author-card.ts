@@ -10,6 +10,7 @@ export const authorCard = defineBlock(
     avatar: z.string().optional(),
     title: z.string().optional(),
   }),
+  "meta",
   [
     { id: "default", label: "横排作者" },
     { id: "centered", label: "居中作者" },

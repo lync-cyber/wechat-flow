@@ -1,13 +1,17 @@
 import type { ZodType } from "zod";
 
+export type BlockCategory = "text" | "media" | "emphasis" | "structured" | "marketing" | "meta";
+
 export interface BlockVariant {
   id: string;
   label?: string;
+  baseStyle?: Record<string, Record<string, string>>;
 }
 
 export interface BlockDefinition {
   id: string;
   name: string;
+  category: BlockCategory;
   attrsSchema: ZodType;
   variants: BlockVariant[];
   baseStyle?: Record<string, Record<string, string>>;

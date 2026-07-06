@@ -10,6 +10,7 @@ export const subscribeCta = defineBlock(
     buttonLabel: z.string().optional(),
     note: z.string().optional(),
   }),
+  "marketing",
   [
     { id: "default", label: "标准订阅引导" },
     { id: "centered", label: "居中订阅引导" },

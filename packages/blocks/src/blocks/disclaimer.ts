@@ -9,6 +9,7 @@ export const disclaimer = defineBlock(
     title: z.string().optional(),
     compact: z.boolean().optional(),
   }),
+  "emphasis",
   [
     { id: "default", label: "标准免责声明" },
     { id: "compact", label: "紧凑免责声明" },
