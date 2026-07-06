@@ -1,10 +1,10 @@
 ---
 id: "ui-spec-wechat-flow"
-version: "0.2.1"
+version: "0.3.1"
 doc_type: ui-spec
 author: ui-designer
 status: approved
-deps: ["prd-wechat-flow", "prd-wechat-flow-f001-f014", "arch-wechat-flow", "arch-wechat-flow-modules"]
+deps: ["prd-wechat-flow", "prd-wechat-flow-f001-f014", "arch-wechat-flow", "arch-wechat-flow-modules", "ui-spec-wechat-flow-block-taxonomy", "ui-spec-wechat-flow-content-elements", "ui-spec-wechat-flow-block-variants"]
 consumers: [tech-lead, developer]
 volume: main
 split_policy: no-further-split
@@ -19,12 +19,13 @@ required_sections:
 [NAV]
 - §0 设计方向 — 调性定义、核心原则、可访问性基线、视觉语言
 - §1 设计系统 → §1.1 色彩 Token, §1.2 排版 Token, §1.3 间距与圆角, §1.4 阴影与层叠, §1.5 动效, §1.6 断点
-- §2 组件清单（分卷）→ UC-001..UC-023（见 ui-spec-wechat-flow-uc001-uc014.md）
+- §2 组件清单（分卷）→ UC-001..UC-023（见 ui-spec-wechat-flow-uc001-uc014.md）；§2.1 Block 内容视觉系统分卷索引
 - §3 页面布局（分卷）→ P-001..P-005（见 ui-spec-wechat-flow-p001-p005.md）
 - §4 导航与路由
 - §5 响应式策略
 - §6 假设清单
 - §7 Penpot 同步任务清单
+- 关联分卷: §8 Block 分类冻结映射（ui-spec-wechat-flow-block-taxonomy）, §9 Markdown 基础元素排版规格（ui-spec-wechat-flow-content-elements）, §10 Block 变体视觉规格（ui-spec-wechat-flow-block-variants）
 [/NAV]
 
 ## 0. 设计方向
@@ -332,6 +333,14 @@ CSS 媒体查询约定：
 - UC-022 主题模板卡片（TemplateThemeCard）
 - UC-023 底部状态栏（StatusBar）
 
+### 2.1 Block 内容视觉系统（分卷索引）
+
+Block / Markdown 基础元素的渲染内容视觉规格（区别于上方编辑器 chrome 组件）见以下 3 份分卷，均为 ARCH M-005「Block / Variant 注册契约」的 UI 侧对应实现：
+
+- `docs/ui-spec/ui-spec-wechat-flow-block-taxonomy.md`（§8）— 40 内置 Block 到 `BlockCategory` 的冻结分类映射，权威承载 A-014（见 §6 假设清单）
+- `docs/ui-spec/ui-spec-wechat-flow-content-elements.md`（§9）— Markdown 基础元素（table / blockquote / strong / 代码块 / 列表 marker / heading accent / 首字段）跨 5 主题排版规格 + 微信平台硬约束通则
+- `docs/ui-spec/ui-spec-wechat-flow-block-variants.md`（§10）— 9 个内置 Block 的变体（`BlockVariant.baseStyle`）视觉规格
+
 ---
 
 ## 3. 页面布局
@@ -525,7 +534,7 @@ CSS 媒体查询约定：
 | A-011 | LXGW WenKai 字体加载策略（CDN 还是本地包） | 假设通过 Web Font CDN（`lxgw-wenkai` CDN）加载，并提供系统衬线字体兜底；字体加载失败时 fallback 到 Source Han Serif SC | §1.2.1 字体栈 | 部署阶段 CDN 接入验证 |
 | A-012 | 同步状态指示器（M-013 对应 C，见分卷）位置 | 假设位于预览面板右下角，半透明小圆点形式（直径 8px） | UC-005 预览面板 | penpot-sync 空间验证 |
 | A-013 | F-012 协作 UI 在 v1 的交付状态 | v1 中 F-012 协作 UI 以 stub 形式保留：组件规格（UC-001 syncing/offline/conflict 状态、UC-005.1 SyncStateIndicator、P-004 同步与协作分组）作为 v2 视觉准备保留在 ui-spec 中，运行时不渲染同步面板与冲突 Tag；UC-001/UC-005.1/P-004 同步分组均加 `[v1 不交付]` 标注；v2 启用时无需修改 ui-spec，仅移除 stub 标注即可 | UC-001、UC-005.1、P-004 | v2 F-012 启用时解除 stub 标注 |
-| A-014 | UC-015 InsertDrawer / UC-021 DirectiveAutocompletePopover 中分类标签命名（行内/块级/标注/封面）待 T-024 BlockRegistry 冻结后修订 | 当前 4 分类为临时占位，不应硬编码到代码 | UC-015、UC-021 | DEV-PLAN T-024 完成后由 ui-designer 重审 UC-015/UC-021 文案 |
+| A-014 | UC-015 InsertDrawer / UC-021 DirectiveAutocompletePopover 分类 Tab 命名与分组依据 | **已冻结**：6 分类 `text`/`media`/`emphasis`/`structured`/`marketing`/`meta`，对应 ARCH M-005「Block / Variant 注册契约」`BlockCategory` 枚举；前端数据驱动自 `BlockDefinition.category`，仅硬编码 `category` → 中文标签映射（基础排版/图文媒体/强调提示/结构化/运营引流/元信息）；40 Block 权威冻结映射表见 `ui-spec-wechat-flow-block-taxonomy#§8` | UC-015、UC-021 | 已验证：与 ARCH M-005 契约一致；`packages/blocks` 各 Block 定义的 `category` 字段实现以冻结映射表为准 |
 
 ---
 
@@ -545,3 +554,4 @@ CSS 媒体查询约定：
 | PS-008 | 暗色主题（若 v2 启用）Token 映射草稿 | P2 | 提前规划 CSS Custom Property 结构，避免 v2 大规模重构 |
 | PS-009 | 移动端底部固定栏（P-005）的拇指热区可达性测试 | P2 | 一键复制按钮须在 320px 宽度的设备上可单手操作 |
 | PS-010 | Job 进度条（UC-014）动画流畅度验证（queued → running → completed 过渡） | P2 | 异步任务视觉反馈，防止用户误认为卡死 |
+| PS-011 | UC-015 InsertDrawer 分类 Tab（6 分类，A-014 冻结）编辑器帧追平 | P1 | 分类 Tab 行数据驱动自 `BlockDefinition.category`，Penpot 帧需同步更新为 6 Tab（基础排版/图文媒体/强调提示/结构化/运营引流/元信息）替换旧 4 分类占位帧；本次 amendment 范围内仅完成 ui-spec 文字规格，Penpot 帧同步为后续独立任务，不阻塞本次收口 |

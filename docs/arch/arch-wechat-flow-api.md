@@ -1,6 +1,6 @@
 ---
 id: "arch-wechat-flow-api"
-version: "0.6.1"
+version: "0.7.0"
 doc_type: arch
 author: architect
 status: approved
@@ -156,7 +156,7 @@ request:
     themeId: { type: string, required: false, desc: "若指定，仅列出该主题已渲染支持的 Block" }
 response:
   schema:
-    blocks: { type: "BlockSummary[]", desc: "{id, name, description, directiveSyntax}[]" }
+    blocks: { type: "BlockSummary[]", desc: "{id, name, category, description, directiveSyntax}[]（category ∈ text|media|emphasis|structured|marketing|meta）" }
 ```
 
 #### API-006: describe_block
@@ -172,6 +172,7 @@ response:
   schema:
     id: { type: string }
     name: { type: string }
+    category: { type: string, desc: "block 功能分类，∈ text|media|emphasis|structured|marketing|meta（驱动 UC-015 分类 tab）" }
     attrsSchema: { type: "JSONSchema", desc: "Block 属性的 JSON Schema 表达，便于 LLM 生成合法 Markdown" }
     variants: { type: "VariantSummary[]" }
     tokenDependencies: { type: "string[]", desc: "该 Block 消费的 token 路径" }
