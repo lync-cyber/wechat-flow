@@ -3,7 +3,6 @@ export const PAINTABLE_SEMANTIC_TOKENS = [
   "--color-accent",
   "--color-text-primary",
   "--color-surface",
-  "--color-success",
   "--color-link",
 ] as const;
 

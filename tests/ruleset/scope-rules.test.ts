@@ -156,8 +156,8 @@ describe("T-015 AC-004: lint-grid-layout produces diagnostic for display:grid el
 
     const result = applyRuleset(hast, [rule]);
 
-    expect(result.report.diagnostics.length).toBeGreaterThanOrEqual(1);
-    const diag = result.report.diagnostics.find((d) => d.ruleId === "lint-grid-layout");
+    expect(result.diagnostics.length).toBeGreaterThanOrEqual(1);
+    const diag = result.diagnostics.find((d) => d.ruleId === "lint-grid-layout");
     if (!diag) throw new Error("Expected diagnostic with ruleId lint-grid-layout not found");
     expect(diag.severity).toBe("error");
     expect(diag.ruleId).toBe("lint-grid-layout");
@@ -172,7 +172,7 @@ describe("T-015 AC-004: lint-grid-layout produces diagnostic for display:grid el
 
     const result = applyRuleset(hast, [rule]);
 
-    const gridDiag = result.report.diagnostics.filter((d) => d.ruleId === "lint-grid-layout");
+    const gridDiag = result.diagnostics.filter((d) => d.ruleId === "lint-grid-layout");
     expect(gridDiag).toHaveLength(0);
   });
 });

@@ -41,7 +41,7 @@ describe("T-061 AC-001: readabilityRules exports 3 lint rules with correct scope
     const el = makeElement("p", { style: "font-size:10px" });
     const hast = makeHast([el]);
     const result = applyRuleset(hast, [rule]);
-    const diag = result.report.diagnostics.find((d) => d.ruleId === "readability-font-size-min");
+    const diag = result.diagnostics.find((d) => d.ruleId === "readability-font-size-min");
     if (!diag) throw new Error("Expected diagnostic for readability-font-size-min");
     expect(diag.severity).toBe("warning");
   });
@@ -53,7 +53,7 @@ describe("T-061 AC-001: readabilityRules exports 3 lint rules with correct scope
     const el = makeElement("p", { style: "line-height:1.2" });
     const hast = makeHast([el]);
     const result = applyRuleset(hast, [rule]);
-    const diag = result.report.diagnostics.find((d) => d.ruleId === "readability-line-height-min");
+    const diag = result.diagnostics.find((d) => d.ruleId === "readability-line-height-min");
     if (!diag) throw new Error("Expected diagnostic for readability-line-height-min");
     expect(diag.severity).toBe("warning");
   });
@@ -66,7 +66,7 @@ describe("T-061 AC-001: readabilityRules exports 3 lint rules with correct scope
     const el = makeElement("p", {}, [makeText(longText)]);
     const hast = makeHast([el]);
     const result = applyRuleset(hast, [rule]);
-    const diag = result.report.diagnostics.find((d) => d.ruleId === "readability-paragraph-length");
+    const diag = result.diagnostics.find((d) => d.ruleId === "readability-paragraph-length");
     if (!diag) throw new Error("Expected diagnostic for readability-paragraph-length");
     expect(diag.severity).toBe("info");
   });
@@ -280,9 +280,7 @@ describe("T-061 AC-003: compliant inputs (14px / 1.6 / 100 chars) produce 0 diag
     const el = makeElement("p", { style: "font-size:14px" });
     const hast = makeHast([el]);
     const result = applyRuleset(hast, readabilityRules);
-    const readabilityDiags = result.report.diagnostics.filter((d) =>
-      d.ruleId.startsWith("readability-")
-    );
+    const readabilityDiags = result.diagnostics.filter((d) => d.ruleId.startsWith("readability-"));
     expect(readabilityDiags).toHaveLength(0);
   });
 
@@ -290,9 +288,7 @@ describe("T-061 AC-003: compliant inputs (14px / 1.6 / 100 chars) produce 0 diag
     const el = makeElement("p", { style: "line-height:1.6" });
     const hast = makeHast([el]);
     const result = applyRuleset(hast, readabilityRules);
-    const readabilityDiags = result.report.diagnostics.filter((d) =>
-      d.ruleId.startsWith("readability-")
-    );
+    const readabilityDiags = result.diagnostics.filter((d) => d.ruleId.startsWith("readability-"));
     expect(readabilityDiags).toHaveLength(0);
   });
 
@@ -300,9 +296,7 @@ describe("T-061 AC-003: compliant inputs (14px / 1.6 / 100 chars) produce 0 diag
     const el = makeElement("p", {}, [makeText("一".repeat(100))]);
     const hast = makeHast([el]);
     const result = applyRuleset(hast, readabilityRules);
-    const readabilityDiags = result.report.diagnostics.filter((d) =>
-      d.ruleId.startsWith("readability-")
-    );
+    const readabilityDiags = result.diagnostics.filter((d) => d.ruleId.startsWith("readability-"));
     expect(readabilityDiags).toHaveLength(0);
   });
 
@@ -312,9 +306,7 @@ describe("T-061 AC-003: compliant inputs (14px / 1.6 / 100 chars) produce 0 diag
     ]);
     const hast = makeHast([el]);
     const result = applyRuleset(hast, readabilityRules);
-    const readabilityDiags = result.report.diagnostics.filter((d) =>
-      d.ruleId.startsWith("readability-")
-    );
+    const readabilityDiags = result.diagnostics.filter((d) => d.ruleId.startsWith("readability-"));
     expect(readabilityDiags).toHaveLength(0);
   });
 });
