@@ -88,6 +88,11 @@ function visitContainerDirectives(tree: MdastRoot, diagnostics: Diagnostic[] | u
         (directive.data.hProperties as Record<string, unknown>)["data-quote-decoration"] = variant;
       }
 
+      if (name === "paragraph" && variant === "dropcap") {
+        (directive.data.hProperties as Record<string, unknown>)["data-paragraph-decoration"] =
+          variant;
+      }
+
       if (name === "compare" && variant === "ledger") {
         const attrs = directive.attributes ?? {};
         const props = directive.data.hProperties as Record<string, unknown>;
@@ -308,6 +313,7 @@ function injectContainerDecorations(hast: HastRoot): HastRoot {
     const props = node.properties ?? {};
     const authorText = props["data-pull-quote-author"];
     const quoteDecoration = props["data-quote-decoration"];
+    const paragraphDecoration = props["data-paragraph-decoration"];
 
     if (props["data-block"] === "steps" && props["data-variant"] === "card") {
       const ul = node.children.find(
@@ -361,6 +367,11 @@ function injectContainerDecorations(hast: HastRoot): HastRoot {
 
     if (props["data-block"] === "quote" && quoteDecoration === "dropcap") {
       const { "data-quote-decoration": _stash, ...restProps } = props;
+      return injectDropcapDecoration({ ...node, properties: restProps, children: newChildren });
+    }
+
+    if (props["data-block"] === "paragraph" && paragraphDecoration === "dropcap") {
+      const { "data-paragraph-decoration": _stash, ...restProps } = props;
       return injectDropcapDecoration({ ...node, properties: restProps, children: newChildren });
     }
 
