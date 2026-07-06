@@ -11,8 +11,35 @@ export const announcement = defineBlock(
   }),
   "emphasis",
   [
-    { id: "default", label: "标准公告" },
-    { id: "banner", label: "横幅公告" },
-    { id: "compact", label: "紧凑公告" },
-  ]
+    {
+      id: "danger-bar",
+      label: "危险横幅公告",
+      baseStyle: {
+        root: {
+          "border-top": "4px solid #B94A3E",
+          "border-left": "3px solid #B94A3E",
+          padding: "12px 16px",
+          background: "#F3F0EB",
+        },
+      },
+    },
+    {
+      id: "compact",
+      label: "紧凑公告",
+      baseStyle: {
+        root: {
+          padding: "8px 12px",
+          "border-left": "3px solid #2D5A4E",
+          "font-size": "13px",
+        },
+      },
+    },
+  ],
+  {
+    root: {
+      "border-left": "3px solid #B94A3E",
+      padding: "12px 16px",
+      background: "#F3F0EB",
+    },
+  }
 );

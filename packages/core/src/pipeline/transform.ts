@@ -87,6 +87,17 @@ function visitContainerDirectives(tree: MdastRoot, diagnostics: Diagnostic[] | u
       if (name === "quote" && (variant === "large-quote-mark" || variant === "dropcap")) {
         (directive.data.hProperties as Record<string, unknown>)["data-quote-decoration"] = variant;
       }
+
+      if (name === "compare" && variant === "ledger") {
+        const attrs = directive.attributes ?? {};
+        const props = directive.data.hProperties as Record<string, unknown>;
+        for (const key of ["left-label", "left-value", "right-label", "right-value", "title"]) {
+          const value = attrs[key];
+          if (typeof value === "string" && value.trim() !== "") {
+            props[`data-compare-${key}`] = value;
+          }
+        }
+      }
     }
     const parent = node as { children?: Node[] };
     if (parent.children) {
@@ -237,6 +248,54 @@ function buildStepCard(listItem: Element, isLast: boolean): Element {
   };
 }
 
+function buildCompareLedgerChildren(props: Record<string, unknown>): Element[] {
+  const leftLabel = props["data-compare-left-label"];
+  const leftValue = props["data-compare-left-value"];
+  const rightLabel = props["data-compare-right-label"];
+  const rightValue = props["data-compare-right-value"];
+  const title = props["data-compare-title"];
+
+  const children: Element[] = [];
+
+  if (typeof title === "string" && title.trim() !== "") {
+    children.push({
+      type: "element",
+      tagName: "div",
+      properties: { "data-block-slot": "title" },
+      children: [{ type: "text", value: title }],
+    });
+  }
+
+  const leftText = [leftLabel, leftValue]
+    .filter((v): v is string => typeof v === "string" && v.length > 0)
+    .join("：");
+  const rightText = [rightLabel, rightValue]
+    .filter((v): v is string => typeof v === "string" && v.length > 0)
+    .join("：");
+
+  const leftCell: Element = {
+    type: "element",
+    tagName: "div",
+    properties: { "data-block-slot": "left" },
+    children: [{ type: "text", value: leftText }],
+  };
+  const rightCell: Element = {
+    type: "element",
+    tagName: "div",
+    properties: { "data-block-slot": "right" },
+    children: [{ type: "text", value: rightText }],
+  };
+
+  children.push({
+    type: "element",
+    tagName: "div",
+    properties: { "data-block-slot": "table" },
+    children: [leftCell, rightCell],
+  });
+
+  return children;
+}
+
 function buildStepsCardList(ul: Element): Element[] {
   const listItems = ul.children.filter(
     (child): child is Element => child.type === "element" && child.tagName === "li"
@@ -259,6 +318,18 @@ function injectContainerDecorations(hast: HastRoot): HastRoot {
         const { "data-block": _block, "data-variant": _variant, ...restProps } = props;
         return { ...node, properties: restProps, children: cards };
       }
+    }
+
+    if (props["data-block"] === "compare" && props["data-variant"] === "ledger") {
+      const {
+        "data-compare-left-label": _l1,
+        "data-compare-left-value": _l2,
+        "data-compare-right-label": _l3,
+        "data-compare-right-value": _l4,
+        "data-compare-title": _l5,
+        ...restProps
+      } = props;
+      return { ...node, properties: restProps, children: buildCompareLedgerChildren(props) };
     }
 
     const newChildren = node.children.map((child) =>
