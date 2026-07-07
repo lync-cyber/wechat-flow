@@ -26,12 +26,13 @@ describe("AC-001: list_block_variants(callout) returns ≥3 variants each with i
     }
   });
 
-  it("result includes built-in variants default, filled, minimal", () => {
+  it("result includes built-in variants tip, warning, info, danger", () => {
     const result = listBlockVariantsTool({ blockId: "callout" }) as Array<{ id: string }>;
     const ids = result.map((v) => v.id);
-    expect(ids).toContain("default");
-    expect(ids).toContain("filled");
-    expect(ids).toContain("minimal");
+    expect(ids).toContain("tip");
+    expect(ids).toContain("warning");
+    expect(ids).toContain("info");
+    expect(ids).toContain("danger");
   });
 
   it("SR-006: each item exposes render metadata field (undefined when M-005 has no render model)", () => {
@@ -42,11 +43,11 @@ describe("AC-001: list_block_variants(callout) returns ≥3 variants each with i
   });
 });
 
-// ---- AC-002: describe_variant('callout','filled') 返回 attrsSchema + style ----
+// ---- AC-002: describe_variant('callout','tip') 返回 attrsSchema + style ----
 
-describe("AC-002: describe_variant(callout, filled) returns attrsSchema as JSON Schema and style", () => {
+describe("AC-002: describe_variant(callout, tip) returns attrsSchema as JSON Schema and style", () => {
   it("describeVariantTool({ blockId: 'callout', variantId: 'filled' }) has attrsSchema.type = 'object'", () => {
-    const result = describeVariantTool({ blockId: "callout", variantId: "filled" }) as Record<
+    const result = describeVariantTool({ blockId: "callout", variantId: "tip" }) as Record<
       string,
       unknown
     >;
@@ -60,7 +61,7 @@ describe("AC-002: describe_variant(callout, filled) returns attrsSchema as JSON 
   });
 
   it("describeVariantTool({ blockId: 'callout', variantId: 'filled' }) has style field", () => {
-    const result = describeVariantTool({ blockId: "callout", variantId: "filled" }) as Record<
+    const result = describeVariantTool({ blockId: "callout", variantId: "tip" }) as Record<
       string,
       unknown
     >;
@@ -69,17 +70,17 @@ describe("AC-002: describe_variant(callout, filled) returns attrsSchema as JSON 
   });
 
   it("describeVariantTool returns id, blockId, label fields", () => {
-    const result = describeVariantTool({ blockId: "callout", variantId: "filled" }) as Record<
+    const result = describeVariantTool({ blockId: "callout", variantId: "tip" }) as Record<
       string,
       unknown
     >;
-    expect(result.id).toBe("filled");
+    expect(result.id).toBe("tip");
     expect(result.blockId).toBe("callout");
     expect(typeof result.label).toBe("string");
   });
 
   it("SR-006: describe_variant returns dependencies array (empty when M-005 has no dep model)", () => {
-    const result = describeVariantTool({ blockId: "callout", variantId: "filled" }) as Record<
+    const result = describeVariantTool({ blockId: "callout", variantId: "tip" }) as Record<
       string,
       unknown
     >;

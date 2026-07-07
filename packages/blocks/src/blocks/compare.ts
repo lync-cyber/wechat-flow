@@ -19,7 +19,37 @@ export const compare = defineBlock(
     { id: "default", label: "标准对比" },
     { id: "highlight-right", label: "突出右侧" },
     { id: "table-style", label: "表格对比" },
-    { id: "color-coded", label: "色彩对比" },
+    {
+      id: "ledger",
+      label: "账本对比",
+      baseStyle: {
+        root: {
+          margin: "16px 0",
+        },
+        title: {
+          "text-align": "center",
+          "font-weight": "600",
+          "margin-bottom": "8px",
+        },
+        table: {
+          display: "table",
+          width: "100%",
+        },
+        left: {
+          display: "table-cell",
+          width: "50%",
+          padding: "16px",
+          background: "#F3F0EB",
+        },
+        right: {
+          display: "table-cell",
+          width: "50%",
+          padding: "16px",
+          background: "#F0EDE8",
+          "border-left": "1px solid #D6D3CE",
+        },
+      },
+    },
     { id: "compact", label: "紧凑对比" },
   ],
   {
@@ -29,5 +59,6 @@ export const compare = defineBlock(
       "border-collapse": "collapse",
       margin: "16px 0",
     },
-  }
+  },
+  ["root", "title", "table", "left", "right"]
 );

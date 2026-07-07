@@ -1,11 +1,31 @@
 import type { SanitizeSchema } from "@wechat-flow/contracts";
 import { type Schema, defaultSchema } from "hast-util-sanitize";
 
+const DIVIDER_SVG_TAG_NAMES = ["svg", "path", "circle", "line"];
+
+const DIVIDER_SVG_ATTRIBUTES: NonNullable<Schema["attributes"]> = {
+  svg: ["viewBox"],
+  path: ["d", "stroke", "fill", "strokeWidth"],
+  circle: ["cx", "cy", "r", "fill"],
+  line: ["x1", "y1", "x2", "y2", "stroke"],
+};
+
 export const wechatFlowSanitizeSchema: Schema = {
   ...defaultSchema,
+  tagNames: [...(defaultSchema.tagNames ?? []), ...DIVIDER_SVG_TAG_NAMES],
   attributes: {
     ...defaultSchema.attributes,
-    "*": [...(defaultSchema.attributes?.["*"] ?? []), "style", "data-block", "data-variant"],
+    ...DIVIDER_SVG_ATTRIBUTES,
+    "*": [
+      ...(defaultSchema.attributes?.["*"] ?? []),
+      "style",
+      "data-block",
+      "data-variant",
+      "data-block-slot",
+      "data-block-slot-last",
+      "data-steps-item",
+      "data-dialog-avatar",
+    ],
   },
 };
 

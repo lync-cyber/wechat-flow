@@ -461,8 +461,8 @@ describe("T-122-core: registerVariant 扩展校验抛带 code 的结构化错误
     const code = caughtCode(() =>
       registerVariant({
         blockId: "callout",
-        id: "filled",
-        label: "Filled",
+        id: "tip",
+        label: "Tip",
         style: { root: { "background-color": "#000" } },
       })
     );

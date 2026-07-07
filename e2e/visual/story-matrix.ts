@@ -76,7 +76,7 @@ const COMPOSITE_MARKDOWNS: readonly string[] = [
     "",
     "Opening paragraph establishing the context for readers.",
     "",
-    ":::callout{class=default}",
+    ":::callout{class=info}",
     "Key insight highlighted for the reader.",
     ":::",
   ].join("\n"),
@@ -110,7 +110,7 @@ const COMPOSITE_MARKDOWNS: readonly string[] = [
     "Featured card with summary content.",
     ":::",
     "",
-    ":::callout{class=filled}",
+    ":::callout{class=tip}",
     "Important notice for all readers.",
     ":::",
     "",
@@ -147,7 +147,7 @@ const COMPOSITE_MARKDOWNS: readonly string[] = [
 
   // 7: divider + paragraph + quote + card
   [
-    ":::divider{class=decorative}",
+    ":::divider{class=wave}",
     ":::",
     "",
     "Introductory paragraph before the quote.",
@@ -165,7 +165,7 @@ const COMPOSITE_MARKDOWNS: readonly string[] = [
   [
     "## Summary and Takeaways",
     "",
-    ":::callout{class=success}",
+    ":::callout{class=tip}",
     "You have completed this section successfully.",
     ":::",
     "",

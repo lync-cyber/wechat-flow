@@ -108,11 +108,11 @@ describe("AC-004: 重复注册返回 E_VARIANT_CONFLICT，现有条目不变", (
     expect(second.code).toBe("E_VARIANT_CONFLICT");
   });
 
-  it("命中内置 variant（callout filled）也算冲突 → E_VARIANT_CONFLICT", async () => {
+  it("命中内置 variant（callout tip）也算冲突 → E_VARIANT_CONFLICT", async () => {
     const res = await callRegisterVariant({
       blockId: "callout",
-      variantId: "filled",
-      label: "Filled",
+      variantId: "tip",
+      label: "Tip",
       style: { root: { "background-color": "#000000" } },
     });
     expect(res.code).toBe("E_VARIANT_CONFLICT");

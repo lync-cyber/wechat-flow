@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import type { BlockDefinition } from "@wechat-flow/core";
+import type { BlockCategory, BlockDefinition } from "@wechat-flow/core";
 import { listBlocks } from "@wechat-flow/core";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import BlockLibItem from "./BlockLibItem.vue";
+import { CATEGORY_LABELS, CATEGORY_ORDER } from "./category-labels.ts";
 
 const props = defineProps<{
   isOpen: boolean;
@@ -10,7 +11,36 @@ const props = defineProps<{
   onClose: () => void;
 }>();
 
-const blocks = computed(() => listBlocks());
+const allBlocks = computed(() => listBlocks());
+
+const availableCategories = computed<BlockCategory[]>(() => {
+  const present = new Set(allBlocks.value.map((b) => b.category));
+  return CATEGORY_ORDER.filter((c) => present.has(c));
+});
+
+const activeCategory = ref<BlockCategory | null>(availableCategories.value[0] ?? null);
+
+watch(availableCategories, (categories) => {
+  if (!categories.includes(activeCategory.value as BlockCategory)) {
+    activeCategory.value = categories[0] ?? null;
+  }
+});
+
+const searchQuery = ref("");
+
+const blocks = computed(() => {
+  const inCategory = allBlocks.value.filter((b) => b.category === activeCategory.value);
+  const query = searchQuery.value.trim().toLowerCase();
+  if (!query) return inCategory;
+  return inCategory.filter(
+    (b) => b.name.toLowerCase().includes(query) || b.id.toLowerCase().includes(query)
+  );
+});
+
+function selectCategory(category: BlockCategory): void {
+  activeCategory.value = category;
+}
+
 const selectedBlock = ref<BlockDefinition | null>(null);
 const paramValues = ref<Record<string, string>>({});
 
@@ -61,6 +91,27 @@ function getParamFields(block: BlockDefinition): Array<{ key: string; type: stri
         aria-label="关闭"
         @click="onClose"
       >✕</button>
+    </div>
+
+    <input
+      v-model="searchQuery"
+      class="insert-drawer__search"
+      data-testid="insert-drawer-search"
+      type="text"
+      placeholder="搜索组件…"
+      :style="{ height: '36px' }"
+    />
+
+    <div class="insert-drawer__tab-row" data-testid="insert-drawer-tab-row" :style="{ height: '40px' }">
+      <button
+        v-for="category in availableCategories"
+        :key="category"
+        type="button"
+        class="insert-drawer__tab"
+        :class="{ 'insert-drawer__tab--active': category === activeCategory }"
+        :data-testid="`category-tab-${category}`"
+        @click="selectCategory(category)"
+      >{{ CATEGORY_LABELS[category] }}</button>
     </div>
 
     <div class="insert-drawer__list">
@@ -156,6 +207,55 @@ function getParamFields(block: BlockDefinition): Array<{ key: string; type: stri
 .insert-drawer__close:hover {
   background: var(--color-surface-overlay);
   color: var(--color-text-primary);
+}
+
+.insert-drawer__search {
+  flex-shrink: 0;
+  margin: var(--space-3) var(--space-4) 0;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  background: var(--color-surface-elevated);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  outline: none;
+}
+
+.insert-drawer__search:focus {
+  border-color: var(--color-brand);
+}
+
+.insert-drawer__tab-row {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0 var(--space-4);
+  margin-top: var(--space-2);
+  border-bottom: 1px solid var(--color-border-subtle);
+  overflow-x: auto;
+}
+
+.insert-drawer__tab {
+  flex-shrink: 0;
+  height: 100%;
+  padding: 0 var(--space-2);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.insert-drawer__tab:hover {
+  color: var(--color-text-primary);
+}
+
+.insert-drawer__tab--active {
+  color: var(--color-brand);
+  border-bottom-color: var(--color-brand);
+  font-weight: var(--font-weight-medium);
 }
 
 .insert-drawer__list {

@@ -1,4 +1,5 @@
 import type { Element, Root as HastRoot, Properties } from "hast";
+import { describeBlock } from "../registry/block.ts";
 import { getBlockBaseStyle } from "../registry/variant.ts";
 import { sortedEntries } from "../utils/deterministic.ts";
 import { filterCssAttrs } from "./css-attr-filter.ts";
@@ -73,6 +74,16 @@ const DEFAULT_TOKENS: BlockStyleTable = {
   },
 };
 
+function getBlockSlotStyle(
+  blockId: string,
+  variantId: string,
+  slot: string
+): Record<string, string> {
+  const def = describeBlock(blockId);
+  const variant = def?.variants.find((v) => v.id === variantId);
+  return variant?.baseStyle?.[slot] ?? {};
+}
+
 function stripClassFromProperties(props: Properties): Properties {
   const next: Properties = {};
   for (const [key, val] of Object.entries(props)) {
@@ -89,10 +100,17 @@ function serializeDeclarations(declarations: Record<string, string>): string {
     .join("; ");
 }
 
+interface AmbientBlockContext {
+  blockId: string;
+  variantId: string;
+}
+
 function applyInlineStyles(
   node: HastRoot | Element,
   styleMap: Map<string, string>,
-  themeTokens: BlockStyleTable
+  themeTokens: BlockStyleTable,
+  isEvenBodyRow = false,
+  ambientBlock?: AmbientBlockContext
 ): HastRoot | Element {
   if (node.type === "element") {
     const el = node as Element;
@@ -101,8 +119,12 @@ function applyInlineStyles(
 
     let tagStyle: string;
 
+    const blockSlot = propsWithoutClass["data-block-slot"];
     const dataBlock = propsWithoutClass["data-block"];
-    if (typeof dataBlock === "string" && dataBlock.length > 0) {
+    if (typeof blockSlot === "string" && blockSlot.length > 0 && ambientBlock) {
+      const slotStyle = getBlockSlotStyle(ambientBlock.blockId, ambientBlock.variantId, blockSlot);
+      tagStyle = Object.keys(slotStyle).length > 0 ? serializeDeclarations(slotStyle) : "";
+    } else if (typeof dataBlock === "string" && dataBlock.length > 0) {
       // Container block path: L1 ⊕ L2
       const variantId =
         typeof propsWithoutClass["data-variant"] === "string"
@@ -113,10 +135,20 @@ function applyInlineStyles(
       const l2 = themeTokens[dataBlock]?.[variantId];
 
       const merged: Record<string, string> = { ...l1, ...(l2 ?? {}) };
+      if (propsWithoutClass["data-block-slot-last"] === "true" && "margin-bottom" in merged) {
+        merged["margin-bottom"] = "0";
+      }
       tagStyle = Object.keys(merged).length > 0 ? serializeDeclarations(merged) : "";
     } else {
       // Tag path: existing behaviour, byte-identical
-      tagStyle = styleMap.get(el.tagName) ?? "";
+      const base = themeTokens[el.tagName]?.default;
+      const evenOverride = isEvenBodyRow ? themeTokens[el.tagName]?.even : undefined;
+      if (evenOverride) {
+        const merged = { ...(base ?? {}), ...evenOverride };
+        tagStyle = serializeDeclarations(merged);
+      } else {
+        tagStyle = styleMap.get(el.tagName) ?? "";
+      }
     }
 
     const existingStyle = propsWithoutClass.style;
@@ -128,18 +160,50 @@ function applyInlineStyles(
     const filteredStyle = mergedStyle ? filterCssAttrs(mergedStyle) : "";
 
     const newProps: Properties = { ...propsWithoutClass };
+    if (typeof blockSlot === "string" && blockSlot.length > 0) {
+      newProps["data-block-slot"] = undefined;
+    }
+    if ("data-block-slot-last" in newProps) {
+      newProps["data-block-slot-last"] = undefined;
+    }
     if (filteredStyle) {
       newProps.style = filteredStyle;
     } else {
       newProps.style = undefined;
     }
 
+    const isTbody = el.tagName === "tbody";
+    let bodyRowCounter = 0;
+
+    const childAmbientBlock: AmbientBlockContext | undefined =
+      typeof dataBlock === "string" && dataBlock.length > 0
+        ? {
+            blockId: dataBlock,
+            variantId:
+              typeof propsWithoutClass["data-variant"] === "string"
+                ? propsWithoutClass["data-variant"]
+                : "default",
+          }
+        : ambientBlock;
+
     return {
       ...el,
       properties: newProps,
       children: el.children.map((child) => {
         if (child.type === "element") {
-          return applyInlineStyles(child as Element, styleMap, themeTokens) as Element;
+          const childEl = child as Element;
+          let childIsEvenRow = isEvenBodyRow;
+          if (isTbody && childEl.tagName === "tr") {
+            childIsEvenRow = bodyRowCounter % 2 === 1;
+            bodyRowCounter += 1;
+          }
+          return applyInlineStyles(
+            childEl,
+            styleMap,
+            themeTokens,
+            childIsEvenRow,
+            childAmbientBlock
+          ) as Element;
         }
         return child;
       }),
@@ -150,7 +214,13 @@ function applyInlineStyles(
     ...node,
     children: node.children.map((child) => {
       if (child.type === "element") {
-        return applyInlineStyles(child as Element, styleMap, themeTokens) as Element;
+        return applyInlineStyles(
+          child as Element,
+          styleMap,
+          themeTokens,
+          isEvenBodyRow,
+          ambientBlock
+        ) as Element;
       }
       return child;
     }),

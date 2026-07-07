@@ -11,16 +11,58 @@ export const callout = defineBlock(
   }),
   "emphasis",
   [
-    { id: "default", label: "默认提示" },
-    { id: "filled", label: "填充提示" },
-    { id: "minimal", label: "简约提示" },
-    { id: "info", label: "信息提示" },
-    { id: "success", label: "成功提示" },
-    { id: "warning", label: "警告提示" },
-    { id: "error", label: "错误提示" },
-    { id: "tip", label: "小技巧提示" },
-    { id: "note", label: "注意提示" },
-    { id: "important", label: "重要提示" },
+    {
+      id: "tip",
+      label: "小技巧提示",
+      baseStyle: {
+        root: {
+          padding: "12px 16px",
+          margin: "16px 0",
+          "border-radius": "8px 0 8px 8px",
+          "box-shadow": "inset -4px 0 0 0 #2D5A4E",
+          background: "#F3F0EB",
+        },
+      },
+    },
+    {
+      id: "warning",
+      label: "警告提示",
+      baseStyle: {
+        root: {
+          padding: "12px 16px",
+          margin: "16px 0",
+          "border-top": "2px dashed #B94A3E",
+          "border-bottom": "2px solid #B94A3E",
+          background: "transparent",
+        },
+      },
+    },
+    {
+      id: "info",
+      label: "信息提示",
+      baseStyle: {
+        root: {
+          padding: "12px 16px",
+          margin: "16px 0",
+          border: "1px solid #2D5A4E",
+          "box-shadow": "inset 0 2px 0 0 #2D5A4E, 0 1px 3px rgba(0,0,0,0.06)",
+          background: "#FAF8F5",
+        },
+      },
+    },
+    {
+      id: "danger",
+      label: "危险提示",
+      baseStyle: {
+        root: {
+          padding: "12px 16px",
+          margin: "16px 0",
+          "border-top": "8px solid #B94A3E",
+          "border-radius": "0",
+          background: "#F3F0EB",
+        },
+      },
+    },
   ],
   {
     root: {

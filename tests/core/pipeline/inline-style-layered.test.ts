@@ -72,11 +72,11 @@ describe("AC-T120-002 regression-guard: tag-path 字节不变（无 customCss，
   // representative markdown does not use container directives. Any change here means
   // the L1⊕L2 refactor has broken the tag-path output — that is a bug, not a feature.
   const BASELINE_HASHES: Record<string, string> = {
-    default: "726c9149c24c23b30f9c93a30241ed5bfeb54ea5b9499cad0b29cd5788b75ee8",
-    magazine: "5e0807f7d0b513bb3a9fab896191cafa2a61df4e4e79030f938d6f615e203d39",
-    literary: "91e0775d7c9a019d60c03d0c6ccc5d00f8ac0af9b2df5df03f5f99c0085ccbec",
-    business: "783631bc6c5e19012998353864c7af1ce62d6779fcce23e1b2b2cad1a2dd0026",
-    tech: "0bda982b7559ef5312667b751f98119c10cc69be49d546575eee7e58ee296526",
+    default: "95b8ef48c3213ff424f0b6f1d89e33eb22eaa80474823a48cf1e0e911333cf14",
+    magazine: "79f217c955ef90335e9b787b211b95bb3dc8b63d358d4fd8325f883dd551d928",
+    literary: "08b331e97fa36f8850970814b0065075123e0b83f071808a291f5ee0d1bf466c",
+    business: "3c5b0da98d9929951ab686f43828ce511340790e8e02b0e5abe6ff35e59d5a58",
+    tech: "44c9501ff2c816b7d421c545305ff4081588f1d2f9461ae0dd12ebd7223d3b3e",
   };
 
   it("default theme: tag-path render 与基线 SHA-256 一致", async () => {

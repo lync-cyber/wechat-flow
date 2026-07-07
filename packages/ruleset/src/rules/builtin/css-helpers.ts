@@ -68,6 +68,7 @@ export function clampPxProp(node: Node, propNames: string[], minPx: number, maxP
   const decls = parseDeclarations(style);
   const updated = decls.map(([prop, val]): [string, string] => {
     if (!nameSet.has(prop)) return [prop, val];
+    if (val.trim().endsWith("%")) return [prop, val];
     const px = Number.parseFloat(val);
     if (Number.isNaN(px)) return [prop, val];
     const clamped = Math.min(maxPx, Math.max(minPx, px));

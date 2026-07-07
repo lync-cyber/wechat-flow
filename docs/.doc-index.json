@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-06T12:49:57.605722+00:00",
+  "generated_at": "2026-07-06T17:22:10.617198+00:00",
   "documents": {
     "arch-wechat-flow-api": {
       "file_path": "docs/arch/arch-wechat-flow-api.md",
@@ -2110,7 +2110,7 @@
       "status": "draft",
       "total_lines": 918,
       "est_tokens": 16977,
-      "content_hash": "5a4b6295",
+      "content_hash": "a6551c1d",
       "sections": {
         "1": {
           "heading": "## 1. 迭代目标",
@@ -3317,6 +3317,54 @@
         "T-126"
       ]
     },
+    "code-review-T-137-r1": {
+      "file_path": "docs/reviews/code/CODE-REVIEW-T-137-r1.md",
+      "doc_type": "code-review",
+      "status": "approved",
+      "total_lines": 55,
+      "est_tokens": 1643,
+      "content_hash": "ca07f445",
+      "sections": {},
+      "deps": [
+        "T-137"
+      ]
+    },
+    "code-review-T-137-r2": {
+      "file_path": "docs/reviews/code/CODE-REVIEW-T-137-r2.md",
+      "doc_type": "code-review",
+      "status": "approved",
+      "total_lines": 88,
+      "est_tokens": 2272,
+      "content_hash": "208f2f3a",
+      "sections": {},
+      "deps": [
+        "T-137"
+      ]
+    },
+    "code-review-T-149-r1": {
+      "file_path": "docs/reviews/code/CODE-REVIEW-T-149-r1.md",
+      "doc_type": "code-review",
+      "status": "approved",
+      "total_lines": 129,
+      "est_tokens": 3195,
+      "content_hash": "8ddef51d",
+      "sections": {},
+      "deps": [
+        "T-149"
+      ]
+    },
+    "code-review-T-149-r2": {
+      "file_path": "docs/reviews/code/CODE-REVIEW-T-149-r2.md",
+      "doc_type": "code-review",
+      "status": "approved",
+      "total_lines": 83,
+      "est_tokens": 1418,
+      "content_hash": "a4269027",
+      "sections": {},
+      "deps": [
+        "T-149"
+      ]
+    },
     "code-review-T034-T035-r1": {
       "file_path": "docs/reviews/code/CODE-REVIEW-T034-T035-r1.md",
       "doc_type": "code-review",
@@ -3357,6 +3405,126 @@
         "T-046"
       ]
     },
+    "design-review-UC-015-r1": {
+      "file_path": "docs/reviews/design/DESIGN-REVIEW-UC-015-r1.md",
+      "doc_type": "design-review",
+      "status": "approved",
+      "total_lines": 71,
+      "est_tokens": 1415,
+      "content_hash": "747b1eb5",
+      "sections": {},
+      "deps": [
+        "T-137"
+      ]
+    },
+    "design-review-announcement-r1": {
+      "file_path": "docs/reviews/design/DESIGN-REVIEW-announcement-r1.md",
+      "doc_type": "design-review",
+      "status": "approved",
+      "total_lines": 59,
+      "est_tokens": 863,
+      "content_hash": "146ada9f",
+      "sections": {},
+      "deps": [
+        "T-155"
+      ]
+    },
+    "design-review-blockquote-r1": {
+      "file_path": "docs/reviews/design/DESIGN-REVIEW-blockquote-r1.md",
+      "doc_type": "design-review",
+      "status": "approved",
+      "total_lines": 87,
+      "est_tokens": 1111,
+      "content_hash": "276dcb46",
+      "sections": {},
+      "deps": [
+        "T-142"
+      ]
+    },
+    "design-review-callout-r1": {
+      "file_path": "docs/reviews/design/DESIGN-REVIEW-callout-r1.md",
+      "doc_type": "design-review",
+      "status": "approved",
+      "total_lines": 67,
+      "est_tokens": 1046,
+      "content_hash": "5ac9a9f8",
+      "sections": {},
+      "deps": [
+        "T-148"
+      ]
+    },
+    "design-review-compare-r1": {
+      "file_path": "docs/reviews/design/DESIGN-REVIEW-compare-r1.md",
+      "doc_type": "design-review",
+      "status": "approved",
+      "total_lines": 54,
+      "est_tokens": 756,
+      "content_hash": "dc21d9b9",
+      "sections": {},
+      "deps": [
+        "T-153"
+      ]
+    },
+    "design-review-dialog-r1": {
+      "file_path": "docs/reviews/design/DESIGN-REVIEW-dialog-r1.md",
+      "doc_type": "design-review",
+      "status": "approved",
+      "total_lines": 62,
+      "est_tokens": 759,
+      "content_hash": "2206f8cd",
+      "sections": {},
+      "deps": [
+        "T-154"
+      ]
+    },
+    "design-review-divider-r1": {
+      "file_path": "docs/reviews/design/DESIGN-REVIEW-divider-r1.md",
+      "doc_type": "design-review",
+      "status": "approved",
+      "total_lines": 79,
+      "est_tokens": 1542,
+      "content_hash": "f9a4151d",
+      "sections": {},
+      "deps": [
+        "T-149"
+      ]
+    },
+    "design-review-gallery-r1": {
+      "file_path": "docs/reviews/design/DESIGN-REVIEW-gallery-r1.md",
+      "doc_type": "design-review",
+      "status": "approved",
+      "total_lines": 53,
+      "est_tokens": 753,
+      "content_hash": "d79c29e0",
+      "sections": {},
+      "deps": [
+        "T-156"
+      ]
+    },
+    "design-review-pull-quote-r1": {
+      "file_path": "docs/reviews/design/DESIGN-REVIEW-pull-quote-r1.md",
+      "doc_type": "design-review",
+      "status": "approved",
+      "total_lines": 60,
+      "est_tokens": 821,
+      "content_hash": "781f3b30",
+      "sections": {},
+      "deps": [
+        "T-150"
+      ]
+    },
+    "design-review-quote-r1": {
+      "file_path": "docs/reviews/design/DESIGN-REVIEW-quote-r1.md",
+      "doc_type": "design-review",
+      "status": "approved",
+      "total_lines": 57,
+      "est_tokens": 867,
+      "content_hash": "b7a3b406",
+      "sections": {},
+      "deps": [
+        "T-152"
+      ]
+    },
     "design-review-s1-ui-shell-r1": {
       "file_path": "docs/reviews/design/DESIGN-REVIEW-s1-ui-shell-r1.md",
       "doc_type": "design-review",
@@ -3376,6 +3544,30 @@
       "dep_hashes": {
         "ui-spec-wechat-flow-uc001-uc014": "485d2b93"
       }
+    },
+    "design-review-steps-r1": {
+      "file_path": "docs/reviews/design/DESIGN-REVIEW-steps-r1.md",
+      "doc_type": "design-review",
+      "status": "approved",
+      "total_lines": 51,
+      "est_tokens": 692,
+      "content_hash": "64e6eb65",
+      "sections": {},
+      "deps": [
+        "T-151"
+      ]
+    },
+    "design-review-table-r1": {
+      "file_path": "docs/reviews/design/DESIGN-REVIEW-table-r1.md",
+      "doc_type": "design-review",
+      "status": "approved",
+      "total_lines": 88,
+      "est_tokens": 1182,
+      "content_hash": "1581e43d",
+      "sections": {},
+      "deps": [
+        "T-141"
+      ]
     },
     "review-arch-wechat-flow-r1": {
       "file_path": "docs/reviews/doc/REVIEW-arch-wechat-flow-r1.md",
@@ -3739,7 +3931,7 @@
         "dev-plan-wechat-flow-s7"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow-s7": "5a4b6295"
+        "dev-plan-wechat-flow-s7": "a6551c1d"
       }
     },
     "review-dev-plan-wechat-flow-r8": {
@@ -3754,7 +3946,7 @@
         "dev-plan-wechat-flow-s7"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow-s7": "5a4b6295"
+        "dev-plan-wechat-flow-s7": "a6551c1d"
       }
     },
     "review-prd-wechat-flow-r1": {

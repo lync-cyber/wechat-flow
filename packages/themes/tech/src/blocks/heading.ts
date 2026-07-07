@@ -21,6 +21,8 @@ export const headingBlocks: ThemeBlocks = {
       "line-height": "1.35",
       margin: "0 0 14px",
       "text-align": "left",
+      "border-left": "3px solid #58A6FF",
+      "padding-left": "8px",
     },
   },
   h3: {

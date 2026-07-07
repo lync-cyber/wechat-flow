@@ -66,5 +66,5 @@ export async function computeFixtureHashes(
 export const EXPECTED_HASHES: Record<string, string> = {
   "cjk-heading": "cb9c01f45dd71b185679da34d89f41ce61783e032e3458fff56480a09d2ebf56",
   "block-directive": "2abef30387135a288e74d85c90c2cbdeb19c9a40f15b0b07926601ddfafcad3a",
-  frontmatter: "14f3321390645e625b563d544038a2d3296e0f908440c2d423b99851b880aa72",
+  frontmatter: "2ef5c926e08a94dfc926902ca9c60c709526610a58d932497ed8b8b08e16876e",
 };
