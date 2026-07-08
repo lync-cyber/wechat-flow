@@ -22,6 +22,7 @@ function getLineHeightValue(node: Node): number | null {
 const readabilityLineHeightMin: RuleDefinition = {
   id: "readability-line-height-min",
   scope: "lint",
+  stage: "authoring",
   priority: 30,
   matcher: (node: Node): boolean => {
     const val = getLineHeightValue(node);

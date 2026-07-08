@@ -23,6 +23,7 @@ function getPxFontSize(node: Node): number | null {
 const readabilityFontSizeMin: RuleDefinition = {
   id: "readability-font-size-min",
   scope: "lint",
+  stage: "authoring",
   priority: 30,
   matcher: (node: Node): boolean => {
     const px = getPxFontSize(node);

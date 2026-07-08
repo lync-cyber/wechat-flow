@@ -23,6 +23,7 @@ function makePatchRule(id: string): RuleDefinition {
   return {
     id,
     scope: "patch",
+    stage: "authoring",
     priority: 100,
     matcher: matchNone,
     transform: noop,
@@ -444,6 +445,7 @@ describe("T-060 AC-004: same rule id in patch bundle overwrites existing rule (u
     const v1: RuleDefinition = {
       id: "patch-t060-ac004-version-wins",
       scope: "patch",
+      stage: "authoring",
       priority: 10,
       matcher: matchNone,
       transform: noop,
@@ -451,6 +453,7 @@ describe("T-060 AC-004: same rule id in patch bundle overwrites existing rule (u
     const v2: RuleDefinition = {
       id: "patch-t060-ac004-version-wins",
       scope: "patch",
+      stage: "authoring",
       priority: 20,
       matcher: matchNone,
       transform: noop,

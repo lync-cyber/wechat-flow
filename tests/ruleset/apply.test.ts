@@ -54,6 +54,7 @@ describe("AC-002: strip scope rule removes style attributes", () => {
     const stripStyleRule: RuleDefinition = {
       id: "strip-style",
       scope: "strip",
+      stage: "authoring",
       priority: 100,
       matcher: (node) => node.type === "element" && "style" in (node as Element).properties,
       transform: (node) => {
@@ -78,6 +79,7 @@ describe("AC-002: strip scope rule removes style attributes", () => {
     const stripStyleRule: RuleDefinition = {
       id: "strip-style",
       scope: "strip",
+      stage: "authoring",
       priority: 100,
       matcher: (node) => node.type === "element" && "style" in (node as Element).properties,
       transform: (node) => {

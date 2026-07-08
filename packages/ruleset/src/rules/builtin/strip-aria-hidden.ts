@@ -5,6 +5,7 @@ import type { RuleDefinition } from "../registry.ts";
 const stripAriaHidden: RuleDefinition = {
   id: "strip-aria-hidden",
   scope: "strip",
+  stage: "authoring",
   priority: 85,
   matcher: (node) => {
     if (node.type !== "element") return false;

@@ -8,6 +8,7 @@ const MAX = 2.5;
 const clampLineHeight: RuleDefinition = {
   id: "clamp-line-height",
   scope: "clamp",
+  stage: "authoring",
   priority: 80,
   matcher: (node) => hasStyleProp(node, ["line-height"]),
   transform: (node: Node): Node => {

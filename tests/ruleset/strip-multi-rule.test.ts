@@ -50,6 +50,7 @@ describe("strip scope: multiple rules apply to the same node", () => {
     const deleteRule: RuleDefinition = {
       id: "strip-delete",
       scope: "strip",
+      stage: "authoring",
       priority: 100,
       matcher: (node) => node.type === "element" && (node as Element).tagName === "script",
       transform: () => null,
@@ -57,6 +58,7 @@ describe("strip scope: multiple rules apply to the same node", () => {
     const followupRule: RuleDefinition = {
       id: "strip-followup",
       scope: "strip",
+      stage: "authoring",
       priority: 90,
       matcher: (node) => node.type === "element" && (node as Element).tagName === "script",
       transform: (node) => {
@@ -109,6 +111,7 @@ describe("transform scope: single-rule-per-node is correct semantics", () => {
     const ruleA: RuleDefinition = {
       id: "transform-a",
       scope: "transform",
+      stage: "authoring",
       priority: 100,
       matcher: (node) => node.type === "element" && (node as Element).tagName === "ul",
       transform: (node) => {
@@ -120,6 +123,7 @@ describe("transform scope: single-rule-per-node is correct semantics", () => {
     const ruleB: RuleDefinition = {
       id: "transform-b",
       scope: "transform",
+      stage: "authoring",
       priority: 90,
       matcher: (node) => node.type === "element" && (node as Element).tagName === "ul",
       transform: () => {

@@ -32,6 +32,7 @@ function replaceWhiteInNode(node: Node): Node {
 const transformSvgWhiteOffset: RuleDefinition = {
   id: "transform-svg-white-offset",
   scope: "transform",
+  stage: "authoring",
   priority: 60,
   matcher: (node: Node) => {
     const el = node as Element;

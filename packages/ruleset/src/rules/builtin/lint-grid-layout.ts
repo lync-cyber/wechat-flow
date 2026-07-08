@@ -16,6 +16,7 @@ function hasGridDisplay(node: Node): boolean {
 const lintGridLayout: RuleDefinition = {
   id: "lint-grid-layout",
   scope: "lint",
+  stage: "authoring",
   priority: 40,
   matcher: hasGridDisplay,
   transform: (node: Node): Node => node,

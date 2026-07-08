@@ -4,6 +4,7 @@ import { isTag } from "./css-helpers.ts";
 const stripStyleTag: RuleDefinition = {
   id: "strip-style-tag",
   scope: "strip",
+  stage: "authoring",
   priority: 100,
   matcher: (node) => isTag(node, "style"),
   transform: () => null,
