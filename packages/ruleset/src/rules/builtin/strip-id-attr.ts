@@ -4,6 +4,7 @@ import type { RuleDefinition } from "../registry.ts";
 const stripIdAttr: RuleDefinition = {
   id: "strip-id-attr",
   scope: "strip",
+  stage: "authoring",
   priority: 90,
   matcher: (node) => node.type === "element" && "id" in (node as Element).properties,
   transform: (node) => {

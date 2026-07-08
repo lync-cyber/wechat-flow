@@ -16,6 +16,7 @@ function unquoteDataUrisInStyle(style: string): string {
 const transformDataUriUnquote: RuleDefinition = {
   id: "transform-data-uri-unquote",
   scope: "transform",
+  stage: "authoring",
   priority: 60,
   matcher: hasQuotedDataUri,
   transform: (node: Node): Node => {

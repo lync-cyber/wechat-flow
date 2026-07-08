@@ -6,6 +6,7 @@ const PROPS = ["position"];
 const stripPosition: RuleDefinition = {
   id: "strip-position",
   scope: "strip",
+  stage: "authoring",
   priority: 90,
   matcher: (node) => hasStyleProp(node, PROPS),
   transform: (node) => removeCssDeclarations(node, PROPS),

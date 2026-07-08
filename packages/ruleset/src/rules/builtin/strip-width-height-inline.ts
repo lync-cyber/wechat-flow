@@ -6,6 +6,7 @@ const PROPS = ["width", "height"];
 const stripWidthHeightInline: RuleDefinition = {
   id: "strip-width-height-inline",
   scope: "strip",
+  stage: "authoring",
   priority: 85,
   matcher: (node) => hasStyleProp(node, PROPS),
   transform: (node) => removeCssDeclarations(node, PROPS),

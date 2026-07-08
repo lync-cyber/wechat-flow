@@ -23,6 +23,7 @@ function hasNegativeMargin(node: Node): boolean {
 const stripNegativeMargin: RuleDefinition = {
   id: "strip-negative-margin",
   scope: "strip",
+  stage: "authoring",
   priority: 85,
   matcher: hasNegativeMargin,
   transform: (node: Node): Node => {

@@ -244,6 +244,7 @@ export function compilePatchEntry(entry: unknown): RuleDefinition {
   return {
     id,
     scope: e.scope as RuleScope,
+    stage: "authoring",
     priority: e.priority,
     matcher,
     transform,

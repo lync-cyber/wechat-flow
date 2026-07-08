@@ -17,6 +17,7 @@ function removeEventHandlers(node: Node): Node {
 const stripJsEvents: RuleDefinition = {
   id: "strip-js-events",
   scope: "strip",
+  stage: "authoring",
   priority: 100,
   matcher: hasEventHandlers,
   transform: removeEventHandlers,

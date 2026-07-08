@@ -64,11 +64,11 @@ export async function renderMarkdown(
 
   const rules = options?.rules !== undefined ? options.rules : builtinRules;
   const {
-    hast: rulesetHast,
-    diagnostics: rulesetDiagnostics,
-    nodeChangeRecords,
-  } = applyRuleset(hast, rules);
-  hast = rulesetHast;
+    hast: authoringHast,
+    diagnostics: authoringDiagnostics,
+    nodeChangeRecords: authoringNodeChangeRecords,
+  } = applyRuleset(hast, rules, "authoring");
+  hast = authoringHast;
 
   if (options?.injectNodeIds) {
     hast = injectNodeIds(hast);
@@ -76,23 +76,36 @@ export async function renderMarkdown(
 
   const themeTokens = effectiveTheme?.blocks;
   const styledHast = inlineStyle(hast, themeTokens, effectiveTheme?.tokens);
-  const nightRiskIssues = collectNightRiskIssues(styledHast);
   let decorated = contextAwareRender(styledHast, effectiveTheme);
   decorated = injectDecorations(decorated, effectiveTheme);
-  const html = serializeHast(decorated);
 
-  const allDiagnostics = [...paintDiagnostics, ...transformDiagnostics, ...rulesetDiagnostics];
-
-  let finalHtml = html;
+  const ccDiagnostics: Diagnostic[] = [];
   const customCss = options?.customCss;
-  if (typeof customCss === "string" && customCss.trim() !== "") {
-    const ccDiagnostics: Diagnostic[] = [];
-    finalHtml = applyCustomCss(html, customCss, ccDiagnostics);
-    allDiagnostics.push(...ccDiagnostics);
-  }
+  const afterCustomCss =
+    typeof customCss === "string" && customCss.trim() !== ""
+      ? applyCustomCss(decorated, customCss, ccDiagnostics)
+      : decorated;
+
+  const {
+    hast: outputHast,
+    diagnostics: outputDiagnostics,
+    nodeChangeRecords: outputNodeChangeRecords,
+  } = applyRuleset(afterCustomCss, rules, "output");
+
+  const nightRiskIssues = collectNightRiskIssues(outputHast);
+  const html = serializeHast(outputHast);
+
+  const allDiagnostics = [
+    ...paintDiagnostics,
+    ...transformDiagnostics,
+    ...authoringDiagnostics,
+    ...ccDiagnostics,
+    ...outputDiagnostics,
+  ];
+  const nodeChangeRecords = [...authoringNodeChangeRecords, ...outputNodeChangeRecords];
 
   return {
-    html: finalHtml,
+    html,
     diagnostics: allDiagnostics,
     rulesetVersion: getRulesetVersion(),
     themeVersion: effectiveTheme?.meta?.version ?? "0.0.0",

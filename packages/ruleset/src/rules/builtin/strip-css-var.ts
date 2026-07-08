@@ -41,6 +41,7 @@ function expandCssVars(node: Node): Node {
 const stripCssVar: RuleDefinition = {
   id: "strip-css-var",
   scope: "strip",
+  stage: "authoring",
   priority: 90,
   matcher: hasCssVars,
   transform: expandCssVars,

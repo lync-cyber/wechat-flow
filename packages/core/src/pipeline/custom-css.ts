@@ -162,9 +162,12 @@ function applyMergedStyles(
   return walkPair(hast, juicedHast) as HastRoot;
 }
 
-export function applyCustomCss(html: string, customCss: string, diagnostics: Diagnostic[]): string {
-  // Parse original HTML preserving existing inline styles
-  const origHast = fromHtml(html, { fragment: true }) as HastRoot;
+export function applyCustomCss(
+  hast: HastRoot,
+  customCss: string,
+  diagnostics: Diagnostic[]
+): HastRoot {
+  const origHast = hast;
 
   // Collect existing inline styles before stripping
   const existingStyles = collectInlineStyles(origHast);
@@ -179,7 +182,5 @@ export function applyCustomCss(html: string, customCss: string, diagnostics: Dia
 
   // Merge: existing inline styles (lower priority) + juice styles (higher priority)
   // Then whitelist-filter the juice-contributed declarations
-  const mergedHast = applyMergedStyles(origHast, juicedHast, existingStyles, diagnostics);
-
-  return toHtml(mergedHast);
+  return applyMergedStyles(origHast, juicedHast, existingStyles, diagnostics);
 }

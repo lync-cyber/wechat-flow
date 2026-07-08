@@ -10,6 +10,7 @@ const isStrippableData = (key: string): boolean => /^data[A-Z0-9]/.test(key) && 
 const stripDataAttr: RuleDefinition = {
   id: "strip-data-attr",
   scope: "strip",
+  stage: "authoring",
   priority: 85,
   matcher: (node) => {
     if (node.type !== "element") return false;

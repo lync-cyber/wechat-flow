@@ -15,6 +15,7 @@ function styleHasVh(node: Node): boolean {
 const transformVhFallback: RuleDefinition = {
   id: "transform-vh-fallback",
   scope: "transform",
+  stage: "authoring",
   priority: 70,
   matcher: styleHasVh,
   transform: (node: Node): Node => {

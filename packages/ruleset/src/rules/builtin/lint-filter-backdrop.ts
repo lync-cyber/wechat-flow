@@ -6,6 +6,7 @@ import { hasStyleProp } from "./css-helpers.ts";
 const lintFilterBackdrop: RuleDefinition = {
   id: "lint-filter-backdrop",
   scope: "lint",
+  stage: "authoring",
   priority: 40,
   matcher: (node: Node) => hasStyleProp(node, ["backdrop-filter"]),
   transform: (node: Node): Node => node,

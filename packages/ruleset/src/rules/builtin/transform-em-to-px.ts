@@ -16,6 +16,7 @@ function styleHasEm(node: Node): boolean {
 const transformEmToPx: RuleDefinition = {
   id: "transform-em-to-px",
   scope: "transform",
+  stage: "authoring",
   priority: 70,
   matcher: styleHasEm,
   transform: (node: Node): Node => {

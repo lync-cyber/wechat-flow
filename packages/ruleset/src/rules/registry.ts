@@ -4,9 +4,12 @@ import { rulesetVersion } from "../version/manifest.ts";
 
 export type RuleScope = "strip" | "clamp" | "transform" | "patch" | "lint";
 
+export type RuleStage = "authoring" | "output";
+
 export interface RuleDefinition {
   id: string;
   scope: RuleScope;
+  stage: RuleStage;
   priority: number;
   matcher: (node: Node) => boolean;
   /** Return null to delete the matched node entirely. For lint rules, return the node unchanged. */

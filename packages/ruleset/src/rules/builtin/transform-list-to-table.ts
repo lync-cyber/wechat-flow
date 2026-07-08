@@ -26,6 +26,7 @@ function ulToTable(ul: Element): Element {
 const transformListToTable: RuleDefinition = {
   id: "transform-list-to-table",
   scope: "transform",
+  stage: "authoring",
   priority: 60,
   matcher: (node: Node) => isTag(node, "ul"),
   transform: (node: Node): Node => ulToTable(node as Element),

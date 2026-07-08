@@ -15,6 +15,7 @@ function styleHasVw(node: Node): boolean {
 const transformVwToPercent: RuleDefinition = {
   id: "transform-vw-to-percent",
   scope: "transform",
+  stage: "authoring",
   priority: 70,
   matcher: styleHasVw,
   transform: (node: Node): Node => {

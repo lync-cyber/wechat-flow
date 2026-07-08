@@ -4,6 +4,7 @@ import { isTag } from "./css-helpers.ts";
 const stripScript: RuleDefinition = {
   id: "strip-script",
   scope: "strip",
+  stage: "authoring",
   priority: 100,
   matcher: (node) => isTag(node, "script"),
   transform: () => null,

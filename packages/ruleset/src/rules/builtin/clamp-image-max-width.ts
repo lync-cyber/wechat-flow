@@ -18,6 +18,7 @@ function matchesImgWithMaxWidthOver100Pct(node: Node): boolean {
 const clampImageMaxWidth: RuleDefinition = {
   id: "clamp-image-max-width",
   scope: "clamp",
+  stage: "authoring",
   priority: 70,
   matcher: matchesImgWithMaxWidthOver100Pct,
   transform: (node: Node): Node => {
