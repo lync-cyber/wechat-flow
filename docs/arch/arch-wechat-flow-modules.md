@@ -1,6 +1,6 @@
 ---
 id: "arch-wechat-flow-modules"
-version: "0.9.4"
+version: "0.9.5"
 doc_type: arch
 author: architect
 status: approved
@@ -19,6 +19,8 @@ required_sections:
 [/NAV]
 
 ## 2. 模块划分
+
+> **实现状态（2026-07-08）**：本章 M-002/M-003/M-004/M-005 描述 ruleset 双语义域的**目标架构**。落地状态——T-181（本 amendment）已定契约；**T-182**（stage 机制 / 管线两相插点 / customCss 树域 / nightRisk 后移）、**T-183**（output 域规则归域开闸 + 基线审计 + 平台常量接线）、**T-184**（注册期校验接线 + 模拟器统一为 predict 模式 + 收敛不变量入 CI）为落地任务，执行中。因此当前运行的 render 管线仍为**单相**：output 相过滤未激活（生成样式的 font-family / position / <14px 字号 / em / rgba<0.15 尚未在产物端被剥/夹）、平台常量（`WECHAT_PASTE_STRIPPED_STYLE_PROPS` / `WECHAT_PASTE_UNSAFE_TAGS`）尚零消费、独立模拟器 walker（`simulator/strip-tags.ts` 等）仍在、收敛不变量尚未入 CI。**下游判定微信粘贴兼容性是否已强制时以本状态为准，勿据目标态措辞误判为已交付。** 各节以现在时陈述的 output 相 / 三消费方同源 / CI 不变量均指目标态，交付由上述任务收口。
 
 ### M-001: 编辑器 UI
 
@@ -265,7 +267,7 @@ required_sections:
 - **内部关键组件**:
   - `simulate-paste.ts` — predict 模式入口：取 M-003 output 域规则集，对输入 hast 逐规则跑 predict（记录若 normalize 会产生的变更而不改交付树），汇总 `filteredHtml`（预测过滤后 HTML）/ `droppedAttrs`
   - `diff/per-node-diff.ts` — 节点级 diff 输出（兼容性详情面板核心数据）；与 M-003 `report/node-change-recorder.ts` 的 `NodeChangeRecord` 同构，供 UC-013.1 CompatibilityDiffView 消费
-  - 独立 `simulator/strip-tags.ts` / `strip-attrs.ts` / `rewrite-structure.ts` walker 与 `packages/ruleset/src/shared/paste-strip.ts` 子集不再存在——平台过滤知识单一收敛于 M-003 output 域规则集，注册校验（M-005）/ 渲染 output 相（M-002）/ 模拟器（M-004）三消费方同源
+  - 独立 `simulator/strip-tags.ts` / `strip-attrs.ts` / `rewrite-structure.ts` walker 与 `packages/ruleset/src/shared/paste-strip.ts` 子集由 T-184 统一为 M-003 output 域规则集 predict 模式后移除（**目标态；当前仍存在，见 §2 实现状态**）——落地后平台过滤知识单一收敛于 output 域规则集，注册校验（M-005）/ 渲染 output 相（M-002）/ 模拟器（M-004）三消费方同源
 - **收敛不变量**: `simulatePaste(render(x)).nodeDiffs === []` 对自家产物全 specimen 集（40 块 × 变体 + realworld samples，视觉域比较）成立——render 的 output 相与 simulatePaste 共用同一 output 域规则集，产物已达平台稳定态则 predict 零变更。CI 性质测试断言此不变量；「div 携带样式」等负向 fixture 探针保留，验证对**非自家产物**的任意输入 predict 仍报告真实剥除。任何新增块 / 主题 / 规则破坏不变量即门禁红
 - **context_load**: [prd#§2.F-002, prd#§2.F-004, prd#§2.F-011, arch#§2.M-002, arch#§2.M-003]
 
