@@ -36,8 +36,8 @@ wechat-flow 是面向微信公众号写作者的专业写作与排版工具。�
 
 **专注写作 — 暖意文人美学**
 
-- 底色采用暖白 `#FAF8F5`（宣纸感），让长时间盯屏的眼睛感受温和而非刺眼的纯白
-- 主题色采用墨绿 `#2D5A4E`，来自中国传统水墨的深绿，沉静内敛，适合长文写作语境
+- 底色采用暖白 `#faf8f5`（宣纸感），让长时间盯屏的眼睛感受温和而非刺眼的纯白
+- 主题色采用墨绿 `#2d5a4e`，来自中国传统水墨的深绿，沉静内敛，适合长文写作语境
 - 正文排版使用衬线字体，呼应纸质书阅读质感，降低长文阅读的认知负担
 - UI 控件（按钮、标签、输入框）使用无衬线字体，保持功能性清晰
 - 视觉层次通过色度差与背景色深浅变化建立，避免过多色彩抢走写作者注意力
@@ -66,9 +66,9 @@ wechat-flow 是面向微信公众号写作者的专业写作与排版工具。�
 
 | 维度 | 决策 | 理由 |
 |------|------|------|
-| 主底色 | 暖白 `#FAF8F5` | 降低长时间阅读的视觉疲劳，贴近纸质书质感 |
-| 主题色 | 墨绿 `#2D5A4E` | 稳重内敛，适合工具类界面，与暖白形成高对比 |
-| 强调色 | 赤陶 `#B94A3E` | 暖色系警示与高亮，与暖白调性一致，避免冷色蓝 |
+| 主底色 | 暖白 `#faf8f5` | 降低长时间阅读的视觉疲劳，贴近纸质书质感 |
+| 主题色 | 墨绿 `#2d5a4e` | 稳重内敛，适合工具类界面，与暖白形成高对比 |
+| 强调色 | 赤陶 `#b94a3e` | 暖色系警示与高亮，与暖白调性一致，避免冷色蓝 |
 | 正文字体 | 衬线体栈（LXGW WenKai / Source Han Serif SC + Georgia） | 公众号写作内容即为正文，衬线体降低阅读负担 |
 | UI 字体 | 无衬线体栈（Inter / system-ui + 思源黑体） | 功能按钮、标签、菜单需要清晰紧凑的字形 |
 | 圆角 | 小圆角 `4px`（控件）/ `2px`（输入框）/ `0`（全宽分隔线） | 内容工具需要精准感，不适合圆润的消费品风格 |
@@ -80,7 +80,7 @@ wechat-flow 是面向微信公众号写作者的专业写作与排版工具。�
 
 | 决策号 | 问题 | 选项 | 决策 | 依据 |
 |--------|------|------|------|------|
-| Q1 | 设计调性方向（影响主色系 / 字体 / 整体色调） | A 专注写作（暖白+墨绿+衬线）/ B 现代编辑器（白+靛蓝+无衬线）/ C 专业工具深色 | **A 专注写作** — 暖白 `#FAF8F5` + 墨绿 `#2D5A4E` + 衬线中文正文 | 用户决策；目标用户为内容创作者，"专注写作"差异化定位优先于通用编辑器对标 |
+| Q1 | 设计调性方向（影响主色系 / 字体 / 整体色调） | A 专注写作（暖白+墨绿+衬线）/ B 现代编辑器（白+靛蓝+无衬线）/ C 专业工具深色 | **A 专注写作** — 暖白 `#faf8f5` + 墨绿 `#2d5a4e` + 衬线中文正文 | 用户决策；目标用户为内容创作者，"专注写作"差异化定位优先于通用编辑器对标 |
 | Q2 | 主布局拓扑 | A 三栏固定 / B 可调比例三栏+专注模式 / C 二栏+抽屉 | **B 可调比例三栏 + 专注模式** — 默认 200/auto/320，F11 全屏专注 | 用户决策；同时兼顾宽屏写作体验与窄屏适应 |
 | Q3 | 主题切换入口位置 | A 顶栏下拉 / B 左侧面板首位 Tab / C 命令面板 | **B 左侧面板首位 Tab** — Tab 序列：主题 / 组件 / 文档；顶栏仅保留当前主题状态指示（只读，可显示「主题 · template」双重状态，如「magazine · 美食评测」） | 用户决策；主题切换为中频操作，左栏整合 Theme + Block 收纳合理 |
 | Q4 | 预览刷新策略可见性 | A 隐式即时 / B 节流+进度指示器 / C 显式按钮+自动兜底 | **A 隐式即时刷新** — `≤300ms` debounce，无刷新按钮、无进度指示器 | 用户决策；与"内容优先"设计原则一致，减少 UI 干扰 |
@@ -95,55 +95,55 @@ wechat-flow 是面向微信公众号写作者的专业写作与排版工具。�
 
 ### 1.1 色彩 Token
 
-色彩从暖白 `#FAF8F5` 基底出发，派生暖灰阶；功能色从暖色调选取，避免高饱和的 Bootstrap 原色。
+色彩从暖白 `#faf8f5` 基底出发，派生暖灰阶；功能色从暖色调选取，避免高饱和的 Bootstrap 原色。
 
 #### 1.1.1 表面色（Surface）
 
 | Token | 值 | 用途 |
 |-------|----|------|
-| `--color-surface` | `#FAF8F5` | 主底色、编辑器背景 |
-| `--color-surface-elevated` | `#F4F1EC` | 左侧面板背景（比编辑器略深，暗示功能区） |
-| `--color-surface-overlay` | `#EDEAE3` | 悬停项背景、激活菜单项 |
-| `--color-surface-sunken` | `#E7E3DA` | 输入框背景（低于周围层级） |
-| `--color-surface-preview` | `#F7F7F7` | 右侧预览面板底色（模拟微信默认白底，略冷以区分编辑区） |
+| `--color-surface` | `#faf8f5` | 主底色、编辑器背景 |
+| `--color-surface-elevated` | `#f4f1ec` | 左侧面板背景（比编辑器略深，暗示功能区） |
+| `--color-surface-overlay` | `#edeae3` | 悬停项背景、激活菜单项 |
+| `--color-surface-sunken` | `#e7e3da` | 输入框背景（低于周围层级） |
+| `--color-surface-preview` | `#f7f7f7` | 右侧预览面板底色（模拟微信默认白底，略冷以区分编辑区） |
 
 #### 1.1.2 边框色（Border）
 
 | Token | 值 | 用途 |
 |-------|----|------|
-| `--color-border` | `#D9D4CB` | 标准边框（输入框、卡片轮廓） |
-| `--color-border-strong` | `#C2BCB1` | 强调边框（分隔线、选中项轮廓） |
-| `--color-border-subtle` | `#E8E4DC` | 弱化边框（仅用于区域划分，不希望边框喧宾夺主） |
+| `--color-border` | `#d9d4cb` | 标准边框（输入框、卡片轮廓） |
+| `--color-border-strong` | `#c2bcb1` | 强调边框（分隔线、选中项轮廓） |
+| `--color-border-subtle` | `#e8e4dc` | 弱化边框（仅用于区域划分，不希望边框喧宾夺主） |
 
 #### 1.1.3 文字色（Text）
 
 | Token | 值 | 用途 |
 |-------|----|------|
-| `--color-text-primary` | `#1C1917` | 主正文，源码编辑器文字 |
-| `--color-text-secondary` | `#4A4541` | 次要信息、标签文字、说明文字 |
-| `--color-text-muted` | `#7A746C` | 辅助性文字（占位符、时间戳、禁用状态下的文字） |
-| `--color-text-inverse` | `#FAF8F5` | 深色背景上的文字（主题色按钮内文字） |
-| `--color-text-link` | `#2D5A4E` | 链接色，与主题色一致 |
-| `--color-text-link-hover` | `#1E3D35` | 链接悬停色（主题色加深 20%） |
+| `--color-text-primary` | `#1c1917` | 主正文，源码编辑器文字 |
+| `--color-text-secondary` | `#4a4541` | 次要信息、标签文字、说明文字 |
+| `--color-text-muted` | `#7a746c` | 辅助性文字（占位符、时间戳、禁用状态下的文字） |
+| `--color-text-inverse` | `#faf8f5` | 深色背景上的文字（主题色按钮内文字） |
+| `--color-text-link` | `#2d5a4e` | 链接色，与主题色一致 |
+| `--color-text-link-hover` | `#1e3d35` | 链接悬停色（主题色加深 20%） |
 
 #### 1.1.4 主题色（Brand）
 
 | Token | 值 | 用途 |
 |-------|----|------|
-| `--color-brand` | `#2D5A4E` | 主题色，主按钮背景、链接、选中态描边 |
+| `--color-brand` | `#2d5a4e` | 主题色，主按钮背景、链接、选中态描边 |
 | `--color-brand-hover` | `#245048` | 按钮悬停（加深） |
-| `--color-brand-active` | `#1C3F38` | 按钮点击态 |
-| `--color-brand-subtle` | `#E6EFED` | 主题色浅底（激活的选项卡背景、Tag 背景） |
-| `--color-brand-muted` | `#A3C4BC` | 主题色淡化（进度条轨道背景） |
-| `--color-brand-highlight-outline` | `2px dashed #2D5A4E` | 双向高亮 dashed outline（编辑器光标对应预览节点的反向高亮边框，与 brand 同色但用 dashed 样式区分） |
+| `--color-brand-active` | `#1c3f38` | 按钮点击态 |
+| `--color-brand-subtle` | `#e6efed` | 主题色浅底（激活的选项卡背景、Tag 背景） |
+| `--color-brand-muted` | `#a3c4bc` | 主题色淡化（进度条轨道背景） |
+| `--color-brand-highlight-outline` | `2px dashed #2d5a4e` | 双向高亮 dashed outline（编辑器光标对应预览节点的反向高亮边框，与 brand 同色但用 dashed 样式区分） |
 
 #### 1.1.5 强调色（Accent）
 
 | Token | 值 | 用途 |
 |-------|----|------|
-| `--color-accent` | `#B94A3E` | 赤陶强调色，顶栏 Logo 点缀、重要提示标记 |
-| `--color-accent-hover` | `#A33E33` | 悬停态 |
-| `--color-accent-subtle` | `#F5E8E7` | 赤陶浅底，错误提示背景 |
+| `--color-accent` | `#b94a3e` | 赤陶强调色，顶栏 Logo 点缀、重要提示标记 |
+| `--color-accent-hover` | `#a33e33` | 悬停态 |
+| `--color-accent-subtle` | `#f5e8e7` | 赤陶浅底，错误提示背景 |
 
 #### 1.1.6 功能色（Functional）
 
@@ -151,14 +151,14 @@ wechat-flow 是面向微信公众号写作者的专业写作与排版工具。�
 
 | Token | 值 | 用途 |
 |-------|----|------|
-| `--color-success` | `#3A6B49` | 成功（深绿，比主题色更绿） |
-| `--color-success-subtle` | `#E6F0E9` | 成功浅底 |
-| `--color-warning` | `#8C6A1A` | 警告（暖黄棕，避免刺眼柠檬黄） |
-| `--color-warning-subtle` | `#F5EDDA` | 警告浅底 |
-| `--color-error` | `#B94A3E` | 错误（复用强调色） |
-| `--color-error-subtle` | `#F5E8E7` | 错误浅底 |
-| `--color-info` | `#3D5E8C` | 信息（偏暖的蓝灰，与暖白融合感强） |
-| `--color-info-subtle` | `#E6ECF5` | 信息浅底 |
+| `--color-success` | `#3a6b49` | 成功（深绿，比主题色更绿） |
+| `--color-success-subtle` | `#e6f0e9` | 成功浅底 |
+| `--color-warning` | `#8c6a1a` | 警告（暖黄棕，避免刺眼柠檬黄） |
+| `--color-warning-subtle` | `#f5edda` | 警告浅底 |
+| `--color-error` | `#b94a3e` | 错误（复用强调色） |
+| `--color-error-subtle` | `#f5e8e7` | 错误浅底 |
+| `--color-info` | `#3d5e8c` | 信息（偏暖的蓝灰，与暖白融合感强） |
+| `--color-info-subtle` | `#e6ecf5` | 信息浅底 |
 
 #### 1.1.7 诊断分级色（Diagnostics）
 
@@ -166,9 +166,9 @@ wechat-flow 是面向微信公众号写作者的专业写作与排版工具。�
 
 | Token | 值 | 含义 |
 |-------|----|------|
-| `--color-diag-safe` | `#3A6B49` | 绿色 — 安全，无微信过滤风险 |
-| `--color-diag-warn` | `#8C6A1A` | 黄色 — 可能降级 |
-| `--color-diag-error` | `#B94A3E` | 红色 — 会丢失 |
+| `--color-diag-safe` | `#3a6b49` | 绿色 — 安全，无微信过滤风险 |
+| `--color-diag-warn` | `#8c6a1a` | 黄色 — 可能降级 |
+| `--color-diag-error` | `#b94a3e` | 红色 — 会丢失 |
 
 ### 1.2 排版 Token
 
@@ -219,6 +219,15 @@ wechat-flow 是面向微信公众号写作者的专业写作与排版工具。�
 | `--font-weight-medium` | `500` | 强调、标签 |
 | `--font-weight-semibold` | `600` | 按钮、面板标题 |
 | `--font-weight-bold` | `700` | 页面大标题 |
+
+#### 1.2.5 内容字体的 target profile 分治（全局）
+
+**总则**：内容渲染层的 **全部** inline font-family——每个主题 tag 样式（h1-h6/p/li 等）、所有 Block baseStyle 与变体（含 §10.5 quote dropcap、代码块等宽、首字下沉等本 spec 逐点标注者）——是 Block/主题定义层面的设计意图值，按 target profile 分治生效：
+
+- **wechat profile**：PreviewPane 实时预览与实际粘贴产物同源于同一 render 管线的 output 相（二者不分叉），output 域 `strip-font-family` 规则剥除全部 inline font-family，产物与预览均由微信客户端系统字体栈接管，是诚实的「所见即所粘」。各变体/块的视觉识别度改由字号 / 字重 / 配色 / 间距 / 装饰组合独立承载（各处逐点说明其组合）。
+- **非微信 profile**（长图导出等，图片光栅化不经微信粘贴过滤）：保留 font-family 声明生效，主题字体身份完整。
+
+本 spec 各处 `font-family` 声明保留于 spec 与实现供 profile 分治消费；§10.5 与代码块 / 首字下沉等逐点注记为本总则的场景细化，非独立例外。**编辑器 UI chrome 字体**（`--font-sans` 等，用于按钮 / 菜单 / 面板）不属内容产物，不在剥除范围。
 
 ### 1.3 间距与圆角 Token
 
@@ -544,9 +553,9 @@ Block / Markdown 基础元素的渲染内容视觉规格（区别于上方编辑
 
 | 编号 | 同步内容 | 优先级 | 说明 |
 |------|---------|--------|------|
-| PS-001 | 暖白 #FAF8F5 至暖灰阶的完整 Token 在大色块上的视觉舒适度验证 | P0 | 核心背景色，必须在真实屏幕上验证眼睛疲劳感；与 `--color-surface-elevated` `--color-surface-overlay` 组合效果 |
+| PS-001 | 暖白 #faf8f5 至暖灰阶的完整 Token 在大色块上的视觉舒适度验证 | P0 | 核心背景色，必须在真实屏幕上验证眼睛疲劳感；与 `--color-surface-elevated` `--color-surface-overlay` 组合效果 |
 | PS-002 | 衬线字体（LXGW WenKai）在各字号（11px ~ 24px）下的可读性测试 | P0 | 小字号衬线字体易模糊，需实际渲染截图确认最小可用字号 |
-| PS-003 | 墨绿主题色 #2D5A4E 在各 Surface 背景上的 WCAG 对比度验证 | P0 | 确保所有主题色文字在暖白背景上达到 WCAG AA（≥4.5:1） |
+| PS-003 | 墨绿主题色 #2d5a4e 在各 Surface 背景上的 WCAG 对比度验证 | P0 | 确保所有主题色文字在暖白背景上达到 WCAG AA（≥4.5:1） |
 | PS-004 | Token 双向同步：将 §1.1 全部 CSS Token 迁移至 Penpot Design System 变量组 | P1 | 后续组件绘制以 Penpot 变量为单一来源 |
 | PS-005 | UC-009 命令面板（CommandPalette）完整交互流程原型 | P1 | 覆盖 6 个状态：closed / open-empty / open-typing / open-results / no-results / executing |
 | PS-006 | P-001 三档响应式布局（桌面/平板/移动）线框对比图 | P1 | 开发者理解布局切换规则的视觉参照 |

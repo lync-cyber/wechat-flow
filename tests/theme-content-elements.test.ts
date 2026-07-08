@@ -40,31 +40,31 @@ const EXPECTED_TOKENS: Record<
   }
 > = {
   default: {
-    colorLink: "#2D5A4E",
+    colorLink: "#2d5a4e",
     decorationLinkUnderline: "underline",
     spacingListItem: "6px",
     fontLineHeightBody: "1.85",
   },
   magazine: {
-    colorLink: "#C44011",
+    colorLink: "#c44011",
     decorationLinkUnderline: "none",
     spacingListItem: "8px",
     fontLineHeightBody: "1.9",
   },
   literary: {
-    colorLink: "#7B4F2E",
+    colorLink: "#7b4f2e",
     decorationLinkUnderline: "underline",
     spacingListItem: "7px",
     fontLineHeightBody: "2.0",
   },
   business: {
-    colorLink: "#1A4F8A",
+    colorLink: "#1a4f8a",
     decorationLinkUnderline: "none",
     spacingListItem: "6px",
     fontLineHeightBody: "1.75",
   },
   tech: {
-    colorLink: "#58A6FF",
+    colorLink: "#58a6ff",
     decorationLinkUnderline: "none",
     spacingListItem: "6px",
     fontLineHeightBody: "1.8",
@@ -108,7 +108,7 @@ describe("AC-001: inlineStyle tag-path 命中 ul/ol/li/img/table/a 的 themeToke
     li: { default: { "line-height": "1.85" } },
     img: { default: { "max-width": "100%" } },
     table: { default: { "border-collapse": "collapse" } },
-    a: { default: { color: "#2D5A4E", "text-decoration": "underline" } },
+    a: { default: { color: "#2d5a4e", "text-decoration": "underline" } },
   };
 
   function renderWithTokens(md: string): string {
@@ -153,11 +153,11 @@ describe("AC-001: inlineStyle tag-path 命中 ul/ol/li/img/table/a 的 themeToke
     expect(extractCssProp(style ?? "", "border-collapse")).toBe("collapse");
   });
 
-  it("<a> 产出 style 含 color: #2D5A4E 与 text-decoration: underline（来自 themeTokens.a.default）", () => {
+  it("<a> 产出 style 含 color: #2d5a4e 与 text-decoration: underline（来自 themeTokens.a.default）", () => {
     const html = renderWithTokens("[链接](https://example.com)");
     const style = extractTagStyle(html, "a");
     expect(style).toBeDefined();
-    expect(extractCssProp(style ?? "", "color")).toBe("#2D5A4E");
+    expect(extractCssProp(style ?? "", "color")).toBe("#2d5a4e");
     expect(extractCssProp(style ?? "", "text-decoration")).toBe("underline");
   });
 
@@ -189,10 +189,10 @@ describe("AC-002: default 主题新增 6 元素样式声明", () => {
     expect(val).toBe("6px");
   });
 
-  it("a.default.color 等于 default 主题 --color-link 值 (#2D5A4E)", () => {
+  it("a.default.color 等于 default 主题 --color-link 值 (#2d5a4e)", () => {
     const val = blocks.a?.default?.color;
     expect(val).toBe(defaultTheme.tokens["--color-link"]);
-    expect(val).toBe("#2D5A4E");
+    expect(val).toBe("#2d5a4e");
   });
 
   it("a.default.text-decoration 等于 default 主题 --decoration-link-underline 值 (underline)", () => {

@@ -13,7 +13,7 @@ export const mediaBlocks: ThemeBlocks = {
   },
   a: {
     default: {
-      color: "#7B4F2E",
+      color: "#7b4f2e",
       "text-decoration": "underline",
     },
   },

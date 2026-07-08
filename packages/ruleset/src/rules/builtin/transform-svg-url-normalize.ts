@@ -47,7 +47,7 @@ function isInsideSvg(node: Node): boolean {
 const transformSvgUrlNormalize: RuleDefinition = {
   id: "transform-svg-url-normalize",
   scope: "transform",
-  stage: "authoring",
+  stage: "output",
   priority: 60,
   matcher: isInsideSvg,
   transform: (node: Node): Node => normalizeNode(node),

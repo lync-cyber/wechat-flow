@@ -144,7 +144,7 @@ describe("compilePatchEntry: transform whitelist", () => {
       )
     );
     const out = rule.transform(el("section", { style: "gap: 1px" })) as Element;
-    expect(String(out.properties?.style)).toContain("display:block");
+    expect(String(out.properties?.style)).toContain("display: block");
   });
 
   it("remove-attributes drops the listed attributes", () => {

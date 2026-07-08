@@ -11,16 +11,16 @@ export const tableBlocks: ThemeBlocks = {
     default: {
       padding: "8px 12px",
       "background-color": "transparent",
-      color: "#5A4228",
+      color: "#5a4228",
       "font-weight": "500",
       "letter-spacing": "0.5px",
-      "border-bottom": "1px solid #B8A882",
+      "border-bottom": "1px solid #b8a882",
     },
   },
   td: {
     default: {
       padding: "8px 12px",
-      "border-bottom": "1px solid #DDD4C0",
+      "border-bottom": "1px solid #ddd4c0",
       "vertical-align": "top",
     },
   },

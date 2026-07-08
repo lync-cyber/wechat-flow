@@ -49,33 +49,33 @@ required_sections:
 
 #### default（简约通用）
 
-- `th`: 浅底表头，背景 `--color-surface-alt`（`#F3F0EB`），文字 `--color-text-primary`（`#1C1917`），字重 `600`，`border: 1px solid --color-border`（`#D6D3CE`）
+- `th`: 浅底表头，背景 `--color-surface-alt`（`#f3f0eb`），文字 `--color-text-primary`（`#1c1917`），字重 `600`，`border: 1px solid --color-border`（`#d6d3ce`）
 - `td`: `border: 1px solid --color-border`（四边完整边框，中性通用风格），文字 `--color-text-primary`
 - 不使用斑马纹——default 定位「简约通用」，完整边框已提供足够的行列辨识度，斑马纹会引入额外视觉噪音
 
 #### business（商务）
 
-- `th`: 暗表头反白，背景 `--color-brand`（`#1A4F8A`），文字 `--color-text-inverse`（`#FFFFFF`），字重 `700`，无边框（`border: none`）——深底与四周边框叠加会显得笨重
-- `td`: 仅横向 hairline，`border: none`，`border-bottom: 1px solid --color-border`（`#D0D9E4`），无竖线（账本感，横向分隔即可辨识行）
-- 使用斑马纹：偶数行背景 `--color-surface-alt`（`#EEF2F7`），强化数据行的可扫描性——商务场景常呈现较长数据表，斑马纹显著提升逐行阅读效率
+- `th`: 暗表头反白，背景 `--color-brand`（`#1a4f8a`），文字 `--color-text-inverse`（`#ffffff`），字重 `700`，无边框（`border: none`）——深底与四周边框叠加会显得笨重
+- `td`: 仅横向 hairline，`border: none`，`border-bottom: 1px solid --color-border`（`#d0d9e4`），无竖线（账本感，横向分隔即可辨识行）
+- 使用斑马纹：偶数行背景 `--color-surface-alt`（`#eef2f7`），强化数据行的可扫描性——商务场景常呈现较长数据表，斑马纹显著提升逐行阅读效率
 
 #### literary（文学）
 
-- `th`: 透明表头（背景透明，不反白），文字 `--color-text-secondary`（`#5A4228`），字重 `500`，字距 `0.5px`，仅 `border-bottom: 1px solid --color-border-strong`（`#B8A882`）——呼应古籍「栏目小字」行款，无框无底色
-- `td`: 无竖线无外框，仅 `border-bottom: 1px solid --color-border`（`#DDD4C0`），`vertical-align: top`
+- `th`: 透明表头（背景透明，不反白），文字 `--color-text-secondary`（`#5a4228`），字重 `500`，字距 `0.5px`，仅 `border-bottom: 1px solid --color-border-strong`（`#b8a882`）——呼应古籍「栏目小字」行款，无框无底色
+- `td`: 无竖线无外框，仅 `border-bottom: 1px solid --color-border`（`#ddd4c0`），`vertical-align: top`
 - 不使用斑马纹——文学主题的克制美学不引入行间背景色差，留白本身即是节奏
 
 #### magazine（杂志）
 
-- `th`: 透明表头，文字 `--color-text-primary`（`#1A1208`），字重 `700`，仅 `border-bottom: 2px solid --color-brand`（`#D4521A`，杂志主题惯用的粗分隔线语言，呼应 heading accent 手法）
-- `td`: 仅 `border-bottom: 1px solid --color-border`（`#E8D8C4`），无竖线
+- `th`: 透明表头，文字 `--color-text-primary`（`#1a1208`），字重 `700`，仅 `border-bottom: 2px solid --color-brand`（`#d4521a`，杂志主题惯用的粗分隔线语言，呼应 heading accent 手法）
+- `td`: 仅 `border-bottom: 1px solid --color-border`（`#e8d8c4`），无竖线
 - 不使用斑马纹——保持杂志版式的留白节奏
 
 #### tech（科技）
 
-- `th`: 浅蓝灰表头，背景 `--color-surface-alt`（`#21262D`，暗色主题下的次级表面色），文字 `--color-text-primary`（`#E6EDF3`），字重 `600`，`border: 1px solid --color-border`（`#30363D`）
+- `th`: 浅蓝灰表头，背景 `--color-surface-alt`（`#21262d`，暗色主题下的次级表面色），文字 `--color-text-primary`（`#e6edf3`），字重 `600`，`border: 1px solid --color-border`（`#30363d`）
 - `td`: `border: 1px solid --color-border`，紧凑 padding `6px 10px`（tech 主题定位「教程 / How-to」，表格常用于参数速查，紧凑排布提升信息密度）
-- 使用斑马纹：偶数行背景 `--color-background`（`#0F1117`，比 surface 更深一档制造条纹）——教程场景的参数表/命令速查表用斑马纹提升逐行辨识
+- 使用斑马纹：偶数行背景 `--color-background`（`#0f1117`，比 surface 更深一档制造条纹）——教程场景的参数表/命令速查表用斑马纹提升逐行辨识
 
 ### 9.3 引用块（blockquote）差异化
 
@@ -83,35 +83,35 @@ required_sections:
 
 #### default（简约通用，现状微调）
 
-- `border-left: 4px solid --color-quote-border`（`#2D5A4E`）
-- `background-color: --color-quote-bg`（`#F3F0EB`）
+- `border-left: 4px solid --color-quote-border`（`#2d5a4e`）
+- `background-color: --color-quote-bg`（`#f3f0eb`）
 - `padding: --spacing-blockquote-v --spacing-blockquote-h`（`10px 16px`）
 - 保留斜体正常使用（default 无中文斜体发虚顾虑场景限制，UI 语境非古籍语境）
 
 #### business（商务）
 
-- 双侧 1px 细线，无底色：`border-left: 1px solid --color-brand`（`#1A4F8A`），`border-right: 1px solid --color-brand`，`background-color: transparent`
+- 双侧 1px 细线，无底色：`border-left: 1px solid --color-brand`（`#1a4f8a`），`border-right: 1px solid --color-brand`，`background-color: transparent`
 - `padding: 8px 20px`
-- 文字色 `--color-text-secondary`（`#2D4057`）
+- 文字色 `--color-text-secondary`（`#2d4057`）
 - `column-rule` 式的双竖线是研究报告/内参的高级感语言，避免大面积底色的「便签感」
 
 #### literary（文学）
 
-- 左竖条古籍感：`border-left: 1px solid --color-brand`（`#7B4F2E`），无右边框，无底色
+- 左竖条古籍感：`border-left: 1px solid --color-brand`（`#7b4f2e`），无右边框，无底色
 - `padding: --spacing-blockquote-v --spacing-blockquote-h`（`12px 20px`）
-- **去斜体**：不使用 `font-style: italic`——中文斜体渲染发虚、损失可读性，改用色彩区分：文字色 `--color-text-secondary`（`#5A4228`，比正文 `--color-text-primary` 浅一档）+ 字距 `1.2px`（比正文字距略宽，制造「引文腔调」的视觉节奏，替代斜体的强调功能）
+- **去斜体**：不使用 `font-style: italic`——中文斜体渲染发虚、损失可读性，改用色彩区分：文字色 `--color-text-secondary`（`#5a4228`，比正文 `--color-text-primary` 浅一档）+ 字距 `1.2px`（比正文字距略宽，制造「引文腔调」的视觉节奏，替代斜体的强调功能）
 
 #### magazine（杂志）
 
-- 大字拉引感：`font-size` 相对正文放大至 `1.15em`，`border-left: 3px solid --color-brand`（`#D4521A`）
+- 大字拉引感：`font-size` 相对正文放大至 `1.15em`，`border-left: 3px solid --color-brand`（`#d4521a`）
 - `padding: 12px 20px`
 - 字重 `500`（比正文 `400` 略重，配合放大字号制造「杂志摘引」的视觉冲击）
 
 #### tech（科技）
 
-- 简洁竖条：`border-left: 3px solid --color-brand`（`#58A6FF`），无底色（深色主题下额外底色易与 `bgSoft` 混淆）
+- 简洁竖条：`border-left: 3px solid --color-brand`（`#58a6ff`），无底色（深色主题下额外底色易与 `bgSoft` 混淆）
 - `padding: 8px 16px`
-- 文字色 `--color-text-secondary`（`#8B949E`）
+- 文字色 `--color-text-secondary`（`#8b949e`）
 
 ### 9.4 `strong` 字重梯度
 
@@ -131,11 +131,11 @@ required_sections:
 
 | 主题 | `pre` 底色策略 | Token | 值 | 字体 |
 |------|---------------|-------|-----|------|
-| default | 亮底 | `--color-code-block-bg`（新增）| `#F0EDE8`（沿用现有 `--color-code-bg`，与 inline code 一致） | `--font-family-mono` |
-| business | 亮底 | `--color-code-block-bg`（新增）| `#EEF2F7`（沿用现有 `--color-code-bg`） | `--font-family-mono` |
-| literary | 暖米亮底 | `--color-code-block-bg`（新增）| `#F2ECE0`（沿用现有 `--color-code-bg`，暖米调延续古籍纸感） | `--font-family-mono` |
-| magazine | 亮底 | `--color-code-block-bg`（新增）| `#FFF3E8`（沿用现有 `--color-code-bg`） | `--font-family-mono` |
-| tech | 暗底（Atom-One-Dark 系）| `--color-code-block-bg`（新增）| `#1A1A2E`（沿用现有 `--color-code-bg`，本就是暗底，语义从「inline code 底色」扩展为「代码块底色」，两处一致） | `--font-family-mono` |
+| default | 亮底 | `--color-code-block-bg`（新增）| `#f0ede8`（沿用现有 `--color-code-bg`，与 inline code 一致） | `--font-family-mono` |
+| business | 亮底 | `--color-code-block-bg`（新增）| `#eef2f7`（沿用现有 `--color-code-bg`） | `--font-family-mono` |
+| literary | 暖米亮底 | `--color-code-block-bg`（新增）| `#f2ece0`（沿用现有 `--color-code-bg`，暖米调延续古籍纸感） | `--font-family-mono` |
+| magazine | 亮底 | `--color-code-block-bg`（新增）| `#fff3e8`（沿用现有 `--color-code-bg`） | `--font-family-mono` |
+| tech | 暗底（Atom-One-Dark 系）| `--color-code-block-bg`（新增）| `#1a1a2e`（沿用现有 `--color-code-bg`，本就是暗底，语义从「inline code 底色」扩展为「代码块底色」，两处一致） | `--font-family-mono` |
 
 说明：default / business / magazine 三主题的 `pre` 与 inline `code` 复用同一底色值（视觉一致，无需区分两个 token 实值，但保留 `--color-code-block-bg` 独立 token 名以支持未来单独调整）；tech 主题的深色基调下 `pre` 与 inline code 天然同暗底；literary 保持暖米色呼应古籍纸感。`pre` 边框统一 `1px solid --color-border`（各主题取该主题现有 `--color-border` 值），`border-radius` 取该主题 `--decoration-border-radius-sm`。
 
@@ -155,10 +155,10 @@ required_sections:
 | 主题 | 是否启用 | 规格 |
 |------|---------|------|
 | default | 否 | 保持无 accent 竖条的简约排版，避免视觉噪音 |
-| business | 是 | `border-left: 4px solid --color-brand`（`#1A4F8A`），`padding-left: 8px` |
+| business | 是 | `border-left: 4px solid --color-brand`（`#1a4f8a`），`padding-left: 8px` |
 | literary | 否 | 依赖 `h2Prefix` 类装饰在文学主题语境不适用竖条手法，保持现有 `border-bottom` 下划线风格（见现有 tokens `--decoration-*`），不新增左竖条 |
-| magazine | 是 | `border-left: 6px solid --color-brand`（`#D4521A`，杂志主题惯用粗竖条），`padding-left: 10px` |
-| tech | 是 | `border-left: 3px solid --color-brand`（`#58A6FF`），`padding-left: 8px` |
+| magazine | 是 | `border-left: 6px solid --color-brand`（`#d4521a`，杂志主题惯用粗竖条），`padding-left: 10px` |
+| tech | 是 | `border-left: 3px solid --color-brand`（`#58a6ff`），`padding-left: 8px` |
 
 **明确排除**：序号徽章（如「01」「02」章节编号）等依赖 `::before` / `::after` 伪元素承载数字或符号的手法一律排除——微信编辑器粘贴过滤剥离伪元素后，序号徽章会完全消失且不可预测地影响布局，任何此类需求须改用真实文本字符前缀（写入 Markdown 源码本身，非 CSS 生成），不作为本次视觉升级范围。
 

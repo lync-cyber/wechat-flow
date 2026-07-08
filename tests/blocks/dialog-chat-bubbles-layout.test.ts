@@ -52,7 +52,7 @@ const DIALOG_THREE_ROUNDS_MARKDOWN = [
 // 气泡携带既有 CHAT_BUBBLE_SHARED_STYLE 特征（display: inline-block + 左右各自背景色），
 // 用这两项组合稳定识别气泡元素，不依赖尚待改造的 tagName/data-block-slot 细节。
 function isChatBubble(style: Record<string, string>): boolean {
-  const isLeftOrRightBubble = style.background === "#F3F0EB" || style.background === "#2D5A4E";
+  const isLeftOrRightBubble = style.background === "#f3f0eb" || style.background === "#2d5a4e";
   return style.display === "inline-block" && isLeftOrRightBubble;
 }
 
@@ -127,6 +127,6 @@ describe("AC-004: dialog chat-bubbles 双轮布局改造", () => {
     expect(bubbles).toHaveLength(3);
 
     const backgrounds = bubbles.map((b) => parseStyleDict(b.properties?.style).background);
-    expect(backgrounds).toEqual(["#F3F0EB", "#2D5A4E", "#F3F0EB"]);
+    expect(backgrounds).toEqual(["#f3f0eb", "#2d5a4e", "#f3f0eb"]);
   });
 });

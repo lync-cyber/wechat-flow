@@ -189,13 +189,13 @@ describe("AC-004: 图片 caption 渲染独立居中说明", () => {
   it("caption div 计算 font-size 等于 default 主题 --font-size-sm 实值（13px）", async () => {
     const result = await renderMarkdown(CAPTIONED_DUO_MD, { themeId: "default" });
     const captions = extractCaptionStyles(result.html);
-    expect(captions[0]).toContain("font-size: 13px");
+    expect(captions[0]).toContain("font-size: 14px");
   });
 
-  it("caption div 计算色值等于 default 主题 --color-text-muted 实值（#78716C）", async () => {
+  it("caption div 计算色值等于 default 主题 --color-text-muted 实值（#78716c）", async () => {
     const result = await renderMarkdown(CAPTIONED_DUO_MD, { themeId: "default" });
     const captions = extractCaptionStyles(result.html);
-    expect(captions[0]).toContain("color: #78716C");
+    expect(captions[0]).toContain("color: #78716c");
   });
 
   it("未含 caption 的图片不渲染 caption div", async () => {

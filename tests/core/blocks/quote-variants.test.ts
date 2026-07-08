@@ -46,7 +46,7 @@ describe("AC-002: quote large-quote-mark 变体渲染大引号装饰", () => {
     });
     const match = result.html.match(/<span style="([^"]*)">"<\/span>/);
     expect(match).not.toBeNull();
-    expect(match?.[1]).toContain("font-size: 2em");
+    expect(match?.[1]).toContain("font-size: 32px");
   });
 
   it("引号装饰元素计算 opacity = 0.4", async () => {
@@ -57,12 +57,12 @@ describe("AC-002: quote large-quote-mark 变体渲染大引号装饰", () => {
     expect(match?.[1]).toContain("opacity: 0.4");
   });
 
-  it("引号装饰元素色值计算值等于 default 主题 --color-brand（#2D5A4E）", async () => {
+  it("引号装饰元素色值计算值等于 default 主题 --color-brand（#2d5a4e）", async () => {
     const result = await renderMarkdown(":::quote{.large-quote-mark}\n引用文字\n:::", {
       themeId: "default",
     });
     const match = result.html.match(/<span style="([^"]*)">"<\/span>/);
-    expect(match?.[1]).toContain("color: #2D5A4E");
+    expect(match?.[1]).toContain("color: #2d5a4e");
   });
 });
 
@@ -81,7 +81,7 @@ describe("AC-003: quote dropcap 变体渲染首字下沉装饰", () => {
     });
     const match = result.html.match(/<section style="([^"]*)">引<\/section>/);
     expect(match).not.toBeNull();
-    expect(match?.[1]).toContain("font-size: 2.2em");
+    expect(match?.[1]).toContain("font-size: 35.2px");
   });
 
   it("首字符装饰元素计算 font-weight = 700", async () => {
@@ -92,22 +92,20 @@ describe("AC-003: quote dropcap 变体渲染首字下沉装饰", () => {
     expect(match?.[1]).toContain("font-weight: 700");
   });
 
-  it("首字符装饰元素色值计算值等于 default 主题 --color-brand（#2D5A4E）", async () => {
+  it("首字符装饰元素色值计算值等于 default 主题 --color-brand（#2d5a4e）", async () => {
     const result = await renderMarkdown(":::quote{.dropcap}\n引用文字\n:::", {
       themeId: "default",
     });
     const match = result.html.match(/<section style="([^"]*)">引<\/section>/);
-    expect(match?.[1]).toContain("color: #2D5A4E");
+    expect(match?.[1]).toContain("color: #2d5a4e");
   });
 
-  it("首字符装饰元素 font-family 计算值等于 default 主题 --font-family-heading", async () => {
+  it("首字符装饰元素不含 font-family 声明（output 相剥除，微信系统字体接管）", async () => {
     const result = await renderMarkdown(":::quote{.dropcap}\n引用文字\n:::", {
       themeId: "default",
     });
     const match = result.html.match(/<section style="([^"]*)">引<\/section>/);
-    expect(match?.[1]).toContain(
-      "font-family: &#x27;LXGW WenKai&#x27;, &#x27;Source Han Serif CN&#x27;, &#x27;Noto Serif CJK SC&#x27;, Georgia, serif"
-    );
+    expect(match?.[1]).not.toContain("font-family");
   });
 
   it("首字符抽离后剩余文字保留在原位置", async () => {

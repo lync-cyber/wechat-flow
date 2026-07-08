@@ -10,20 +10,20 @@ export const tableBlocks: ThemeBlocks = {
   th: {
     default: {
       padding: "6px 10px",
-      "background-color": "#21262D",
-      color: "#E6EDF3",
+      "background-color": "#21262d",
+      color: "#e6edf3",
       "font-weight": "600",
-      border: "1px solid #30363D",
+      border: "1px solid #30363d",
     },
   },
   td: {
     default: {
       padding: "6px 10px",
-      border: "1px solid #30363D",
-      color: "#E6EDF3",
+      border: "1px solid #30363d",
+      color: "#e6edf3",
     },
     even: {
-      "background-color": "#0F1117",
+      "background-color": "#0f1117",
     },
   },
 };

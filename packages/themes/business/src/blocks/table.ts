@@ -10,8 +10,8 @@ export const tableBlocks: ThemeBlocks = {
   th: {
     default: {
       padding: "8px 12px",
-      "background-color": "#1A4F8A",
-      color: "#FFFFFF",
+      "background-color": "#1a4f8a",
+      color: "#ffffff",
       "font-weight": "700",
       border: "none",
     },
@@ -20,10 +20,10 @@ export const tableBlocks: ThemeBlocks = {
     default: {
       padding: "8px 12px",
       border: "none",
-      "border-bottom": "1px solid #D0D9E4",
+      "border-bottom": "1px solid #d0d9e4",
     },
     even: {
-      "background-color": "#EEF2F7",
+      "background-color": "#eef2f7",
     },
   },
 };

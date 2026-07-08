@@ -98,10 +98,10 @@ describe("AC-003: ledger 右列布局参数与两列分隔线", () => {
     expect(style).toContain("padding: 16px");
   });
 
-  it("右列渲染后计算 border-left 含 1px solid 与 default 主题 --color-border 实值（#D6D3CE）", async () => {
+  it("右列渲染后计算 border-left 含 1px solid 与 default 主题 --color-border 实值（#d6d3ce）", async () => {
     const result = await renderMarkdown(LEDGER_MD_WITH_TITLE, { themeId: "default" });
     const style = extractSlotDivStyle(result.html, "成本高");
-    expect(style).toContain("border-left: 1px solid #D6D3CE");
+    expect(style).toContain("border-left: 1px solid #d6d3ce");
   });
 });
 

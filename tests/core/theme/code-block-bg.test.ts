@@ -38,43 +38,43 @@ describe("AC-001: tech 主题 pre/code 背景一致（暗底）", () => {
     const result = await renderMarkdown(CODE_BLOCK_MD, { theme: techTheme });
     const preStyle = extractStyle(result.html, "pre");
     const codeStyle = extractStyle(result.html, "code");
-    expect(preStyle["background-color"]).toBe("#1A1A2E");
+    expect(preStyle["background-color"]).toBe("#1a1a2e");
     expect(preStyle["background-color"]).toBe(codeStyle["background-color"]);
   });
 });
 
 describe("AC-002: default/business/magazine 主题 pre/code 背景一致（同值不同 token）", () => {
-  it("default: pre 计算背景色 = #F0EDE8，与 inline code 一致", async () => {
+  it("default: pre 计算背景色 = #f0ede8，与 inline code 一致", async () => {
     const result = await renderMarkdown(CODE_BLOCK_MD, { theme: defaultTheme });
     const preStyle = extractStyle(result.html, "pre");
     const codeStyle = extractStyle(result.html, "code");
-    expect(preStyle["background-color"]).toBe("#F0EDE8");
+    expect(preStyle["background-color"]).toBe("#f0ede8");
     expect(preStyle["background-color"]).toBe(codeStyle["background-color"]);
   });
 
-  it("business: pre 计算背景色 = #EEF2F7，与 inline code 一致", async () => {
+  it("business: pre 计算背景色 = #eef2f7，与 inline code 一致", async () => {
     const result = await renderMarkdown(CODE_BLOCK_MD, { theme: businessTheme });
     const preStyle = extractStyle(result.html, "pre");
     const codeStyle = extractStyle(result.html, "code");
-    expect(preStyle["background-color"]).toBe("#EEF2F7");
+    expect(preStyle["background-color"]).toBe("#eef2f7");
     expect(preStyle["background-color"]).toBe(codeStyle["background-color"]);
   });
 
-  it("magazine: pre 计算背景色 = #FFF3E8，与 inline code 一致", async () => {
+  it("magazine: pre 计算背景色 = #fff3e8，与 inline code 一致", async () => {
     const result = await renderMarkdown(CODE_BLOCK_MD, { theme: magazineTheme });
     const preStyle = extractStyle(result.html, "pre");
     const codeStyle = extractStyle(result.html, "code");
-    expect(preStyle["background-color"]).toBe("#FFF3E8");
+    expect(preStyle["background-color"]).toBe("#fff3e8");
     expect(preStyle["background-color"]).toBe(codeStyle["background-color"]);
   });
 });
 
 describe("AC-003: literary 主题 pre 暖米亮底 + border/border-radius 主题化", () => {
-  it("pre 计算背景色 = #F2ECE0，border 计算值含 --color-border，border-radius 计算值含 --decoration-border-radius-sm", async () => {
+  it("pre 计算背景色 = #f2ece0，border 计算值含 --color-border，border-radius 计算值含 --decoration-border-radius-sm", async () => {
     const result = await renderMarkdown(CODE_BLOCK_MD, { theme: literaryTheme });
     const preStyle = extractStyle(result.html, "pre");
-    expect(preStyle["background-color"]).toBe("#F2ECE0");
-    expect(preStyle.border).toContain("#DDD4C0");
+    expect(preStyle["background-color"]).toBe("#f2ece0");
+    expect(preStyle.border).toContain("#ddd4c0");
     expect(preStyle["border-radius"]).toBe("2px");
   });
 });

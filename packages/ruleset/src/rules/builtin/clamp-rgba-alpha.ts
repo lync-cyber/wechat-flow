@@ -30,7 +30,7 @@ function clampRgbaInValue(val: string): string {
 const clampRgbaAlpha: RuleDefinition = {
   id: "clamp-rgba-alpha",
   scope: "clamp",
-  stage: "authoring",
+  stage: "output",
   priority: 70,
   matcher: hasRgbaLowAlpha,
   transform: (node: Node): Node => {

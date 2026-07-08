@@ -17,7 +17,7 @@ function styleHasUpperHex(node: Node): boolean {
 const transformUppercaseHexLower: RuleDefinition = {
   id: "transform-uppercase-hex-lower",
   scope: "transform",
-  stage: "authoring",
+  stage: "output",
   priority: 70,
   matcher: styleHasUpperHex,
   transform: (node: Node): Node => {

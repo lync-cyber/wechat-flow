@@ -44,8 +44,8 @@ required_sections:
 
 四态形态规格（同色系不同形态区分，不单纯依赖色差）：
 
-- **`tip`**：不对称圆角 `border-radius: 8px 0 8px 8px`（左上/右下直角，右上/左下圆角，制造「便签角」形态识别度）+ 右侧 inset 色条：`box-shadow: inset -4px 0 0 0 {主题 status.tip.accent 对应 token，default 主题取 --color-brand #2D5A4E}`；背景 `--color-surface-alt`（`#F3F0EB`）
-- **`warning`**：顶部 `2px` 虚线 + 底部 `2px` 实线：`border-top: 2px dashed {主题 warning 色，default 取 --color-accent #B94A3E 或主题自定义 warning token}`，`border-bottom: 2px solid` 同色；无左右边框，背景透明；虚实对比制造「警示但非致命」的视觉强度分级
+- **`tip`**：不对称圆角 `border-radius: 8px 0 8px 8px`（左上/右下直角，右上/左下圆角，制造「便签角」形态识别度）+ 右侧 inset 色条：`box-shadow: inset -4px 0 0 0 {主题 status.tip.accent 对应 token，default 主题取 --color-brand #2d5a4e}`；背景 `--color-surface-alt`（`#f3f0eb`）
+- **`warning`**：顶部 `2px` 虚线 + 底部 `2px` 实线：`border-top: 2px dashed {主题 warning 色，default 取 --color-accent #b94a3e 或主题自定义 warning token}`，`border-bottom: 2px solid` 同色；无左右边框，背景透明；虚实对比制造「警示但非致命」的视觉强度分级
 - **`info`**：全边框 `1px solid {主题 brand/info 色}` + 顶部 inset 高光：`box-shadow: inset 0 2px 0 0 {同色}, 0 1px 3px rgba(0,0,0,0.06)`（浅阴影提供轻微浮起感，与全边框配合制造「信息卡片」的完整框定感）；背景 `--color-surface`
 - **`danger`**：顶部 `8px` 实条 + 零圆角：`border-top: 8px solid {主题 danger/accent 色}`，`border-radius: 0`；粗色条制造最强的视觉优先级，零圆角强化「不容忽视」的严肃感；背景 `--color-accent-light` 对应的浅底色（各主题按其 `--color-accent-light` 的低饱和变体取值，若无现成浅底 token 则复用 `--color-surface-alt`）
 
@@ -92,7 +92,7 @@ required_sections:
 **现状变体清单收敛**：现有 5 个变体（`default` / `highlight-right` / `table-style` / `color-coded` / `compact`）中 `color-coded` 为空壳，本节填充其规格并重命名为 `ledger`（更准确描述双色账本布局本质）：
 
 - **`ledger`**（原 `color-coded`）：双色账本布局，`display: table` + 两个 `display: table-cell` 子项（§9.1 通则要求 flex/grid 须 table fallback，此变体直接以 table 布局实现，无需 fallback）：
-  - 左列（指令属性 `left-label` + `left-value`，渲染为「{label}：{value}」）：背景取该主题 status.tip 对应浅底色（default 主题暂无现成 tip-soft token，取 `--color-surface-alt` `#F3F0EB` 近似），`padding: 16px`，`width: 50%`
+  - 左列（指令属性 `left-label` + `left-value`，渲染为「{label}：{value}」）：背景取该主题 status.tip 对应浅底色（default 主题暂无现成 tip-soft token，取 `--color-surface-alt` `#f3f0eb` 近似），`padding: 16px`，`width: 50%`
   - 右列（指令属性 `right-label` + `right-value`，渲染同左列）：背景取该主题 status.danger 对应浅底色（取 `--color-accent-light` 对应浅底近似值，或复用 `--color-code-bg` 作中性浅底占位），`padding: 16px`，`width: 50%`
   - 两列间 `border-left: 1px solid --color-border` 分隔（`table-cell` 天然贴合，无需额外 gap 声明）
   - 顶部标题（指令属性 `title`，若有）跨两列：单独一行 `<div style="display: table; width: 100%">` 之外的独立块，`text-align: center`，`font-weight: 600`，`margin-bottom: 8px`

@@ -52,8 +52,8 @@ describe("AC-001: 容器 typography 下推 — text-align 覆盖 tag token 且 s
     const result = await renderMarkdown(PULL_QUOTE_DECORATED_MD, { theme: defaultTheme });
     const authorMatch = result.html.match(/<section style="([^"]*)">—— 鲁迅<\/section>/);
     expect(authorMatch).not.toBeNull();
-    expect(authorMatch?.[1]).toContain("font-size: 13px");
-    expect(authorMatch?.[1]).not.toContain("font-size: 1.25em");
+    expect(authorMatch?.[1]).toContain("font-size: 14px");
+    expect(authorMatch?.[1]).not.toContain("font-size: 20px");
   });
 });
 
@@ -62,18 +62,18 @@ describe("AC-002: 容器 typography 下推 — font-size 覆盖 tag token", () =
     const result = await renderMarkdown(PULL_QUOTE_DECORATED_MD, { theme: defaultTheme });
     const pMatch = result.html.match(/<p style="([^"]*)">/);
     expect(pMatch).not.toBeNull();
-    expect(pMatch?.[1]).toContain("font-size: 1.25em");
+    expect(pMatch?.[1]).toContain("font-size: 20px");
     expect(pMatch?.[1]).not.toContain("font-size: 15px");
   });
 });
 
 describe("AC-003: 容器 typography 下推 — color 覆盖 tag token（quote large-quote-mark）", () => {
-  it("quote large-quote-mark 正文 <p> inline style 含 color: #555（容器 root 声明色值，覆盖 tag token 的 #1C1917）", async () => {
+  it("quote large-quote-mark 正文 <p> inline style 含 color: #555（容器 root 声明色值，覆盖 tag token 的 #1c1917）", async () => {
     const result = await renderMarkdown(QUOTE_LARGE_MARK_MD, { theme: defaultTheme });
     const pMatch = result.html.match(/<p style="([^"]*)">/);
     expect(pMatch).not.toBeNull();
     expect(pMatch?.[1]).toContain("color: #555");
-    expect(pMatch?.[1]).not.toContain("color: #1C1917");
+    expect(pMatch?.[1]).not.toContain("color: #1c1917");
   });
 });
 
@@ -81,14 +81,14 @@ describe("AC-004 regression-guard: 非容器上下文普通元素样式 byte-ide
   it("纯段落（无容器块）渲染 HTML 与现状字节级一致", async () => {
     const result = await renderMarkdown(PLAIN_PARAGRAPH_MD, { theme: defaultTheme });
     expect(sha256(result.html)).toBe(
-      "f5f8a64e01c61f0e3d0178e1912764dae1ef48c89138d66e183d01027bff1cd6"
+      "f0649874fc37306c461bca977dbef6a31f4e641bcf0b86c2d98e909456ee1582"
     );
   });
 
   it("多元素代表性文档（标题/段落/引用/代码块/分隔线）渲染 SHA-256 与基线一致", async () => {
     const result = await renderMarkdown(REPRESENTATIVE_MD, { theme: defaultTheme });
     expect(sha256(result.html)).toBe(
-      "95b8ef48c3213ff424f0b6f1d89e33eb22eaa80474823a48cf1e0e911333cf14"
+      "a6dadcd25458c3b1863bb6bb8be313ad1c796e78035cec71be222e125a55e9b3"
     );
   });
 });

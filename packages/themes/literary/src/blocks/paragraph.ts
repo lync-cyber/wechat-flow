@@ -6,7 +6,7 @@ export const paragraphBlocks: ThemeBlocks = {
       "font-family": "'Source Han Serif CN', 'Noto Serif CJK SC', 'SimSun', Georgia, serif",
       "font-size": "15px",
       "font-weight": "400",
-      color: "#2C1F0A",
+      color: "#2c1f0a",
       "line-height": "2.0",
       margin: "0 0 16px",
       "text-align": "justify",
@@ -15,12 +15,12 @@ export const paragraphBlocks: ThemeBlocks = {
   em: {
     default: {
       "font-style": "italic",
-      color: "#5A4228",
+      color: "#5a4228",
     },
   },
   a: {
     default: {
-      color: "#7B4F2E",
+      color: "#7b4f2e",
       "text-decoration": "underline",
     },
   },

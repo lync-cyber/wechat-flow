@@ -34,7 +34,7 @@ describe("AC-001: paragraph dropcap 变体渲染首字符独立悬挂 cell", () 
     });
     const match = result.html.match(/<section style="([^"]*)">首<\/section>/);
     expect(match).not.toBeNull();
-    expect(match?.[1]).toContain("font-size: 2.2em");
+    expect(match?.[1]).toContain("font-size: 35.2px");
   });
 
   it("首字符装饰元素计算 display = table-cell（§9.8 悬挂布局）", async () => {
@@ -61,24 +61,22 @@ describe("AC-001: paragraph dropcap 变体渲染首字符独立悬挂 cell", () 
   });
 });
 
-// AC-002: 任一主题渲染 dropcap，文字色 = 该主题 --color-brand，font-family = 该主题 --font-family-heading
+// AC-002: 任一主题渲染 dropcap，文字色 = 该主题 --color-brand；font-family 经平台过滤剥除
 describe("AC-002: paragraph dropcap 变体主题色值与字体族", () => {
-  it("首字符装饰元素色值计算值等于 default 主题 --color-brand（#2D5A4E）", async () => {
+  it("首字符装饰元素色值计算值等于 default 主题 --color-brand（#2d5a4e）", async () => {
     const result = await renderMarkdown(":::paragraph{.dropcap}\n首字后面的正文\n:::", {
       themeId: "default",
     });
     const match = result.html.match(/<section style="([^"]*)">首<\/section>/);
-    expect(match?.[1]).toContain("color: #2D5A4E");
+    expect(match?.[1]).toContain("color: #2d5a4e");
   });
 
-  it("首字符装饰元素 font-family 计算值等于 default 主题 --font-family-heading", async () => {
+  it("首字符装饰元素不含 font-family 声明（output 相剥除，微信系统字体接管）", async () => {
     const result = await renderMarkdown(":::paragraph{.dropcap}\n首字后面的正文\n:::", {
       themeId: "default",
     });
     const match = result.html.match(/<section style="([^"]*)">首<\/section>/);
-    expect(match?.[1]).toContain(
-      "font-family: &#x27;LXGW WenKai&#x27;, &#x27;Source Han Serif CN&#x27;, &#x27;Noto Serif CJK SC&#x27;, Georgia, serif"
-    );
+    expect(match?.[1]).not.toContain("font-family");
   });
 });
 

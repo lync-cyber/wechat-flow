@@ -3,7 +3,7 @@ import type { Element, Node } from "hast";
 import { parseDeclarations } from "../builtin/css-helpers.ts";
 import type { RuleDefinition } from "../registry.ts";
 
-const MIN_FONT_SIZE_PX = 12;
+const MIN_FONT_SIZE_PX = 14;
 
 function getPxFontSize(node: Node): number | null {
   const el = node as Element;
@@ -23,7 +23,7 @@ function getPxFontSize(node: Node): number | null {
 const readabilityFontSizeMin: RuleDefinition = {
   id: "readability-font-size-min",
   scope: "lint",
-  stage: "authoring",
+  stage: "output",
   priority: 30,
   matcher: (node: Node): boolean => {
     const px = getPxFontSize(node);

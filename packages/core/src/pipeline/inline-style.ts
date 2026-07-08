@@ -85,6 +85,18 @@ const FALLBACK_SLOT_TOKENS: Record<string, string> = {
 
 const TOKEN_PLACEHOLDER_PATTERN = /^var\((--[\w-]+)\)$/;
 
+// Mirrors clamp-line-height's readability floor (packages/ruleset/src/rules/builtin/clamp-line-height.ts).
+// Decorative slot line-heights below this floor get a transient marker so the output-stage clamp
+// rule can exempt them instead of forcing body-text line-height onto single-glyph decorations.
+const LINE_HEIGHT_READABILITY_FLOOR = 1.2;
+const LINE_HEIGHT_EXEMPT_ATTR = "data-lh-exempt";
+
+function isBelowLineHeightFloor(value: string | undefined): boolean {
+  if (typeof value !== "string") return false;
+  const num = Number.parseFloat(value);
+  return !Number.isNaN(num) && num < LINE_HEIGHT_READABILITY_FLOOR;
+}
+
 function resolveTokenPlaceholder(value: string, designTokens?: ThemeTokens): string {
   const match = TOKEN_PLACEHOLDER_PATTERN.exec(value.trim());
   if (!match) return value;
@@ -171,6 +183,7 @@ function applyInlineStyles(
 
     let tagStyle: string;
     let containerInherited: Record<string, string> | undefined;
+    let slotLineHeightExempt = false;
 
     const blockSlot = propsWithoutClass["data-block-slot"];
     const dataBlock = propsWithoutClass["data-block"];
@@ -182,6 +195,7 @@ function applyInlineStyles(
         designTokens
       );
       tagStyle = Object.keys(slotStyle).length > 0 ? serializeDeclarations(slotStyle) : "";
+      slotLineHeightExempt = isBelowLineHeightFloor(slotStyle["line-height"]);
     } else if (typeof dataBlock === "string" && dataBlock.length > 0) {
       // Container block path: L1 ⊕ L2
       const variantId =
@@ -230,6 +244,9 @@ function applyInlineStyles(
     }
     if ("data-block-slot-last" in newProps) {
       newProps["data-block-slot-last"] = undefined;
+    }
+    if (slotLineHeightExempt) {
+      newProps[LINE_HEIGHT_EXEMPT_ATTR] = "true";
     }
     if (filteredStyle) {
       newProps.style = filteredStyle;

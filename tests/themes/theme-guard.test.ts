@@ -118,14 +118,12 @@ describe("AC-002: tech 主题代码块 background-color luminance 差值 ≥ 0.4
     expect(diff).toBeGreaterThanOrEqual(0.4);
   });
 
-  it("tech 代码块 font-family 含等宽字体族（mono|consolas|menlo|sf mono|courier）", async () => {
+  it("tech 代码块不含 font-family 声明（决策①剥除）", async () => {
     const techResult = await renderMarkdown(CODE_MARKDOWN, { theme: techTheme });
     const techPreStyle = extractFirstPreStyle(techResult.html);
     const fontFamily = extractCssProp(techPreStyle, "font-family");
 
-    if (!fontFamily) throw new Error("tech theme <pre> has no font-family");
-
-    expect(fontFamily).toMatch(/mono|consolas|menlo|sf mono|courier/i);
+    expect(fontFamily).toBeUndefined();
   });
 });
 

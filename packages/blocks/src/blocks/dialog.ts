@@ -65,13 +65,13 @@ export const dialog = defineBlock(
         },
         "bubble-left": {
           ...CHAT_BUBBLE_SHARED_STYLE,
-          background: "#F3F0EB",
-          color: "#1C1917",
+          background: "#f3f0eb",
+          color: "#1c1917",
         },
         "bubble-right": {
           ...CHAT_BUBBLE_SHARED_STYLE,
-          background: "#2D5A4E",
-          color: "#FAFAF9",
+          background: "#2d5a4e",
+          color: "#fafaf9",
         },
       },
     },

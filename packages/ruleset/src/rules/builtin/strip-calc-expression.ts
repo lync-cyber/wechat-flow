@@ -13,7 +13,7 @@ function hasCalc(node: Node): boolean {
 const stripCalcExpression: RuleDefinition = {
   id: "strip-calc-expression",
   scope: "strip",
-  stage: "authoring",
+  stage: "output",
   priority: 85,
   matcher: hasCalc,
   transform: (node: Node): Node => {

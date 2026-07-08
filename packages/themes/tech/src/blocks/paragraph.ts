@@ -6,7 +6,7 @@ export const paragraphBlocks: ThemeBlocks = {
       "font-family": "'SF Pro Text', 'Inter', 'Helvetica Neue', Arial, sans-serif",
       "font-size": "15px",
       "font-weight": "400",
-      color: "#E6EDF3",
+      color: "#e6edf3",
       "line-height": "1.8",
       margin: "0 0 12px",
       "text-align": "left",
@@ -15,12 +15,12 @@ export const paragraphBlocks: ThemeBlocks = {
   em: {
     default: {
       "font-style": "italic",
-      color: "#8B949E",
+      color: "#8b949e",
     },
   },
   a: {
     default: {
-      color: "#58A6FF",
+      color: "#58a6ff",
       "text-decoration": "none",
     },
   },

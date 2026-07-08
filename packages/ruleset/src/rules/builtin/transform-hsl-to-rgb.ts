@@ -26,7 +26,7 @@ function styleHasHsl(node: Node): boolean {
 const transformHslToRgb: RuleDefinition = {
   id: "transform-hsl-to-rgb",
   scope: "transform",
-  stage: "authoring",
+  stage: "output",
   priority: 70,
   matcher: styleHasHsl,
   transform: (node: Node): Node => {

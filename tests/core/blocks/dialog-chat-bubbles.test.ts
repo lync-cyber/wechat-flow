@@ -95,10 +95,10 @@ describe("AC-002: 首位 speaker 气泡贴左且背景为 surface-alt 实值", (
     expect(aligns[0]).toBe("left");
   });
 
-  it("首条消息气泡计算 background = default 主题 --color-surface-alt 实值（#F3F0EB）", async () => {
+  it("首条消息气泡计算 background = default 主题 --color-surface-alt 实值（#f3f0eb）", async () => {
     const result = await renderMarkdown(TWO_MESSAGE_MD, { themeId: "default" });
     const styles = extractBubbleContainerStyles(result.html);
-    expect(styles[0]).toContain("background: #F3F0EB");
+    expect(styles[0]).toContain("background: #f3f0eb");
   });
 });
 
@@ -110,16 +110,16 @@ describe("AC-003: 次位不同 speaker 气泡贴右且背景/文字色为交替�
     expect(aligns[1]).toBe("right");
   });
 
-  it("第二条消息气泡计算 background = default 主题 --color-brand 实值（#2D5A4E）", async () => {
+  it("第二条消息气泡计算 background = default 主题 --color-brand 实值（#2d5a4e）", async () => {
     const result = await renderMarkdown(TWO_MESSAGE_MD, { themeId: "default" });
     const styles = extractBubbleContainerStyles(result.html);
-    expect(styles[1]).toContain("background: #2D5A4E");
+    expect(styles[1]).toContain("background: #2d5a4e");
   });
 
-  it("第二条消息气泡计算文字色 = default 主题 --color-text-inverse 实值（#FAFAF9）", async () => {
+  it("第二条消息气泡计算文字色 = default 主题 --color-text-inverse 实值（#fafaf9）", async () => {
     const result = await renderMarkdown(TWO_MESSAGE_MD, { themeId: "default" });
     const styles = extractBubbleContainerStyles(result.html);
-    expect(styles[1]).toContain("color: #FAFAF9");
+    expect(styles[1]).toContain("color: #fafaf9");
   });
 });
 
@@ -157,7 +157,7 @@ describe("AC-005: avatar 字段渲染圆形头像并按侧位排列", () => {
     const tags = extractAvatarTags(result.html);
     expect(tags.length).toBe(2);
     for (const tag of tags) {
-      expect(tag).toContain("border-radius:50%");
+      expect(tag).toContain("border-radius: 50%");
     }
   });
 

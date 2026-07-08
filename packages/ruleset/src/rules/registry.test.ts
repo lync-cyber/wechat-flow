@@ -22,23 +22,21 @@ describe("T-182 AC-001: RuleDefinition.stage is mandatory with no default", () =
     expect(builtinRules).toHaveLength(45);
   });
 
-  it("every builtinRules entry explicitly declares stage: 'authoring'", () => {
-    const nonAuthoring = builtinRules.filter(
-      (r) => (r as { stage?: string }).stage !== "authoring"
-    );
-    expect(nonAuthoring).toEqual([]);
+  it("builtinRules declares exactly 8 authoring-stage entries and 37 output-stage entries (arch 附录 A)", () => {
+    const authoring = builtinRules.filter((r) => (r as { stage?: string }).stage === "authoring");
+    const output = builtinRules.filter((r) => (r as { stage?: string }).stage === "output");
+    expect(authoring).toHaveLength(8);
+    expect(output).toHaveLength(37);
   });
 
-  it("readabilityRules (3 entries) explicitly declare stage: 'authoring'", () => {
+  it("readabilityRules (3 entries) explicitly declare stage: 'output' (arch 附录 A.2 lint 域)", () => {
     expect(readabilityRules).toHaveLength(3);
-    const nonAuthoring = readabilityRules.filter(
-      (r) => (r as { stage?: string }).stage !== "authoring"
-    );
-    expect(nonAuthoring).toEqual([]);
+    const nonOutput = readabilityRules.filter((r) => (r as { stage?: string }).stage !== "output");
+    expect(nonOutput).toEqual([]);
   });
 
-  it("the distinct stage values observed across builtinRules is exactly the singleton set {'authoring'}", () => {
+  it("the distinct stage values observed across builtinRules is exactly {'authoring', 'output'}", () => {
     const stages = new Set(builtinRules.map((r) => (r as { stage?: string }).stage));
-    expect(stages).toEqual(new Set(["authoring"]));
+    expect(stages).toEqual(new Set(["authoring", "output"]));
   });
 });

@@ -4,7 +4,7 @@ export const emphasisBlocks: ThemeBlocks = {
   strong: {
     default: {
       "font-weight": "600",
-      color: "#58A6FF",
+      color: "#58a6ff",
     },
   },
 };

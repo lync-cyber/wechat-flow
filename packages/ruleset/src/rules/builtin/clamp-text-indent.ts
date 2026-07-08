@@ -4,7 +4,7 @@ import { clampPxProp, hasStyleProp } from "./css-helpers.ts";
 const clampTextIndent: RuleDefinition = {
   id: "clamp-text-indent",
   scope: "clamp",
-  stage: "authoring",
+  stage: "output",
   priority: 80,
   matcher: (node) => hasStyleProp(node, ["text-indent"]),
   transform: (node) => clampPxProp(node, ["text-indent"], 0, 64),

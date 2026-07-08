@@ -9,8 +9,8 @@ beforeAll(() => {
 });
 
 // The "default" theme's authored `p` color (packages/themes/default/src/blocks/paragraph.ts).
-// inlineStyle serializes it as "color: #1C1917" (see serializeDeclarations space-after-colon format).
-const DEFAULT_P_COLOR_DECLARATION = "color: #1C1917";
+// inlineStyle serializes it as "color: #1c1917" (see serializeDeclarations space-after-colon format).
+const DEFAULT_P_COLOR_DECLARATION = "color: #1c1917";
 
 const detectComputedColorRule = {
   id: "t182-detect-computed-color",

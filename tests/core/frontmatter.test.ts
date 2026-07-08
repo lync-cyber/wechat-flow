@@ -138,16 +138,16 @@ describe("AC-001: frontmatter theme: tech 切换主题", () => {
     const preStyle = extractTagStyle(result.html, "pre");
     if (!preStyle) throw new Error("no <pre> with style in output HTML");
     const bg = extractCssProp(preStyle, "background-color");
-    expect(bg).toBe("#1A1A2E");
+    expect(bg).toBe("#1a1a2e");
   });
 
-  it("产出 HTML 中 pre 的 font-family 含 mono 等宽字体", async () => {
+  it("产出 HTML 中 pre 不含 font-family 声明（决策①剥除）", async () => {
     const md = "---\ntheme: tech\n---\n```js\nconsole.log('hi');\n```";
     const result = await renderMarkdown(md);
     const preStyle = extractTagStyle(result.html, "pre");
     if (!preStyle) throw new Error("no <pre> with style in output HTML");
     const ff = extractCssProp(preStyle, "font-family");
-    expect(ff).toMatch(/mono|consolas|menlo|courier/i);
+    expect(ff).toBeUndefined();
   });
 
   it("themeVersion 反映 tech 主题的 meta.version", async () => {
@@ -329,7 +329,7 @@ describe("options.themeId 经注册中心解析主题", () => {
     const result = await renderMarkdown(md, { themeId: "tech" });
     const preStyle = extractTagStyle(result.html, "pre");
     if (!preStyle) throw new Error("no <pre> with style in output HTML");
-    expect(extractCssProp(preStyle, "background-color")).toBe("#1A1A2E");
+    expect(extractCssProp(preStyle, "background-color")).toBe("#1a1a2e");
     expect(result.themeVersion).toBe("1.0.0");
   });
 
@@ -358,7 +358,7 @@ describe("options.themeId 经注册中心解析主题", () => {
     const result = await renderMarkdown(md, { themeId: "other" });
     const preStyle = extractTagStyle(result.html, "pre");
     if (!preStyle) throw new Error("no <pre> with style in output HTML");
-    expect(extractCssProp(preStyle, "background-color")).toBe("#1A1A2E");
+    expect(extractCssProp(preStyle, "background-color")).toBe("#1a1a2e");
     expect(result.themeVersion).toBe("1.0.0");
   });
 
@@ -406,7 +406,7 @@ describe("优先级: 显式 options.theme 优先于 frontmatter", () => {
     const preStyle = extractTagStyle(result.html, "pre");
     if (!preStyle) throw new Error("no <pre> with style in output HTML");
     const bg = extractCssProp(preStyle, "background-color");
-    expect(bg).toBe("#FFFFFF");
+    expect(bg).toBe("#ffffff");
     expect(result.themeVersion).toBe("2.0.0");
   });
 });

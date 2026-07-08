@@ -20,7 +20,7 @@ function matchesImgWithWidthOver(node: Node): boolean {
 const clampImageWidth: RuleDefinition = {
   id: "clamp-image-width",
   scope: "clamp",
-  stage: "authoring",
+  stage: "output",
   priority: 70,
   matcher: matchesImgWithWidthOver,
   transform: (node: Node): Node => {

@@ -55,13 +55,13 @@ function extractSlotStyle(html: string, slot: "title" | "description", index: nu
 describe("AC-001: card 每个 step 项渲染背景/border/border-radius", () => {
   it("getBlockBaseStyle('steps','card') 的 background 计算值为 --color-surface-alt 主题实值", () => {
     const base = getBlockBaseStyle("steps", "card");
-    expect(base.background).toBe("#F3F0EB");
+    expect(base.background).toBe("#f3f0eb");
   });
 
   it("getBlockBaseStyle('steps','card') 的 border 计算值含 1px solid 与 --color-border 主题实值", () => {
     const base = getBlockBaseStyle("steps", "card");
     expect(base.border).toContain("1px solid");
-    expect(base.border).toContain("#D6D3CE");
+    expect(base.border).toContain("#d6d3ce");
   });
 
   it("getBlockBaseStyle('steps','card') 的 border-radius 计算值等于 default 主题 --decoration-border-radius-md", () => {
@@ -74,8 +74,8 @@ describe("AC-001: card 每个 step 项渲染背景/border/border-radius", () => 
     const cardStyles = extractStepCardStyles(result.html);
     expect(cardStyles.length).toBe(3);
     for (const style of cardStyles) {
-      expect(style).toContain("background: #F3F0EB");
-      expect(style).toContain("border: 1px solid #D6D3CE");
+      expect(style).toContain("background: #f3f0eb");
+      expect(style).toContain("border: 1px solid #d6d3ce");
       expect(style).toContain("border-radius: 6px");
     }
   });
@@ -108,11 +108,11 @@ describe("AC-003: 卡片内 title 字重与 description 色值/字号计算值",
     }
   });
 
-  it("每张卡片 description 元素计算色值等于 default 主题 --color-text-secondary（#44403C）", async () => {
+  it("每张卡片 description 元素计算色值等于 default 主题 --color-text-secondary（#44403c）", async () => {
     const result = await renderMarkdown(STEPS_MD, { themeId: "default" });
     for (let i = 0; i < 3; i++) {
       const style = extractSlotStyle(result.html, "description", i);
-      expect(style).toContain("color: #44403C");
+      expect(style).toContain("color: #44403c");
     }
   });
 
@@ -120,7 +120,7 @@ describe("AC-003: 卡片内 title 字重与 description 色值/字号计算值",
     const result = await renderMarkdown(STEPS_MD, { themeId: "default" });
     for (let i = 0; i < 3; i++) {
       const style = extractSlotStyle(result.html, "description", i);
-      expect(style).toContain("font-size: 13px");
+      expect(style).toContain("font-size: 14px");
     }
   });
 });
