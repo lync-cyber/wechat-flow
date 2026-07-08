@@ -4,12 +4,7 @@ import { defineBlock } from "../factory.ts";
 export const authorCard = defineBlock(
   "author-card",
   "作者卡片",
-  z.object({
-    name: z.string(),
-    bio: z.string().optional(),
-    avatar: z.string().optional(),
-    title: z.string().optional(),
-  }),
+  z.object({}).strict(),
   "meta",
   [
     { id: "default", label: "横排作者" },

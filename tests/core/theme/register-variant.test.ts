@@ -54,7 +54,7 @@ describe("AC-001: registerVariant 注册后 listBlockVariants 和 getBlockBaseSt
       id: "multi-slot-test",
       name: "多槽测试",
       category: "structured",
-      attrsSchema: z.object({}),
+      directiveAttrs: z.object({}),
       variants: [],
       slots: ["root", "icon"],
     });
@@ -444,7 +444,7 @@ describe("T-122-core: registerVariant 扩展校验抛带 code 的结构化错误
         id: "no-root-slot",
         name: "无 root 槽",
         category: "structured",
-        attrsSchema: z.object({}),
+        directiveAttrs: z.object({}),
         variants: [],
         baseStyle: { root: { color: "#000000" } },
         slots: ["title"],

@@ -4,14 +4,7 @@ import { defineBlock } from "../factory.ts";
 export const advertCard = defineBlock(
   "advert-card",
   "广告卡片",
-  z.object({
-    title: z.string(),
-    description: z.string().optional(),
-    image: z.string().optional(),
-    link: z.string().optional(),
-    cta: z.string().optional(),
-    tag: z.string().optional(),
-  }),
+  z.object({}).strict(),
   "marketing",
   [
     { id: "default", label: "标准广告卡片" },

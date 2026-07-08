@@ -75,7 +75,7 @@ export async function renderMarkdown(
   }
 
   const themeTokens = effectiveTheme?.blocks;
-  const styledHast = inlineStyle(hast, themeTokens);
+  const styledHast = inlineStyle(hast, themeTokens, effectiveTheme?.tokens);
   const nightRiskIssues = collectNightRiskIssues(styledHast);
   let decorated = contextAwareRender(styledHast, effectiveTheme);
   decorated = injectDecorations(decorated, effectiveTheme);

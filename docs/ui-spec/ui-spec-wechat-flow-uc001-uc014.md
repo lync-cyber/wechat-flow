@@ -1,6 +1,6 @@
 ---
 id: "ui-spec-wechat-flow-uc001-uc014"
-version: "0.3.0"
+version: "0.4.0"
 doc_type: ui-spec
 author: ui-designer
 status: approved
@@ -249,9 +249,17 @@ required_sections:
 | `active`（选中）| 背景 `--color-surface-overlay`，文字 `--color-brand`，底边 `2px solid --color-brand` |
 | `disabled` | 文字 `--color-text-muted`，opacity `0.5`，不响应交互（预留给未来锁定的 Tab） |
 
-**变体 (variant)**: 单一形态组件，无 variant 区分
+**收纳交互（桌面态）**：
 
-**Props**: `defaultTab: 'theme' | 'components' | 'docs'`, `onTabChange: (tab: string) => void`
+- Tab 标题行右端固定一个收起按钮（`⟨⟨` 双角括图标，`20px`，`--color-text-muted`，hover 文字 `--color-text-primary` + 背景 `--color-surface-overlay`，tooltip「收起面板」）
+- 收纳态（rail）：面板收窄为 `48px` 纵向图标条，背景不变；三个 Tab 化为语义图标（主题=色板 / 组件=积木 / 文档=文档页，`20px`，纵向排列，每项 hit target `48×40px`，间距 `8px`，顶部对齐）；rail 顶部为展开按钮（`⟩⟩`，同收起按钮规格）
+- rail 图标 hover：背景 `--color-surface-overlay` + tooltip 显示 Tab 名；点击 rail 图标：展开面板并激活对应 Tab
+- 与 UC-009 命令面板「视图 → 折叠左栏」命令双向同步（命令 toggle 与按钮 toggle 状态一致）
+- 收纳状态写入编辑器偏好持久化（会话间保持）
+
+**变体 (variant)**: 单一形态组件，无 variant 区分（收纳为状态非 variant）
+
+**Props**: `defaultTab: 'theme' | 'components' | 'docs'`, `onTabChange: (tab: string) => void`, `collapsed: boolean`, `onCollapsedChange: (collapsed: boolean) => void`
 
 ---
 
@@ -439,26 +447,27 @@ F-014 中文排版修订与 directive 插入均可从命令面板/「...」菜�
 **布局**：位于编辑器底部，高度在折叠/展开间切换，宽度与中栏一致。背景 `--color-surface-elevated`，顶边 `1px solid --color-border`。
 
 **内部结构**（展开时）：
-- 标题行：「兼容性报告」+ 汇总计数（绿/黄/红色计数）+ 折叠/展开按钮
-- 诊断列表（每条高 `36px`）：
-  - 左侧级别色块（`4×36px` 竖条：红/黄/绿）
-  - 节点描述（14px）
-  - 右侧操作链接（「查看」跳转到编辑器对应行）
+- 标题行：「兼容性报告」+ 折叠/展开按钮——标题行**不承载汇总计数**，各类计数的唯一权威展示位为 UC-023 状态栏
+- 诊断列表按分组渲染（组序固定：兼容性 / 可读性 / 违规词 / 夜间风险；空组不显示）：
+  - 组头行（高 `24px`，`--font-size-xs`，`--color-text-muted`）：「{组名} N 项」
+  - 兼容性/可读性/违规词组条目（每条高 `36px`）：左侧级别色块（`4×36px` 竖条：红/黄/绿）+ 节点描述（14px）+ 右侧操作链接（「查看」跳转到编辑器对应行）
+  - 夜间风险组条目（每条高 `36px`）：前缀月亮图标（`--color-error`）+ 节点描述 + 对比度实测值/阈值 + 「查看」跳转链接（数据源 `diagnostics.nightRiskIssues`）
 
 **状态**：
 
 | 状态 | 视觉表现 |
 |------|---------|
-| `empty-no-issues` | 折叠状态，标题行显示绿色「无风险」，全绿对勾图标 |
-| `has-issues` | 标题行显示「提醒 N 项 / 严重 N 项」，颜色分别为 `--color-warning` / `--color-error` |
+| `empty-no-issues` | 折叠状态，仅标题行（状态与计数见 UC-023 状态栏） |
 | `running`（分析中）| 标题行显示「正在分析…」+ 旋转 spinner（`--color-brand-muted`），列表区域 skeleton 占位 |
 | `collapsed` | 高度 `32px`，仅显示标题行，展开按钮向上箭头 |
 | `expanded` | 高度 `auto`（最大 `200px` 可滚动），展开按钮向下箭头 |
-| `night-risk-alert` | 仅当 `diagnostics.nightRiskIssues` 非空时：面板顶边 `2px solid --color-error` 高亮，标题行追加「夜间风险 N 项」红色计数；列表中夜间风险条目前缀月亮图标（`--color-error`） |
+| `night-risk-alert` | 仅当 `diagnostics.nightRiskIssues` 非空时：面板顶边 `2px solid --color-error` 高亮，标题行前缀月亮标记（`--color-error`，无计数文本） |
+
+**锚定行为**：`anchorGroup` 传入时展开面板并滚动至对应组头（由 UC-023 指标段点击触发）。
 
 **变体 (variant)**: 单一形态组件，无 variant 区分
 
-**Props**: `diagnostics: DiagnosticReport`, `isRunning: boolean`, `isExpanded: boolean`, `onToggle: () => void`, `onItemClick: (nodeSelector: string) => void`, `onShowDiff: (nodeSelector: string) => void`
+**Props**: `diagnostics: DiagnosticReport`, `isRunning: boolean`, `isExpanded: boolean`, `anchorGroup?: 'compat' | 'readability' | 'keyword' | 'night-risk'`, `onToggle: () => void`, `onItemClick: (nodeSelector: string) => void`, `onShowDiff: (nodeSelector: string) => void`
 
 `DiagnosticReport` 类型新增字段：`nightRiskIssues: NightRiskEntry[]`（对比度低于阈值的节点列表，由 F-002 AC-003/004 提供；允许空数组）。
 
@@ -853,7 +862,9 @@ before/after HTML 片段由 M-003 过滤规则集引擎在执行过滤时记录�
 | `error` | 右侧显示 `!` 图标（`--color-error`，12px）+ tooltip「指标加载失败，点击重试」 |
 
 **状态与交互**：
-- 点击「兼容性摘要」触发 UC-013 展开/折叠（与 `isExpanded` 双向同步）；该区域 hover 时背景 `--color-surface-hover`，focus（键盘聚焦）时显示 2px focus ring；其他指标区域无 hover 反馈
+- 点击「兼容性摘要」触发 UC-013 展开/折叠（与 `isExpanded` 双向同步，锚定「兼容性」组）
+- 点击「可读性」「违规词」「夜间风险」展开 UC-013 并锚定至对应分组（传递 `anchorGroup`）
+- 四个指标段（兼容性摘要/可读性/违规词/夜间风险）均为 button 语义：hover 时背景 `--color-surface-hover`，focus（键盘聚焦）时显示 2px focus ring
 - 兼容性严重项 > 0 时显示 `--color-error`，提醒项 > 0 时显示 `--color-warning`，否则 `--color-text-muted`
 - 可读性/违规词/夜间风险同样使用三态色规则（见主卷 A-006）
 
@@ -863,6 +874,6 @@ before/after HTML 片段由 M-003 过滤规则集引擎在执行过滤时记录�
 
 **变体 (variant)**: 单一形态组件，无 variant 区分（桌面/平板差异通过响应式断点驱动内容项数变化，不构成 variant 切换）
 
-**Props**: `metrics: { words: number; readMinutes: number }`, `diagnostics: DiagnosticReport`, `isDiagnosticsExpanded: boolean`, `onToggleDiagnostics: () => void`
+**Props**: `metrics: { words: number; readMinutes: number }`, `diagnostics: DiagnosticReport`, `isDiagnosticsExpanded: boolean`, `onToggleDiagnostics: (anchorGroup?: 'compat' | 'readability' | 'keyword' | 'night-risk') => void`
 
 `metrics.words` 格式化规则：1000 及以上时显示千分位（如 1,234 字），小于 1000 时直接显示数字 + 「字」。

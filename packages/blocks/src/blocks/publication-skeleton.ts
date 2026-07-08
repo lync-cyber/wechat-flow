@@ -4,12 +4,7 @@ import { defineBlock } from "../factory.ts";
 export const publicationSkeleton = defineBlock(
   "publication-skeleton",
   "排版骨架",
-  z.object({
-    title: z.string(),
-    subtitle: z.string().optional(),
-    coverImage: z.string().optional(),
-    category: z.string().optional(),
-  }),
+  z.object({}).strict(),
   "meta",
   [
     { id: "default", label: "标准骨架" },

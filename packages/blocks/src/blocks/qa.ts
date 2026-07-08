@@ -4,12 +4,7 @@ import { defineBlock } from "../factory.ts";
 export const qa = defineBlock(
   "qa",
   "问答",
-  z.object({
-    question: z.string(),
-    answer: z.string(),
-    questionPrefix: z.string().optional(),
-    answerPrefix: z.string().optional(),
-  }),
+  z.object({}).strict(),
   "structured",
   [
     { id: "default", label: "标准问答" },
@@ -21,5 +16,7 @@ export const qa = defineBlock(
       margin: "16px 0",
       padding: "0",
     },
-  }
+  },
+  undefined,
+  "正文按一问一答顺序书写，每组问答以「**问：**」开头的段落紧跟「**答：**」开头的段落表达。"
 );

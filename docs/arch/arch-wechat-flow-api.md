@@ -1,6 +1,6 @@
 ---
 id: "arch-wechat-flow-api"
-version: "0.7.0"
+version: "0.7.1"
 doc_type: arch
 author: architect
 status: approved
@@ -173,7 +173,9 @@ response:
     id: { type: string }
     name: { type: string }
     category: { type: string, desc: "block 功能分类，∈ text|media|emphasis|structured|marketing|meta（驱动 UC-015 分类 tab）" }
-    attrsSchema: { type: "JSONSchema", desc: "Block 属性的 JSON Schema 表达，便于 LLM 生成合法 Markdown" }
+    source: { type: "'builtin'|'plugin'", desc: "block 注册来源；决定 attrsSchema 的语义域" }
+    attrsSchema: { type: "JSONSchema", desc: "供 LLM 书写该 block 属性的 JSON Schema：source=builtin 时为 core directiveAttrs（指令 `{}` 语法域标注属性，M-005）的 JSON Schema，多数内置块为空 strict object；source=plugin 时为 plugin-api 自持结构化 attrsSchema（M-007）的 JSON Schema" }
+    directiveBody: { type: string, desc: "内置 block 指令体（正文 / 子结构）写法说明，如 dialog 逐轮 speaker 行、compare 左右列；plugin block 内容由 render(attrs) 从结构化属性生成，此字段为空串" }
     variants: { type: "VariantSummary[]" }
     tokenDependencies: { type: "string[]", desc: "该 Block 消费的 token 路径" }
 ```
@@ -203,7 +205,7 @@ response:
   schema:
     id: { type: string }
     name: { type: string }
-    attrsSchema: { type: "JSONSchema" }
+    attrsSchema: { type: "JSONSchema", desc: "core mark 行内指令属性（`{}` 语法域）的 JSON Schema，供 LLM 生成合法行内 directive；mark 均为内置，无 plugin 结构化数据域" }
     inlineSyntax: { type: string, desc: "行内 directive 用法示例" }
 ```
 

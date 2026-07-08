@@ -4,13 +4,7 @@ import { defineBlock } from "../factory.ts";
 export const citation = defineBlock(
   "citation",
   "学术引用",
-  z.object({
-    text: z.string(),
-    source: z.string().optional(),
-    url: z.string().optional(),
-    year: z.number().int().optional(),
-    author: z.string().optional(),
-  }),
+  z.object({}).strict(),
   "meta",
   [
     { id: "default", label: "标准学术引用" },

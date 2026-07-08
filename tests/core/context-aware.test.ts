@@ -115,7 +115,7 @@ describe("AC-002: context-aware render — callout inner h2 gets in-callout clas
     const result = await renderMarkdown(md, { themeId: "ctx-test3" });
 
     const html = result.html;
-    const calloutMatch = html.match(/data-block="callout"[^>]*>([\s\S]*?)<\/div>/);
+    const calloutMatch = html.match(/data-block="callout"[^>]*>([\s\S]*?)<\/section>/);
     const calloutInner = calloutMatch?.[0] ?? "";
     expect(calloutInner).toContain("in-callout");
     expect(calloutInner).not.toContain("standalone");

@@ -1,6 +1,9 @@
+import type { Element } from "hast";
 import type { ZodType } from "zod";
 
 export type BlockCategory = "text" | "media" | "emphasis" | "structured" | "marketing" | "meta";
+
+export type BlockSource = "builtin" | "plugin";
 
 export interface BlockVariant {
   id: string;
@@ -8,14 +11,23 @@ export interface BlockVariant {
   baseStyle?: Record<string, Record<string, string>>;
 }
 
+export interface BlockDecorateContext {
+  variant: string;
+  attrs: Record<string, string>;
+  docState: Record<string, unknown>;
+}
+
 export interface BlockDefinition {
   id: string;
   name: string;
   category: BlockCategory;
-  attrsSchema: ZodType;
+  source?: BlockSource;
+  directiveAttrs: ZodType;
+  directiveBody?: string;
   variants: BlockVariant[];
   baseStyle?: Record<string, Record<string, string>>;
   slots: string[];
+  decorate?: (element: Element, ctx: BlockDecorateContext) => void;
 }
 
 const store = new Map<string, BlockDefinition>();

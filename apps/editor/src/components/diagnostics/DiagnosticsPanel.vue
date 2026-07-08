@@ -1,17 +1,21 @@
 <script setup lang="ts">
 import type { Diagnostic, DiagnosticReport } from "@wechat-flow/contracts";
-import { computed, watch } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 import DiagnosticsItem from "./DiagnosticsItem.vue";
+
+type AnchorGroup = "compat" | "readability" | "keyword" | "night-risk";
 
 const props = withDefaults(
   defineProps<{
     diagnostics: DiagnosticReport;
     isRunning?: boolean;
     isExpanded?: boolean;
+    anchorGroup?: AnchorGroup;
   }>(),
   {
     isRunning: false,
     isExpanded: false,
+    anchorGroup: undefined,
   }
 );
 
@@ -21,17 +25,33 @@ const emit = defineEmits<{
   "show-diff": [nodeSelector: string];
 }>();
 
+const KEYWORD_RULE_ID = "keyword-lint";
+const READABILITY_RULE_PREFIX = "readability-";
+
+const compatDiagnostics = computed(() =>
+  props.diagnostics.diagnostics.filter(
+    (d: Diagnostic) =>
+      d.ruleId !== KEYWORD_RULE_ID && !d.ruleId?.startsWith(READABILITY_RULE_PREFIX)
+  )
+);
+
+const readabilityDiagnostics = computed(() =>
+  props.diagnostics.diagnostics.filter((d: Diagnostic) =>
+    d.ruleId?.startsWith(READABILITY_RULE_PREFIX)
+  )
+);
+
+const keywordDiagnostics = computed(() =>
+  props.diagnostics.diagnostics.filter((d: Diagnostic) => d.ruleId === KEYWORD_RULE_ID)
+);
+
+const nightRiskIssues = computed(() => props.diagnostics.nightRiskIssues);
+
 const errorCount = computed(
   () => props.diagnostics.diagnostics.filter((d: Diagnostic) => d.severity === "error").length
 );
 
-const warnCount = computed(
-  () => props.diagnostics.diagnostics.filter((d: Diagnostic) => d.severity === "warning").length
-);
-
-const hasIssues = computed(() => props.diagnostics.diagnostics.length > 0);
-
-const hasNightRisk = computed(() => props.diagnostics.nightRiskIssues.length > 0);
+const hasNightRisk = computed(() => nightRiskIssues.value.length > 0);
 
 watch(
   errorCount,
@@ -39,6 +59,19 @@ watch(
     if (count > 0 && !props.isExpanded) {
       emit("toggle");
     }
+  },
+  { immediate: true }
+);
+
+const panelRoot = ref<HTMLElement | null>(null);
+
+watch(
+  () => [props.anchorGroup, props.isExpanded] as const,
+  async ([group, expanded]) => {
+    if (!group || !expanded) return;
+    await nextTick();
+    const target = panelRoot.value?.querySelector(`[data-testid="group-header-${group}"]`);
+    target?.scrollIntoView({ block: "nearest" });
   },
   { immediate: true }
 );
@@ -58,6 +91,7 @@ function handleItemClick(nodeSelector: string): void {
 
 <template>
   <div
+    ref="panelRoot"
     class="diagnostics-panel"
     :class="{ 'diagnostics-panel--night-risk-alert': hasNightRisk }"
     data-testid="diagnostics-panel"
@@ -75,26 +109,6 @@ function handleItemClick(nodeSelector: string): void {
         aria-hidden="true"
       >🌙</span>
       <span class="diagnostics-panel__title">兼容性报告</span>
-      <span v-if="!hasIssues" class="diagnostics-panel__no-issues" data-testid="no-issues-badge">
-        无风险
-      </span>
-      <template v-if="hasIssues">
-        <span
-          v-if="errorCount > 0"
-          class="diagnostics-panel__count diagnostics-panel__count--error"
-          data-testid="error-count"
-        >严重 {{ errorCount }} 项</span>
-        <span
-          v-if="warnCount > 0"
-          class="diagnostics-panel__count diagnostics-panel__count--warn"
-          data-testid="warn-count"
-        >提醒 {{ warnCount }} 项</span>
-        <span
-          v-if="hasNightRisk"
-          class="diagnostics-panel__count diagnostics-panel__count--night"
-          data-testid="night-risk-count"
-        >夜间风险 {{ diagnostics.nightRiskIssues.length }} 项</span>
-      </template>
       <button
         type="button"
         class="diagnostics-panel__toggle-btn"
@@ -115,13 +129,67 @@ function handleItemClick(nodeSelector: string): void {
         <span>检测中…</span>
       </div>
       <template v-else>
-        <DiagnosticsItem
-          v-for="(diag, i) in diagnostics.diagnostics"
-          :key="i"
-          :diagnostic="diag"
-          @show-diff="handleShowDiff"
-          @item-click="handleItemClick"
-        />
+        <div v-if="compatDiagnostics.length > 0" class="diagnostics-panel__group">
+          <div class="diagnostics-panel__group-header" data-testid="group-header-compat">
+            兼容性 {{ compatDiagnostics.length }} 项
+          </div>
+          <DiagnosticsItem
+            v-for="(diag, i) in compatDiagnostics"
+            :key="`compat-${i}`"
+            :diagnostic="diag"
+            @show-diff="handleShowDiff"
+            @item-click="handleItemClick"
+          />
+        </div>
+
+        <div v-if="readabilityDiagnostics.length > 0" class="diagnostics-panel__group">
+          <div class="diagnostics-panel__group-header" data-testid="group-header-readability">
+            可读性 {{ readabilityDiagnostics.length }} 项
+          </div>
+          <DiagnosticsItem
+            v-for="(diag, i) in readabilityDiagnostics"
+            :key="`readability-${i}`"
+            :diagnostic="diag"
+            @show-diff="handleShowDiff"
+            @item-click="handleItemClick"
+          />
+        </div>
+
+        <div v-if="keywordDiagnostics.length > 0" class="diagnostics-panel__group">
+          <div class="diagnostics-panel__group-header" data-testid="group-header-keyword">
+            违规词 {{ keywordDiagnostics.length }} 项
+          </div>
+          <DiagnosticsItem
+            v-for="(diag, i) in keywordDiagnostics"
+            :key="`keyword-${i}`"
+            :diagnostic="diag"
+            @show-diff="handleShowDiff"
+            @item-click="handleItemClick"
+          />
+        </div>
+
+        <div v-if="nightRiskIssues.length > 0" class="diagnostics-panel__group">
+          <div class="diagnostics-panel__group-header" data-testid="group-header-night-risk">
+            夜间风险 {{ nightRiskIssues.length }} 项
+          </div>
+          <div
+            v-for="(risk, i) in nightRiskIssues"
+            :key="`night-risk-${i}`"
+            class="diagnostics-panel__night-risk-item"
+            data-testid="night-risk-item"
+          >
+            <span class="diagnostics-panel__night-risk-icon" aria-hidden="true">🌙</span>
+            <span class="diagnostics-panel__night-risk-message">
+              {{ risk.nodeSelector }} 对比度 {{ risk.contrastRatio.toFixed(1) }}（{{ risk.suggestion }}）
+            </span>
+            <button
+              type="button"
+              class="diagnostics-panel__night-risk-link"
+              data-testid="night-risk-view-btn"
+              @click="handleItemClick(risk.nodeSelector)"
+            >查看</button>
+          </div>
+        </div>
       </template>
     </div>
   </div>
@@ -162,27 +230,6 @@ function handleItemClick(nodeSelector: string): void {
   flex: 1;
 }
 
-.diagnostics-panel__no-issues {
-  font-size: var(--font-size-sm, 13px);
-  color: var(--color-diag-safe);
-}
-
-.diagnostics-panel__count {
-  font-size: var(--font-size-sm, 13px);
-}
-
-.diagnostics-panel__count--error {
-  color: var(--color-error);
-}
-
-.diagnostics-panel__count--warn {
-  color: var(--color-warning);
-}
-
-.diagnostics-panel__count--night {
-  color: var(--color-error);
-}
-
 .diagnostics-panel__toggle-btn {
   border: none;
   background: none;
@@ -196,6 +243,51 @@ function handleItemClick(nodeSelector: string): void {
 .diagnostics-panel__list {
   overflow-y: auto;
   max-height: 168px; /* 200px - 32px header */
+}
+
+.diagnostics-panel__group-header {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-3, 12px);
+  font-size: var(--font-size-xs, 11px);
+  color: var(--color-text-muted);
+}
+
+.diagnostics-panel__night-risk-item {
+  display: flex;
+  align-items: center;
+  height: 36px;
+  gap: var(--space-2, 8px);
+  padding: 0 var(--space-3, 12px);
+}
+
+.diagnostics-panel__night-risk-icon {
+  flex-shrink: 0;
+}
+
+.diagnostics-panel__night-risk-message {
+  flex: 1;
+  font-size: var(--font-size-sm, 13px);
+  color: var(--color-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.diagnostics-panel__night-risk-link {
+  border: none;
+  background: none;
+  color: var(--color-text-link);
+  font-size: var(--font-size-sm, 13px);
+  cursor: pointer;
+  padding: 0 var(--space-1, 4px);
+  flex-shrink: 0;
+}
+
+.diagnostics-panel__night-risk-link:hover {
+  color: var(--color-text-link-hover);
+  text-decoration: underline;
 }
 
 .diagnostics-panel__running {

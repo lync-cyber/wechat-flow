@@ -1,5 +1,7 @@
+import { simulatePaste } from "@wechat-flow/core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { composeCopy } from "../copy.ts";
+import { composeRender } from "../render.ts";
 
 function setViewportWidth(width: number): void {
   Object.defineProperty(window, "innerWidth", { value: width, configurable: true, writable: true });
@@ -126,6 +128,27 @@ describe("composeCopy: 现代浏览器成功路径不回归 (AC-003)", () => {
     expect(navigator.clipboard.write).toHaveBeenCalledOnce();
     expect(document.execCommand).not.toHaveBeenCalled();
     expect(notifySpy).toHaveBeenCalledWith(expect.objectContaining({ type: "success" }));
+  });
+
+  it("T-169 AC-002: clipboard.write payload 是单个 ClipboardItem，同时含 text/html 与 text/plain，html Blob 内容等于 filteredHtml", async () => {
+    const writeMock = navigator.clipboard.write as unknown as ReturnType<typeof vi.fn>;
+
+    await composeCopy({ markdown: "# Hi", notify: vi.fn() });
+
+    expect(writeMock).toHaveBeenCalledOnce();
+    const [payload] = writeMock.mock.calls[0] as [ClipboardItem[]];
+    expect(payload).toHaveLength(1);
+
+    const [item] = payload;
+    expect(item.types).toContain("text/html");
+    expect(item.types).toContain("text/plain");
+
+    const rendered = await composeRender({ markdown: "# Hi" });
+    const { filteredHtml } = simulatePaste(rendered.html);
+
+    const htmlBlob = await item.getType("text/html");
+    const htmlText = await htmlBlob.text();
+    expect(htmlText).toBe(filteredHtml);
   });
 });
 

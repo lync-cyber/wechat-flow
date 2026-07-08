@@ -16,6 +16,7 @@ export interface CommandRegistryDeps {
   exportLongImage?: () => void;
   openShortcuts?: () => void;
   openPaletteDerive?: () => void;
+  toggleLeftPanelCollapsed?: () => void;
 }
 
 export function buildEditorCommands(deps: CommandRegistryDeps): CommandDefinition[] {
@@ -34,8 +35,7 @@ export function buildEditorCommands(deps: CommandRegistryDeps): CommandDefinitio
       id: "view-collapse-left",
       group: "视图",
       label: "折叠左栏",
-      placeholder: true,
-      run: () => {},
+      run: () => deps.toggleLeftPanelCollapsed?.(),
     },
     {
       id: "view-collapse-right",

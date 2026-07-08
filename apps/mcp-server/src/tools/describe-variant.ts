@@ -11,7 +11,7 @@ export function describeVariantTool(args: Record<string, unknown>) {
   const block = describeBlock(blockId);
   if (!block) return { code: "E_NOT_FOUND", blockId };
 
-  const attrsSchema = z.toJSONSchema(block.attrsSchema);
+  const attrsSchema = z.toJSONSchema(block.directiveAttrs);
 
   const builtin = block.variants.find((v) => v.id === variantId);
   if (builtin) {

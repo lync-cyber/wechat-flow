@@ -20,16 +20,18 @@ const LEDGER_MD_NO_TITLE =
   ':::compare{.ledger left-label="优点" left-value="速度快" right-label="缺点" right-value="成本高"}\n:::';
 
 function extractContainerStyle(html: string): string {
-  const match = html.match(/<div data-block="compare" data-variant="ledger"[^>]* style="([^"]*)"/);
+  const match = html.match(
+    /<section data-block="compare" data-variant="ledger"[^>]* style="([^"]*)"/
+  );
   expect(match, `no compare ledger container found in html: ${html}`).not.toBeNull();
   return match?.[1] ?? "";
 }
 
 function extractSlotDivStyle(html: string, marker: string): string {
   const escaped = marker.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const re = new RegExp(`<div style="([^"]*)">[^<]*${escaped}[^<]*</div>`);
+  const re = new RegExp(`<section style="([^"]*)">[^<]*${escaped}[^<]*</section>`);
   const match = html.match(re);
-  expect(match, `no slot div containing "${marker}" found in html: ${html}`).not.toBeNull();
+  expect(match, `no slot section containing "${marker}" found in html: ${html}`).not.toBeNull();
   return match?.[1] ?? "";
 }
 

@@ -53,12 +53,12 @@ describe("AC-001: pull-quote decorated 变体渲染装饰引号", () => {
 
 // AC-002: decorated 变体渲染独立署名行 — font-size 13px + text-align center + margin-top 10px + 主题 --color-text-muted 色值
 describe("AC-002: pull-quote decorated 变体渲染独立署名行", () => {
-  it("渲染后 HTML 含独立署名行元素承载 author 文本", async () => {
+  it("渲染后 HTML 含独立署名行元素承载「—— {author}」文本", async () => {
     await import("../../../packages/blocks/src/index.ts");
     const result = await renderMarkdown(':::pull-quote{.decorated author="鲁迅"}\n摘引文字\n:::', {
       themeId: "default",
     });
-    expect(result.html).toMatch(/<div style="[^"]*">鲁迅<\/div>/);
+    expect(result.html).toMatch(/<section style="[^"]*">—— 鲁迅<\/section>/);
   });
 
   it("署名行元素计算 font-size = 13px", async () => {
@@ -66,7 +66,7 @@ describe("AC-002: pull-quote decorated 变体渲染独立署名行", () => {
     const result = await renderMarkdown(':::pull-quote{.decorated author="鲁迅"}\n摘引文字\n:::', {
       themeId: "default",
     });
-    const match = result.html.match(/<div style="([^"]*)">鲁迅<\/div>/);
+    const match = result.html.match(/<section style="([^"]*)">—— 鲁迅<\/section>/);
     expect(match).not.toBeNull();
     expect(match?.[1]).toContain("font-size: 13px");
   });
@@ -76,7 +76,7 @@ describe("AC-002: pull-quote decorated 变体渲染独立署名行", () => {
     const result = await renderMarkdown(':::pull-quote{.decorated author="鲁迅"}\n摘引文字\n:::', {
       themeId: "default",
     });
-    const match = result.html.match(/<div style="([^"]*)">鲁迅<\/div>/);
+    const match = result.html.match(/<section style="([^"]*)">—— 鲁迅<\/section>/);
     expect(match?.[1]).toContain("text-align: center");
   });
 
@@ -85,7 +85,7 @@ describe("AC-002: pull-quote decorated 变体渲染独立署名行", () => {
     const result = await renderMarkdown(':::pull-quote{.decorated author="鲁迅"}\n摘引文字\n:::', {
       themeId: "default",
     });
-    const match = result.html.match(/<div style="([^"]*)">鲁迅<\/div>/);
+    const match = result.html.match(/<section style="([^"]*)">—— 鲁迅<\/section>/);
     expect(match?.[1]).toContain("margin-top: 10px");
   });
 
@@ -94,7 +94,7 @@ describe("AC-002: pull-quote decorated 变体渲染独立署名行", () => {
     const result = await renderMarkdown(':::pull-quote{.decorated author="鲁迅"}\n摘引文字\n:::', {
       themeId: "default",
     });
-    const match = result.html.match(/<div style="([^"]*)">鲁迅<\/div>/);
+    const match = result.html.match(/<section style="([^"]*)">—— 鲁迅<\/section>/);
     expect(match?.[1]).toContain("color: #78716C");
   });
 });
@@ -117,7 +117,7 @@ describe("AC-003: pull-quote root 容器基线与 decorated variant 装饰声明
       themeId: "default",
     });
     const containerMatch = result.html.match(
-      /<div data-block="pull-quote" data-variant="decorated" style="([^"]*)"/
+      /<section data-block="pull-quote" data-variant="decorated" style="([^"]*)"/
     );
     expect(containerMatch).not.toBeNull();
     expect(containerMatch?.[1]).toContain("text-align: center");
@@ -129,7 +129,7 @@ describe("AC-003: pull-quote root 容器基线与 decorated variant 装饰声明
       themeId: "default",
     });
     const containerMatch = result.html.match(
-      /<div data-block="pull-quote" data-variant="decorated" style="([^"]*)"/
+      /<section data-block="pull-quote" data-variant="decorated" style="([^"]*)"/
     );
     expect(containerMatch?.[1]).toContain("padding: 24px 16px");
   });
@@ -140,7 +140,7 @@ describe("AC-003: pull-quote root 容器基线与 decorated variant 装饰声明
       themeId: "default",
     });
     const containerMatch = result.html.match(
-      /<div data-block="pull-quote" data-variant="decorated" style="([^"]*)"/
+      /<section data-block="pull-quote" data-variant="decorated" style="([^"]*)"/
     );
     expect(containerMatch?.[1]).toContain("font-size: 1.25em");
     const quoteMarkMatch = result.html.match(/<span style="([^"]*)">「<\/span>/);

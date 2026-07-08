@@ -4,17 +4,7 @@ import { defineBlock } from "../factory.ts";
 export const relatedCards = defineBlock(
   "related-cards",
   "相关文章",
-  z.object({
-    items: z.array(
-      z.object({
-        title: z.string(),
-        url: z.string().optional(),
-        summary: z.string().optional(),
-        image: z.string().optional(),
-      })
-    ),
-    title: z.string().optional(),
-  }),
+  z.object({}).strict(),
   "marketing",
   [
     { id: "default", label: "标准相关文章" },

@@ -24,7 +24,7 @@ async function renderDivider(variantId: string): Promise<string> {
 }
 
 function extractDividerContainer(html: string): string | null {
-  const match = html.match(/<div data-block="divider"[^>]*>[\s\S]*?<\/div>/);
+  const match = html.match(/<section data-block="divider"[^>]*>[\s\S]*?<\/section>/);
   return match ? match[0] : null;
 }
 

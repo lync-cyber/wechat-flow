@@ -37,6 +37,7 @@ export {
 } from "./backup/auto-backup.ts";
 export type { BackupRecord } from "./storage/indexeddb-adapter.ts";
 export { saveSplitterWidth, loadSplitterWidth } from "./storage/preferences.ts";
+export { saveLeftPanelCollapsed, loadLeftPanelCollapsed } from "./storage/preferences.ts";
 export {
   saveEditorPreferences,
   loadEditorPreferences,
@@ -61,7 +62,13 @@ export {
   onRegistryReset,
   resetBlockRegistry,
 } from "./registry/block.ts";
-export type { BlockCategory, BlockDefinition, BlockVariant } from "./registry/block.ts";
+export type {
+  BlockCategory,
+  BlockDecorateContext,
+  BlockDefinition,
+  BlockSource,
+  BlockVariant,
+} from "./registry/block.ts";
 export {
   registerMark,
   listMarks,

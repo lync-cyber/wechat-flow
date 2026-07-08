@@ -8,8 +8,10 @@ const props = defineProps<{
   isDiagnosticsExpanded: boolean;
 }>();
 
+type AnchorGroup = "compat" | "readability" | "keyword" | "night-risk";
+
 const emit = defineEmits<{
-  "toggle-diagnostics": [];
+  "toggle-diagnostics": [anchorGroup?: AnchorGroup];
 }>();
 
 const KEYWORD_RULE_ID = "keyword-lint";
@@ -116,8 +118,8 @@ onUnmounted(() => {
   window.removeEventListener("resize", onResize);
 });
 
-function onToggleDiagnostics(): void {
-  emit("toggle-diagnostics");
+function onToggleDiagnostics(anchorGroup?: AnchorGroup): void {
+  emit("toggle-diagnostics", anchorGroup);
 }
 </script>
 
@@ -140,7 +142,7 @@ function onToggleDiagnostics(): void {
       :class="`status-bar__compat--${compatColor}`"
       :data-color="compatColor"
       data-testid="compat-summary"
-      @click="onToggleDiagnostics"
+      @click="onToggleDiagnostics('compat')"
     >
       {{ compatText }}
     </button>
@@ -153,49 +155,57 @@ function onToggleDiagnostics(): void {
       :data-state="statusState"
       :title="tooltipText"
       data-testid="compat-icon"
-      @click="onToggleDiagnostics"
+      @click="onToggleDiagnostics('compat')"
     >
       ⓘ
     </button>
 
-    <span
+    <button
+      type="button"
       class="status-bar__item status-bar__metric"
       :class="`status-bar__metric--${readabilityColor}`"
       :data-color="readabilityColor"
       :title="readabilityTooltip"
       data-testid="readability-summary"
+      @click="onToggleDiagnostics('readability')"
     >
       {{ readabilityText }}
-    </span>
+    </button>
 
-    <span
+    <button
       v-if="!isTablet"
+      type="button"
       class="status-bar__item status-bar__metric"
       :class="`status-bar__metric--${violationColor}`"
       :data-color="violationColor"
       data-testid="violation-count"
+      @click="onToggleDiagnostics('keyword')"
     >
       违规词 {{ violationCount }}
-    </span>
-    <span
+    </button>
+    <button
       v-else
+      type="button"
       class="status-bar__item status-bar__metric status-bar__metric-icon"
       :class="`status-bar__metric--${violationColor}`"
       :data-color="violationColor"
       :title="violationTooltip"
       data-testid="violation-icon"
+      @click="onToggleDiagnostics('keyword')"
     >
       ⓘ
-    </span>
+    </button>
 
-    <span
+    <button
+      type="button"
       class="status-bar__item status-bar__metric"
       :class="`status-bar__metric--${nightRiskColor}`"
       :data-color="nightRiskColor"
       data-testid="night-risk-count"
+      @click="onToggleDiagnostics('night-risk')"
     >
       夜间风险 {{ nightRiskCount }} 项
-    </span>
+    </button>
   </footer>
 </template>
 
@@ -236,12 +246,23 @@ function onToggleDiagnostics(): void {
 .status-bar__metric {
   background: none;
   border: none;
-  padding: 0;
+  padding: 0 var(--space-1, 4px);
+  margin: 0 calc(var(--space-1, 4px) * -1);
+  font-family: inherit;
   font-size: var(--font-size-xs, 12px);
+  border-radius: var(--radius-sm, 2px);
+  cursor: pointer;
 }
 
-.status-bar__compat {
-  cursor: pointer;
+.status-bar__compat:hover,
+.status-bar__metric:hover {
+  background: var(--color-surface-overlay);
+}
+
+.status-bar__compat:focus-visible,
+.status-bar__metric:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 1px;
 }
 
 .status-bar__compat--muted,

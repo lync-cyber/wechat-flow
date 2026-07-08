@@ -4,13 +4,7 @@ import { defineBlock } from "../factory.ts";
 export const socialCta = defineBlock(
   "social-cta",
   "社交行动引导",
-  z.object({
-    platform: z.string(),
-    action: z.string(),
-    description: z.string().optional(),
-    icon: z.string().optional(),
-    url: z.string().optional(),
-  }),
+  z.object({}).strict(),
   "marketing",
   [
     { id: "default", label: "标准社交引导" },

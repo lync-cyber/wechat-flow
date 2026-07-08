@@ -4,11 +4,7 @@ import { defineBlock } from "../factory.ts";
 export const disclaimer = defineBlock(
   "disclaimer",
   "免责声明",
-  z.object({
-    text: z.string(),
-    title: z.string().optional(),
-    compact: z.boolean().optional(),
-  }),
+  z.object({}).strict(),
   "emphasis",
   [
     { id: "default", label: "标准免责声明" },

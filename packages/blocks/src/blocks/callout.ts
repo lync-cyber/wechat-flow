@@ -4,11 +4,7 @@ import { defineBlock } from "../factory.ts";
 export const callout = defineBlock(
   "callout",
   "提示框",
-  z.object({
-    type: z.enum(["info", "warning", "success", "error"]).default("info"),
-    text: z.string(),
-    title: z.string().optional(),
-  }),
+  z.object({}).strict(),
   "emphasis",
   [
     {

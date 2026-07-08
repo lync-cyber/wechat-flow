@@ -16,5 +16,8 @@
     "@wechat-flow/contracts": "workspace:*",
     "@wechat-flow/core": "workspace:*",
     "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/hast": "^3.0.4"
   }
 }

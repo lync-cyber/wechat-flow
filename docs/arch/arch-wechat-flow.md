@@ -1,6 +1,6 @@
 ---
 id: "arch-wechat-flow"
-version: "0.6.1"
+version: "0.6.2"
 doc_type: arch
 author: architect
 status: approved
@@ -107,7 +107,7 @@ C4Context
 | 运行时 (Node) | Node.js | 22.x LTS | Active LTS | LTS 至 2027-04，Web Standards API 覆盖完整 | Node.js release schedule |
 | 运行时 (Edge) | Cloudflare Workers / Vercel Edge | wrangler 3.x + workerd (Cloudflare 2024.x runtime) | Active | Hono 多 runtime 一等公民，MCP HTTP transport 低冷启动选项；`@cloudflare/vitest-pool-workers` 0.x 与 workerd 同源跑 Miniflare 测试 | Hono multi-runtime docs / Cloudflare workerd release notes |
 | 类型系统 | TypeScript | 5.x | Active | F-010 全链路类型推导基础，与 Vue 3.5 Volar + Hono RPC 协同 | TS release notes |
-| Schema 校验 | Zod | 4.x (含 `@zod/mini` + `.toJSONSchema()`) | Active | F-013 AC-002 强类型 schema + 运行时校验、F-010 全链路类型推导；`.toJSONSchema()` 原生互转喂 LLM 通过 `describeBlock` 拿到 attrsSchema | Zod v4 release notes |
+| Schema 校验 | Zod | 4.x (含 `@zod/mini` + `.toJSONSchema()`) | Active | F-013 AC-002 强类型 schema + 运行时校验、F-010 全链路类型推导；`.toJSONSchema()` 原生互转喂 LLM——`describeBlock` 对内置 Block 输出 `directiveAttrs` JSON Schema、对插件 Block 输出结构化 `attrsSchema` JSON Schema | Zod v4 release notes |
 | Markdown 管线 | unified + remark + rehype | 17 / 15 / 13 | Active | mdast/hast 双 AST 体系成熟，五段管线 stage 化自然 | unified ecosystem docs |
 | Directive 语法 | remark-directive | 4.x | Active | F-001 AC-002 容器/行内指令语法的事实标准 | remark-directive |
 | CSS 内联化（token 层） | 自研确定性 token styleMap 内联器（`packages/core/src/pipeline/inline-style.ts`） | — | — | F-004 AC-003 CSS 内联化的 token 来源路径（base-style ⊕ theme token override）；token 字典模型下 cascade 引擎能力无消费方；零第三方依赖、纯 hast 遍历，跨四运行时无加载差异；确定性与 §5.2 规范同源（`sortedEntries` + `css-attr-filter` 复用）（决策记录 §8.2 Q3.9） | [rn-006](../research/tech-eval-css-inlining.md) |

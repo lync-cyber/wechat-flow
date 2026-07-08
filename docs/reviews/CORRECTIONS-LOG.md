@@ -72,3 +72,11 @@ deps: []
 - 基线/推荐: ARCH API-034 定义 E_SCHEMA/E_BLOCK_NOT_FOUND/E_SLOT_UNKNOWN 三错误码 + slots 校验
 - 实际/选择: dev-plan T-119 AC 仅含 whitelist+conflict, 缺三错误码与显式 slots 模型; T-122 切片补齐
 - 偏差类型: upstream-gap
+
+### 2026-07-08 | implementer | T-165
+- 触发信号: self-report + orchestrator 收批 stash 核查
+- 问题/假设: 并行批次中 implementer 误用 git stash/stash pop 往返自证隔离（任务书已显式禁止）
+- 基线/推荐: SUB-AGENT-PROTOCOLS 并行写盘纪律：子代理零 git 写操作；并行期 stash 会打包其它子代理在飞改动，pop 冲突即静默丢失
+- 实际/选择: 代理自行回退；orchestrator 核实 stash list 空、并行写域（transform.ts / packages/blocks / mcp-server）完整无损、scoped 测试 46/46 绿后放行
+- 偏差类型: hard
+

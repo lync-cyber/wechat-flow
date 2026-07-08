@@ -20,13 +20,13 @@ const STEPS_MD = `:::steps{.card}
 
 function extractStepCardStyles(html: string): string[] {
   const matches = [
-    ...html.matchAll(/<div data-block="steps" data-variant="card"[^>]* style="([^"]*)"/g),
+    ...html.matchAll(/<section data-block="steps" data-variant="card"[^>]* style="([^"]*)"/g),
   ];
   return matches.map((m) => m[1]);
 }
 
 function extractStepCardChunks(html: string): string[] {
-  const openTagRe = /<div data-block="steps" data-variant="card"[^>]*>/g;
+  const openTagRe = /<section data-block="steps" data-variant="card"[^>]*>/g;
   const opens = [...html.matchAll(openTagRe)];
   const chunks: string[] = [];
   for (let i = 0; i < opens.length; i++) {
@@ -41,12 +41,12 @@ function extractSlotStyle(html: string, slot: "title" | "description", index: nu
   const chunks = extractStepCardChunks(html);
   const chunk = chunks[index];
   expect(chunk, `no step card chunk at index ${index} found in html: ${html}`).toBeDefined();
-  const innerDivs = [...(chunk ?? "").matchAll(/<div style="([^"]*)">/g)];
+  const innerSections = [...(chunk ?? "").matchAll(/<section style="([^"]*)">/g)];
   const slotIndex = slot === "title" ? 0 : 1;
-  const match = innerDivs[slotIndex];
+  const match = innerSections[slotIndex];
   expect(
     match,
-    `no ${slot} div (position ${slotIndex}) found in card chunk ${index}: ${chunk}`
+    `no ${slot} section (position ${slotIndex}) found in card chunk ${index}: ${chunk}`
   ).toBeDefined();
   return match?.[1] ?? "";
 }

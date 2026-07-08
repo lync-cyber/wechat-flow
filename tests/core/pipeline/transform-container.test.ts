@@ -68,11 +68,11 @@ describe("AC-T121-003: container directive 渲染为正确的 data-block 容器�
   });
 });
 
-// AC-T121-004: attrsSchema 缺必填字段时 diagnostics 含 warning 且渲染不中断
-describe("AC-T121-004: attrsSchema 缺必填字段 → diagnostics warning + 渲染不中断", () => {
-  it("steps directive 缺 steps 字段 → result.diagnostics 含 source:'transform' severity:'warning'，html 仍含 content 文本", async () => {
-    // steps attrsSchema requires a `steps` array — providing an empty directive omits it
-    const result = await renderMarkdown(":::steps{.list}\ncontent\n:::", {
+// AC-T121-004: directiveAttrs 出现未声明属性时 diagnostics 含 warning 且渲染不中断
+describe("AC-T121-004: directiveAttrs 未声明属性 → diagnostics warning + 渲染不中断", () => {
+  it("steps directive 携带未声明的指令属性 → result.diagnostics 含 source:'transform' severity:'warning'，html 仍含 content 文本", async () => {
+    // steps 的 directiveAttrs 为空 strict object，未声明属性 foo 触发校验警告
+    const result = await renderMarkdown(':::steps{.list foo="bar"}\ncontent\n:::', {
       themeId: "default",
     });
 

@@ -66,20 +66,20 @@ describe("AC-002: quote large-quote-mark 变体渲染大引号装饰", () => {
   });
 });
 
-// AC-003: dropcap 变体渲染首字下沉装饰 — 首字符独立 <span> + font-size 2.2em 换算值 + font-weight 700 + 主题 --color-brand 色值 + 主题 --font-family-heading 计算值
+// AC-003: dropcap 变体渲染首字下沉装饰 — 首字符独立 table-cell <div>（§9.8 悬挂布局）+ font-size 2.2em 换算值 + font-weight 700 + 主题 --color-brand 色值 + 主题 --font-family-heading 计算值
 describe("AC-003: quote dropcap 变体渲染首字下沉装饰", () => {
-  it("渲染后 HTML 含首字符独立 <span>", async () => {
+  it("渲染后 HTML 含首字符独立 table-cell <div>", async () => {
     const result = await renderMarkdown(":::quote{.dropcap}\n引用文字\n:::", {
       themeId: "default",
     });
-    expect(result.html).toMatch(/<span style="[^"]*">引<\/span>/);
+    expect(result.html).toMatch(/<section style="[^"]*">引<\/section>/);
   });
 
   it("首字符装饰元素计算 font-size 换算值等于 2.2em", async () => {
     const result = await renderMarkdown(":::quote{.dropcap}\n引用文字\n:::", {
       themeId: "default",
     });
-    const match = result.html.match(/<span style="([^"]*)">引<\/span>/);
+    const match = result.html.match(/<section style="([^"]*)">引<\/section>/);
     expect(match).not.toBeNull();
     expect(match?.[1]).toContain("font-size: 2.2em");
   });
@@ -88,7 +88,7 @@ describe("AC-003: quote dropcap 变体渲染首字下沉装饰", () => {
     const result = await renderMarkdown(":::quote{.dropcap}\n引用文字\n:::", {
       themeId: "default",
     });
-    const match = result.html.match(/<span style="([^"]*)">引<\/span>/);
+    const match = result.html.match(/<section style="([^"]*)">引<\/section>/);
     expect(match?.[1]).toContain("font-weight: 700");
   });
 
@@ -96,7 +96,7 @@ describe("AC-003: quote dropcap 变体渲染首字下沉装饰", () => {
     const result = await renderMarkdown(":::quote{.dropcap}\n引用文字\n:::", {
       themeId: "default",
     });
-    const match = result.html.match(/<span style="([^"]*)">引<\/span>/);
+    const match = result.html.match(/<section style="([^"]*)">引<\/section>/);
     expect(match?.[1]).toContain("color: #2D5A4E");
   });
 
@@ -104,7 +104,7 @@ describe("AC-003: quote dropcap 变体渲染首字下沉装饰", () => {
     const result = await renderMarkdown(":::quote{.dropcap}\n引用文字\n:::", {
       themeId: "default",
     });
-    const match = result.html.match(/<span style="([^"]*)">引<\/span>/);
+    const match = result.html.match(/<section style="([^"]*)">引<\/section>/);
     expect(match?.[1]).toContain(
       "font-family: &#x27;LXGW WenKai&#x27;, &#x27;Source Han Serif CN&#x27;, &#x27;Noto Serif CJK SC&#x27;, Georgia, serif"
     );

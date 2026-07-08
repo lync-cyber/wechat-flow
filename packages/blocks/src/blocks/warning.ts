@@ -4,11 +4,7 @@ import { defineBlock } from "../factory.ts";
 export const warning = defineBlock(
   "warning",
   "警告块",
-  z.object({
-    text: z.string(),
-    title: z.string().optional(),
-    severity: z.enum(["low", "medium", "high"]).optional(),
-  }),
+  z.object({}).strict(),
   "emphasis",
   [
     { id: "default", label: "标准警告" },

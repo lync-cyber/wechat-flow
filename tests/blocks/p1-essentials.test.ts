@@ -9,14 +9,6 @@ import "../../packages/blocks/src/index.ts";
 
 const P1_BLOCK_IDS = ["author-card", "publication-skeleton", "kpi-card", "qa", "footnote"] as const;
 
-const SAMPLE_INPUTS: Record<string, unknown> = {
-  "author-card": { name: "张三", bio: "作者简介" },
-  "publication-skeleton": { title: "文章标题" },
-  "kpi-card": { label: "月活用户", value: "120K" },
-  qa: { question: "什么是微信公众号？", answer: "一种内容发布平台" },
-  footnote: { text: "脚注内容" },
-};
-
 beforeEach(() => {
   resetBlockRegistry();
 });
@@ -42,7 +34,7 @@ describe("AC-001: listBlocks 长度 ≥ 30，5 个新 ID 全部注册", () => {
   });
 });
 
-describe("AC-002: 每新增 Block 注册 ≥ 2 variant，attrsSchema Zod parse 无异常", () => {
+describe("AC-002: 每新增 Block 注册 ≥ 2 variant，directiveAttrs Zod parse 无异常", () => {
   it.each(P1_BLOCK_IDS)("Block '%s' variants 数量 ≥ 2", (id) => {
     const def = mustDescribeBlock(id);
     expect(def.variants.length).toBeGreaterThanOrEqual(2);
@@ -56,17 +48,20 @@ describe("AC-002: 每新增 Block 注册 ≥ 2 variant，attrsSchema Zod parse �
     }
   });
 
-  it.each(P1_BLOCK_IDS)("Block '%s' attrsSchema.parse(样例输入) 不抛异常", (id) => {
+  it.each(P1_BLOCK_IDS)("Block '%s' directiveAttrs.parse({}) 不抛异常（指令属性均可选）", (id) => {
     const def = mustDescribeBlock(id);
-    expect(() => def.attrsSchema.parse(SAMPLE_INPUTS[id])).not.toThrow();
+    expect(() => def.directiveAttrs.parse({})).not.toThrow();
   });
 
-  it.each(P1_BLOCK_IDS)("Block '%s' toJSONSchema(attrsSchema) 返回含 schema 标记的对象", (id) => {
-    const def = mustDescribeBlock(id);
-    const schema = toJSONSchema(def.attrsSchema);
-    const hasSchemaMarker = "type" in schema || "properties" in schema || "$schema" in schema;
-    expect(hasSchemaMarker).toBe(true);
-  });
+  it.each(P1_BLOCK_IDS)(
+    "Block '%s' toJSONSchema(directiveAttrs) 返回含 schema 标记的对象",
+    (id) => {
+      const def = mustDescribeBlock(id);
+      const schema = toJSONSchema(def.directiveAttrs);
+      const hasSchemaMarker = "type" in schema || "properties" in schema || "$schema" in schema;
+      expect(hasSchemaMarker).toBe(true);
+    }
+  );
 });
 
 describe("AC-003: 5 套主题对新 Block 提供基础 CSS（baseStyle.root 存在）", () => {

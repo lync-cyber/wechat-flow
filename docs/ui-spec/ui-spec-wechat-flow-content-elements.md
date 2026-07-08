@@ -1,6 +1,6 @@
 ---
 id: "ui-spec-wechat-flow-content-elements"
-version: "0.1.0"
+version: "0.2.0"
 doc_type: ui-spec
 author: ui-designer
 status: approved
@@ -164,16 +164,19 @@ required_sections:
 
 经典首字下沉技法依赖 `float: left` 将首字符脱离文档流，与正文环绕；该实现在微信编辑器粘贴过滤中会因 `float` 被清除而完全失效（§9.1 通则）。
 
-**变通方案**：不追求「首字环绕正文」的真实下沉效果，改为「段首独立大号衬线字符块」——将段落首字符抽取为独立 `<span>`，赋予放大字号（`2.2em`）与主题强调色，作为**段前装饰**而非环绕排版，不使用 `float`：
+**实现方案**：`display: table` 双格悬挂布局——首字符独立占据左 cell，正文占据右 cell，正文多行**整体悬挂于首字右侧**（悬挂缩进，非 `float` 环绕）；table 布局属 §9.1 微信粘贴白名单（§10.6 compare ledger 同技法），粘贴后列结构稳定保留：
 
 ```
-<p>
-  <span style="font-size: 2.2em; font-weight: 700; color: {主题 --color-brand};
-    line-height: 1; display: inline-block; margin-right: 4px; vertical-align: top;
-    font-family: {主题 --font-family-heading}">首</span>字后面的正文内容照常排版……
-</p>
+<div style="display: table; width: 100%">
+  <div style="display: table-cell; width: 1%; white-space: nowrap; vertical-align: top;
+    padding-right: 8px; font-size: 2.2em; font-weight: 700; line-height: 1;
+    color: {主题 --color-brand}; font-family: {主题 --font-family-heading}">首</div>
+  <div style="display: table-cell; vertical-align: top">字后面的正文内容照常排版，
+    多行文本整体悬挂于首字右侧……</div>
+</div>
 ```
 
-- `display: inline-block` + `vertical-align: top` 保证首字符与后续正文在同一行内起始对齐，不产生环绕效果
+- 首字 cell `width: 1%` + `white-space: nowrap` 收缩至字符实际宽度；`line-height: 1` 压实首字行盒，避免撑高首行行距
+- 正文 cell 承载段落排版（字号/行高/颜色由容器 typography 下推与主题 tag 规格合成，见 arch `M-002` 通用渲染机制）
 - 各主题的 `color` 取该主题 `--color-brand`，`font-family` 取该主题 `--font-family-heading`
-- 登记为**可选 variant**（`paragraph` Block 的一个可选形态，非默认渲染），供 literary / magazine 等强调「开篇仪式感」的场景选用；不建议 business / tech 主题使用（与其克制/工程化调性不符）
+- 登记为**可选 variant**（`paragraph` Block 的一个可选形态，非默认渲染），供 literary / magazine 等强调「开篇仪式感」的场景选用；不建议 business / tech 主题使用（与其克制/工程化调性不符）；`quote` Block 的 `dropcap` 变体复用本方案（§10.5）

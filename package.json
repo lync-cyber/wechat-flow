@@ -39,7 +39,8 @@
     "design:build-overlay-report": "tsx scripts/design-sync/build-overlay-report.ts",
     "design:overlay-precheck": "tsx scripts/design-sync/overlay-precheck.ts",
     "test:design-overlay": "playwright test -c playwright.design-overlay.config.ts",
-    "test:sandbox-security": "playwright test -c playwright.sandbox.config.ts"
+    "test:sandbox-security": "playwright test -c playwright.sandbox.config.ts",
+    "test:clipboard-e2e": "playwright test -c playwright.clipboard.config.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

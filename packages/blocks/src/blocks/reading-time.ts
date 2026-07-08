@@ -4,11 +4,7 @@ import { defineBlock } from "../factory.ts";
 export const readingTime = defineBlock(
   "reading-time",
   "阅读时长",
-  z.object({
-    minutes: z.number().int().min(1),
-    label: z.string().optional(),
-    wordCount: z.number().int().optional(),
-  }),
+  z.object({}).strict(),
   "meta",
   [
     { id: "default", label: "标准阅读时长" },

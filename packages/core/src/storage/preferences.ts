@@ -28,3 +28,15 @@ export async function loadEditorPreferences(): Promise<Partial<EditorPreferences
   const record = await db.get("preferences", "editor");
   return record?.value as Partial<EditorPreferences> | undefined;
 }
+
+export async function saveLeftPanelCollapsed(collapsed: boolean): Promise<void> {
+  const db = await getDb();
+  await db.put("preferences", { key: "leftPanelCollapsed", value: collapsed });
+}
+
+export async function loadLeftPanelCollapsed(): Promise<boolean | undefined> {
+  const db = await getDb();
+  const record = await db.get("preferences", "leftPanelCollapsed");
+  if (record === undefined) return undefined;
+  return record.value as boolean;
+}

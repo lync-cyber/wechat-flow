@@ -21,19 +21,6 @@ const P1_INCREMENTAL_IDS = [
   "subscribe-cta",
 ] as const;
 
-const SAMPLE_INPUTS: Record<string, unknown> = {
-  "tip-grid": { items: [{ icon: "💡", text: "提示内容" }] },
-  warning: { text: "警告内容" },
-  disclaimer: { text: "免责声明内容" },
-  "reading-time": { minutes: 5 },
-  citation: { text: "引用内容", source: "来源" },
-  "definition-list": { items: [{ term: "术语", definition: "定义" }] },
-  "advert-card": { title: "广告标题", description: "广告描述" },
-  "related-cards": { items: [{ title: "相关文章", url: "https://example.com" }] },
-  "social-cta": { platform: "微信", action: "关注" },
-  "subscribe-cta": { text: "订阅我们的公众号" },
-};
-
 beforeEach(() => {
   resetBlockRegistry();
 });
@@ -59,7 +46,7 @@ describe("AC-001: listBlocks 长度 ≥ 40，10 个新 ID 全部注册", () => {
   });
 });
 
-describe("AC-002: 10 个新增 Block 各注册 ≥ 1 variant，attrsSchema Zod parse 无异常", () => {
+describe("AC-002: 10 个新增 Block 各注册 ≥ 1 variant，directiveAttrs Zod parse 无异常", () => {
   it.each(P1_INCREMENTAL_IDS)("Block '%s' variants 数量 ≥ 1", (id) => {
     const def = mustDescribeBlock(id);
     expect(def.variants.length).toBeGreaterThanOrEqual(1);
@@ -73,16 +60,19 @@ describe("AC-002: 10 个新增 Block 各注册 ≥ 1 variant，attrsSchema Zod p
     }
   });
 
-  it.each(P1_INCREMENTAL_IDS)("Block '%s' attrsSchema.parse(样例输入) 不抛异常", (id) => {
-    const def = mustDescribeBlock(id);
-    expect(() => def.attrsSchema.parse(SAMPLE_INPUTS[id])).not.toThrow();
-  });
-
   it.each(P1_INCREMENTAL_IDS)(
-    "Block '%s' toJSONSchema(attrsSchema) 返回含 schema 标记的对象",
+    "Block '%s' directiveAttrs.parse({}) 不抛异常（指令属性均可选）",
     (id) => {
       const def = mustDescribeBlock(id);
-      const schema = toJSONSchema(def.attrsSchema);
+      expect(() => def.directiveAttrs.parse({})).not.toThrow();
+    }
+  );
+
+  it.each(P1_INCREMENTAL_IDS)(
+    "Block '%s' toJSONSchema(directiveAttrs) 返回含 schema 标记的对象",
+    (id) => {
+      const def = mustDescribeBlock(id);
+      const schema = toJSONSchema(def.directiveAttrs);
       const hasSchemaMarker = "type" in schema || "properties" in schema || "$schema" in schema;
       expect(hasSchemaMarker).toBe(true);
     }

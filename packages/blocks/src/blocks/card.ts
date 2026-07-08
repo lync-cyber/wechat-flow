@@ -4,12 +4,7 @@ import { defineBlock } from "../factory.ts";
 export const card = defineBlock(
   "card",
   "卡片",
-  z.object({
-    title: z.string(),
-    body: z.string(),
-    image: z.string().optional(),
-    link: z.string().optional(),
-  }),
+  z.object({}).strict(),
   "structured",
   [
     { id: "default", label: "普通卡片" },

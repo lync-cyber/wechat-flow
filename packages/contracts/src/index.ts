@@ -8,3 +8,4 @@ export * from "./version/triple-structure.ts";
 export * from "./theme/template-definition.ts";
 export * from "./theme/theme-definition.ts";
 export * from "./clipboard/clipboard-payload.ts";
+export * from "./platform/wechat-paste.ts";

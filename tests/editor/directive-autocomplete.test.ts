@@ -457,14 +457,14 @@ describe("AC-001: DirectiveAutocompletePopover — renders candidates from props
     )) as typeof import("../../apps/editor/src/components/editor/DirectiveAutocompletePopover.vue");
     const { listBlocks } = await import("../../packages/core/src/registry/block.ts");
     const { listMarks } = await import("../../packages/core/src/registry/mark.ts");
-    const callout = listBlocks().find((b) => b.id === "callout");
-    if (!callout) throw new Error("callout block not registered");
+    const pullQuote = listBlocks().find((b) => b.id === "pull-quote");
+    if (!pullQuote) throw new Error("pull-quote block not registered");
     const onSelect = vi.fn();
     const wrapper = mount(DirectiveAutocompletePopover, {
       props: {
         isOpen: true,
         triggerType: "block" as const,
-        blocks: [callout],
+        blocks: [pullQuote],
         marks: listMarks(),
         currentInput: "",
         onSelect,
@@ -473,21 +473,21 @@ describe("AC-001: DirectiveAutocompletePopover — renders candidates from props
     });
     await wrapper.find("[data-testid='autocomplete-item']").trigger("click");
 
-    const infoVariant = wrapper.find("[data-testid='autocomplete-variant-info']");
-    expect(infoVariant.exists()).toBe(true);
-    await infoVariant.trigger("click");
+    const decoratedVariant = wrapper.find("[data-testid='autocomplete-variant-decorated']");
+    expect(decoratedVariant.exists()).toBe(true);
+    await decoratedVariant.trigger("click");
 
-    const titleInput = wrapper.find("[data-testid='autocomplete-param-title']");
-    expect(titleInput.exists()).toBe(true);
-    await titleInput.setValue("提示标题");
+    const authorInput = wrapper.find("[data-testid='autocomplete-param-author']");
+    expect(authorInput.exists()).toBe(true);
+    await authorInput.setValue("鲁迅");
 
     await wrapper.find("[data-testid='autocomplete-insert']").trigger("click");
     const call = onSelect.mock.calls[0][0] as {
       variantId?: string;
       params?: Record<string, string>;
     };
-    expect(call.variantId).toBe("info");
-    expect(call.params?.title).toBe("提示标题");
+    expect(call.variantId).toBe("decorated");
+    expect(call.params?.author).toBe("鲁迅");
   });
 
   it("二段式：面包屑点击回退到列表一段", async () => {
@@ -549,15 +549,15 @@ describe("AC-001: DirectiveAutocompletePopover — renders candidates from props
     )) as typeof import("../../apps/editor/src/components/editor/DirectiveAutocompletePopover.vue");
     const { listBlocks } = await import("../../packages/core/src/registry/block.ts");
     const { listMarks } = await import("../../packages/core/src/registry/mark.ts");
-    const advertCard = listBlocks().find((b) => b.id === "advert-card");
-    if (!advertCard) throw new Error("advert-card block not registered");
+    const compare = listBlocks().find((b) => b.id === "compare");
+    if (!compare) throw new Error("compare block not registered");
     const onClose = vi.fn();
     const onOpenInsertDrawer = vi.fn();
     const wrapper = mount(DirectiveAutocompletePopover, {
       props: {
         isOpen: true,
         triggerType: "block" as const,
-        blocks: [advertCard],
+        blocks: [compare],
         marks: listMarks(),
         currentInput: "",
         onSelect: () => {},

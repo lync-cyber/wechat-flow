@@ -151,7 +151,7 @@ describe("defineVariant (AC-002)", () => {
       id: "callout",
       name: "Callout",
       category: "emphasis",
-      attrsSchema: z.object({}),
+      directiveAttrs: z.object({}),
       variants: [],
       slots: ["root"],
     });

@@ -4,11 +4,7 @@ import { defineBlock } from "../factory.ts";
 export const footerCta = defineBlock(
   "footer-cta",
   "底部行动号召",
-  z.object({
-    text: z.string(),
-    url: z.string().optional(),
-    buttonLabel: z.string().optional(),
-  }),
+  z.object({}).strict(),
   "marketing",
   [
     { id: "default", label: "标准 CTA" },

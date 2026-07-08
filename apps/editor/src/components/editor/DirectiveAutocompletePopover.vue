@@ -4,6 +4,7 @@ import type { MarkDefinition } from "@wechat-flow/core";
 import { computed, ref, watch } from "vue";
 import type { SnippetOptions } from "../../editor/extensions/directive-completion.ts";
 import { buildCandidates } from "../../editor/extensions/directive-completion.ts";
+import { getDirectiveAttrFields } from "../../lib/directive-attr-fields.ts";
 import { blockGlyph } from "../common/block-glyphs.ts";
 import { CATEGORY_LABELS, CATEGORY_ORDER } from "../panel/category-labels.ts";
 
@@ -109,12 +110,7 @@ function segmentsOf(text: string): NameSegment[] {
 }
 
 function paramFieldsOf(block: BlockDefinition): string[] {
-  try {
-    const shape = (block.attrsSchema as { shape?: Record<string, unknown> }).shape;
-    return shape ? Object.keys(shape) : [];
-  } catch {
-    return [];
-  }
+  return getDirectiveAttrFields(block);
 }
 
 const visibleParamFields = computed(() =>

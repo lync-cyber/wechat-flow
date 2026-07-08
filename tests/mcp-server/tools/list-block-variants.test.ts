@@ -46,11 +46,11 @@ describe("AC-001: list_block_variants(callout) returns ≥3 variants each with i
 // ---- AC-002: describe_variant('callout','tip') 返回 attrsSchema + style ----
 
 describe("AC-002: describe_variant(callout, tip) returns attrsSchema as JSON Schema and style", () => {
-  it("describeVariantTool({ blockId: 'callout', variantId: 'filled' }) has attrsSchema.type = 'object'", () => {
-    const result = describeVariantTool({ blockId: "callout", variantId: "tip" }) as Record<
-      string,
-      unknown
-    >;
+  it("describeVariantTool({ blockId: 'pull-quote', variantId: 'decorated' }) has attrsSchema.type = 'object' with non-empty properties (directiveAttrs-sourced)", () => {
+    const result = describeVariantTool({
+      blockId: "pull-quote",
+      variantId: "decorated",
+    }) as Record<string, unknown>;
     expect(result).not.toHaveProperty("code");
     expect(result).toHaveProperty("attrsSchema");
     const schema = result.attrsSchema as Record<string, unknown>;

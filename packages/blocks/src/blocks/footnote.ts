@@ -4,11 +4,7 @@ import { defineBlock } from "../factory.ts";
 export const footnote = defineBlock(
   "footnote",
   "脚注",
-  z.object({
-    text: z.string(),
-    index: z.number().int().positive().optional(),
-    source: z.string().optional(),
-  }),
+  z.object({}).strict(),
   "meta",
   [
     { id: "default", label: "标准脚注" },

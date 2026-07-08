@@ -1,5 +1,6 @@
 import { simulatePaste } from "@wechat-flow/core";
 import { buildDualMimePayload } from "./dual-mime-payload.ts";
+import { extractPlainText } from "./plain-text.ts";
 import { composeRender } from "./render.ts";
 
 export interface ComposeCopyInput {
@@ -29,7 +30,7 @@ function fallbackCopyToClipboard(plainText: string): void {
 export async function composeCopy(input: ComposeCopyInput): Promise<void> {
   const rendered = await composeRender({ markdown: input.markdown, themeId: input.themeId });
   const { filteredHtml } = simulatePaste(rendered.html);
-  const plainText = rendered.html.replace(/<[^>]+>/g, "");
+  const plainText = extractPlainText(rendered.html);
   const payload = buildDualMimePayload(filteredHtml, plainText);
   try {
     await navigator.clipboard.write(payload);

@@ -151,7 +151,7 @@ function makeBlock(id: string) {
     id,
     name: id,
     category: "structured" as const,
-    attrsSchema: z.object({}),
+    directiveAttrs: z.object({}),
     variants: [],
     baseStyle: { root: {} },
     slots: ["root"],

@@ -4,16 +4,7 @@ import { defineBlock } from "../factory.ts";
 export const tipGrid = defineBlock(
   "tip-grid",
   "提示网格",
-  z.object({
-    items: z.array(
-      z.object({
-        icon: z.string().optional(),
-        text: z.string(),
-        title: z.string().optional(),
-      })
-    ),
-    columns: z.number().int().min(1).max(4).optional(),
-  }),
+  z.object({}).strict(),
   "emphasis",
   [
     { id: "default", label: "标准提示网格" },

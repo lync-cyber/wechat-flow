@@ -54,7 +54,7 @@ describe("AC-002: danger-bar 变体解析含顶部 accent 实条与左边框", (
       themeId: "default",
     });
     const containerMatch = result.html.match(
-      /<div data-block="announcement" data-variant="danger-bar" style="([^"]*)"/
+      /<section data-block="announcement" data-variant="danger-bar" style="([^"]*)"/
     );
     expect(containerMatch).not.toBeNull();
     const styleAttr = containerMatch?.[1] ?? "";
@@ -92,7 +92,7 @@ describe("AC-003: compact 变体解析为紧凑单行且无顶部条", () => {
       themeId: "default",
     });
     const containerMatch = result.html.match(
-      /<div data-block="announcement" data-variant="compact" style="([^"]*)"/
+      /<section data-block="announcement" data-variant="compact" style="([^"]*)"/
     );
     expect(containerMatch).not.toBeNull();
     const styleAttr = containerMatch?.[1] ?? "";
@@ -124,7 +124,7 @@ describe("AC-004: default 变体为 danger-bar 去掉顶部实条的简化版", 
       themeId: "default",
     });
     const containerMatch = result.html.match(
-      /<div data-block="announcement" data-variant="default" style="([^"]*)"/
+      /<section data-block="announcement" data-variant="default" style="([^"]*)"/
     );
     expect(containerMatch).not.toBeNull();
     const styleAttr = containerMatch?.[1] ?? "";

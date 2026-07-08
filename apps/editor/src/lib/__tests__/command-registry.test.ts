@@ -101,6 +101,15 @@ describe("command-registry: buildEditorCommands", () => {
     expect(openPaletteDerive).toHaveBeenCalledOnce();
   });
 
+  it("view-collapse-left.run() 调用 toggleLeftPanelCollapsed 回调", () => {
+    const toggleLeftPanelCollapsed = vi.fn();
+    const cmds = buildEditorCommands({ switchTheme: vi.fn(), toggleLeftPanelCollapsed });
+    const cmd = cmds.find((c) => c.id === "view-collapse-left");
+    if (!cmd) throw new Error("view-collapse-left not found");
+    cmd.run();
+    expect(toggleLeftPanelCollapsed).toHaveBeenCalledOnce();
+  });
+
   it("空实现命令显式标记 placeholder: true，switch-theme 与 export-download-html/export-long-image 为真实实现无标记", () => {
     const cmds = buildEditorCommands({ switchTheme: vi.fn() });
     const realImplIds = new Set([
@@ -108,6 +117,7 @@ describe("command-registry: buildEditorCommands", () => {
       "export-long-image",
       "help-shortcuts",
       "theme-palette-derive",
+      "view-collapse-left",
     ]);
     for (const cmd of cmds) {
       if (cmd.id.startsWith("switch-theme-") || realImplIds.has(cmd.id)) {

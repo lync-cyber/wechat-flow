@@ -4,14 +4,7 @@ import { defineBlock } from "../factory.ts";
 export const definitionList = defineBlock(
   "definition-list",
   "定义列表",
-  z.object({
-    items: z.array(
-      z.object({
-        term: z.string(),
-        definition: z.string(),
-      })
-    ),
-  }),
+  z.object({}).strict(),
   "text",
   [
     { id: "default", label: "标准定义列表" },

@@ -4,12 +4,7 @@ import { defineBlock } from "../factory.ts";
 export const subscribeCta = defineBlock(
   "subscribe-cta",
   "订阅引导",
-  z.object({
-    text: z.string(),
-    title: z.string().optional(),
-    buttonLabel: z.string().optional(),
-    note: z.string().optional(),
-  }),
+  z.object({}).strict(),
   "marketing",
   [
     { id: "default", label: "标准订阅引导" },

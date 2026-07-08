@@ -1,6 +1,6 @@
 ---
 id: "ui-spec-wechat-flow-block-variants"
-version: "0.1.1"
+version: "0.2.0"
 doc_type: ui-spec
 author: ui-designer
 status: approved
@@ -66,9 +66,9 @@ required_sections:
 **现状变体清单收敛**：现有 5 个变体（`default` / `large` / `decorated` / `minimal` / `bordered`）中 `decorated` 为空壳，本节即其规格填充：
 
 - **`decorated`**：装饰大引号 + 居中署名行两个视觉元素组合：
-  - 装饰引号：真实文本字符「「」（中文书名号形态引号，非 SVG），`font-size: 28px`，`opacity: 0.35`，贴左上角：`position: relative`，引号以 `display: inline-block` 置于摘引文字前，`color: {主题 --color-brand}`，`vertical-align: top`，`line-height: 1`
-  - 居中署名行：`author` 字段渲染为独立行，`font-size: 13px`，`color: {主题 --color-text-muted}`，`margin-top: 10px`，`text-align: center`
-- 沿用现有 `pull-quote` block-level `baseStyle`（`text-align: center`，`padding: 24px 16px`，`margin: 24px 0`，`font-size: 1.25em`）作为 root 容器基线，`decorated` 在此基础上叠加引号与署名装饰
+  - 装饰引号：真实文本字符「「」（中文书名号形态引号，非 SVG），`font-size: 28px`，`opacity: 0.35`，`color: {主题 --color-brand}`，`display: inline-block`，`vertical-align: top`，`line-height: 1`；引号节点为摘引首个段落的**第一个子节点**（与正文同行、位于文字行首），不作为段落的兄弟节点独立成行
+  - 居中署名行：`author` 字段渲染为独立行，文本为「—— {author}」（破折号「——」前缀 + 空格），`font-size: 13px`，`color: {主题 --color-text-muted}`，`margin-top: 10px`，`text-align: center`
+- 沿用现有 `pull-quote` block-level `baseStyle`（`text-align: center`，`padding: 24px 16px`，`margin: 24px 0`，`font-size: 1.25em`）作为 root 容器基线，`decorated` 在此基础上叠加引号与署名装饰；root 的 `text-align`/`font-size` 属可继承 typography，须对摘引正文段落**渲染后真实生效**（正文 `<p>` 计算 `text-align` = `center`、字号反映 `1.25em`，经容器 typography 下推保障，见 arch `M-002` 通用渲染机制）
 
 ### 10.4 steps（步骤）— step-card 卡片变体
 
@@ -80,20 +80,20 @@ required_sections:
 
 **现状变体清单收敛**：现有 10 个变体（`default` / `bordered` / `centered` / `filled` / `minimal` / `large` / `italic` / `card` / `magazine` / `literary`）中 `magazine` 与 `literary` 命名指向"主题绑定"而非独立视觉形态，与 Block variant 应描述"形态"而非"主题"的定位不符——收敛调整：`magazine` 重命名为 `large-quote-mark`（大引号装饰，见下），`literary` 重命名为 `dropcap`（首字下沉装饰，见下），两者作为独立视觉手法供任意主题选用，不再以主题名暗示专属绑定：
 
-- **`large-quote-mark`**（原 `magazine`）：大引号装饰，真实文本字符「"」置于引用文字前，`font-size: 2em`，`color: {主题 --color-brand}`，`opacity: 0.4`，`line-height: 0.6`，`display: inline-block`，`vertical-align: top`，`margin-right: 4px`
-- **`dropcap`**（原 `literary`）：复用 §9.8 首字下沉变通方案——首字符独立 `<span>`，`font-size: 2.2em`，`font-weight: 700`，`color: {主题 --color-brand}`，`display: inline-block`，`vertical-align: top`，`margin-right: 4px`，`font-family: {主题 --font-family-heading}`
+- **`large-quote-mark`**（原 `magazine`）：大引号装饰，真实文本字符「"」置于引用文字前（引号节点为首个段落的**第一个子节点**，与正文同行、位于文字行首，不独立成行），`font-size: 2em`，`color: {主题 --color-brand}`，`opacity: 0.4`，`line-height: 0.6`，`display: inline-block`，`vertical-align: top`，`margin-right: 4px`
+- **`dropcap`**（原 `literary`）：复用 §9.8 首字下沉方案（table 双格悬挂）——首字符独立占据左 cell，`font-size: 2.2em`，`font-weight: 700`，`line-height: 1`，`color: {主题 --color-brand}`，`font-family: {主题 --font-family-heading}`；引用正文占据右 cell，多行整体悬挂于首字右侧
 
-两变体均不使用 `float`（§9.1 通则），`large-quote-mark` 与 `dropcap` 二选一装饰同一引用文本首部，不叠加使用。
+两变体的 root 容器为**无边框引用基线**：不含 `border-left`（区别于 `default` 变体的左边框样式，对齐 `block-variants-quote.png` 样张），`padding: 8px 16px`，`margin: 16px 0`，`color: #555`（default 主题基准，跨主题渲染替换实值）；root 的 `color` 属可继承 typography，须对引用正文渲染后真实生效。两变体均不使用 `float`（§9.1 通则），`large-quote-mark` 与 `dropcap` 二选一装饰同一引用文本首部，不叠加使用。
 
 ### 10.6 compare（对比）— ledger 双色账本
 
 **现状变体清单收敛**：现有 5 个变体（`default` / `highlight-right` / `table-style` / `color-coded` / `compact`）中 `color-coded` 为空壳，本节填充其规格并重命名为 `ledger`（更准确描述双色账本布局本质）：
 
 - **`ledger`**（原 `color-coded`）：双色账本布局，`display: table` + 两个 `display: table-cell` 子项（§9.1 通则要求 flex/grid 须 table fallback，此变体直接以 table 布局实现，无需 fallback）：
-  - 左列（`left` 字段）：背景取该主题 status.tip 对应浅底色（default 主题暂无现成 tip-soft token，取 `--color-surface-alt` `#F3F0EB` 近似），`padding: 16px`，`width: 50%`
-  - 右列（`right` 字段）：背景取该主题 status.danger 对应浅底色（取 `--color-accent-light` 对应浅底近似值，或复用 `--color-code-bg` 作中性浅底占位），`padding: 16px`，`width: 50%`
+  - 左列（指令属性 `left-label` + `left-value`，渲染为「{label}：{value}」）：背景取该主题 status.tip 对应浅底色（default 主题暂无现成 tip-soft token，取 `--color-surface-alt` `#F3F0EB` 近似），`padding: 16px`，`width: 50%`
+  - 右列（指令属性 `right-label` + `right-value`，渲染同左列）：背景取该主题 status.danger 对应浅底色（取 `--color-accent-light` 对应浅底近似值，或复用 `--color-code-bg` 作中性浅底占位），`padding: 16px`，`width: 50%`
   - 两列间 `border-left: 1px solid --color-border` 分隔（`table-cell` 天然贴合，无需额外 gap 声明）
-  - 顶部标题（`title` 字段，若有）跨两列：单独一行 `<div style="display: table; width: 100%">` 之外的独立块，`text-align: center`，`font-weight: 600`，`margin-bottom: 8px`
+  - 顶部标题（指令属性 `title`，若有）跨两列：单独一行 `<div style="display: table; width: 100%">` 之外的独立块，`text-align: center`，`font-weight: 600`，`margin-bottom: 8px`
 
 ### 10.7 dialog（对话）— chat-bubbles 聊天气泡
 

@@ -113,7 +113,7 @@ describe("AC-006: 四态 baseStyle 经 renderMarkdown 端到端合成进 style �
       });
       expect(result.html).toMatch(new RegExp(`data-variant="${variantId}"`));
       const containerMatch = result.html.match(
-        new RegExp(`<div data-block="callout" data-variant="${variantId}" style="([^"]*)"`)
+        new RegExp(`<section data-block="callout" data-variant="${variantId}" style="([^"]*)"`)
       );
       expect(containerMatch).not.toBeNull();
       const styleAttr = containerMatch?.[1] ?? "";
@@ -133,7 +133,7 @@ describe("AC-006: 四态 baseStyle 经 renderMarkdown 端到端合成进 style �
       )
     );
     const styles = htmls.map((r) => {
-      const m = r.html.match(/<div data-block="callout"[^>]*style="([^"]*)"/);
+      const m = r.html.match(/<section data-block="callout"[^>]*style="([^"]*)"/);
       return m?.[1] ?? "";
     });
     const uniqueStyles = new Set(styles);

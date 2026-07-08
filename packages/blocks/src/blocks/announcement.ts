@@ -4,11 +4,7 @@ import { defineBlock } from "../factory.ts";
 export const announcement = defineBlock(
   "announcement",
   "公告",
-  z.object({
-    text: z.string(),
-    title: z.string().optional(),
-    link: z.string().optional(),
-  }),
+  z.object({}).strict(),
   "emphasis",
   [
     {

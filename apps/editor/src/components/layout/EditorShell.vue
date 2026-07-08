@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import type { DiagnosticReport } from "@wechat-flow/contracts";
-import { describeTheme, listThemes, registerTheme } from "@wechat-flow/core";
+import {
+  describeTheme,
+  listThemes,
+  loadLeftPanelCollapsed,
+  registerTheme,
+  saveLeftPanelCollapsed,
+} from "@wechat-flow/core";
 import { type ComponentPublicInstance, computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useAutoBackup } from "../../composables/use-auto-backup.ts";
 import { useBidirectionalHighlight } from "../../composables/use-bidirectional-highlight.ts";
@@ -105,6 +111,7 @@ useAutoBackup({
 const LEFT_PANEL_MIN = 160;
 const LEFT_PANEL_MAX = 320;
 const LEFT_PANEL_DEFAULT = 200;
+const LEFT_PANEL_RAIL_WIDTH = 48;
 const RIGHT_PANEL_MIN = 280;
 const RIGHT_PANEL_MAX = 480;
 const RIGHT_PANEL_DEFAULT = 320;
@@ -115,6 +122,9 @@ const isTablet = ref(window.innerWidth < TABLET_BREAKPOINT);
 const isDrawerOpen = ref(false);
 const previewViewport = ref<"375" | "768" | "auto">("375");
 const isDiagnosticsExpanded = ref(false);
+const diagnosticsAnchorGroup = ref<"compat" | "readability" | "keyword" | "night-risk" | undefined>(
+  undefined
+);
 const isDiffOpen = ref(false);
 const diffNodeSelector = ref<string | undefined>(undefined);
 const isCommandPaletteOpen = ref(false);
@@ -125,6 +135,7 @@ const contextMenuAnchor = computed<HTMLElement | null>(() => topBarRef.value?.mo
 const isPaintDrawerOpen = ref(false);
 const isShortcutsModalOpen = ref(false);
 const isPaletteDeriveOpen = ref(false);
+const leftPanelCollapsed = ref(false);
 
 const { paintableTokens, setPaint } = usePaintBinding();
 
@@ -139,6 +150,15 @@ function openShortcuts(): void {
 
 function openPaletteDerive(): void {
   isPaletteDeriveOpen.value = true;
+}
+
+function onLeftPanelCollapsedChange(collapsed: boolean): void {
+  leftPanelCollapsed.value = collapsed;
+  void saveLeftPanelCollapsed(collapsed).catch(() => {});
+}
+
+function toggleLeftPanelCollapsed(): void {
+  onLeftPanelCollapsedChange(!leftPanelCollapsed.value);
 }
 
 function onPaletteDeriveApply(_baseColor: string, derivedTokens: Record<string, string>): void {
@@ -156,9 +176,11 @@ const commandPaletteCommands = computed<CommandDefinition[]>(() => {
   listThemes();
   return buildEditorCommands({
     switchTheme,
+    downloadHtml: onDownloadHtml,
     exportLongImage: onExportLongImage,
     openShortcuts,
     openPaletteDerive,
+    toggleLeftPanelCollapsed,
   });
 });
 
@@ -194,8 +216,15 @@ const statusBarMetrics = computed(() => {
   };
 });
 
-function onToggleDiagnostics(): void {
-  isDiagnosticsExpanded.value = !isDiagnosticsExpanded.value;
+function onToggleDiagnostics(
+  anchorGroup?: "compat" | "readability" | "keyword" | "night-risk"
+): void {
+  if (anchorGroup && anchorGroup !== "compat") {
+    isDiagnosticsExpanded.value = true;
+  } else {
+    isDiagnosticsExpanded.value = !isDiagnosticsExpanded.value;
+  }
+  diagnosticsAnchorGroup.value = anchorGroup;
 }
 
 function onShowDiff(nodeSelector: string): void {
@@ -293,6 +322,7 @@ function onContextMenuCommand(commandId: string): void {
     exportLongImage: onExportLongImage,
     openShortcuts,
     openPaletteDerive,
+    toggleLeftPanelCollapsed,
   });
   const cmd = cmds.find((c) => c.id === commandId);
   cmd?.run();
@@ -337,6 +367,13 @@ onMounted(() => {
   preferencesStore.init();
   editorStore.loadDraft();
   attachPreviewClickListener();
+  loadLeftPanelCollapsed()
+    .then((collapsed) => {
+      if (typeof collapsed === "boolean") {
+        leftPanelCollapsed.value = collapsed;
+      }
+    })
+    .catch(() => {});
 });
 
 onUnmounted(() => {
@@ -383,10 +420,12 @@ onUnmounted(() => {
         class="editor-shell__left"
         :class="{ 'editor-shell__left--drawer': isTablet }"
         data-testid="left-panel"
-        :style="!isTablet ? { width: leftPanel.width.value + 'px' } : undefined"
+        :style="!isTablet ? { width: (leftPanelCollapsed ? LEFT_PANEL_RAIL_WIDTH : leftPanel.width.value) + 'px' } : undefined"
       >
         <LeftPanelTabs
           default-tab="theme"
+          :collapsed="!isTablet && leftPanelCollapsed"
+          :on-collapsed-change="onLeftPanelCollapsedChange"
           :on-theme-select="switchTheme"
           :on-insert-block="onInsertDirective"
           @palette-derive="openPaletteDerive"
@@ -394,9 +433,9 @@ onUnmounted(() => {
         />
       </aside>
 
-      <!-- Left splitter (desktop only, not focus mode) -->
+      <!-- Left splitter (desktop only, not focus mode, not rail) -->
       <ResizableSplitter
-        v-if="!isTablet && !isFocusMode"
+        v-if="!isTablet && !isFocusMode && !leftPanelCollapsed"
         direction="vertical"
         :min-left="LEFT_PANEL_MIN"
         :max-left="LEFT_PANEL_MAX"
@@ -455,6 +494,7 @@ onUnmounted(() => {
     <DiagnosticsPanel
       :diagnostics="diagnostics"
       :is-expanded="isDiagnosticsExpanded"
+      :anchor-group="diagnosticsAnchorGroup"
       @toggle="onToggleDiagnostics"
       @show-diff="onShowDiff"
       @item-click="onDiagnosticView"

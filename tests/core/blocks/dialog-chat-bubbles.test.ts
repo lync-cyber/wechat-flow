@@ -33,7 +33,9 @@ const AVATAR_MD = [
 ].join("\n");
 
 function extractDialogRows(html: string): string[] {
-  const matches = [...html.matchAll(/<div data-block="dialog" data-variant="chat-bubbles"[^>]*>/g)];
+  const matches = [
+    ...html.matchAll(/<section data-block="dialog" data-variant="chat-bubbles"[^>]*>/g),
+  ];
   const starts = matches.map((m) => m.index ?? 0);
   return starts.map((start, i) => {
     const end = i + 1 < starts.length ? starts[i + 1] : html.length;
@@ -43,17 +45,25 @@ function extractDialogRows(html: string): string[] {
 
 function extractRowOpenTagStyle(rowHtml: string): string {
   const match = rowHtml.match(
-    /^<div data-block="dialog" data-variant="chat-bubbles"[^>]* style="([^"]*)"/
+    /^<section data-block="dialog" data-variant="chat-bubbles"[^>]* style="([^"]*)"/
   );
   expect(match, `no row style found in: ${rowHtml}`).not.toBeNull();
   return match?.[1] ?? "";
 }
 
 function extractBubbleContainerStyles(html: string): string[] {
-  const matches = [...html.matchAll(/<div style="([^"]*)"/g)].filter((m) =>
+  const matches = [...html.matchAll(/<section style="([^"]*)"/g)].filter((m) =>
     m[1].includes("background:")
   );
   return matches.map((m) => m[1]);
+}
+
+function extractCellTextAligns(html: string): string[] {
+  const matches = [...html.matchAll(/<section style="([^"]*text-align:[^"]*)">/g)];
+  return matches.map((m) => {
+    const alignMatch = m[1].match(/text-align:\s*([a-z]+)/);
+    return alignMatch?.[1] ?? "";
+  });
 }
 
 function extractAvatarTags(html: string): string[] {
@@ -78,11 +88,11 @@ describe("AC-001: dialog variants 数组以 chat-bubbles 替代 bubble", () => {
 
 // AC-002: 第一位 speaker 贴左，背景 --color-surface-alt
 describe("AC-002: 首位 speaker 气泡贴左且背景为 surface-alt 实值", () => {
-  it("首条消息气泡计算 margin-right = auto", async () => {
+  it("首条消息内容 cell 计算 text-align = left", async () => {
     const result = await renderMarkdown(TWO_MESSAGE_MD, { themeId: "default" });
-    const styles = extractBubbleContainerStyles(result.html);
-    expect(styles.length).toBe(2);
-    expect(styles[0]).toContain("margin-right: auto");
+    const aligns = extractCellTextAligns(result.html);
+    expect(aligns.length).toBe(2);
+    expect(aligns[0]).toBe("left");
   });
 
   it("首条消息气泡计算 background = default 主题 --color-surface-alt 实值（#F3F0EB）", async () => {
@@ -94,10 +104,10 @@ describe("AC-002: 首位 speaker 气泡贴左且背景为 surface-alt 实值", (
 
 // AC-003: 第二位不同 speaker 贴右，背景 --color-brand，文字 --color-text-inverse
 describe("AC-003: 次位不同 speaker 气泡贴右且背景/文字色为交替实值", () => {
-  it("第二条消息（不同 speaker）气泡计算 margin-left = auto", async () => {
+  it("第二条消息（不同 speaker）内容 cell 计算 text-align = right", async () => {
     const result = await renderMarkdown(TWO_MESSAGE_MD, { themeId: "default" });
-    const styles = extractBubbleContainerStyles(result.html);
-    expect(styles[1]).toContain("margin-left: auto");
+    const aligns = extractCellTextAligns(result.html);
+    expect(aligns[1]).toBe("right");
   });
 
   it("第二条消息气泡计算 background = default 主题 --color-brand 实值（#2D5A4E）", async () => {

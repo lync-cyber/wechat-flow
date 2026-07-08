@@ -14,11 +14,26 @@ const props = withDefaults(
     onTabChange?: (tab: TabId) => void;
     onThemeSelect?: (themeId: string) => void;
     onInsertBlock?: (directive: string) => void;
+    collapsed?: boolean;
+    onCollapsedChange?: (collapsed: boolean) => void;
   }>(),
   {
     defaultTab: "theme",
+    collapsed: false,
   }
 );
+
+const RAIL_TAB_LABELS: Record<TabId, string> = {
+  theme: "主题",
+  components: "组件",
+  docs: "文档",
+};
+
+const RAIL_TAB_GLYPHS: Record<TabId, string> = {
+  theme: "🎨",
+  components: "🧩",
+  docs: "📄",
+};
 
 const emit = defineEmits<{
   "palette-derive": [];
@@ -54,73 +69,120 @@ function selectTheme(id: string): void {
 function insertBlock(block: ReturnType<typeof listBlocks>[number]): void {
   props.onInsertBlock?.(`:::${block.id}\n内容\n:::`);
 }
+
+function collapsePanel(): void {
+  props.onCollapsedChange?.(true);
+}
+
+function expandPanel(): void {
+  props.onCollapsedChange?.(false);
+}
+
+function selectRailTab(tab: TabId): void {
+  switchTab(tab);
+  props.onCollapsedChange?.(false);
+}
 </script>
 
 <template>
-  <div class="left-panel-tabs">
-    <!-- Tab header row -->
-    <div class="left-panel-tabs__header" role="tablist">
+  <div class="left-panel-tabs" :class="{ 'left-panel-tabs--collapsed': collapsed }">
+    <!-- Rail (collapsed) -->
+    <div v-if="collapsed" class="left-panel-tabs__rail" data-testid="left-panel-rail">
+      <button
+        type="button"
+        class="left-panel-tabs__rail-btn left-panel-tabs__rail-expand"
+        data-testid="rail-expand-btn"
+        aria-label="展开面板"
+        title="展开面板"
+        @click="expandPanel"
+      >⟩⟩</button>
       <button
         v-for="tab in (['theme', 'components', 'docs'] as TabId[])"
         :key="tab"
         type="button"
-        role="tab"
-        class="left-panel-tabs__tab"
-        :class="{ 'left-panel-tabs__tab--active': activeTab === tab }"
-        :data-testid="`tab-${tab}`"
-        :aria-selected="activeTab === tab"
-        @click="switchTab(tab)"
-      >{{ tab === 'theme' ? '主题' : tab === 'components' ? '组件' : '文档' }}</button>
+        class="left-panel-tabs__rail-btn left-panel-tabs__rail-icon"
+        :class="{ 'left-panel-tabs__rail-icon--active': activeTab === tab }"
+        :data-testid="`rail-icon-${tab}`"
+        :aria-label="RAIL_TAB_LABELS[tab]"
+        :title="RAIL_TAB_LABELS[tab]"
+        @click="selectRailTab(tab)"
+      ><span aria-hidden="true">{{ RAIL_TAB_GLYPHS[tab] }}</span></button>
     </div>
 
-    <!-- Tab content -->
-    <div class="left-panel-tabs__content" role="tabpanel">
-      <!-- Theme tab -->
-      <template v-if="activeTab === 'theme'">
-        <div class="left-panel-tabs__theme-list">
-          <ThemeCard
-            v-for="theme in themes"
-            :key="theme.id"
-            :data-testid="`theme-card-${theme.id}`"
-            :theme="{ id: theme.id, name: theme.name, tokens: theme.tokens }"
-            :description="theme.description"
-            :is-selected="selectedThemeId === theme.id"
-            :on-select="selectTheme"
-          />
-        </div>
-        <div class="left-panel-tabs__theme-links">
-          <a
-            href="#"
-            class="left-panel-tabs__theme-link"
-            data-testid="link-custom-color"
-            @click.prevent="emit('custom-color')"
-          >自定义配色</a>
-          <a
-            href="#"
-            class="left-panel-tabs__theme-link"
-            data-testid="link-palette-derive"
-            @click.prevent="emit('palette-derive')"
-          >调色板派生</a>
-        </div>
-      </template>
+    <!-- Expanded -->
+    <template v-else>
+      <!-- Tab header row -->
+      <div class="left-panel-tabs__header" role="tablist">
+        <button
+          v-for="tab in (['theme', 'components', 'docs'] as TabId[])"
+          :key="tab"
+          type="button"
+          role="tab"
+          class="left-panel-tabs__tab"
+          :class="{ 'left-panel-tabs__tab--active': activeTab === tab }"
+          :data-testid="`tab-${tab}`"
+          :aria-selected="activeTab === tab"
+          @click="switchTab(tab)"
+        >{{ tab === 'theme' ? '主题' : tab === 'components' ? '组件' : '文档' }}</button>
+        <button
+          type="button"
+          class="left-panel-tabs__collapse-btn"
+          data-testid="collapse-btn"
+          aria-label="收起面板"
+          title="收起面板"
+          @click="collapsePanel"
+        >⟨⟨</button>
+      </div>
 
-      <!-- Components tab -->
-      <template v-else-if="activeTab === 'components'">
-        <div class="left-panel-tabs__block-list">
-          <BlockLibItem
-            v-for="block in blocks"
-            :key="block.id"
-            :block="block"
-            :on-insert="insertBlock"
-          />
-        </div>
-      </template>
+      <!-- Tab content -->
+      <div class="left-panel-tabs__content" role="tabpanel">
+        <!-- Theme tab -->
+        <template v-if="activeTab === 'theme'">
+          <div class="left-panel-tabs__theme-list">
+            <ThemeCard
+              v-for="theme in themes"
+              :key="theme.id"
+              :data-testid="`theme-card-${theme.id}`"
+              :theme="{ id: theme.id, name: theme.name, tokens: theme.tokens }"
+              :description="theme.description"
+              :is-selected="selectedThemeId === theme.id"
+              :on-select="selectTheme"
+            />
+          </div>
+          <div class="left-panel-tabs__theme-links">
+            <a
+              href="#"
+              class="left-panel-tabs__theme-link"
+              data-testid="link-custom-color"
+              @click.prevent="emit('custom-color')"
+            >自定义配色</a>
+            <a
+              href="#"
+              class="left-panel-tabs__theme-link"
+              data-testid="link-palette-derive"
+              @click.prevent="emit('palette-derive')"
+            >调色板派生</a>
+          </div>
+        </template>
 
-      <!-- Docs tab -->
-      <template v-else-if="activeTab === 'docs'">
-        <DocListPanel />
-      </template>
-    </div>
+        <!-- Components tab -->
+        <template v-else-if="activeTab === 'components'">
+          <div class="left-panel-tabs__block-list">
+            <BlockLibItem
+              v-for="block in blocks"
+              :key="block.id"
+              :block="block"
+              :on-insert="insertBlock"
+            />
+          </div>
+        </template>
+
+        <!-- Docs tab -->
+        <template v-else-if="activeTab === 'docs'">
+          <DocListPanel />
+        </template>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -198,5 +260,60 @@ function insertBlock(block: ReturnType<typeof listBlocks>[number]): void {
 .left-panel-tabs__block-list {
   display: flex;
   flex-direction: column;
+}
+
+.left-panel-tabs__collapse-btn {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin: auto 8px auto 0;
+  border: none;
+  background: none;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.left-panel-tabs__collapse-btn:hover {
+  color: var(--color-text-primary);
+  background: var(--color-surface-overlay);
+}
+
+.left-panel-tabs--collapsed {
+  width: 48px;
+}
+
+.left-panel-tabs__rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding-top: 8px;
+  width: 48px;
+}
+
+.left-panel-tabs__rail-btn {
+  width: 48px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.left-panel-tabs__rail-btn:hover {
+  background: var(--color-surface-overlay);
+  color: var(--color-text-primary);
+}
+
+.left-panel-tabs__rail-icon--active {
+  color: var(--color-brand);
 }
 </style>

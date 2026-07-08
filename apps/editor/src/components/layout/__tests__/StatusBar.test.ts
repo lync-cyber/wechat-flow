@@ -483,6 +483,82 @@ describe("BC-4 UC-023: 夜间风险指标段", () => {
   });
 });
 
+// ── T-170 AC-003: 指标段可点击 button + 携带 anchorGroup ────────────────────
+
+describe("T-170 AC-003: 指标段为可点击 button，点击携带对应 anchorGroup", () => {
+  it("compat-summary 为 type=button 元素，点击 emit toggle-diagnostics('compat')", async () => {
+    const wrapper = mount(StatusBar, {
+      props: {
+        metrics: { chineseChars: 100, totalChars: 100, readMinutes: 1 },
+        diagnostics: emptyReport(),
+        isDiagnosticsExpanded: false,
+      },
+    });
+    const seg = wrapper.find('[data-testid="compat-summary"]');
+    expect(seg.element.tagName).toBe("BUTTON");
+    expect((seg.element as HTMLButtonElement).type).toBe("button");
+
+    await seg.trigger("click");
+    const emitted = wrapper.emitted("toggle-diagnostics");
+    expect(emitted).toBeTruthy();
+    expect(emitted?.[0]).toEqual(["compat"]);
+  });
+
+  it("readability-summary 为 type=button 元素，点击 emit toggle-diagnostics('readability')", async () => {
+    const wrapper = mount(StatusBar, {
+      props: {
+        metrics: { chineseChars: 100, totalChars: 100, readMinutes: 1 },
+        diagnostics: emptyReport(),
+        isDiagnosticsExpanded: false,
+      },
+    });
+    const seg = wrapper.find('[data-testid="readability-summary"]');
+    expect(seg.element.tagName).toBe("BUTTON");
+    expect((seg.element as HTMLButtonElement).type).toBe("button");
+
+    await seg.trigger("click");
+    const emitted = wrapper.emitted("toggle-diagnostics");
+    expect(emitted).toBeTruthy();
+    expect(emitted?.[0]).toEqual(["readability"]);
+  });
+
+  it("violation-count 为 type=button 元素，点击 emit toggle-diagnostics('keyword')", async () => {
+    const wrapper = mount(StatusBar, {
+      props: {
+        metrics: { chineseChars: 100, totalChars: 100, readMinutes: 1 },
+        diagnostics: reportWithKeyword(2),
+        isDiagnosticsExpanded: false,
+      },
+    });
+    const seg = wrapper.find('[data-testid="violation-count"]');
+    expect(seg.element.tagName).toBe("BUTTON");
+    expect((seg.element as HTMLButtonElement).type).toBe("button");
+
+    await seg.trigger("click");
+    const emitted = wrapper.emitted("toggle-diagnostics");
+    expect(emitted).toBeTruthy();
+    expect(emitted?.[0]).toEqual(["keyword"]);
+  });
+
+  it("night-risk-count 为 type=button 元素，点击 emit toggle-diagnostics('night-risk')", async () => {
+    const wrapper = mount(StatusBar, {
+      props: {
+        metrics: { chineseChars: 100, totalChars: 100, readMinutes: 1 },
+        diagnostics: reportWithNightRisk(1),
+        isDiagnosticsExpanded: false,
+      },
+    });
+    const seg = wrapper.find('[data-testid="night-risk-count"]');
+    expect(seg.element.tagName).toBe("BUTTON");
+    expect((seg.element as HTMLButtonElement).type).toBe("button");
+
+    await seg.trigger("click");
+    const emitted = wrapper.emitted("toggle-diagnostics");
+    expect(emitted).toBeTruthy();
+    expect(emitted?.[0]).toEqual(["night-risk"]);
+  });
+});
+
 describe("T-066 AC-004/005: 字数统计格式", () => {
   it("AC-004: 中英混排显示 '{chineseChars} 字 / {totalChars} 字符' 格式", () => {
     const wrapper = mount(StatusBar, {

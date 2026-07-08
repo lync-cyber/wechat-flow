@@ -4,16 +4,7 @@ import { defineBlock } from "../factory.ts";
 export const recommendation = defineBlock(
   "recommendation",
   "推荐阅读",
-  z.object({
-    items: z.array(
-      z.object({
-        title: z.string(),
-        url: z.string(),
-        cover: z.string().optional(),
-        summary: z.string().optional(),
-      })
-    ),
-  }),
+  z.object({}).strict(),
   "marketing",
   [
     { id: "default", label: "列表推荐" },

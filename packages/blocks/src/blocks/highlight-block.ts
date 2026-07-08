@@ -4,10 +4,7 @@ import { defineBlock } from "../factory.ts";
 export const highlightBlock = defineBlock(
   "highlight-block",
   "高亮块",
-  z.object({
-    text: z.string(),
-    color: z.string().optional(),
-  }),
+  z.object({}).strict(),
   "emphasis",
   [
     { id: "default", label: "默认高亮" },

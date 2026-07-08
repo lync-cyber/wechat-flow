@@ -1,8 +1,11 @@
 import type { ZodType } from "zod";
+import { z } from "zod";
 import { E_PERMISSION_DENIED, aclRequestResource } from "../acl/acl-request.ts";
 import type { AuditLog } from "../acl/audit-log.ts";
 
 export type BlockCategory = "text" | "media" | "emphasis" | "structured" | "marketing" | "meta";
+
+export type BlockSource = "builtin" | "plugin";
 
 export interface DefineBlockInput {
   id: string;
@@ -43,7 +46,9 @@ export interface BlockRegistryEntry {
   id: string;
   name: string;
   category: BlockCategory;
-  attrsSchema: ZodType;
+  source?: BlockSource;
+  directiveAttrs: ZodType;
+  directiveBody?: string;
   variants: Array<{ id: string; label?: string }>;
   baseStyle?: Record<string, Record<string, string>>;
   slots: string[];
@@ -85,7 +90,9 @@ export function createPluginSurface(registry: RegistryBridge, acl?: AclDeps): Pl
         id: input.id,
         name: input.name,
         category: input.category,
-        attrsSchema: input.attrsSchema,
+        source: "plugin",
+        directiveAttrs: z.object({}).strict(),
+        directiveBody: "",
         variants: [],
         slots: input.slots ?? ["root"],
       });

@@ -1,14 +1,11 @@
 import { z } from "zod";
+import { injectDropcapMutation, injectLeadingInlineNode, slotElement } from "../decorate-utils.ts";
 import { defineBlock } from "../factory.ts";
 
 export const quote = defineBlock(
   "quote",
   "引用",
-  z.object({
-    text: z.string(),
-    author: z.string().optional(),
-    source: z.string().optional(),
-  }),
+  z.object({}).strict(),
   "text",
   [
     { id: "default", label: "标准引用" },
@@ -24,14 +21,13 @@ export const quote = defineBlock(
       label: "大引号引用",
       baseStyle: {
         root: {
-          "border-left": "3px solid #888",
           padding: "8px 16px",
           margin: "16px 0",
           color: "#555",
         },
         "quote-mark": {
           "font-size": "2em",
-          color: "#2D5A4E",
+          color: "var(--color-brand)",
           opacity: "0.4",
           "line-height": "0.6",
           display: "inline-block",
@@ -45,20 +41,25 @@ export const quote = defineBlock(
       label: "首字下沉引用",
       baseStyle: {
         root: {
-          "border-left": "3px solid #888",
           padding: "8px 16px",
           margin: "16px 0",
           color: "#555",
         },
         dropcap: {
+          display: "table-cell",
+          width: "1%",
+          "white-space": "nowrap",
+          "vertical-align": "top",
+          "padding-right": "8px",
           "font-size": "2.2em",
           "font-weight": "700",
-          color: "#2D5A4E",
-          display: "inline-block",
-          "vertical-align": "top",
-          "margin-right": "4px",
-          "font-family":
-            "'LXGW WenKai', 'Source Han Serif CN', 'Noto Serif CJK SC', Georgia, serif",
+          "line-height": "1",
+          color: "var(--color-brand)",
+          "font-family": "var(--font-family-heading)",
+        },
+        "dropcap-table": {
+          display: "table",
+          width: "100%",
         },
       },
     },
@@ -71,5 +72,22 @@ export const quote = defineBlock(
       color: "#555",
     },
   },
-  ["root", "quote-mark", "dropcap"]
+  ["root", "quote-mark", "dropcap", "dropcap-table"],
+  undefined,
+  (element, ctx) => {
+    if (ctx.variant === "large-quote-mark") {
+      const { "data-quote-decoration": _stash, ...restProps } = element.properties ?? {};
+      element.properties = restProps;
+      injectLeadingInlineNode(
+        element,
+        slotElement("quote-mark", [{ type: "text", value: '"' }], { inline: true })
+      );
+      return;
+    }
+    if (ctx.variant === "dropcap") {
+      const { "data-quote-decoration": _stash, ...restProps } = element.properties ?? {};
+      element.properties = restProps;
+      injectDropcapMutation(element);
+    }
+  }
 );

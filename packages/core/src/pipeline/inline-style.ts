@@ -1,3 +1,4 @@
+import type { ThemeTokens } from "@wechat-flow/contracts";
 import type { Element, Root as HastRoot, Properties } from "hast";
 import { describeBlock } from "../registry/block.ts";
 import { getBlockBaseStyle } from "../registry/variant.ts";
@@ -74,14 +75,44 @@ const DEFAULT_TOKENS: BlockStyleTable = {
   },
 };
 
+// Resolution fallback for slot `var(--token)` placeholders when no theme/token is registered.
+const FALLBACK_SLOT_TOKENS: Record<string, string> = {
+  "--color-brand": "#2D5A4E",
+  "--font-family-heading":
+    "'LXGW WenKai', 'Source Han Serif CN', 'Noto Serif CJK SC', Georgia, serif",
+  "--color-text-muted": "#78716C",
+};
+
+const TOKEN_PLACEHOLDER_PATTERN = /^var\((--[\w-]+)\)$/;
+
+function resolveTokenPlaceholder(value: string, designTokens?: ThemeTokens): string {
+  const match = TOKEN_PLACEHOLDER_PATTERN.exec(value.trim());
+  if (!match) return value;
+  const tokenName = match[1];
+  return designTokens?.[tokenName] ?? FALLBACK_SLOT_TOKENS[tokenName] ?? value;
+}
+
+function resolveSlotDeclarations(
+  declarations: Record<string, string>,
+  designTokens?: ThemeTokens
+): Record<string, string> {
+  const resolved: Record<string, string> = {};
+  for (const [prop, val] of Object.entries(declarations)) {
+    resolved[prop] = resolveTokenPlaceholder(val, designTokens);
+  }
+  return resolved;
+}
+
 function getBlockSlotStyle(
   blockId: string,
   variantId: string,
-  slot: string
+  slot: string,
+  designTokens?: ThemeTokens
 ): Record<string, string> {
   const def = describeBlock(blockId);
   const variant = def?.variants.find((v) => v.id === variantId);
-  return variant?.baseStyle?.[slot] ?? {};
+  const raw = variant?.baseStyle?.[slot] ?? {};
+  return resolveSlotDeclarations(raw, designTokens);
 }
 
 function stripClassFromProperties(props: Properties): Properties {
@@ -103,6 +134,26 @@ function serializeDeclarations(declarations: Record<string, string>): string {
 interface AmbientBlockContext {
   blockId: string;
   variantId: string;
+  inherited: Record<string, string>;
+}
+
+const INHERITABLE_PROPS = [
+  "text-align",
+  "color",
+  "font-size",
+  "line-height",
+  "font-family",
+  "letter-spacing",
+] as const;
+
+function extractInheritedStyle(merged: Record<string, string>): Record<string, string> {
+  const inherited: Record<string, string> = {};
+  for (const prop of INHERITABLE_PROPS) {
+    if (prop in merged) {
+      inherited[prop] = merged[prop];
+    }
+  }
+  return inherited;
 }
 
 function applyInlineStyles(
@@ -110,7 +161,8 @@ function applyInlineStyles(
   styleMap: Map<string, string>,
   themeTokens: BlockStyleTable,
   isEvenBodyRow = false,
-  ambientBlock?: AmbientBlockContext
+  ambientBlock?: AmbientBlockContext,
+  designTokens?: ThemeTokens
 ): HastRoot | Element {
   if (node.type === "element") {
     const el = node as Element;
@@ -118,11 +170,17 @@ function applyInlineStyles(
     const propsWithoutClass = stripClassFromProperties(props);
 
     let tagStyle: string;
+    let containerInherited: Record<string, string> | undefined;
 
     const blockSlot = propsWithoutClass["data-block-slot"];
     const dataBlock = propsWithoutClass["data-block"];
     if (typeof blockSlot === "string" && blockSlot.length > 0 && ambientBlock) {
-      const slotStyle = getBlockSlotStyle(ambientBlock.blockId, ambientBlock.variantId, blockSlot);
+      const slotStyle = getBlockSlotStyle(
+        ambientBlock.blockId,
+        ambientBlock.variantId,
+        blockSlot,
+        designTokens
+      );
       tagStyle = Object.keys(slotStyle).length > 0 ? serializeDeclarations(slotStyle) : "";
     } else if (typeof dataBlock === "string" && dataBlock.length > 0) {
       // Container block path: L1 ⊕ L2
@@ -139,13 +197,20 @@ function applyInlineStyles(
         merged["margin-bottom"] = "0";
       }
       tagStyle = Object.keys(merged).length > 0 ? serializeDeclarations(merged) : "";
+      containerInherited = extractInheritedStyle(merged);
     } else {
-      // Tag path: existing behaviour, byte-identical
+      // Tag path: byte-identical when no container ambient typography applies
       const base = themeTokens[el.tagName]?.default;
       const evenOverride = isEvenBodyRow ? themeTokens[el.tagName]?.even : undefined;
-      if (evenOverride) {
-        const merged = { ...(base ?? {}), ...evenOverride };
-        tagStyle = serializeDeclarations(merged);
+      const inherited = ambientBlock?.inherited;
+      const hasInherited = inherited !== undefined && Object.keys(inherited).length > 0;
+      if (evenOverride || hasInherited) {
+        const merged: Record<string, string> = {
+          ...(base ?? {}),
+          ...(evenOverride ?? {}),
+          ...(hasInherited ? inherited : {}),
+        };
+        tagStyle = Object.keys(merged).length > 0 ? serializeDeclarations(merged) : "";
       } else {
         tagStyle = styleMap.get(el.tagName) ?? "";
       }
@@ -183,6 +248,7 @@ function applyInlineStyles(
               typeof propsWithoutClass["data-variant"] === "string"
                 ? propsWithoutClass["data-variant"]
                 : "default",
+            inherited: containerInherited ?? {},
           }
         : ambientBlock;
 
@@ -202,7 +268,8 @@ function applyInlineStyles(
             styleMap,
             themeTokens,
             childIsEvenRow,
-            childAmbientBlock
+            childAmbientBlock,
+            designTokens
           ) as Element;
         }
         return child;
@@ -219,7 +286,8 @@ function applyInlineStyles(
           styleMap,
           themeTokens,
           isEvenBodyRow,
-          ambientBlock
+          ambientBlock,
+          designTokens
         ) as Element;
       }
       return child;
@@ -240,8 +308,12 @@ function buildStyleMap(tokens: BlockStyleTable): Map<string, string> {
   return styleMap;
 }
 
-export function inlineStyle(hast: HastRoot, themeTokens?: BlockStyleTable): HastRoot {
+export function inlineStyle(
+  hast: HastRoot,
+  themeTokens?: BlockStyleTable,
+  designTokens?: ThemeTokens
+): HastRoot {
   const tokens = themeTokens ?? DEFAULT_TOKENS;
   const styleMap = buildStyleMap(tokens);
-  return applyInlineStyles(hast, styleMap, tokens) as HastRoot;
+  return applyInlineStyles(hast, styleMap, tokens, false, undefined, designTokens) as HastRoot;
 }

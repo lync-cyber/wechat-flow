@@ -119,3 +119,63 @@ describe("AC-004: EditorShell 字面模板接线 StatusBar + DiagnosticsPanel", 
     wrapper.unmount();
   });
 });
+
+describe("T-170 AC-003: StatusBar 指标段点击接线 anchorGroup 至 DiagnosticsPanel", () => {
+  it("点击 readability-summary 后 DiagnosticsPanel 展开并接收 anchorGroup='readability'", async () => {
+    const wrapper = mount(EditorShell, {
+      attachTo: document.body,
+      global: { plugins: [createPinia()] },
+    });
+    await nextTick();
+
+    const diagPanel = wrapper.findComponent({ name: "DiagnosticsPanel" });
+    expect(diagPanel.props("isExpanded")).toBe(false);
+
+    const statusBar = wrapper.findComponent({ name: "StatusBar" });
+    await statusBar.find('[data-testid="readability-summary"]').trigger("click");
+    await nextTick();
+
+    expect(diagPanel.props("isExpanded")).toBe(true);
+    expect(diagPanel.props("anchorGroup")).toBe("readability");
+    wrapper.unmount();
+  });
+
+  it("点击 night-risk-count 后 DiagnosticsPanel 接收 anchorGroup='night-risk'", async () => {
+    const wrapper = mount(EditorShell, {
+      attachTo: document.body,
+      global: { plugins: [createPinia()] },
+    });
+    await nextTick();
+
+    const diagPanel = wrapper.findComponent({ name: "DiagnosticsPanel" });
+    const statusBar = wrapper.findComponent({ name: "StatusBar" });
+    await statusBar.find('[data-testid="night-risk-count"]').trigger("click");
+    await nextTick();
+
+    expect(diagPanel.props("isExpanded")).toBe(true);
+    expect(diagPanel.props("anchorGroup")).toBe("night-risk");
+    wrapper.unmount();
+  });
+
+  it("compat-summary 点击后 anchorGroup='compat' 且再次点击折叠（既有 toggle 行为不回归）", async () => {
+    const wrapper = mount(EditorShell, {
+      attachTo: document.body,
+      global: { plugins: [createPinia()] },
+    });
+    await nextTick();
+
+    const diagPanel = wrapper.findComponent({ name: "DiagnosticsPanel" });
+    const statusBar = wrapper.findComponent({ name: "StatusBar" });
+
+    await statusBar.find('[data-testid="compat-summary"]').trigger("click");
+    await nextTick();
+    expect(diagPanel.props("isExpanded")).toBe(true);
+    expect(diagPanel.props("anchorGroup")).toBe("compat");
+
+    await statusBar.find('[data-testid="compat-summary"]').trigger("click");
+    await nextTick();
+    expect(diagPanel.props("isExpanded")).toBe(false);
+
+    wrapper.unmount();
+  });
+});

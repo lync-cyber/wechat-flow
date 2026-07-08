@@ -1,5 +1,11 @@
 import { mount } from "@vue/test-utils";
-import { listBlocks, registerBlock, resetBlockRegistry } from "@wechat-flow/core";
+import {
+  describeBlock,
+  listBlocks,
+  registerBlock,
+  renderMarkdown,
+  resetBlockRegistry,
+} from "@wechat-flow/core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
 import { z } from "zod";
@@ -14,7 +20,7 @@ const makeBlocks = () => {
     id: "callout",
     name: "提示框",
     category: "emphasis",
-    attrsSchema: z.object({
+    directiveAttrs: z.object({
       type: z.enum(["info", "warning", "success", "error"]).default("info"),
       text: z.string(),
       title: z.string().optional(),
@@ -26,7 +32,7 @@ const makeBlocks = () => {
     id: "heading",
     name: "标题",
     category: "text",
-    attrsSchema: z.object({
+    directiveAttrs: z.object({
       level: z.number().int().min(1).max(6).default(2),
       text: z.string(),
     }),
@@ -149,7 +155,7 @@ function registerFullTaxonomy(): void {
         id,
         name: BLOCK_NAMES[id] ?? id,
         category,
-        attrsSchema: z.object({ text: z.string().optional() }),
+        directiveAttrs: z.object({ text: z.string().optional() }),
         variants: [],
         slots: ["root"],
       });
@@ -371,7 +377,7 @@ describe("T-137 AC-002: 分类 Tab 标签为硬编码中文映射，Tab 集合�
       id: "heading",
       name: "标题",
       category: "text",
-      attrsSchema: z.object({ text: z.string() }),
+      directiveAttrs: z.object({ text: z.string() }),
       variants: [],
       slots: ["root"],
     });
@@ -379,7 +385,7 @@ describe("T-137 AC-002: 分类 Tab 标签为硬编码中文映射，Tab 集合�
       id: "callout",
       name: "提示框",
       category: "emphasis",
-      attrsSchema: z.object({ text: z.string() }),
+      directiveAttrs: z.object({ text: z.string() }),
       variants: [],
       slots: ["root"],
     });
@@ -508,6 +514,135 @@ describe("T-137 AC-006: 分类 Tab 行高 40px、搜索框高 36px", () => {
     const el = search.element as HTMLElement;
     const height = el.style.height || getComputedStyle(el).height;
     expect(height).toBe("36px");
+    wrapper.unmount();
+  });
+});
+
+async function selectRealBlock(blockId: string) {
+  const wrapper = mount(InsertDrawer, { props: defaultProps() });
+  await nextTick();
+  const block = describeBlock(blockId);
+  if (!block) throw new Error(`block not registered: ${blockId}`);
+
+  await wrapper.find(`[data-testid="category-tab-${block.category}"]`).trigger("click");
+  await nextTick();
+
+  const item = wrapper
+    .findAll('[data-testid="block-lib-item"]')
+    .find((i) => i.text().includes(block.name));
+  if (!item) throw new Error(`block-lib-item not found for: ${blockId}`);
+  await item.trigger("click");
+  await nextTick();
+
+  return wrapper;
+}
+
+function renderedParamFieldKeys(wrapper: Awaited<ReturnType<typeof selectRealBlock>>): string[] {
+  return wrapper
+    .findAll('[data-testid^="param-input-"]')
+    .map((el) => el.attributes("data-testid")?.replace("param-input-", "") ?? "");
+}
+
+describe("T-165 AC-001: 参数区字段从 directiveAttrs.shape 生成（真实内置 Block）", () => {
+  beforeEach(async () => {
+    resetBlockRegistry();
+    await import("@wechat-flow/blocks");
+  });
+
+  it("选中 pull-quote 时参数区仅显示 author 字段", async () => {
+    const wrapper = await selectRealBlock("pull-quote");
+    expect(renderedParamFieldKeys(wrapper)).toEqual(["author"]);
+    wrapper.unmount();
+  });
+
+  it("选中 dialog 时参数区显示 speaker/avatar 字段", async () => {
+    const wrapper = await selectRealBlock("dialog");
+    expect(renderedParamFieldKeys(wrapper)).toEqual(["speaker", "avatar"]);
+    wrapper.unmount();
+  });
+
+  it("选中 compare 时参数区显示 left-label/left-value/right-label/right-value/title 字段", async () => {
+    const wrapper = await selectRealBlock("compare");
+    expect(renderedParamFieldKeys(wrapper)).toEqual([
+      "left-label",
+      "left-value",
+      "right-label",
+      "right-value",
+      "title",
+    ]);
+    wrapper.unmount();
+  });
+
+  it("选中 callout 时参数区无字段（结构化域字段 text/title 不再出现）", async () => {
+    const wrapper = await selectRealBlock("callout");
+    expect(renderedParamFieldKeys(wrapper)).toEqual([]);
+    expect(wrapper.find('[data-testid="param-input-text"]').exists()).toBe(false);
+    expect(wrapper.find('[data-testid="param-input-title"]').exists()).toBe(false);
+    wrapper.unmount();
+  });
+});
+
+describe("T-165 AC-002: 参数区填写 author 后插入并经真实渲染管线渲染，属性真实生效", () => {
+  beforeEach(async () => {
+    resetBlockRegistry();
+    await import("@wechat-flow/blocks");
+  });
+
+  it("选中 pull-quote 的 decorated 变体，填写 author=鲁迅 插入并渲染，产物含署名行「鲁迅」", async () => {
+    const onInsert = vi.fn();
+    const wrapper = await selectRealBlock("pull-quote");
+    await wrapper.setProps({ onInsert });
+
+    await wrapper.find('[data-testid="insert-drawer-variant-decorated"]').trigger("click");
+    await nextTick();
+
+    await wrapper.find('[data-testid="param-input-author"]').setValue("鲁迅");
+    await nextTick();
+
+    await wrapper.find('[data-testid="insert-drawer-submit"]').trigger("click");
+    await nextTick();
+
+    expect(onInsert).toHaveBeenCalledOnce();
+    const [directive] = onInsert.mock.calls[0] as [string];
+    expect(directive).toContain(".decorated");
+    expect(directive).toContain('author="鲁迅"');
+
+    const result = await renderMarkdown(directive, { themeId: "default" });
+    expect(result.html).toContain("鲁迅");
+    wrapper.unmount();
+  });
+
+  it("未选择变体（保持默认）时插入生成的指令文本不含变体 class", async () => {
+    const onInsert = vi.fn();
+    const wrapper = await selectRealBlock("pull-quote");
+    await wrapper.setProps({ onInsert });
+
+    await wrapper.find('[data-testid="param-input-author"]').setValue("鲁迅");
+    await nextTick();
+    await wrapper.find('[data-testid="insert-drawer-submit"]').trigger("click");
+    await nextTick();
+
+    const [directive] = onInsert.mock.calls[0] as [string];
+    expect(directive).not.toContain(".decorated");
+    expect(directive).toContain('author="鲁迅"');
+    wrapper.unmount();
+  });
+});
+
+describe("T-165 AC-003: shape 字段提取收敛为共用 util，跨组件结果一致", () => {
+  beforeEach(async () => {
+    resetBlockRegistry();
+    await import("@wechat-flow/blocks");
+  });
+
+  it("dialog 的参数字段集合（speaker/avatar）与 describeBlock 返回的 directiveAttrs.shape 键集合一致", async () => {
+    const wrapper = await selectRealBlock("dialog");
+    const block = describeBlock("dialog");
+    if (!block) throw new Error("dialog not registered");
+    const shapeKeys = Object.keys(
+      (block.directiveAttrs as unknown as { shape: Record<string, unknown> }).shape
+    );
+    expect(renderedParamFieldKeys(wrapper)).toEqual(shapeKeys);
     wrapper.unmount();
   });
 });

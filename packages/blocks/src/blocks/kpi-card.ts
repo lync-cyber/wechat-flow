@@ -4,13 +4,7 @@ import { defineBlock } from "../factory.ts";
 export const kpiCard = defineBlock(
   "kpi-card",
   "数据指标卡",
-  z.object({
-    label: z.string(),
-    value: z.string(),
-    unit: z.string().optional(),
-    trend: z.enum(["up", "down", "flat"]).optional(),
-    description: z.string().optional(),
-  }),
+  z.object({}).strict(),
   "structured",
   [
     { id: "default", label: "标准指标卡" },

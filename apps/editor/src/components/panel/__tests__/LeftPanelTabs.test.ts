@@ -278,7 +278,7 @@ describe("AC-004: BlockLibItem onInsert 回调", () => {
       id: "heading",
       name: "标题",
       category: "text" as const,
-      attrsSchema: z.object({}),
+      directiveAttrs: z.object({}),
       variants: [],
       slots: ["root"],
     };
@@ -300,7 +300,7 @@ describe("AC-004: BlockLibItem onInsert 回调", () => {
       id: "heading",
       name: "标题块",
       category: "text" as const,
-      attrsSchema: z.object({}),
+      directiveAttrs: z.object({}),
       variants: [
         { id: "v1", label: "皮肤1" },
         { id: "v2", label: "皮肤2" },
@@ -322,7 +322,7 @@ describe("AC-004: BlockLibItem onInsert 回调", () => {
       id: "heading",
       name: "标题",
       category: "text" as const,
-      attrsSchema: z.object({}),
+      directiveAttrs: z.object({}),
       variants: [{ id: "v1" }, { id: "v2" }, { id: "v3" }],
       slots: ["root"],
     };
@@ -345,7 +345,7 @@ describe("AC-004: LeftPanelTabs 内 BlockLibItem 插入接线", () => {
       id: "heading",
       name: "标题",
       category: "text",
-      attrsSchema: z.object({}),
+      directiveAttrs: z.object({}),
       variants: [],
       slots: ["root"],
     });
@@ -375,6 +375,112 @@ describe("AC-004: LeftPanelTabs 内 BlockLibItem 插入接线", () => {
     );
     const source = readFileSync(shellPath, "utf-8");
     expect(source).toMatch(/<LeftPanelTabs[^>]*:on-insert-block="onInsertDirective"/s);
+  });
+});
+
+describe("AC-001: 左栏收纳 rail 形态（UC-006）", () => {
+  beforeEach(() => {
+    resetThemeRegistry();
+    registerTheme({ id: "default", name: "简约通用", tokens: {}, paintable: {}, assets: {} });
+  });
+
+  it("collapsed=false 时渲染展开态 Tab 头 + 收起按钮，不渲染 rail", async () => {
+    const wrapper = mount(LeftPanelTabs, {
+      props: { defaultTab: "theme", collapsed: false },
+      global: { plugins: [makeRouter()] },
+    });
+    await nextTick();
+
+    expect(wrapper.find('[data-testid="tab-theme"]').exists()).toBe(true);
+    expect(wrapper.find('[data-testid="collapse-btn"]').exists()).toBe(true);
+    expect(wrapper.find('[data-testid="left-panel-rail"]').exists()).toBe(false);
+  });
+
+  it("collapsed=true 时渲染 rail 且不渲染展开态 Tab 头", async () => {
+    const wrapper = mount(LeftPanelTabs, {
+      props: { defaultTab: "theme", collapsed: true },
+      global: { plugins: [makeRouter()] },
+    });
+    await nextTick();
+
+    expect(wrapper.find('[data-testid="left-panel-rail"]').exists()).toBe(true);
+    expect(wrapper.find('[data-testid="tab-theme"]').exists()).toBe(false);
+    expect(wrapper.find('[data-testid="collapse-btn"]').exists()).toBe(false);
+  });
+
+  it("rail 态渲染三个语义图标（主题/组件/文档）+ 展开按钮", async () => {
+    const wrapper = mount(LeftPanelTabs, {
+      props: { defaultTab: "theme", collapsed: true },
+      global: { plugins: [makeRouter()] },
+    });
+    await nextTick();
+
+    expect(wrapper.find('[data-testid="rail-icon-theme"]').exists()).toBe(true);
+    expect(wrapper.find('[data-testid="rail-icon-components"]').exists()).toBe(true);
+    expect(wrapper.find('[data-testid="rail-icon-docs"]').exists()).toBe(true);
+    expect(wrapper.find('[data-testid="rail-expand-btn"]').exists()).toBe(true);
+  });
+
+  it("点击收起按钮时 onCollapsedChange 以 true 调用", async () => {
+    const onCollapsedChange = vi.fn();
+    const wrapper = mount(LeftPanelTabs, {
+      props: { defaultTab: "theme", collapsed: false, onCollapsedChange },
+      global: { plugins: [makeRouter()] },
+    });
+    await nextTick();
+
+    await wrapper.find('[data-testid="collapse-btn"]').trigger("click");
+    await nextTick();
+
+    expect(onCollapsedChange).toHaveBeenCalledWith(true);
+  });
+
+  it("点击 rail 展开按钮时 onCollapsedChange 以 false 调用", async () => {
+    const onCollapsedChange = vi.fn();
+    const wrapper = mount(LeftPanelTabs, {
+      props: { defaultTab: "theme", collapsed: true, onCollapsedChange },
+      global: { plugins: [makeRouter()] },
+    });
+    await nextTick();
+
+    await wrapper.find('[data-testid="rail-expand-btn"]').trigger("click");
+    await nextTick();
+
+    expect(onCollapsedChange).toHaveBeenCalledWith(false);
+  });
+
+  it("点击 rail 图标（组件）时展开面板并激活对应 Tab", async () => {
+    const onCollapsedChange = vi.fn();
+    const onTabChange = vi.fn();
+    const wrapper = mount(LeftPanelTabs, {
+      props: { defaultTab: "theme", collapsed: true, onCollapsedChange, onTabChange },
+      global: { plugins: [makeRouter()] },
+    });
+    await nextTick();
+
+    await wrapper.find('[data-testid="rail-icon-components"]').trigger("click");
+    await nextTick();
+
+    expect(onCollapsedChange).toHaveBeenCalledWith(false);
+    expect(onTabChange).toHaveBeenCalledWith("components");
+  });
+
+  it("点击 rail 图标后，父级据 onCollapsedChange 将 collapsed 翻为 false，展开后对应 Tab 处于 active 态", async () => {
+    listDocumentsMock.mockResolvedValue([]);
+    const wrapper = mount(LeftPanelTabs, {
+      props: { defaultTab: "theme", collapsed: true },
+      global: { plugins: [makeRouter()] },
+    });
+    await nextTick();
+
+    await wrapper.find('[data-testid="rail-icon-docs"]').trigger("click");
+    await nextTick();
+    await wrapper.setProps({ collapsed: false });
+    await nextTick();
+
+    expect(wrapper.find('[data-testid="tab-docs"]').classes()).toContain(
+      "left-panel-tabs__tab--active"
+    );
   });
 });
 

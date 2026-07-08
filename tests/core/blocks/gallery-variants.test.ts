@@ -23,25 +23,25 @@ function galleryMarkdown(
 }
 
 function extractRowChunks(html: string): string[] {
-  const openTagRe = /<div data-block="gallery" data-variant="[^"]*"[^>]*>/g;
+  const openTagRe = /<section data-block="gallery" data-variant="[^"]*"[^>]*>/g;
   const rootMatch = openTagRe.exec(html);
   expect(rootMatch, `no gallery root found in html: ${html}`).not.toBeNull();
-  const rowOpenRe = /<div style="([^"]*display: table-row[^"]*)">/g;
+  const rowOpenRe = /<section style="([^"]*display: table-row[^"]*)">/g;
   return [...html.matchAll(rowOpenRe)].map((m) => m[0]);
 }
 
 function extractRowStyles(html: string): string[] {
-  const rowOpenRe = /<div style="([^"]*display: table-row[^"]*)">/g;
+  const rowOpenRe = /<section style="([^"]*display: table-row[^"]*)">/g;
   return [...html.matchAll(rowOpenRe)].map((m) => m[1]);
 }
 
 function extractCellStyles(html: string): string[] {
-  const cellOpenRe = /<div style="([^"]*display: table-cell[^"]*)">/g;
+  const cellOpenRe = /<section style="([^"]*display: table-cell[^"]*)">/g;
   return [...html.matchAll(cellOpenRe)].map((m) => m[1]);
 }
 
 function extractCaptionStyles(html: string): string[] {
-  const captionRe = /<div style="([^"]*text-align: center[^"]*)">/g;
+  const captionRe = /<section style="([^"]*text-align: center[^"]*)">/g;
   return [...html.matchAll(captionRe)].map((m) => m[1]);
 }
 

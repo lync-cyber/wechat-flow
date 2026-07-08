@@ -4,12 +4,7 @@ import { defineBlock } from "../factory.ts";
 export const miniprogramCard = defineBlock(
   "miniprogram-card",
   "小程序卡片",
-  z.object({
-    appId: z.string(),
-    path: z.string(),
-    title: z.string(),
-    thumbnail: z.string().optional(),
-  }),
+  z.object({}).strict(),
   "marketing",
   [
     { id: "default", label: "标准小程序卡片" },

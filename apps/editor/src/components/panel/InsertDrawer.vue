@@ -2,6 +2,7 @@
 import type { BlockCategory, BlockDefinition } from "@wechat-flow/core";
 import { listBlocks } from "@wechat-flow/core";
 import { computed, ref, watch } from "vue";
+import { getDirectiveAttrFields } from "../../lib/directive-attr-fields.ts";
 import BlockLibItem from "./BlockLibItem.vue";
 import { CATEGORY_LABELS, CATEGORY_ORDER } from "./category-labels.ts";
 
@@ -42,36 +43,37 @@ function selectCategory(category: BlockCategory): void {
 }
 
 const selectedBlock = ref<BlockDefinition | null>(null);
+const selectedVariantId = ref<string | null>(null);
 const paramValues = ref<Record<string, string>>({});
 
 function selectBlock(block: BlockDefinition): void {
   selectedBlock.value = block;
+  selectedVariantId.value = null;
   paramValues.value = {};
 }
 
-function buildDirective(block: BlockDefinition, params: Record<string, string>): string {
+function buildDirective(
+  block: BlockDefinition,
+  params: Record<string, string>,
+  variantId: string | null
+): string {
+  const classPart = variantId && variantId !== "default" ? `.${variantId}` : "";
   const attrs = Object.entries(params)
     .filter(([, v]) => v.trim() !== "")
     .map(([k, v]) => `${k}="${v}"`)
     .join(" ");
-  const attrStr = attrs ? `{${attrs}}` : "";
-  return `:::${block.id}${attrStr}\n内容\n:::`;
+  const attrStr = [classPart, attrs].filter((s) => s !== "").join(" ");
+  return `:::${block.id}${attrStr ? `{${attrStr}}` : ""}\n内容\n:::`;
 }
 
 function handleInsert(): void {
   if (!selectedBlock.value) return;
-  const directive = buildDirective(selectedBlock.value, paramValues.value);
+  const directive = buildDirective(selectedBlock.value, paramValues.value, selectedVariantId.value);
   props.onInsert(directive);
 }
 
 function getParamFields(block: BlockDefinition): Array<{ key: string; type: string }> {
-  try {
-    const shape = (block.attrsSchema as { shape?: Record<string, unknown> }).shape;
-    if (!shape) return [];
-    return Object.keys(shape).map((key) => ({ key, type: "text" }));
-  } catch {
-    return [];
-  }
+  return getDirectiveAttrFields(block).map((key) => ({ key, type: "text" }));
 }
 </script>
 
@@ -129,6 +131,21 @@ function getParamFields(block: BlockDefinition): Array<{ key: string; type: stri
       data-testid="insert-drawer-params"
     >
       <div class="insert-drawer__params-title">{{ selectedBlock.name }} 参数</div>
+      <div
+        v-if="selectedBlock.variants.length > 0"
+        class="insert-drawer__variant-row"
+        data-testid="insert-drawer-variant-row"
+      >
+        <button
+          v-for="variant in selectedBlock.variants"
+          :key="variant.id"
+          type="button"
+          class="insert-drawer__variant-btn"
+          :class="{ 'insert-drawer__variant-btn--active': variant.id === selectedVariantId }"
+          :data-testid="`insert-drawer-variant-${variant.id}`"
+          @click="selectedVariantId = selectedVariantId === variant.id ? null : variant.id"
+        >{{ variant.label ?? variant.id }}</button>
+      </div>
       <div
         v-for="field in getParamFields(selectedBlock)"
         :key="field.key"
@@ -278,6 +295,28 @@ function getParamFields(block: BlockDefinition): Array<{ key: string; type: stri
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-secondary);
+}
+
+.insert-drawer__variant-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.insert-drawer__variant-btn {
+  padding: 2px var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-elevated);
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.insert-drawer__variant-btn--active {
+  border-color: var(--color-brand);
+  color: var(--color-brand);
+  font-weight: var(--font-weight-medium);
 }
 
 .insert-drawer__param-row {

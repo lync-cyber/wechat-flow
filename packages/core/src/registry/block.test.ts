@@ -27,7 +27,7 @@ describe("BlockDefinition.category", () => {
         id: `block-${category}`,
         name: `Block ${category}`,
         category,
-        attrsSchema: z.object({}),
+        directiveAttrs: z.object({}),
         variants: [],
         slots: ["root"],
       };
@@ -41,7 +41,7 @@ describe("BlockDefinition.category", () => {
     const definition: BlockDefinition = {
       id: "block-no-category",
       name: "Block No Category",
-      attrsSchema: z.object({}),
+      directiveAttrs: z.object({}),
       variants: [],
       slots: ["root"],
     };
@@ -76,7 +76,7 @@ describe("registerBlock root slot validation (regression)", () => {
       id: "block-bad-basestyle",
       name: "Block Bad BaseStyle",
       category: "text",
-      attrsSchema: z.object({}),
+      directiveAttrs: z.object({}),
       variants: [],
       baseStyle: { header: { color: "#000000" } },
       slots: ["root", "header"],
@@ -89,7 +89,7 @@ describe("registerBlock root slot validation (regression)", () => {
       id: "block-bad-slots",
       name: "Block Bad Slots",
       category: "text",
-      attrsSchema: z.object({}),
+      directiveAttrs: z.object({}),
       variants: [],
       slots: ["header"],
     };
@@ -101,7 +101,7 @@ describe("registerBlock root slot validation (regression)", () => {
       id: "block-good",
       name: "Block Good",
       category: "media",
-      attrsSchema: z.object({}),
+      directiveAttrs: z.object({}),
       variants: [],
       baseStyle: { root: { color: "#111111" } },
       slots: ["root"],

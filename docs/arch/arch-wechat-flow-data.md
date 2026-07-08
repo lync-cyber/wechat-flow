@@ -1,6 +1,6 @@
 ---
 id: "arch-wechat-flow-data"
-version: "0.6.1"
+version: "0.6.2"
 doc_type: arch
 author: architect
 status: approved
@@ -184,7 +184,7 @@ erDiagram
 | name | string | required | 包名 |
 | version | string | required，semver | pack 版本 |
 | manifest | object | required | manifest 描述（kind: `plugin`/`theme`、entry、permissions、白名单声明） |
-| schemas | object | optional | 注册的 Block / Mark / Theme 的 attrsSchema 集合 |
+| schemas | object | optional | 插件注册的 Block 结构化 `attrsSchema`（M-007 plugin-api 数据模型）与 Theme schema 集合；内置 Block 的指令域 `directiveAttrs` 归 core 注册中心（M-005），不落此字段 |
 | variants | array | optional | 注册的 variant 列表（含 namespace 前缀） |
 | rulePatches | array | optional | 注册的规则补丁列表 |
 | dependencies | object | optional | 对其他 pack / theme / token 的依赖声明 |
@@ -309,7 +309,7 @@ CREATE INDEX IF NOT EXISTS idx_upload_job_id ON upload_records(job_id);
 | id | string | PK，uuid v4 | 诊断报告 ID |
 | documentId | string | optional，FK→Document | 关联文档（编辑器侧）；MCP server 调用方式下为 null |
 | versionTriple | string | required | 序列化的 `{coreVersion, themeVersion, rulesetVersion}` |
-| diagnostics | array | required | `Diagnostic[]`，含每项 `{severity, ruleId?, nodeRef?, message}` |
+| diagnostics | array | required | `Diagnostic[]`，含每项 `{severity, ruleId?, nodeRef?, message}`；UC-013 兼容性 / 可读性 / 违规词三组的判别依据 `ruleId`（判别契约见 arch#§2.M-003 DiagnosticReport 数据类型段），不引入分组字段 |
 | nodeDiffs | array | optional | M-004 粘贴过滤模拟产出的逐节点差异（F-002 AC-006，复制路径触发） |
 | nodeChangeRecords | array | required（可为空数组） | `NodeChangeRecord[]`，含每项 `{nodeSelector, before (outerHTML), after (outerHTML), attrDiff: AttrDiffEntry[], triggerRuleId}`；由 M-003 在执行 strip / clamp / transform / patch 作用域规则时记录；M-001 UC-013.1 CompatibilityDiffView 据此渲染双栏对比 |
 | nightRiskIssues | array | required（可为空数组） | `NightRiskEntry[]`，含每项 `{nodeSelector, contrastRatio, foreground, background, suggestion}`；由 M-003 `lint/readability.ts` 在节点遍历时对 `contrastRatio < 4.5` (WCAG AA) 节点产；M-001 DiagnosticsPanel `night-risk-alert` 状态据此激活 |

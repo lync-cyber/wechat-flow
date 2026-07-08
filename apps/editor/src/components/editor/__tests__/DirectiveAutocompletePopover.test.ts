@@ -1,6 +1,7 @@
 import { mount } from "@vue/test-utils";
 import type { BlockDefinition, MarkDefinition } from "@wechat-flow/core";
-import { describe, expect, it, vi } from "vitest";
+import { describeBlock, resetBlockRegistry } from "@wechat-flow/core";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
 import { z } from "zod";
 import { CATEGORY_LABELS, CATEGORY_ORDER } from "../../panel/category-labels.ts";
@@ -11,7 +12,7 @@ const BLOCKS: BlockDefinition[] = [
     id: "callout",
     name: "提示框",
     category: "emphasis",
-    attrsSchema: z.object({ text: z.string() }),
+    directiveAttrs: z.object({ text: z.string() }),
     variants: [],
     slots: ["root"],
   },
@@ -19,7 +20,7 @@ const BLOCKS: BlockDefinition[] = [
     id: "heading",
     name: "标题",
     category: "text",
-    attrsSchema: z.object({ text: z.string() }),
+    directiveAttrs: z.object({ text: z.string() }),
     variants: [],
     slots: ["root"],
   },
@@ -27,7 +28,7 @@ const BLOCKS: BlockDefinition[] = [
     id: "quote",
     name: "引用",
     category: "text",
-    attrsSchema: z.object({ text: z.string() }),
+    directiveAttrs: z.object({ text: z.string() }),
     variants: [],
     slots: ["root"],
   },
@@ -202,6 +203,51 @@ describe("UC-021 分类标签行: 数据驱动派生、点击过滤、与搜索�
     await nextTick();
 
     expect(wrapper.findAll('[data-testid="autocomplete-item"]').length).toBe(BLOCKS.length);
+    wrapper.unmount();
+  });
+});
+
+describe("T-165 AC-003: shape 字段提取收敛为共用 util，Popover 显示与 directiveAttrs.shape 一致（真实内置 Block）", () => {
+  beforeEach(async () => {
+    resetBlockRegistry();
+    await import("@wechat-flow/blocks");
+  });
+
+  it("选中 dialog 后二级参数区显示的字段集合与 directiveAttrs.shape 键集合一致（speaker/avatar）", async () => {
+    const dialogBlock = describeBlock("dialog");
+    if (!dialogBlock) throw new Error("dialog not registered");
+
+    const wrapper = mount(DirectiveAutocompletePopover, {
+      props: { ...defaultProps(), blocks: [dialogBlock], marks: [] },
+    });
+    await nextTick();
+
+    await wrapper.find('[data-testid="autocomplete-item"]').trigger("click");
+    await nextTick();
+
+    const shapeKeys = Object.keys(
+      (dialogBlock.directiveAttrs as unknown as { shape: Record<string, unknown> }).shape
+    );
+    const fields = wrapper
+      .findAll('[data-testid^="autocomplete-param-"]')
+      .map((el) => el.attributes("data-testid")?.replace("autocomplete-param-", ""));
+    expect(fields).toEqual(shapeKeys);
+    wrapper.unmount();
+  });
+
+  it("选中 callout（空 directiveAttrs）后不显示参数区", async () => {
+    const calloutBlock = describeBlock("callout");
+    if (!calloutBlock) throw new Error("callout not registered");
+
+    const wrapper = mount(DirectiveAutocompletePopover, {
+      props: { ...defaultProps(), blocks: [calloutBlock], marks: [] },
+    });
+    await nextTick();
+
+    await wrapper.find('[data-testid="autocomplete-item"]').trigger("click");
+    await nextTick();
+
+    expect(wrapper.find('[data-testid="autocomplete-params"]').exists()).toBe(false);
     wrapper.unmount();
   });
 });
