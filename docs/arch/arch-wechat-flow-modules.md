@@ -1,6 +1,6 @@
 ---
 id: "arch-wechat-flow-modules"
-version: "0.9.3"
+version: "0.9.4"
 doc_type: arch
 author: architect
 status: approved
@@ -51,7 +51,7 @@ required_sections:
   | 2 | transform | mdast → hast | `pipeline/transform.ts` | rehype 适配 + directive 展开 + `data-{block}-{attr}` 透传 + `decorate` 钩子（见「通用渲染机制」） |
   | 3 | dividerDecorations | hast → hast | `pipeline/divider-decoration.ts` | divider SVG 装饰变体注入（主题相关）；置于 sanitize（stage 4）之前——`<hr>`→SVG 容器结构须先生成，方能被 `wechatFlowSanitizeSchema` 作为合法结构校验放行；其余七类装饰（stage 9）仅注槽位/字面样式、不改可被 sanitize 拦截的标签结构，故置样式合成后 |
   | 4 | sanitize | hast → hast | `pipeline/sanitize.ts` | rehype-sanitize + wechatFlowSanitizeSchema（profile 参数）；hast 下游**单一守门点** |
-  | 5 | **ruleset — authoring 相** | hast → hast | `applyRuleset(hast, rules, "authoring")` | 作者输入域：script/style/js-events/id/data/aria 结构清理 + keyword-lint，源位置诊断在此保真；样式合成前 |
+  | 5 | **ruleset — authoring 相** | hast → hast | `applyRuleset(hast, rules, "authoring")` | 作者输入域：script/style/js-events/id/data/aria 结构清理，源位置诊断在此保真；样式合成前。keyword-lint 作用于 Markdown 源文本、独立调用，不在此 stage（见规则语义域契约） |
   | 6 | injectNodeIds | hast → hast | `pipeline/node-id-injector.ts` | 条件（`options.injectNodeIds`），注入 `data-node-id` 供 UC-013.1 diff view |
   | 7 | inlineStyle | hast → hast | `pipeline/inline-style.ts` | L1 block base-style ⊕ L2 主题 token override 分层合成（§8.2 Q3.15）+ 容器 typography 下推 |
   | 8 | contextAwareRender | hast → hast | `pipeline/context-aware-renderer.ts` | 上下文敏感渲染（`{{tokenId}}` SVG 注入、侧位交替等） |
@@ -61,7 +61,7 @@ required_sections:
   | 12 | collectNightRiskIssues | hast → DiagnosticReport | `packages/core/src/pipeline/readability.ts` | 对 stage 11 output 相之后的**最终树**算夜间风险 / 对比度（消费真实产物计算样式）；仅产 `nightRiskIssues`，readability-* 三条字号/行高/段长诊断由 stage 11 `applyRuleset(...,"output")` 产出，不在此重复 |
   | 13 | serialize | hast → string | `pipeline/serialize.ts` | canonical 稳定排序字符串化 |
 
-  `composeRender` 输出 = stage 13 结束的 inline-styled HTML（`postPaste: false`）。**不在 renderMarkdown 主路径执行独立 M-004 walker**——output 相（stage 11）已对产物建模平台合规；composeCopy 路径经 M-004 `simulatePaste`（= M-003 output 域规则集 predict 模式）对最终产物做预测 + per-node diff。两相分域依据、43 条规则 stage 归属、开闸风险与用户决策矩阵见 §2.M-003 附录 A / B。
+  `composeRender` 输出 = stage 13 结束的 inline-styled HTML（`postPaste: false`）。**不在 renderMarkdown 主路径执行独立 M-004 walker**——output 相（stage 11）已对产物建模平台合规；composeCopy 路径经 M-004 `simulatePaste`（= M-003 output 域规则集 predict 模式）对最终产物做预测 + per-node diff。两相分域依据、45 条规则 stage 归属、开闸风险与用户决策矩阵见 §2.M-003 附录 A / B。
 - **两相执行契约**: authoring 相与 output 相共用单一注册表 `applyRuleset(hast, rules, stage)` 按 `RuleDefinition.stage` 过滤执行；authoring 相位于 inlineStyle 之前（作者输入域，保留源位置诊断），output 相位于全部样式合成 / 装饰注入 / customCss 之后、serialize 之前（产物合规域，serialize 前最后一个树变换）。规则 stage 归属由 metadata 显式声明（无缺省），归域裁定见 §2.M-003 附录 A。output 相对样式合成 / 装饰 / customCss 生成的声明建模平台过滤——主题 tag 样式的 `font-family`、pull-quote 槽位的 `position: relative` 等声明在样式合成后方存在，仅 output 相可见并拦截；置于 authoring 相（inlineStyle 之前）的产物合规规则对这些生成声明不可见。
 - **收敛不变量**: `simulatePaste(render(x)).nodeDiffs === []`（视觉域比较，忽略 `data-node-id` 等非视觉脚手架属性）对自家产物全 specimen 集成立——render 的 output 相已将产物落到平台稳定态，M-004 output 域 predict 再跑零变更。是 PRD 产品契约「粘贴过滤后视觉一致」的机器可验证形式，入 CI 性质测试（详 §2.M-004、§2.M-003 收敛不变量条）。
 - **目标平台 profile**: output 域规则集 + 平台常量（`@wechat-flow/contracts` `platform/wechat-paste.ts`：`WECHAT_PASTE_UNSAFE_TAGS` / `WECHAT_PASTE_STRIPPED_STYLE_PROPS`）+ sanitize schema 参数统一由 target profile 承载，`wechat` 为首个 profile；为未来多平台 / 长图导出预留——`font-family` 按 profile 分治：wechat profile 开启 `strip-font-family` 剥除，非微信 profile（长图导出等）保留（详 §2.M-003 附录 B 决策①）。
@@ -289,7 +289,7 @@ required_sections:
 - **内部关键组件**:
   - `registry/theme.ts`、`block.ts`、`mark.ts`、`variant.ts`、`token.ts` — 五类注册表
   - `registry/template.ts` — template 注册中心；存储结构 `Map<themeId, Map<templateId, TemplateDef>>`；支持 `defineTheme.templates: Record<TemplateId, TemplateDef>` 嵌套与 `defineTemplate({ themeId, templateId, render })` 独立 API 两路注册；同名 templateId 在不同 themeId 下互相隔离
-  - `guard/nine-dimensions.ts` — 主题守护 9 维校验；维度清单：基线选择器密度、核心 block 覆盖率、token 覆盖率、跨主题身份 token 防碰撞、元数据完整性、theme.css 属性合规、WCAG 对比度自动校验（阈值 4.5，WCAG AA 文本基准，与 M-003 `lint/readability.ts` 一致；同一 token 在守护通过后运行时不会复现 `nightRiskIssues`）、装饰资产完整性、内置 template 完整性
+  - `guard/nine-dimensions.ts` — 主题守护 9 维校验；维度清单：基线选择器密度、核心 block 覆盖率、token 覆盖率、跨主题身份 token 防碰撞、元数据完整性、theme.css 属性合规、WCAG 对比度自动校验（阈值 4.5，WCAG AA 文本基准，与 M-002 `pipeline/readability.ts` 夜间风险/对比度收集器阈值一致；同一 token 在守护通过后运行时不会复现 `nightRiskIssues`）、装饰资产完整性、内置 template 完整性
   - `guard/validate-theme-templates.ts` — 9 维新维度执行器：`validateThemeTemplates(themeId: string): ThemeTemplateValidationResult`；调用 `listThemeTemplates(themeId)` 取该主题全部 template，对每个 template 调 `validateTemplateCoverage(themeId, templateId)`，任一未覆盖即记 `pass: false` 与缺失项；单元测试位于 `packages/core/src/theme-guard/template-coverage.test.ts`
   - `inheritance/delta-merge.ts` — 主题继承 + delta 合并（F-009）；继承时 templates 字典亦按 delta 合并
   - `brand-pack/lock.ts` — 品牌包字体 / 配色 / 组件子集锁定
