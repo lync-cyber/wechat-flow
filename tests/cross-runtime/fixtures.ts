@@ -64,7 +64,7 @@ export async function computeFixtureHashes(
 // for byte. Regenerate with `pnpm gen:cross-runtime-hashes` when render output
 // legitimately changes.
 export const EXPECTED_HASHES: Record<string, string> = {
-  "cjk-heading": "cb9c01f45dd71b185679da34d89f41ce61783e032e3458fff56480a09d2ebf56",
-  "block-directive": "2abef30387135a288e74d85c90c2cbdeb19c9a40f15b0b07926601ddfafcad3a",
-  frontmatter: "2ef5c926e08a94dfc926902ca9c60c709526610a58d932497ed8b8b08e16876e",
+  "cjk-heading": "8650b22716773748e56a36f754c72ebb83d561895e4f2e8f62a61cf51859e9aa",
+  "block-directive": "9e65c0927fcc6956a20c9fc3f54227940988c5cd6bd948ab2a0d61f6353615f3",
+  frontmatter: "8d3eebcff21e9e92c0b9083a2e93aef0d4788f53e388dd181c0b06c4742d0a7e",
 };

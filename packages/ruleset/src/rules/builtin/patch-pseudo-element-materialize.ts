@@ -15,7 +15,7 @@ function hasPseudoElementStyle(node: Node): boolean {
 const patchPseudoElementMaterialize: RuleDefinition = {
   id: "patch-pseudo-element-materialize",
   scope: "lint",
-  stage: "authoring",
+  stage: "output",
   priority: 50,
   matcher: hasPseudoElementStyle,
   transform: (node: Node): Node => node,

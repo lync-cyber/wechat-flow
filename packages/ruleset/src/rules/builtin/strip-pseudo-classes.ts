@@ -13,7 +13,7 @@ function getStyle(node: Node): string | undefined {
 const stripPseudoClasses: RuleDefinition = {
   id: "strip-pseudo-classes",
   scope: "strip",
-  stage: "authoring",
+  stage: "output",
   priority: 70,
   matcher: (node) => {
     const style = getStyle(node);

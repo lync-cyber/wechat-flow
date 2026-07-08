@@ -161,10 +161,11 @@ required_sections:
 
 规则清册核实：`packages/ruleset/src/rules/builtin/` 42 条（metadata 支撑）+ `rules/readability/` 3 条 = 45 条注册；减 `strip-width-height-inline`（已裁移除）= 44 条参与两相执行。**归属依据**判据：目标构造是否由样式合成 / 装饰 / customCss **生成**（生成→output），或迁 output 是否破坏管线语义脚手架（破坏→authoring）。**开闸风险** = 迁至 output 相后对现有生成样式的预期命中，是开闸时逐组基线 diff 审计的预警。
 
-##### A.1 authoring 相（作者输入域，6 条 + keyword-lint）——不迁移
+##### A.1 authoring 相（作者输入域，7 条 + keyword-lint）——不迁移
 
 | ruleId | scope | 归属依据 | 不迁移理由 |
 |---|---|---|---|
+| transform-list-to-table | transform | 结构改写靶向作者输入 `<ul>`（非样式合成产物）；`ulToTable` 构造裸 `table/td`，须**前置于**表格样式 pass 方能被样式化 | 归域裁定（T-183 开闸审计）：迁 output 相则结构改写发生在 inlineStyle 之后，重建的裸 td 丢弃已施加的列表样式（实证 03/11 fixture 列表表格样式全失）。结构改写属 authoring 域，与 transform-ul-marker-type「取舍活跃者」取 table 策略 |
 | strip-script | strip | `<script>` 仅来自作者输入，管线从不生成 | 迁 output 无收益；与 sanitize 冗余的源结构清理，authoring 保留源位置诊断 |
 | strip-style-tag | strip | `<style>` 仅来自作者输入，管线从不生成 | 同上 |
 | strip-js-events | strip | `on*` 事件处理器仅来自作者输入 | 变更分析显式列 authoring；管线不生成事件属性 |
@@ -173,7 +174,7 @@ required_sections:
 | strip-aria-hidden | strip | `aria-hidden` 仅来自作者输入（已核实：divider/decoration 注入不产 aria-hidden） | 迁 output 无必要；注：现有 camelCase matcher 在真实解析路径 no-op（与归域正交，独立处理） |
 | keyword-lint（`lints/keyword-lint.ts`，非 `RuleDefinition`、不经 `applyRuleset` 分发） | lint | 违规词检测须映射作者源文位置；`lintMarkdown(content)` 作用于 Markdown 源文本 | 独立于两相注册表——语义域天然作者输入，源位置诊断在此保真；不计入 45 条注册、不占 stage 行 |
 
-##### A.2 output 相（产物合规域，38 条）——分组开闸
+##### A.2 output 相（产物合规域，37 条）——分组开闸
 
 | ruleId | scope | 归属依据（生成源） | 开闸风险（迁 output 后预期命中） |
 |---|---|---|---|
@@ -205,8 +206,7 @@ required_sections:
 | transform-svg-white-offset | transform | 装饰 SVG 注入纯白 #ffffff（divider/装饰） | 命中装饰 SVG 纯白——落 #fefefe（微信实测纯白光栅化透明风险），无争议；须核对 kpi-card #ffffff 是否 SVG 上下文 |
 | transform-svg-url-normalize | transform | 装饰 SVG `url("#x")` 引号 | 命中装饰 SVG url 片段引号 |
 | transform-data-uri-unquote | transform | data URI url() 引号（背景图生成） | 命中生成 data URI 引号 |
-| transform-ul-marker-type | transform | list-style-type 由主题生成，标记物化读生成值 | 命中主题列表样式；须在 inlineStyle 后读 list-style-type |
-| transform-list-to-table | transform | ul→table 结构合规（微信剥列表渲染） | 结构改写须迁移 li 生成 inline 样式至 td，复杂度高；与 transform-ul-marker-type 策略互斥，开闸审计取舍活跃者 |
+| transform-ul-marker-type | transform | list-style-type 由主题生成，标记物化读生成值 | 命中主题列表样式；须在 inlineStyle 后读 list-style-type；transform-list-to-table 归 authoring 后 ul 已转 table，本规则对列表内容惰性（table 策略活跃） |
 | patch-flex-to-block | patch | display:flex 可由 baseStyle 生成 | 命中生成 flex→block |
 | patch-pseudo-element-materialize | lint | ::before/::after 来自 customCss/主题装饰 | 诊断生成/customCss 伪元素；须置于 applyCustomCss 之后。`scope: lint`（非 patch）——伪元素物化仅能在 juice 处理后**诊断**而不改写树，故命名带 `patch-` 但作用域为 lint |
 | lint-filter-backdrop | lint | backdrop-filter 可由 baseStyle/customCss 生成 | 诊断生成 backdrop-filter |

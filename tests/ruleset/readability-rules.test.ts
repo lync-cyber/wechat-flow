@@ -75,7 +75,7 @@ describe("T-061 AC-001: readabilityRules exports 3 lint rules with correct scope
 // ── AC-002 + AC-004: readability-font-size-min ────────────────────────────────
 
 describe("T-061 AC-002/AC-004: readability-font-size-min produces message with actual vs threshold", () => {
-  it("positive: font-size:10px → diagnostic message contains '10px' and '12px'", () => {
+  it("positive: font-size:10px → diagnostic message contains '10px' and '14px'", () => {
     const rule = readabilityRules.find((r) => r.id === "readability-font-size-min");
     if (!rule) throw new Error("readability-font-size-min not found");
 
@@ -85,10 +85,10 @@ describe("T-061 AC-002/AC-004: readability-font-size-min produces message with a
 
     expect(diags).toHaveLength(1);
     expect(diags[0].message).toContain("10px");
-    expect(diags[0].message).toContain("12px");
+    expect(diags[0].message).toContain("14px");
   });
 
-  it("positive: font-size:8px → message matches 'font-size: 8px < min 12px'", () => {
+  it("positive: font-size:8px → message matches 'font-size: 8px < min 14px'", () => {
     const rule = readabilityRules.find((r) => r.id === "readability-font-size-min");
     if (!rule) throw new Error("readability-font-size-min not found");
 
@@ -96,7 +96,7 @@ describe("T-061 AC-002/AC-004: readability-font-size-min produces message with a
     if (!rule.diagnose) throw new Error("rule.diagnose missing");
     const diags = rule.diagnose(el);
 
-    expect(diags[0].message).toBe("font-size: 8px < min 12px");
+    expect(diags[0].message).toBe("font-size: 8px < min 14px");
   });
 
   it("positive: font-size:11px → diagnostic (boundary: < 12 means 11 is below)", () => {
@@ -111,7 +111,7 @@ describe("T-061 AC-002/AC-004: readability-font-size-min produces message with a
     expect(diags[0].message).toContain("11px");
   });
 
-  it("negative: font-size:14px → matcher returns false (no diagnostic)", () => {
+  it("negative: font-size:14px → exactly at threshold, no diagnostic", () => {
     const rule = readabilityRules.find((r) => r.id === "readability-font-size-min");
     if (!rule) throw new Error("readability-font-size-min not found");
 
@@ -119,12 +119,12 @@ describe("T-061 AC-002/AC-004: readability-font-size-min produces message with a
     expect(rule.matcher(el)).toBe(false);
   });
 
-  it("negative: font-size:12px → exactly at threshold, no diagnostic", () => {
+  it("positive: font-size:12px → below new threshold (决策②-i=14), diagnostic present", () => {
     const rule = readabilityRules.find((r) => r.id === "readability-font-size-min");
     if (!rule) throw new Error("readability-font-size-min not found");
 
     const el = makeElement("p", { style: "font-size:12px" });
-    expect(rule.matcher(el)).toBe(false);
+    expect(rule.matcher(el)).toBe(true);
   });
 
   it("negative: non-px font-size (em) → matcher returns false", () => {

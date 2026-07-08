@@ -24,7 +24,7 @@ function getParagraphLength(node: Node): number | null {
 const readabilityParagraphLength: RuleDefinition = {
   id: "readability-paragraph-length",
   scope: "lint",
-  stage: "authoring",
+  stage: "output",
   priority: 30,
   matcher: (node: Node): boolean => {
     const len = getParagraphLength(node);

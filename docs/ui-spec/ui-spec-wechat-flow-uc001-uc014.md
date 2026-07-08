@@ -192,8 +192,8 @@ required_sections:
 | `loading` | iframe 区域展示居中旋转 spinner（直径 `32px`，颜色 `--color-brand-muted`），背景 `--color-surface-preview` |
 | `populated` | iframe 正常显示渲染内容，无额外遮罩 |
 | `error` | iframe 区域替换为错误状态视图：居中 `!` 图标（`--color-error`，`48px`）+ 简短错误说明（`--font-sans`, 14px）+ 「重试」按钮（UC-003 primary variant） |
-| `night-risk-warning` | `nightMode='risk-preview'` 时激活：预览区背景变深底（`#1C1917`，模拟深色微信 UI 环境）；对比度低于阈值的节点添加 `--color-error` `2px dashed` outline 高亮；UC-013 DiagnosticsPanel 对应行高亮；顶部视口工具栏显示「夜间风险预览」标签（warning 色） |
-| `source-cursor-overlay` | 编辑器光标对应的预览节点添加 outline `--color-brand-highlight-outline`（`2px dashed #2D5A4E`）；scroll-into-view 中心对齐；节流 150ms debounce 防止高频重绘 |
+| `night-risk-warning` | `nightMode='risk-preview'` 时激活：预览区背景变深底（`#1c1917`，模拟深色微信 UI 环境）；对比度低于阈值的节点添加 `--color-error` `2px dashed` outline 高亮；UC-013 DiagnosticsPanel 对应行高亮；顶部视口工具栏显示「夜间风险预览」标签（warning 色） |
+| `source-cursor-overlay` | 编辑器光标对应的预览节点添加 outline `--color-brand-highlight-outline`（`2px dashed #2d5a4e`）；scroll-into-view 中心对齐；节流 150ms debounce 防止高频重绘 |
 
 **变体 (variant)**: 单一形态组件，无 variant 区分
 

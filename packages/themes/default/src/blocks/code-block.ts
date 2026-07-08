@@ -5,7 +5,7 @@ export const codeBlocks: ThemeBlocks = {
   code: {
     default: {
       "font-family": "'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace",
-      "background-color": "#F0EDE8",
+      "background-color": "#f0ede8",
       color: "#292524",
       padding: "2px 4px",
       "border-radius": "3px",

@@ -10,17 +10,17 @@ export const tableBlocks: ThemeBlocks = {
   th: {
     default: {
       padding: "8px 12px",
-      "background-color": "#F3F0EB",
-      color: "#1C1917",
+      "background-color": "#f3f0eb",
+      color: "#1c1917",
       "font-weight": "600",
-      border: "1px solid #D6D3CE",
+      border: "1px solid #d6d3ce",
     },
   },
   td: {
     default: {
       padding: "8px 12px",
-      border: "1px solid #D6D3CE",
-      color: "#1C1917",
+      border: "1px solid #d6d3ce",
+      color: "#1c1917",
     },
   },
 };

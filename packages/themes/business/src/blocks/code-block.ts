@@ -5,8 +5,8 @@ export const codeBlocks: ThemeBlocks = {
   code: {
     default: {
       "font-family": "'JetBrains Mono', 'Fira Code', monospace",
-      "background-color": "#EEF2F7",
-      color: "#0D1B2A",
+      "background-color": "#eef2f7",
+      color: "#0d1b2a",
       padding: "2px 4px",
       "border-radius": "3px",
       "font-size": "13px",
@@ -18,7 +18,7 @@ export const codeBlocks: ThemeBlocks = {
       get "background-color"() {
         return tokens["--color-code-block-bg"];
       },
-      color: "#0D1B2A",
+      color: "#0d1b2a",
       padding: "12px 16px",
       "border-radius": "4px",
       "font-size": "13px",

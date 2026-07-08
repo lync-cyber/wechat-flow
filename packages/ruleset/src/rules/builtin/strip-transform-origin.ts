@@ -6,7 +6,7 @@ const PROPS = ["transform-origin"];
 const stripTransformOrigin: RuleDefinition = {
   id: "strip-transform-origin",
   scope: "strip",
-  stage: "authoring",
+  stage: "output",
   priority: 80,
   matcher: (node) => hasStyleProp(node, PROPS),
   transform: (node) => removeCssDeclarations(node, PROPS),

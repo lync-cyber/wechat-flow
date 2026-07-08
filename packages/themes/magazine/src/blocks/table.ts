@@ -11,15 +11,15 @@ export const tableBlocks: ThemeBlocks = {
     default: {
       padding: "8px 12px",
       "background-color": "transparent",
-      color: "#1A1208",
+      color: "#1a1208",
       "font-weight": "700",
-      "border-bottom": "2px solid #D4521A",
+      "border-bottom": "2px solid #d4521a",
     },
   },
   td: {
     default: {
       padding: "8px 12px",
-      "border-bottom": "1px solid #E8D8C4",
+      "border-bottom": "1px solid #e8d8c4",
     },
   },
 };

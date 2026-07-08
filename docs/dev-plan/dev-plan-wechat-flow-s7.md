@@ -1695,15 +1695,15 @@ graph LR
 - **user_facing_critical_path**: true
 - **dependencies**: [T-182]
 - **acceptance_criteria**:
-  - [ ] AC-001: T-181 归域表中 output 域规则全部迁移完成，每组开闸附基线 diff 审计记录（命中清单 + 逐条裁定 + 处置）
-  - [ ] AC-002: font-family 用户决策落地（决策矩阵推荐项经用户确认）；若剥除：ui-spec §10.5 等字体条款 amendment 同步（owner=ui-designer），主题字体保留语义收窄至非微信 profile
-  - [ ] AC-003: clamp 阈值冲突清单逐项裁定落地（阈值修订须引权威依据，禁止拟合现状）
-  - [ ] AC-004: 开闸后生成样式（主题 tag 样式/块 baseStyle/槽位/装饰/customCss）全部经 output 相建模——以带违规声明的负向探针验证 output 相真实拦截
-  - [ ] AC-005: 全仓四门禁绿；基线更新逐条列依据
+  - [x] AC-001: T-181 归域表中 output 域规则全部迁移完成，每组开闸附基线 diff 审计记录（命中清单 + 逐条裁定 + 处置）
+  - [x] AC-002: font-family 用户决策落地（决策矩阵推荐项经用户确认）；若剥除：ui-spec §10.5 等字体条款 amendment 同步（owner=ui-designer），主题字体保留语义收窄至非微信 profile
+  - [x] AC-003: clamp 阈值冲突清单逐项裁定落地（阈值修订须引权威依据，禁止拟合现状）
+  - [x] AC-004: 开闸后生成样式（主题 tag 样式/块 baseStyle/槽位/装饰/customCss）全部经 output 相建模——以带违规声明的负向探针验证 output 相真实拦截
+  - [x] AC-005: 全仓四门禁绿；基线更新逐条列依据
 - **deliverables**:
-  - [ ] 43 条规则 stage 归域迁移
-  - [ ] 基线审计记录（随卡 code-review 或独立 CODE-SCAN 报告）
-  - [ ] ui-spec 字体条款 amendment（决策为剥除时）
+  - [x] 43 条规则 stage 归域迁移（37 output / transform-list-to-table 归域修正入 authoring）
+  - [x] 基线审计记录（CODE-SCAN-20260708-r2）
+  - [x] ui-spec 字体条款 amendment（决策为剥除时）
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-003
   - ui-spec-wechat-flow-block-variants#§10.5

@@ -4,7 +4,7 @@ export const dividerBlocks: ThemeBlocks = {
   hr: {
     default: {
       border: "none",
-      "border-top": "1px solid #D0D9E4",
+      "border-top": "1px solid #d0d9e4",
       margin: "24px 0",
     },
   },

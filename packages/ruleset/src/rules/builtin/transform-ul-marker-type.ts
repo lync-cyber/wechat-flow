@@ -31,7 +31,7 @@ function hasMarkerType(node: Node): boolean {
 const transformUlMarkerType: RuleDefinition = {
   id: "transform-ul-marker-type",
   scope: "transform",
-  stage: "authoring",
+  stage: "output",
   priority: 60,
   matcher: hasMarkerType,
   transform: (node: Node): Node => {

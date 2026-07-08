@@ -98,6 +98,11 @@ describe("T-014 AC-005 + T-015 AC-005 + SR-003: builtin fixture suite (all 42 ru
       } else {
         // non-lint rules: compare HTML output
         const actualHtml = toHtml(result.hast).trim();
+        if (process.env.UPDATE_FIXTURES) {
+          const { writeFile } = await import("node:fs/promises");
+          await writeFile(join(fixtureDir, "expected.html"), `${actualHtml}\n`, "utf-8");
+          return;
+        }
         const normalizedExpected = await normalizeHtml(expectedHtml);
         expect(actualHtml).toBe(normalizedExpected);
       }

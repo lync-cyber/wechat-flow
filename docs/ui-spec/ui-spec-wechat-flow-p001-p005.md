@@ -39,7 +39,7 @@ required_sections:
 │              │     │                               │     │                  │
 │ UC-006 左栏   │     │ UC-004 SourcePane              │     │ UC-005 PreviewPane│
 │ 固定 200px   │  S  │ auto（min 360px）              │  S  │ 固定 320px       │
-│              │  p  │ 背景 #FAF8F5                  │  p  │ 背景 #F7F7F7     │
+│              │  p  │ 背景 #faf8f5                  │  p  │ 背景 #f7f7f7     │
 │ Tab 1: 主题  │  l  │ 编辑器正文区                  │  l  │ iframe 沙箱      │
 │  UC-007 卡片  │  i  │                               │  i  │ 视口：375px      │
 │ Tab 2: 组件  │  t  │                               │  t  │                  │
@@ -55,7 +55,7 @@ required_sections:
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-视觉重心：编辑区（最亮暖白 `#FAF8F5`）是视觉重心，左栏（略深 `#F4F1EC`）与预览区（微冷 `#F7F7F7`）通过背景色梯度形成层次。三栏之间由 `4px` Splitter 连接，Splitter 颜色 `--color-border-subtle` 保证存在感低。
+视觉重心：编辑区（最亮暖白 `#faf8f5`）是视觉重心，左栏（略深 `#f4f1ec`）与预览区（微冷 `#f7f7f7`）通过背景色梯度形成层次。三栏之间由 `4px` Splitter 连接，Splitter 颜色 `--color-border-subtle` 保证存在感低。
 
 关键间距：
 - 左栏内边距：`var(--space-4)`（左右各 16px）

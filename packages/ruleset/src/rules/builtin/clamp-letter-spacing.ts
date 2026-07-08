@@ -8,7 +8,7 @@ const MAX_EM = 0.2;
 const clampLetterSpacing: RuleDefinition = {
   id: "clamp-letter-spacing",
   scope: "clamp",
-  stage: "authoring",
+  stage: "output",
   priority: 80,
   matcher: (node) => hasStyleProp(node, ["letter-spacing"]),
   transform: (node: Node): Node => {

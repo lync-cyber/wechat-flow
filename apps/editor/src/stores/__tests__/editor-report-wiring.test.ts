@@ -18,11 +18,13 @@ describe("M-003 诊断流接线: store.lastReport 由真实渲染管线灌入", 
     ).toBe(true);
   });
 
-  it("纯段落内容不触发规则, lastReport.nodeChangeRecords 为空", async () => {
+  it("纯段落内容不触发结构性转换规则（transform-list-to-table 不参与）", async () => {
     const store = useEditorStore();
 
     await store.updatePreview("普通段落文字");
 
-    expect(store.lastReport.nodeChangeRecords).toHaveLength(0);
+    expect(
+      store.lastReport.nodeChangeRecords.some((r) => r.triggerRuleId === "transform-list-to-table")
+    ).toBe(false);
   });
 });

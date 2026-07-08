@@ -13,7 +13,7 @@ export const mediaBlocks: ThemeBlocks = {
   },
   a: {
     default: {
-      color: "#C44011",
+      color: "#c44011",
       "text-decoration": "none",
     },
   },

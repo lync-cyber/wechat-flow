@@ -15,7 +15,7 @@ function hasFlexDisplay(node: Node): boolean {
 const patchFlexToBlock: RuleDefinition = {
   id: "patch-flex-to-block",
   scope: "patch",
-  stage: "authoring",
+  stage: "output",
   priority: 50,
   matcher: hasFlexDisplay,
   transform: (node: Node): Node => {

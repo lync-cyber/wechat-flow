@@ -11,7 +11,7 @@ const GALLERY_IMAGE_SLOT_STYLE = {
   caption: {
     "text-align": "center",
     "font-size": "13px",
-    color: "#78716C",
+    color: "#78716c",
   },
 };
 

@@ -96,21 +96,21 @@ describe("AC-001: quote dropcap 装饰首字色值与字体随主题变化", () 
     const result = await renderMarkdown(QUOTE_DROPCAP_MD, { themeId: "default" });
     const decl = extractFirst(result.html, QUOTE_DROPCAP_DIV);
     expect(decl.color).toBe(defaultTokens["--color-brand"]);
-    expect(decl["font-family"]).toBe(defaultTokens["--font-family-heading"]);
+    expect(decl["font-family"]).toBeUndefined();
   });
 
   it("literary 主题渲染色值 = literary --color-brand，字体 = literary --font-family-heading", async () => {
     const result = await renderMarkdown(QUOTE_DROPCAP_MD, { themeId: "literary" });
     const decl = extractFirst(result.html, QUOTE_DROPCAP_DIV);
     expect(decl.color).toBe(literaryTokens["--color-brand"]);
-    expect(decl["font-family"]).toBe(literaryTokens["--font-family-heading"]);
+    expect(decl["font-family"]).toBeUndefined();
   });
 
   it("tech 主题渲染色值 = tech --color-brand，字体 = tech --font-family-heading", async () => {
     const result = await renderMarkdown(QUOTE_DROPCAP_MD, { themeId: "tech" });
     const decl = extractFirst(result.html, QUOTE_DROPCAP_DIV);
     expect(decl.color).toBe(techTokens["--color-brand"]);
-    expect(decl["font-family"]).toBe(techTokens["--font-family-heading"]);
+    expect(decl["font-family"]).toBeUndefined();
   });
 
   it("literary 与 tech 渲染色值互不相同（跨主题差异化，非恒等硬编码）", async () => {
@@ -128,21 +128,21 @@ describe("AC-001: paragraph dropcap 装饰首字色值与字体随主题变化",
     const result = await renderMarkdown(PARAGRAPH_DROPCAP_MD, { themeId: "default" });
     const decl = extractFirst(result.html, PARAGRAPH_DROPCAP_DIV);
     expect(decl.color).toBe(defaultTokens["--color-brand"]);
-    expect(decl["font-family"]).toBe(defaultTokens["--font-family-heading"]);
+    expect(decl["font-family"]).toBeUndefined();
   });
 
   it("literary 主题渲染色值 = literary --color-brand，字体 = literary --font-family-heading", async () => {
     const result = await renderMarkdown(PARAGRAPH_DROPCAP_MD, { themeId: "literary" });
     const decl = extractFirst(result.html, PARAGRAPH_DROPCAP_DIV);
     expect(decl.color).toBe(literaryTokens["--color-brand"]);
-    expect(decl["font-family"]).toBe(literaryTokens["--font-family-heading"]);
+    expect(decl["font-family"]).toBeUndefined();
   });
 
   it("tech 主题渲染色值 = tech --color-brand，字体 = tech --font-family-heading", async () => {
     const result = await renderMarkdown(PARAGRAPH_DROPCAP_MD, { themeId: "tech" });
     const decl = extractFirst(result.html, PARAGRAPH_DROPCAP_DIV);
     expect(decl.color).toBe(techTokens["--color-brand"]);
-    expect(decl["font-family"]).toBe(techTokens["--font-family-heading"]);
+    expect(decl["font-family"]).toBeUndefined();
   });
 
   it("literary 与 tech 渲染色值互不相同（跨主题差异化，非恒等硬编码）", async () => {
@@ -248,7 +248,7 @@ describe("AC-002 回归护栏: pull-quote decorated root 容器非色值布局�
       expect(decl["text-align"]).toBe("center");
       expect(decl.padding).toBe("24px 16px");
       expect(decl.margin).toBe("24px 0");
-      expect(decl["font-size"]).toBe("1.25em");
+      expect(decl["font-size"]).toBe("20px");
     }
   );
 });

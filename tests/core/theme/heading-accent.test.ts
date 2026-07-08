@@ -37,7 +37,7 @@ describe("AC-001: business 主题 h2 左竖条 accent", () => {
   it("border-left 计算值 4px solid 含 --color-brand 实值，padding-left 计算值 8px", async () => {
     const result = await renderMarkdown(H2_MD, { theme: businessTheme });
     const style = extractStyle(result.html, "h2");
-    expect(style["border-left"]).toBe("4px solid #1A4F8A");
+    expect(style["border-left"]).toBe("4px solid #1a4f8a");
     expect(style["padding-left"]).toBe("8px");
   });
 });
@@ -46,7 +46,7 @@ describe("AC-002: magazine 主题 h2 左竖条 accent", () => {
   it("border-left 计算值 6px solid 含 --color-brand 实值，padding-left 计算值 10px", async () => {
     const result = await renderMarkdown(H2_MD, { theme: magazineTheme });
     const style = extractStyle(result.html, "h2");
-    expect(style["border-left"]).toBe("6px solid #D4521A");
+    expect(style["border-left"]).toBe("6px solid #d4521a");
     expect(style["padding-left"]).toBe("10px");
   });
 });
@@ -55,7 +55,7 @@ describe("AC-003: tech 主题 h2 左竖条 accent", () => {
   it("border-left 计算值 3px solid 含 --color-brand 实值，padding-left 计算值 8px", async () => {
     const result = await renderMarkdown(H2_MD, { theme: techTheme });
     const style = extractStyle(result.html, "h2");
-    expect(style["border-left"]).toBe("3px solid #58A6FF");
+    expect(style["border-left"]).toBe("3px solid #58a6ff");
     expect(style["padding-left"]).toBe("8px");
   });
 });
@@ -82,7 +82,7 @@ describe("AC-005: literary 主题 h2 无左竖条且既有风格不回归", () =
     expect(style["border-left"]).toBeUndefined();
     expect(style["font-weight"]).toBe("700");
     expect(style["font-size"]).toBe("18px");
-    expect(style.color).toBe("#2C1F0A");
+    expect(style.color).toBe("#2c1f0a");
   });
 });
 

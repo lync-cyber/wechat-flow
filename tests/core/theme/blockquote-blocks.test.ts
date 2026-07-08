@@ -29,48 +29,48 @@ function parseDeclarations(style: string): Record<string, string> {
 }
 
 describe("AC-001: business 主题 blockquote 双侧细线无底色", () => {
-  it("border-left 与 border-right 均为 1px solid #1A4F8A，background-color 为 transparent", async () => {
+  it("border-left 与 border-right 均为 1px solid #1a4f8a，background-color 为 transparent", async () => {
     const result = await renderMarkdown(QUOTE_MD, { theme: businessTheme });
     const style = parseDeclarations(extractBlockquoteStyle(result.html));
-    expect(style["border-left"]).toBe("1px solid #1A4F8A");
-    expect(style["border-right"]).toBe("1px solid #1A4F8A");
+    expect(style["border-left"]).toBe("1px solid #1a4f8a");
+    expect(style["border-right"]).toBe("1px solid #1a4f8a");
     expect(style["background-color"]).toBe("transparent");
   });
 });
 
 describe("AC-002: literary 主题 blockquote 去斜体 + 字距", () => {
-  it("font-style 不为 italic，color 为 #5A4228，letter-spacing 为 1.2px", async () => {
+  it("font-style 不为 italic，color 为 #5a4228，letter-spacing 为 1.2px", async () => {
     const result = await renderMarkdown(QUOTE_MD, { theme: literaryTheme });
     const style = parseDeclarations(extractBlockquoteStyle(result.html));
     expect(style["font-style"]).not.toBe("italic");
-    expect(style.color).toBe("#5A4228");
+    expect(style.color).toBe("#5a4228");
     expect(style["letter-spacing"]).toBe("1.2px");
   });
 });
 
 describe("AC-003: magazine 主题 blockquote 大字拉引感", () => {
-  it("font-size 为正文 16px 的 1.15em 换算值 18.4px，border-left 为 3px solid #D4521A", async () => {
+  it("font-size 为正文 16px 的 1.15em 换算值 18.4px，border-left 为 3px solid #d4521a", async () => {
     const result = await renderMarkdown(QUOTE_MD, { theme: magazineTheme });
     const style = parseDeclarations(extractBlockquoteStyle(result.html));
     expect(style["font-size"]).toBe("18.4px");
-    expect(style["border-left"]).toBe("3px solid #D4521A");
+    expect(style["border-left"]).toBe("3px solid #d4521a");
   });
 });
 
 describe("AC-004: tech 主题 blockquote 简洁竖条", () => {
-  it("border-left 为 3px solid #58A6FF，background-color 为 transparent", async () => {
+  it("border-left 为 3px solid #58a6ff，background-color 为 transparent", async () => {
     const result = await renderMarkdown(QUOTE_MD, { theme: techTheme });
     const style = parseDeclarations(extractBlockquoteStyle(result.html));
-    expect(style["border-left"]).toBe("3px solid #58A6FF");
+    expect(style["border-left"]).toBe("3px solid #58a6ff");
     expect(style["background-color"]).toBe("transparent");
   });
 });
 
 describe("AC-005: default 主题 blockquote 现状微调", () => {
-  it("border-left 为 4px solid #2D5A4E，background-color 含 #F3F0EB", async () => {
+  it("border-left 为 4px solid #2d5a4e，background-color 含 #f3f0eb", async () => {
     const result = await renderMarkdown(QUOTE_MD, { theme: defaultTheme });
     const style = parseDeclarations(extractBlockquoteStyle(result.html));
-    expect(style["border-left"]).toBe("4px solid #2D5A4E");
-    expect(style["background-color"]).toBe("#F3F0EB");
+    expect(style["border-left"]).toBe("4px solid #2d5a4e");
+    expect(style["background-color"]).toBe("#f3f0eb");
   });
 });

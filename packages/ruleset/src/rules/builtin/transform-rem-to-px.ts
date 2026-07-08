@@ -15,7 +15,7 @@ function styleHasRem(node: Node): boolean {
 const transformRemToPx: RuleDefinition = {
   id: "transform-rem-to-px",
   scope: "transform",
-  stage: "authoring",
+  stage: "output",
   priority: 70,
   matcher: styleHasRem,
   transform: (node: Node): Node => {

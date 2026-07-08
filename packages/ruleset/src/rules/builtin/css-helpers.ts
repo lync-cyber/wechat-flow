@@ -14,9 +14,9 @@ export function parseDeclarations(style: string): Array<[string, string]> {
     .filter((pair): pair is [string, string] => pair !== null);
 }
 
-/** Rebuild an inline style string from `prop:value` pairs. */
+/** Rebuild an inline style string from `prop:value` pairs; format mirrors core inline-style (`prop: value; `) so output-stage re-serialization is byte-consistent with untouched nodes. */
 export function serializeDeclarations(decls: Array<[string, string]>): string {
-  return decls.map(([p, v]) => `${p}:${v}`).join(";");
+  return decls.map(([p, v]) => `${p}: ${v}`).join("; ");
 }
 
 /**
@@ -60,7 +60,9 @@ export function hasStyleProp(node: Node, propNames: string[]): boolean {
   return parseDeclarations(style).some(([p]) => nameSet.has(p));
 }
 
-/** Clamp the px value of the named CSS declarations into [minPx, maxPx]; non-px / NaN values pass through unchanged. */
+const STRICT_PX_RE = /^-?\d+\.?\d*px$/;
+
+/** Clamp the px value of the named CSS declarations into [minPx, maxPx]; non-px units (em/rem/vw/%/…) and NaN values pass through unchanged. */
 export function clampPxProp(node: Node, propNames: string[], minPx: number, maxPx: number): Node {
   const el = node as Element;
   const style = el.properties?.style as string;
@@ -68,8 +70,9 @@ export function clampPxProp(node: Node, propNames: string[], minPx: number, maxP
   const decls = parseDeclarations(style);
   const updated = decls.map(([prop, val]): [string, string] => {
     if (!nameSet.has(prop)) return [prop, val];
-    if (val.trim().endsWith("%")) return [prop, val];
-    const px = Number.parseFloat(val);
+    const trimmed = val.trim();
+    if (!STRICT_PX_RE.test(trimmed)) return [prop, val];
+    const px = Number.parseFloat(trimmed);
     if (Number.isNaN(px)) return [prop, val];
     const clamped = Math.min(maxPx, Math.max(minPx, px));
     return [prop, `${clamped}px`];

@@ -41,13 +41,13 @@ describe("AC-001: pull-quote decorated 变体渲染装饰引号", () => {
     expect(match?.[1]).toContain("opacity: 0.35");
   });
 
-  it("装饰引号元素色值计算值等于 default 主题 --color-brand（#2D5A4E）", async () => {
+  it("装饰引号元素色值计算值等于 default 主题 --color-brand（#2d5a4e）", async () => {
     await import("../../../packages/blocks/src/index.ts");
     const result = await renderMarkdown(':::pull-quote{.decorated author="鲁迅"}\n摘引文字\n:::', {
       themeId: "default",
     });
     const match = result.html.match(/<span style="([^"]*)">「<\/span>/);
-    expect(match?.[1]).toContain("color: #2D5A4E");
+    expect(match?.[1]).toContain("color: #2d5a4e");
   });
 });
 
@@ -68,7 +68,7 @@ describe("AC-002: pull-quote decorated 变体渲染独立署名行", () => {
     });
     const match = result.html.match(/<section style="([^"]*)">—— 鲁迅<\/section>/);
     expect(match).not.toBeNull();
-    expect(match?.[1]).toContain("font-size: 13px");
+    expect(match?.[1]).toContain("font-size: 14px");
   });
 
   it("署名行元素计算 text-align = center", async () => {
@@ -89,13 +89,13 @@ describe("AC-002: pull-quote decorated 变体渲染独立署名行", () => {
     expect(match?.[1]).toContain("margin-top: 10px");
   });
 
-  it("署名行元素色值计算值等于 default 主题 --color-text-muted（#78716C）", async () => {
+  it("署名行元素色值计算值等于 default 主题 --color-text-muted（#78716c）", async () => {
     await import("../../../packages/blocks/src/index.ts");
     const result = await renderMarkdown(':::pull-quote{.decorated author="鲁迅"}\n摘引文字\n:::', {
       themeId: "default",
     });
     const match = result.html.match(/<section style="([^"]*)">—— 鲁迅<\/section>/);
-    expect(match?.[1]).toContain("color: #78716C");
+    expect(match?.[1]).toContain("color: #78716c");
   });
 });
 
@@ -142,7 +142,7 @@ describe("AC-003: pull-quote root 容器基线与 decorated variant 装饰声明
     const containerMatch = result.html.match(
       /<section data-block="pull-quote" data-variant="decorated" style="([^"]*)"/
     );
-    expect(containerMatch?.[1]).toContain("font-size: 1.25em");
+    expect(containerMatch?.[1]).toContain("font-size: 20px");
     const quoteMarkMatch = result.html.match(/<span style="([^"]*)">「<\/span>/);
     expect(quoteMarkMatch?.[1]).toContain("font-size: 28px");
   });

@@ -16,7 +16,7 @@ function hasPositionFixed(node: Node): boolean {
 const lintPositionFixed: RuleDefinition = {
   id: "lint-position-fixed",
   scope: "lint",
-  stage: "authoring",
+  stage: "output",
   priority: 40,
   matcher: hasPositionFixed,
   transform: (node: Node): Node => node,

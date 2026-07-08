@@ -4,7 +4,7 @@ import { clampPxProp, hasStyleProp } from "./css-helpers.ts";
 const clampFontSize: RuleDefinition = {
   id: "clamp-font-size",
   scope: "clamp",
-  stage: "authoring",
+  stage: "output",
   priority: 80,
   matcher: (node) => hasStyleProp(node, ["font-size"]),
   transform: (node) => clampPxProp(node, ["font-size"], 14, 32),
