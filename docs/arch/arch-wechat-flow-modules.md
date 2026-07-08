@@ -1,6 +1,6 @@
 ---
 id: "arch-wechat-flow-modules"
-version: "0.9.0"
+version: "0.9.1"
 doc_type: arch
 author: architect
 status: approved
@@ -64,7 +64,7 @@ required_sections:
   `composeRender` 输出 = stage 13 结束的 inline-styled HTML（`postPaste: false`）。**不在 renderMarkdown 主路径执行独立 M-004 walker**——output 相（stage 11）已对产物建模平台合规；composeCopy 路径经 M-004 `simulatePaste`（= M-003 output 域规则集 predict 模式）对最终产物做预测 + per-node diff。两相分域依据、43 条规则 stage 归属、开闸风险与用户决策矩阵见 §2.M-003 附录 A / B。
 - **两相执行契约**: authoring 相与 output 相共用单一注册表 `applyRuleset(hast, rules, stage)` 按 `RuleDefinition.stage` 过滤执行；authoring 相位于 inlineStyle 之前（作者输入域，保留源位置诊断），output 相位于全部样式合成 / 装饰注入 / customCss 之后、serialize 之前（产物合规域，serialize 前最后一个树变换）。规则 stage 归属由 metadata 显式声明（无缺省），归域裁定见 §2.M-003 附录 A。output 相对样式合成 / 装饰 / customCss 生成的声明建模平台过滤——主题 tag 样式的 `font-family`、pull-quote 槽位的 `position: relative` 等声明在样式合成后方存在，仅 output 相可见并拦截；置于 authoring 相（inlineStyle 之前）的产物合规规则对这些生成声明不可见。
 - **收敛不变量**: `simulatePaste(render(x)).nodeDiffs === []`（视觉域比较，忽略 `data-node-id` 等非视觉脚手架属性）对自家产物全 specimen 集成立——render 的 output 相已将产物落到平台稳定态，M-004 output 域 predict 再跑零变更。是 PRD 产品契约「粘贴过滤后视觉一致」的机器可验证形式，入 CI 性质测试（详 §2.M-004、§2.M-003 收敛不变量条）。
-- **目标平台 profile**: output 域规则集 + 平台常量（`@wechat-flow/contracts` `platform/wechat-paste.ts`：`WECHAT_PASTE_UNSAFE_TAGS` / `WECHAT_PASTE_STRIPPED_STYLE_PROPS`）+ sanitize schema 参数统一由 target profile 承载，`wechat` 为首个 profile；为未来多平台 / 长图导出预留——`font-family` 等产品取舍按 profile 分治（详 §2.M-003 附录 B 决策①）。
+- **目标平台 profile**: output 域规则集 + 平台常量（`@wechat-flow/contracts` `platform/wechat-paste.ts`：`WECHAT_PASTE_UNSAFE_TAGS` / `WECHAT_PASTE_STRIPPED_STYLE_PROPS`）+ sanitize schema 参数统一由 target profile 承载，`wechat` 为首个 profile；为未来多平台 / 长图导出预留——`font-family` 按 profile 分治：wechat profile 开启 `strip-font-family` 剥除，非微信 profile（长图导出等）保留（详 §2.M-003 附录 B 决策①）。
 - **postPaste 字段语义**: `RenderResult` 含 `postPaste: boolean`；renderMarkdown / Preview / MCP `render_markdown` 路径 `postPaste === false`（output 相已建模平台合规，但仍保留 `data-node-id` 等交互脚手架）；composeCopy / `export_clipboard_payload` 路径在 stage 13 之后经 M-004 `simulatePaste`，置 `postPaste === true`。三路径产物可通过此字段对账，禁止双跑 simulatePaste。
 - **通用渲染机制（管线不含块名特化分支）**:
   1. **指令属性透传**（transform stage）: M-005 `BlockDefinition.directiveAttrs` 声明的指令 `{}` 属性经 strict 校验后，按 `data-{block}-{attr}` 命名透传至容器 hast 元素（如 `data-dialog-speaker` / `data-pull-quote-author` / `data-compare-left-label`）；块级子结构生成与装饰经 M-005 `decorate(element, ctx)` 钩子收编。transform 与 inline-style 均按通用规则驱动，不含 per-block 名分支。
@@ -94,7 +94,7 @@ required_sections:
   - 包级 API：`applyRuleset(hast, ruleset, stage: "authoring" | "output") → {hast, report}`，其中 `report: DiagnosticReport`；`getRulesetVersion() → string`；被 M-002 两相调用（stage 5 传 `"authoring"`、stage 11 传 `"output"`）。`stage` 缺省行为不存在——调用方必须显式传相，防止误将全集在单点执行
   - **outbound 数据契约**：`DiagnosticReport.nodeChangeRecords[] → M-001 UC-013.1 CompatibilityDiffView 消费`；`DiagnosticReport.nightRiskIssues[] → M-001 DiagnosticsPanel `night-risk-alert` 状态消费`
 - **依赖模块**: M-012 (schema 契约层 — Rule schema 含 `stage` 字段、DiagnosticReport schema) / `@wechat-flow/contracts` (`platform/wechat-paste.ts` 平台常量 `WECHAT_PASTE_UNSAFE_TAGS` / `WECHAT_PASTE_STRIPPED_STYLE_PROPS`，output 域规则与注册校验共享的平台事实源)
-- **目标平台 profile**: output 域规则集参数化为 target profile（`wechat` 首个），与 M-002 sanitize schema 参数、`@wechat-flow/contracts` 平台常量同源。平台知识更新只改常量 + 规则定义，三消费方（注册校验 / output 相 / 模拟器）同步演进。为未来多平台 / 长图导出预留——`font-family` 等产品取舍按 profile 分治（长图导出 profile 因光栅化不经微信粘贴过滤，可保留 font-family；详附录 B 决策①）
+- **目标平台 profile**: output 域规则集参数化为 target profile（`wechat` 首个），与 M-002 sanitize schema 参数、`@wechat-flow/contracts` 平台常量同源。平台知识更新只改常量 + 规则定义，三消费方（注册校验 / output 相 / 模拟器）同步演进。为未来多平台 / 长图导出预留——`font-family` 按 profile 分治：wechat profile 开启 `strip-font-family` 剥除，长图导出 profile 因光栅化不经微信粘贴过滤保留 font-family（详附录 B 决策①）
 - **内部关键组件**:
   - `rules/registry.ts` — 规则注册中心；`RuleDefinition` 含 `stage` 字段；`applyRuleset(hast, ruleset, stage)` 按 stage 过滤执行
   - `rules/scope/strip.ts`、`clamp.ts`、`transform.ts`、`patch.ts`、`lint.ts` — 五类作用域执行器（scope 正交于 stage：scope 决定「如何改」，stage 决定「何时改」）
@@ -178,7 +178,7 @@ required_sections:
 | strip-css-var | strip | 槽位/decorate 样式以 `var(--token)` 占位生成（实证 `var(--color-brand)`/`var(--font-family-heading)`） | 命中全部 var 占位槽位/装饰样式；须确认 token 解析后无残留，否则展开顺序与 inlineStyle 交互需定 |
 | strip-calc-expression | strip | `calc()` 可由 baseStyle/customCss 生成 | 命中生成样式中的 calc |
 | strip-flex-gap | strip | flex 容器 gap/justify-content/align-items 可由 baseStyle 生成 | 命中生成 flex 布局声明；与 patch-flex-to-block 联动 |
-| strip-font-family | strip | 主题 tag 样式 / block baseStyle 全量生成 font-family（旗舰实证：主题 font-family 全量绕过） | **命中全部主题 tag 样式与块 baseStyle 的 font-family——牵动决策矩阵①，须先落用户决策再开闸** |
+| strip-font-family | strip | 主题 tag 样式 / block baseStyle 全量生成 font-family（旗舰实证：主题 font-family 全量绕过） | 命中全部主题 tag 样式与块 baseStyle 的 font-family——决策①已裁定剥除（wechat profile 开启 strip-font-family），T-183 直接开闸 |
 | strip-negative-margin | strip | 负 margin 可由 baseStyle/decorate 生成 | 命中生成负 margin |
 | strip-position | strip | 槽位样式生成 position（实证先例 pull-quote 槽位 `position: relative`） | **命中 pull-quote 等槽位 position——真实潜伏违规，开闸即修复样式** |
 | strip-pseudo-classes | strip | 伪类/伪元素 inline 残影来自 customCss juice 级联 | 命中 customCss 处理残留；须置于 applyCustomCss 之后 |
@@ -222,7 +222,9 @@ required_sections:
 
 ---
 
-#### 附录 B: 用户决策矩阵（T-183 开闸前须用户确认）
+#### 附录 B: 用户决策矩阵（已裁定 2026-07-08，T-183 落地）
+
+三项决策均已由用户拍板（2026-07-08）；下方各决策保留候选选项与理由以承载决策记录，以「**用户裁定**」行为准。T-183 分组开闸按裁定直接执行，无遗留待确认项——唯 ②-ii 的新样张基准须用户 sign-off（该 sign-off 门在 T-183 执行时触达）。
 
 ##### 决策①: font-family 策略
 
@@ -231,6 +233,7 @@ required_sections:
 - **选项 B（保留 font-family + 模拟器警告）**: wechat profile 关闭 `strip-font-family`，产物保留 font-family，预览美观且主题身份完整；`simulatePaste` predict 模式报「font-family 将被微信剥除」诊断。
   - **影响面**: 预览与实际粘贴视觉系统性不一致（失真）；**破坏收敛不变量**——render 保留 font-family 而 predict 剥除 → 非零 diff，CI 性质测试无法成立。
 - **推荐**: **选项 A（剥除）**。理由：(1) 产品契约核心 =「粘贴过滤后视觉一致」，font-family 是微信实测剥除项（wechat-typeset 生产实证：剥 inline font-family），保留即制造预览/产物系统性失真，违背契约根基；(2) 收敛不变量 `simulatePaste(render(x)) === render(x)` 要求 render 产物已达平台稳定态，保留 font-family 直接破坏不变量；(3) 主题身份可由字号层级 / 配色 / 间距 / 装饰 SVG 充分承载，字体非唯一身份载体。
+- **用户裁定（2026-07-08）**: **选项 A（剥除）**。wechat profile 开启 `strip-font-family`，产物不含 font-family，微信系统字体栈接管，守收敛不变量。下游：ui-spec §10.5 及相关字体条款须 amendment（owner=ui-designer，属 T-183 deliverable）；主题字体保留语义收窄至非微信 profile（长图导出等 profile 保留 font-family）。
 - **重评估条件**: 微信编辑器后续版本停止剥除 inline font-family（须实测验证），或产品新增「非微信目标平台」（长图 / PDF / 其他平台）成为主用例——font-family 保留策略按 profile 分治重启评估。
 
 ##### 决策②: clamp / transform 阈值与现有块样式冲突清单
@@ -239,13 +242,17 @@ required_sections:
 
 | 冲突项 | 命中规则 | 现有样式（实测） | 规则阈值/行为 | 冲突性质 | 处置方向（推荐） |
 |---|---|---|---|---|---|
-| 小字 12–13px | clamp-font-size / readability-font-size-min | announcement/gallery/pull-quote/steps/code-block(全主题) 13px；footnote 12px；business/literary heading 13px（须核对是否 label） | 下限 14px | 生成字号 < 平台下限 | **须裁定**：(A) 小字统一提至 14px 对齐平台下限（推荐——微信正文最小可读 14px 是 wechat-typeset 构建期硬约束）；(B) caption/footnote 类豁免 clamp（须权威依据证明该字号在微信可读，禁止拟合现状） |
-| dropcap/装饰行高 | clamp-line-height / readability-line-height-min | quote 0.6（装饰引号）；paragraph/pull-quote/quote 1（首字下沉紧排 T-168） | 下限 1.2 | 生成行高 < 下限 | **须裁定**：以「首字下沉/装饰字符非正文行」为客观依据修订规则匹配范围（按语境放行），**非放宽全局阈值**——正文行仍守 1.2 下限 |
+| 小字 12–13px | clamp-font-size / readability-font-size-min | announcement/gallery/pull-quote/steps/code-block(全主题) 13px；footnote 12px；business/literary heading 13px（须核对是否 label） | 下限 14px | 生成字号 < 平台下限 | **已裁定 A**：小字统一提至 14px 对齐平台下限（微信正文最小可读 14px 是 wechat-typeset 构建期硬约束）；候选 (B) caption/footnote 豁免 clamp 未采纳（无权威依据证明 <14px 在微信可读，拒拟合现状） |
+| dropcap/装饰行高 | clamp-line-height / readability-line-height-min | quote 0.6（装饰引号）；paragraph/pull-quote/quote 1（首字下沉紧排 T-168） | 下限 1.2 | 生成行高 < 下限 | **已裁定**：以「首字下沉/装饰字符非正文行」为客观依据修订规则匹配范围（按语境放行），**非放宽全局阈值**——正文行仍守 1.2 下限 |
 | em 单位声明 | transform-em-to-px | 565 处 em 占用（paragraph 2.2em、quote 2em/2.2em、pull-quote 1.25em、citation 0.9em、disclaimer 0.875em 等） | 1em=16px 转 px | 生成 em 批量转换 | 逐条随开闸基线 diff 审计；em→px 归一化多数视觉等价（低风险），须核对无单位 line-height 与 em 未混用、字号继承链无级联失真 |
-| 淡背景透明度 | clamp-rgba-alpha | callout `rgba(0,0,0,0.06)` 等 11 处 < 0.15 | 下限 0.15 | 生成 alpha < 下限 | **须裁定**：0.06→0.15 会显著加深淡背景（真实视觉变更）——(A) 装饰性淡背景豁免 clamp-rgba-alpha（须以「微信色彩处理对 0.06 的实际表现」为依据）；(B) 提 alpha 并同步样张基准（须用户 sign-off） |
+| 淡背景透明度 | clamp-rgba-alpha | callout `rgba(0,0,0,0.06)` 等 11 处 < 0.15 | 下限 0.15 | 生成 alpha < 下限 | **已裁定 B**：0.06→0.15 提 alpha 至下限、无豁免特例，同步样张基准（真实视觉变更，新基准须用户 sign-off，T-183 门）；候选 (A) 装饰性淡背景豁免 clamp-rgba-alpha 未采纳 |
 | SVG 纯白 | transform-svg-white-offset | divider/装饰 SVG #ffffff；kpi-card #ffffff（须核对 SVG vs 背景）；business table `#FFFFFF` | #ffffff→#fefefe（仅 SVG 上下文） | 生成 SVG 白色 | 直接落 #fefefe（微信实测纯白光栅化透明风险），无争议；非 SVG 背景白色不受影响 |
 | border-radius / padding / margin | clamp-border-radius / clamp-padding / clamp-margin-top-bottom | 扫描**无** > 24px 圆角 / > 48px 内外边距命中 | 上限 24px / 48px | 现状无冲突 | 无需处置；开闸后作为新增块的守护下限 |
 
+- **用户裁定（2026-07-08）**:
+  - **②-i 小字下限**: **选项 A** —— 命中 announcement/gallery/pull-quote/steps/code-block 13px 与 footnote 12px 统一提至 14px，对齐微信正文最小可读下限，无豁免。
+  - **②-ii 淡背景透明度**: **选项 B（非豁免）** —— callout `rgba(0,0,0,0.06)` 等 11 处 <0.15 一律提 alpha 至 0.15，产物严守 clamp 下限无特例；此为真实视觉变更，**新样张基准须用户 sign-off（T-183 门）**。
+  - **其余清单项（无须用户抉择，据实为已裁定）**: dropcap/装饰行高按「首字下沉/装饰字符非正文行」语境豁免（正文行仍守 1.2 下限）；em→px 随开闸基线逐条 diff 审计（低风险）；SVG 纯白 → #fefefe（无争议）；border-radius/padding/margin 现状无冲突，开闸后作为新增块守护下限。
 - **推荐总则**: 阈值冲突一律按客观权威标准裁定（WCAG / 微信实测下限 / 平台白名单），**禁止反推阈值以令现状产物通过**（拟合现状 = 循环论证、放过真缺陷）。逐条命中在 T-183 开闸时以基线 diff 审计坐实：命中即二选一——「真实潜伏违规 → 修复样式」或「规则过严 → 按权威依据修订规则匹配范围/阈值」（`position:relative` 与 `strip-width-height-inline` 分别代表两类裁定方向）。
 - **重评估条件**: 微信编辑器渲染下限变化（须实测），或新目标平台 profile 引入不同阈值时，各阈值随 profile 重新标定。
 
