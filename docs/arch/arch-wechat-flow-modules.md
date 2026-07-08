@@ -1,6 +1,6 @@
 ---
 id: "arch-wechat-flow-modules"
-version: "0.9.1"
+version: "0.9.2"
 doc_type: arch
 author: architect
 status: approved
@@ -282,7 +282,9 @@ required_sections:
     - `validateTemplateCoverage(themeId: string, templateId: string): CoverageReport` — 静态校验 template 是否覆盖 F-003 AC-012 白名单（9 基础元素 + ≥ 6 核心 Block 容器），返回逐项缺失清单
     - `validateThemeTemplates(themeId: string): ThemeTemplateValidationResult` — 9 维守护第 9 维（内置 template 完整性）执行器；遍历该主题全部 template 调 `validateTemplateCoverage`，任一未覆盖即整体 `pass: false`；由 `guard/validate-theme-templates.ts` 实现，于 CI 守护流程阻断发布
   - 被 M-002 / M-008 / M-009 调用
-- **注册期平台合规校验（前移平台约束）**: `registerBlock` / `registerVariant` / `registerTheme` 的样式校验接 `@wechat-flow/contracts` 平台常量（`platform/wechat-paste.ts`：`WECHAT_PASTE_UNSAFE_TAGS` / `WECHAT_PASTE_STRIPPED_STYLE_PROPS`）——注册样式声明命中 `WECHAT_PASTE_STRIPPED_STYLE_PROPS`（如 `position` / `font-family`，按 target profile）或平台禁用值域即 `E_SCHEMA` 拒绝并附被拒声明清单。此校验沿既有 `registry/css-property-whitelist.ts`（`CSS_SAFE_PROPERTIES` / `isWhitelistedProperty`）**单一机制扩展**——白名单放行 ∩ 平台禁用剔除，不建平行校验器。作用是把「产物在 output 相被 strip」的失效前移到注册期显式拒绝，使 output 相对内置样式源的命中收敛为零（output 相的实际拦截目标退化为动态 customCss / 第三方注入）；平台知识与 M-003 output 域规则、M-002 sanitize schema 同源于 target profile
+- **注册期平台合规校验（前移平台约束）**: `registerBlock` / `registerVariant` / `registerTheme` 的样式校验接 `@wechat-flow/contracts` 平台常量（`platform/wechat-paste.ts`：`WECHAT_PASTE_UNSAFE_TAGS` / `WECHAT_PASTE_STRIPPED_STYLE_PROPS`）——注册样式声明命中 `WECHAT_PASTE_STRIPPED_STYLE_PROPS`（`position` / `top` / `right` / `bottom` / `left` / `z-index` / `float` —— profile 无关、在微信粘贴过滤下永不合法的定位/浮动属性）或平台禁用值域即 `E_SCHEMA` 拒绝并附被拒声明清单。此校验沿既有 `registry/css-property-whitelist.ts`（`CSS_SAFE_PROPERTIES` / `isWhitelistedProperty`）**单一机制扩展**——白名单放行 ∩ 平台禁用剔除，不建平行校验器。
+  - **font-family 走「声明—按 output profile 剥除」模型，排除出注册期拒绝集**: 主题 tag 样式 / 块 baseStyle **允许声明 font-family**（注册期放行，非 `WECHAT_PASTE_STRIPPED_STYLE_PROPS` 成员），其平台处置为 profile 分治——wechat profile 在 output 相经 `strip-font-family` 剥除、非微信 profile（长图导出等）保留（详 §2.M-003 附录 B 决策①）。font-family 不进注册期拒绝集，因其非「永不合法」而是「按目标平台取舍」，由 output 域 profile-gated 规则承载，非注册期一刀切拒绝。
+  - 作用是把「产物在 output 相被 strip」的失效前移到注册期显式拒绝，使 output 相对内置样式源的命中收敛为零——**profile-gated 属性（font-family）除外**：其由内置主题声明并按 profile 于 output 相剥除，是设计内命中而非潜伏失效。output 相对非 profile-gated 声明的实际拦截目标退化为动态 customCss / 第三方注入；平台知识与 M-003 output 域规则、M-002 sanitize schema 同源于 target profile
 - **依赖模块**: M-006 (调色板派生) / M-007 (plugin-api 类型) / M-012 (schema 契约层 — TemplateDef / CoverageReport schema + `extendSanitizeSchema` 共享契约；M-005 通过此契约把自定义 Block 标签合入 M-002 sanitize 白名单，避免与 M-002 形成模块环) / `@wechat-flow/contracts` (平台常量 `platform/wechat-paste.ts`，注册期校验的平台事实源)
 - **内部关键组件**:
   - `registry/theme.ts`、`block.ts`、`mark.ts`、`variant.ts`、`token.ts` — 五类注册表
