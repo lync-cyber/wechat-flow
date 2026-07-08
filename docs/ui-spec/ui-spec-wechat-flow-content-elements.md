@@ -1,6 +1,6 @@
 ---
 id: "ui-spec-wechat-flow-content-elements"
-version: "0.2.0"
+version: "0.2.1"
 doc_type: ui-spec
 author: ui-designer
 status: approved
@@ -139,6 +139,8 @@ required_sections:
 
 说明：default / business / magazine 三主题的 `pre` 与 inline `code` 复用同一底色值（视觉一致，无需区分两个 token 实值，但保留 `--color-code-block-bg` 独立 token 名以支持未来单独调整）；tech 主题的深色基调下 `pre` 与 inline code 天然同暗底；literary 保持暖米色呼应古籍纸感。`pre` 边框统一 `1px solid --color-border`（各主题取该主题现有 `--color-border` 值），`border-radius` 取该主题 `--decoration-border-radius-sm`。
 
+**target profile 分治（wechat profile 剥除 font-family）**：上表「字体」列 `--font-family-mono` 是 Block 定义层面的设计意图值，按 target profile 分治生效——wechat profile 下（PreviewPane 实时预览与实际粘贴产物同源于同一 render 管线的 output 相，二者不分叉），output 域 `strip-font-family` 规则剥除该声明，代码块产物与预览均不含 inline font-family，由微信客户端系统字体栈接管；仅长图导出等非微信 profile（不经微信粘贴过滤）保留等宽字体声明。微信场景下代码块（含 tech 主题「科技 / 教程」调性倚重的等宽身份）的视觉识别度不依赖等宽字体本身，改由本节已定义的底色深浅（各主题 `--color-code-block-bg` 差异，tech 暗底最鲜明）、`1px solid --color-border` 边框、`--decoration-border-radius-sm` 圆角与紧凑 padding（tech `6px 10px`）组合承载；`--font-family-mono` 声明保留于 spec 与实现供 profile 分治消费。
+
 ### 9.6 列表 marker 主题色设计
 
 微信公众号编辑器粘贴过滤会剥离 `li::marker` 伪元素样式（§9.1 通则），marker 着色须依赖 `list-style` 原生能力与 `color` 继承，不可用伪元素定制符号形状：
@@ -179,4 +181,7 @@ required_sections:
 - 首字 cell `width: 1%` + `white-space: nowrap` 收缩至字符实际宽度；`line-height: 1` 压实首字行盒，避免撑高首行行距
 - 正文 cell 承载段落排版（字号/行高/颜色由容器 typography 下推与主题 tag 规格合成，见 arch `M-002` 通用渲染机制）
 - 各主题的 `color` 取该主题 `--color-brand`，`font-family` 取该主题 `--font-family-heading`
+
+**target profile 分治（wechat profile 剥除 font-family）**：上述 `font-family` 声明按 target profile 分治生效——wechat profile 下（PreviewPane 实时预览与实际粘贴产物同源于同一 render 管线的 output 相，二者不分叉），output 域 `strip-font-family` 规则剥除该声明，首字下沉产物与预览均不含 inline font-family，由微信客户端系统字体栈接管；仅长图导出等非微信 profile（不经微信粘贴过滤）保留字体族取值。微信场景下首字下沉的视觉识别度不依赖字体族本身，由 `font-size: 2.2em` + `font-weight: 700` + `line-height: 1` + `color: {主题 --color-brand}` 的组合独立承载——literary 主题倚重的宋体/衬线标题字体身份在微信产物中让位于此组合；`quote` Block 的 `dropcap` 变体复用本方案时同一分治规则生效（见 §10.5）。
+
 - 登记为**可选 variant**（`paragraph` Block 的一个可选形态，非默认渲染），供 literary / magazine 等强调「开篇仪式感」的场景选用；不建议 business / tech 主题使用（与其克制/工程化调性不符）；`quote` Block 的 `dropcap` 变体复用本方案（§10.5）

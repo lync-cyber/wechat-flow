@@ -1,6 +1,6 @@
 ---
 id: "ui-spec-wechat-flow-block-variants"
-version: "0.2.0"
+version: "0.2.1"
 doc_type: ui-spec
 author: ui-designer
 status: approved
@@ -82,6 +82,8 @@ required_sections:
 
 - **`large-quote-mark`**（原 `magazine`）：大引号装饰，真实文本字符「"」置于引用文字前（引号节点为首个段落的**第一个子节点**，与正文同行、位于文字行首，不独立成行），`font-size: 2em`，`color: {主题 --color-brand}`，`opacity: 0.4`，`line-height: 0.6`，`display: inline-block`，`vertical-align: top`，`margin-right: 4px`
 - **`dropcap`**（原 `literary`）：复用 §9.8 首字下沉方案（table 双格悬挂）——首字符独立占据左 cell，`font-size: 2.2em`，`font-weight: 700`，`line-height: 1`，`color: {主题 --color-brand}`，`font-family: {主题 --font-family-heading}`；引用正文占据右 cell，多行整体悬挂于首字右侧
+
+**target profile 分治（wechat profile 剥除 font-family）**：`dropcap` 声明的 `font-family: {主题 --font-family-heading}` 是 Block 定义层面的设计意图值，按 target profile 分治生效——wechat profile 下（PreviewPane 实时预览与实际粘贴产物同源于同一 render 管线的 output 相，二者不分叉），output 域 `strip-font-family` 规则剥除该声明，产物与预览均不含 inline font-family，由微信客户端系统字体栈接管，是诚实的「所见即所粘」；仅长图导出等非微信 profile（图片光栅化，不经微信粘贴过滤）保留该声明生效。因此 `dropcap` 在微信场景下的首字识别度不依赖字体族本身，由 `font-size: 2.2em` + `font-weight: 700` + `color: {主题 --color-brand}` + `line-height: 1` 的尺寸/字重/配色/紧排行高组合独立承载——各主题（含 literary 的宋体身份倾向）在微信产物中的字体识别度让位于此组合，`font-family` 声明保留于 spec 与实现供 profile 分治消费。
 
 两变体的 root 容器为**无边框引用基线**：不含 `border-left`（区别于 `default` 变体的左边框样式，对齐 `block-variants-quote.png` 样张），`padding: 8px 16px`，`margin: 16px 0`，`color: #555`（default 主题基准，跨主题渲染替换实值）；root 的 `color` 属可继承 typography，须对引用正文渲染后真实生效。两变体均不使用 `float`（§9.1 通则），`large-quote-mark` 与 `dropcap` 二选一装饰同一引用文本首部，不叠加使用。
 
