@@ -1,6 +1,6 @@
 ---
 id: "ui-spec-wechat-flow-content-elements"
-version: "0.2.1"
+version: "0.3.0"
 doc_type: ui-spec
 author: ui-designer
 status: approved
@@ -129,17 +129,17 @@ required_sections:
 
 区分 `code-block` Block（对应 `<pre>`）与 inline `<code>` 的底色：inline code 沿用现有 `--color-code-bg` / `--color-code-text`；`pre` 新增专属 token `--color-code-block-bg`（ARCH E-002 open record 内非破坏性追加），使代码块可独立于 inline code 呈现暗底/亮底效果。
 
-| 主题 | `pre` 底色策略 | Token | 值 | 字体 |
-|------|---------------|-------|-----|------|
-| default | 亮底 | `--color-code-block-bg`（新增）| `#f0ede8`（沿用现有 `--color-code-bg`，与 inline code 一致） | `--font-family-mono` |
-| business | 亮底 | `--color-code-block-bg`（新增）| `#eef2f7`（沿用现有 `--color-code-bg`） | `--font-family-mono` |
-| literary | 暖米亮底 | `--color-code-block-bg`（新增）| `#f2ece0`（沿用现有 `--color-code-bg`，暖米调延续古籍纸感） | `--font-family-mono` |
-| magazine | 亮底 | `--color-code-block-bg`（新增）| `#fff3e8`（沿用现有 `--color-code-bg`） | `--font-family-mono` |
-| tech | 暗底（Atom-One-Dark 系）| `--color-code-block-bg`（新增）| `#1a1a2e`（沿用现有 `--color-code-bg`，本就是暗底，语义从「inline code 底色」扩展为「代码块底色」，两处一致） | `--font-family-mono` |
+| 主题 | `pre` 底色策略 | Token | 值 |
+|------|---------------|-------|-----|
+| default | 亮底 | `--color-code-block-bg`（新增）| `#f0ede8`（沿用现有 `--color-code-bg`，与 inline code 一致） |
+| business | 亮底 | `--color-code-block-bg`（新增）| `#eef2f7`（沿用现有 `--color-code-bg`） |
+| literary | 暖米亮底 | `--color-code-block-bg`（新增）| `#f2ece0`（沿用现有 `--color-code-bg`，暖米调延续古籍纸感） |
+| magazine | 亮底 | `--color-code-block-bg`（新增）| `#fff3e8`（沿用现有 `--color-code-bg`） |
+| tech | 暗底（Atom-One-Dark 系）| `--color-code-block-bg`（新增）| `#1a1a2e`（沿用现有 `--color-code-bg`，本就是暗底，语义从「inline code 底色」扩展为「代码块底色」，两处一致） |
 
 说明：default / business / magazine 三主题的 `pre` 与 inline `code` 复用同一底色值（视觉一致，无需区分两个 token 实值，但保留 `--color-code-block-bg` 独立 token 名以支持未来单独调整）；tech 主题的深色基调下 `pre` 与 inline code 天然同暗底；literary 保持暖米色呼应古籍纸感。`pre` 边框统一 `1px solid --color-border`（各主题取该主题现有 `--color-border` 值），`border-radius` 取该主题 `--decoration-border-radius-sm`。
 
-**target profile 分治（wechat profile 剥除 font-family）**：上表「字体」列 `--font-family-mono` 是 Block 定义层面的设计意图值，按 target profile 分治生效——wechat profile 下（PreviewPane 实时预览与实际粘贴产物同源于同一 render 管线的 output 相，二者不分叉），output 域 `strip-font-family` 规则剥除该声明，代码块产物与预览均不含 inline font-family，由微信客户端系统字体栈接管；仅长图导出等非微信 profile（不经微信粘贴过滤）保留等宽字体声明。微信场景下代码块（含 tech 主题「科技 / 教程」调性倚重的等宽身份）的视觉识别度不依赖等宽字体本身，改由本节已定义的底色深浅（各主题 `--color-code-block-bg` 差异，tech 暗底最鲜明）、`1px solid --color-border` 边框、`--decoration-border-radius-sm` 圆角与紧凑 padding（tech `6px 10px`）组合承载；`--font-family-mono` 声明保留于 spec 与实现供 profile 分治消费。
+**font-family 缺席（全局约束见 §1.2.5）**：`code-block` Block 不声明 `font-family`（构造守卫拒绝）——代码块产物与预览在所有 render target 下均不含 inline font-family，由目标环境系统字体栈接管。代码块（含 tech 主题「科技 / 教程」调性倚重的等宽身份）的视觉识别度不依赖等宽字体本身，改由本节已定义的底色深浅（各主题 `--color-code-block-bg` 差异，tech 暗底最鲜明）、`1px solid --color-border` 边框、`--decoration-border-radius-sm` 圆角与紧凑 padding（tech `6px 10px`）组合承载。
 
 ### 9.6 列表 marker 主题色设计
 
@@ -172,16 +172,16 @@ required_sections:
 <div style="display: table; width: 100%">
   <div style="display: table-cell; width: 1%; white-space: nowrap; vertical-align: top;
     padding-right: 8px; font-size: 2.2em; font-weight: 700; line-height: 1;
-    color: {主题 --color-brand}; font-family: {主题 --font-family-heading}">首</div>
+    color: {主题 --color-brand}">首</div>
   <div style="display: table-cell; vertical-align: top">字后面的正文内容照常排版，
     多行文本整体悬挂于首字右侧……</div>
 </div>
 ```
 
-- 首字 cell `width: 1%` + `white-space: nowrap` 收缩至字符实际宽度；`line-height: 1` 压实首字行盒，避免撑高首行行距
+- 首字 cell `width: 1%` + `white-space: nowrap` 收缩至字符实际宽度；`line-height: 1` 压实首字行盒，避免撑高首行行距（微信粘贴会剥离 `white-space`，`width: 1%` 单独存在时存在塌陷风险，属独立平台保真事项，登记见架构层 dropcap px 宽修复项，与本节 font-family 约束正交，不在本节处置范围）
 - 正文 cell 承载段落排版（字号/行高/颜色由容器 typography 下推与主题 tag 规格合成，见 arch `M-002` 通用渲染机制）
-- 各主题的 `color` 取该主题 `--color-brand`，`font-family` 取该主题 `--font-family-heading`
+- 各主题的 `color` 取该主题 `--color-brand`
 
-**target profile 分治（wechat profile 剥除 font-family）**：上述 `font-family` 声明按 target profile 分治生效——wechat profile 下（PreviewPane 实时预览与实际粘贴产物同源于同一 render 管线的 output 相，二者不分叉），output 域 `strip-font-family` 规则剥除该声明，首字下沉产物与预览均不含 inline font-family，由微信客户端系统字体栈接管；仅长图导出等非微信 profile（不经微信粘贴过滤）保留字体族取值。微信场景下首字下沉的视觉识别度不依赖字体族本身，由 `font-size: 2.2em` + `font-weight: 700` + `line-height: 1` + `color: {主题 --color-brand}` 的组合独立承载——literary 主题倚重的宋体/衬线标题字体身份在微信产物中让位于此组合；`quote` Block 的 `dropcap` 变体复用本方案时同一分治规则生效（见 §10.5）。
+**font-family 缺席（全局约束见 §1.2.5）**：首字 cell 不声明 `font-family`（构造守卫拒绝）——首字下沉产物与预览在所有 render target 下均不含 inline font-family，由目标环境系统字体栈接管。首字下沉的视觉识别度不依赖字体族本身，由 `font-size: 2.2em` + `font-weight: 700` + `line-height: 1` + `color: {主题 --color-brand}` 的组合独立承载——literary 主题倚重的宋体/衬线标题字体身份让位于此组合；`quote` Block 的 `dropcap` 变体复用本方案时同一约束生效（见 §10.5）。
 
 - 登记为**可选 variant**（`paragraph` Block 的一个可选形态，非默认渲染），供 literary / magazine 等强调「开篇仪式感」的场景选用；不建议 business / tech 主题使用（与其克制/工程化调性不符）；`quote` Block 的 `dropcap` 变体复用本方案（§10.5）

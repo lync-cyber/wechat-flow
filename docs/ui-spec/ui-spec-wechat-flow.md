@@ -1,6 +1,6 @@
 ---
 id: "ui-spec-wechat-flow"
-version: "0.3.1"
+version: "0.4.0"
 doc_type: ui-spec
 author: ui-designer
 status: approved
@@ -220,14 +220,17 @@ wechat-flow 是面向微信公众号写作者的专业写作与排版工具。�
 | `--font-weight-semibold` | `600` | 按钮、面板标题 |
 | `--font-weight-bold` | `700` | 页面大标题 |
 
-#### 1.2.5 内容字体的 target profile 分治（全局）
+#### 1.2.5 内容渲染层 font-family 缺席（全局约束）
 
-**总则**：内容渲染层的 **全部** inline font-family——每个主题 tag 样式（h1-h6/p/li 等）、所有 Block baseStyle 与变体（含 §10.5 quote dropcap、代码块等宽、首字下沉等本 spec 逐点标注者）——是 Block/主题定义层面的设计意图值，按 target profile 分治生效：
+**总则**：内容渲染层——每个主题 tag 样式（h1-h6/p/li 等）、所有 Block baseStyle 与变体（含 §10.5 quote dropcap、代码块等宽、首字下沉等本 spec 逐点标注者）、全部 Mark 定义——在**全部 render target 均不携带 inline font-family**。主题 / Block / Mark 定义层面不得声明 `font-family`（构造守卫拒绝，分阶段落地见 arch amendment T-189）；output 域 `strip-font-family` 规则在运行期兜底剥除任何遗留声明。产物由目标环境（微信客户端 / 系统）的字体栈接管，PreviewPane 实时预览与实际粘贴产物同源于同一 render 管线，是诚实的「所见即所粘」。
 
-- **wechat profile**：PreviewPane 实时预览与实际粘贴产物同源于同一 render 管线的 output 相（二者不分叉），output 域 `strip-font-family` 规则剥除全部 inline font-family，产物与预览均由微信客户端系统字体栈接管，是诚实的「所见即所粘」。各变体/块的视觉识别度改由字号 / 字重 / 配色 / 间距 / 装饰组合独立承载（各处逐点说明其组合）。
-- **非微信 profile**（长图导出等，图片光栅化不经微信粘贴过滤）：保留 font-family 声明生效，主题字体身份完整。
+图片导出（长图光栅化）是独立的 render target（跳过微信粘贴专属调整），但**不重新引入** font-family——源头本就未声明，图片路径与其余 render target 一致缺席字体族。
 
-本 spec 各处 `font-family` 声明保留于 spec 与实现供 profile 分治消费；§10.5 与代码块 / 首字下沉等逐点注记为本总则的场景细化，非独立例外。**编辑器 UI chrome 字体**（`--font-sans` 等，用于按钮 / 菜单 / 面板）不属内容产物，不在剥除范围。
+各主题 / 变体 / 装饰的视觉识别度不依赖字体族本身，改由**字号层级 / 字重 / 配色 / 间距 / 装饰组合**独立承载（各处逐点说明其组合，见 §9.5、§9.8、§10.5）。
+
+**[用户裁定 2026-07-09]**：图片导出路径**接受全缺席、不引入 `fontStack` 机制**——图片导出与其余 render target 一致，不携带 font-family，主题字体身份由字号 / 字重 / 配色 / 间距 / 装饰承载。重开条件：图片导出功能真正落地时重估需保留主题字体身份（如 literary 衬线标题），届时再引入豁免块级构造守卫、仅供图片光栅化消费的主题级 `fontStack` 元数据。
+
+**编辑器 UI chrome 字体**（`--font-sans` 等，用于按钮 / 菜单 / 面板）不属内容产物，不在本约束范围。
 
 ### 1.3 间距与圆角 Token
 

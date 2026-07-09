@@ -1,6 +1,6 @@
 ---
 id: "deploy-spec-wechat-flow"
-version: "0.1.0"
+version: "0.2.0"
 doc_type: deploy-spec
 author: devops
 status: approved
@@ -96,7 +96,7 @@ arch#§5.5 将日志收集后端、`/metrics` 端点落地方式、审计日志�
 | 委托事项 | 承接方案 | 环境差异 |
 |---------|---------|---------|
 | 结构化日志收集后端 | Relay/Job Worker/MCP server 统一输出 JSON 格式日志（`level/ts/requestId/tool/latencyMs/coreVersion/rulesetVersion`，arch#§5.5 已定义字段）到容器 stdout；不在本次引入集中式日志平台 | dev/staging：`docker compose logs` 直接查看；prod：**[ASSUMPTION]** 由容器编排/托管平台（如 ghcr.io 镜像所在的容器服务、Kubernetes 或云厂商容器实例）原生 stdout 采集链路承接（如 CloudWatch Logs / Loki / 云厂商日志服务），具体平台选型留待实际 prod 基础设施确定时补充；重新评估条件：prod 部署目标平台确定后，此处需补充实际 sink 配置 |
-| `/metrics`（Prometheus 格式）端点 | 当前 Relay/MCP server 源码未实现该端点（`apps/relay`、`apps/mcp-server` 路由表无 `/metrics`）——**登记为 backlog**，非本次部署阻塞项，落点：dev 任务补 `prom-client` 或等价库输出 `render_markdown_latency_ms`/`job_queue_depth`/`paste_simulation_diff_ratio` 三项 arch#§5.5 定义的关键 SLI | 端点补齐后，dev/staging 环境可选接入本地 Prometheus + Grafana（docker-compose profile 扩展）；prod 视基础设施决定是否接入托管 APM（如 Datadog/云厂商 Prometheus 托管服务） |
+| `/metrics`（Prometheus 格式）端点 | 当前 Relay/MCP server 源码未实现该端点（`apps/relay`、`apps/mcp-server` 路由表无 `/metrics`）——**登记为 backlog**，非本次部署阻塞项，落点：dev 任务补 `prom-client` 或等价库输出 `render_markdown_latency_ms`/`job_queue_depth`/`fallback_platform_patch_hits`（output 平台规则命中数 / render，健康信号）三项 arch#§5.5 定义的关键 SLI；`fallback_platform_patch_hits` 属 **breaking dashboard 变更**——旧指标名 `paste_simulation_diff_ratio`（语义为 render↔粘贴模拟器 diff 比率）随平台模型收敛为单一 output ruleset patch 层已失义并被取代，任何已引用旧指标名的仪表盘/告警查询需在端点接入时同步迁移为新指标名 | 端点补齐后，dev/staging 环境可选接入本地 Prometheus + Grafana（docker-compose profile 扩展）；prod 视基础设施决定是否接入托管 APM（如 Datadog/云厂商 Prometheus 托管服务） |
 | 审计日志完整存储策略 | M-007 `acl/audit-log.ts` 当前输出结构化 JSON（`timestamp/actor/action/resource/result/traceId`）到运行时日志流，**不入业务数据库**（arch#§5.5 现状）。与 §9-D3 记录的 SQLite/libsql 服务端持久化未激活现状一致——审计日志的独立查询接口、保留期策略与聚合平台选型均依赖后续 sprint 激活持久化层后才可实现 | 本轮不实现集中化查询与保留期策略，仅保留进程 stdout（随上述日志收集后端方案一并采集）；重新评估条件：E-010 等实体的 DB 持久化接线完成后（见 §9-D3），需在此节补审计日志表 schema、保留期（建议 ≥180 天以满足安全事件回溯）与查询接口方案 |
 
 ## 3. CI/CD流水线
@@ -134,6 +134,7 @@ verify-tag-on-green-main（tag 必须指向 main 上的 commit，否则拒绝发
 - [ ] 视觉回归通过（`visual-core.yml` + `visual-sampled.yml` 在合并 main 前的 PR 上已绿；release tag 不重跑视觉回归，信任 main 上的既有绿色状态）
 - [ ] 版本号已更新：待发布的 npm 包 `package.json.version` 与 git tag `v{version}` 一致（当前无自动化校验，人工核对，见 §9-D1）
 - [ ] CHANGELOG 已更新（`docs/changelog/changelog-wechat-flow.md` 含当前版本条目）
+- [ ] MCP 契约 breaking 变更说明已对齐：`postPaste` 字段删除 / `simulate_paste` 响应重构（`filteredHtml`→`patchedHtml`，过渡期保留旧字段别名）/ `@wechat-flow/core` 导出删除（`simulatePaste`/`SimulatePasteResult`/`NodeDiff`/`DroppedAttr`）均属破坏性 API 变更，CHANGELOG 逐项列明迁移路径且 `@wechat-flow/core` 与 mcp-server 已按 major/minor 版本 bump；关联的 dashboard 指标 rename（`paste_simulation_diff_ratio`→`fallback_platform_patch_hits`，见 §2.3）已随本次发布一并同步告知消费方
 - [ ] 安全扫描通过（`guards` job 的 `gitleaks` 全历史密钥扫描 + `pnpm guard:secrets` secretlint；`pnpm audit` 未接入 CI，见 §9-D4）
 - [ ] 环境变量矩阵核对：目标环境 `.env.{dev,staging,prod}` 中的必需变量（`EDITOR_JWT_SECRET`/`API_KEY_PEPPER`/`IMAGE_HOST` 对应凭据）已配置且非默认值
 - [ ] `EDITOR_ALLOWED_ORIGINS` 已收紧为目标环境真实域名（非 `*` 或 dev 通配）

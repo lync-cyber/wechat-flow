@@ -1,6 +1,6 @@
 ---
 id: "arch-wechat-flow-modules"
-version: "0.9.5"
+version: "0.10.1"
 doc_type: arch
 author: architect
 status: approved
@@ -20,7 +20,11 @@ required_sections:
 
 ## 2. 模块划分
 
-> **实现状态（2026-07-08）**：本章 M-002/M-003/M-004/M-005 描述 ruleset 双语义域的**目标架构**。落地状态——T-181（本 amendment）已定契约；**T-182**（stage 机制 / 管线两相插点 / customCss 树域 / nightRisk 后移）、**T-183**（output 域规则归域开闸 + 基线审计 + 平台常量接线）、**T-184**（注册期校验接线 + 模拟器统一为 predict 模式 + 收敛不变量入 CI）为落地任务，执行中。因此当前运行的 render 管线仍为**单相**：output 相过滤未激活（生成样式的 font-family / position / <14px 字号 / em / rgba<0.15 尚未在产物端被剥/夹）、平台常量（`WECHAT_PASTE_STRIPPED_STYLE_PROPS` / `WECHAT_PASTE_UNSAFE_TAGS`）尚零消费、独立模拟器 walker（`simulator/strip-tags.ts` 等）仍在、收敛不变量尚未入 CI。**下游判定微信粘贴兼容性是否已强制时以本状态为准，勿据目标态措辞误判为已交付。** 各节以现在时陈述的 output 相 / 三消费方同源 / CI 不变量均指目标态，交付由上述任务收口。
+> **实现状态（2026-07-09）**：ruleset 双语义域两相机制已落地——**T-182**（stage 机制 / 管线两相插点 / customCss 树域 / nightRisk 后移）、**T-183**（output 域 37 条规则归域开闸 + 基线审计）已交付：render output 相（stage 11）激活，生成样式的 font-family 剥除、position 剥除、<14px 字号夹至 14、rgba<0.15 夹至 0.15、em→px 归一化已在产物端生效。
+>
+> **本章 M-003/M-004/M-005/M-009 描述采用 wechat-typeset 平台保真模型的目标架构**（见 `AMENDMENT-platform-fidelity-r1.md`）：output 域 ruleset 本身即 hast 幂等 patch 层；**删除重复的独立模拟器**，兼容性报告 / 复制 / MCP 全部改指向 output ruleset。落地状态——**T-184**（平台常量单一源，治理三份常量表 + S1 同步断言）、**T-185**（消费方改指向 output ruleset + `PlatformAdapter{patch,inspect}` 薄层）、**T-186**（删模拟器 + 全消费方/MCP/文档同步 + breaking 版本化）、**T-187**（`registerBlock/Variant/Theme/Mark` 构造守卫含 Mark + 全主题×全组合扫描含标签）、**T-188**（dropcap/dialog px 宽修复）、**T-189**（主题/mark/dropcap font-family 声明退出）为落地任务，执行中。
+>
+> 因此当前代码库仍存在待收口的过渡态：独立模拟器 walker（`simulate-paste.ts` / `simulator/*` / `diff/per-node-diff.ts`）仍在、`RenderResult.postPaste` 字段仍在、`PlatformAdapter`/`inspect` 尚未建、Block/Theme/Mark 构造守卫尚未建、平台常量完整集（`FORBIDDEN_CSS_PROPS` 等）尚未单一源治理。**下游判定微信粘贴兼容性是否已强制、模拟器是否已删时以本状态为准，勿据目标态措辞误判为已交付。** 各节以现在时陈述的 PlatformAdapter / inspect / 构造守卫均指目标态，交付由 T-184..T-189 收口。
 
 ### M-001: 编辑器 UI
 
@@ -41,10 +45,10 @@ required_sections:
 
 ### M-002: 渲染管线核心
 
-- **职责**: 纯函数 stage 编排的确定性渲染管线；ruleset 双语义域两相执行（authoring 相在样式合成前、output 相为 serialize 前最后一个树变换）；版本三元组透传；确定性渲染保证；framework-agnostic 无 DOM 依赖。目标平台行为经 target profile 参数化（`wechat` 首个）——output 域规则集 / sanitize schema 参数 / 平台常量随 profile 分治
-- **映射功能**: F-002 / F-003 (AC-002 热切换) / F-004 (AC-003 内联化 / AC-004 模拟前置) / F-007 / F-013 (AC-001 跨运行时一致)
+- **职责**: 纯函数 stage 编排的确定性渲染管线；ruleset 双语义域两相执行（authoring 相在样式合成前、output 相为 serialize 前最后一个树变换）；版本三元组透传；确定性渲染保证；framework-agnostic 无 DOM 依赖。微信平台合规经 output 相 `PlatformAdapter.patch`（`wechat` 平台适配层，M-004）承载——`patch` 即 output 相 `applyRuleset(hast, rules, "output")` 那一次执行的具名封装（render 与 adapter 不各维护一份 output-stage 调用逻辑）；渲染目标区分见「render target 与平台 patch」
+- **映射功能**: F-002 / F-003 (AC-002 热切换) / F-004 (AC-003 内联化 / AC-004 视觉一致性) / F-007 / F-013 (AC-001 跨运行时一致)
 - **对外接口**: 包级 API（非 HTTP）：`renderMarkdown(input, options) → RenderResult`、`renderHast(hast, options) → string`；被 M-008 / M-009 / M-011 调用
-- **依赖模块**: M-003 (规则集引擎，两相 `applyRuleset`) / M-004 (粘贴过滤模拟器 = M-003 output 域规则集 predict 模式) / M-007 (plugin-api 类型) / M-012 (schema 契约层 + `extendSanitizeSchema` 共享契约)
+- **依赖模块**: M-003 (规则集引擎，两相 `applyRuleset`) / M-004 (平台适配层 `PlatformAdapter` — `patch` 为 output 相 `applyRuleset` 的具名封装) / M-007 (plugin-api 类型) / M-012 (schema 契约层 + `extendSanitizeSchema` 共享契约)
 - **管线 stage 序列（唯一权威）**: ruleset 按 `stage` 分两相执行——authoring 相（作者输入域）在样式合成前、output 相（产物合规域）为 serialize 前最后一个树变换。
 
   | 序号 | stage | 输入 → 输出 | 实现位置 | 相 / 备注 |
@@ -59,15 +63,16 @@ required_sections:
   | 8 | contextAwareRender | hast → hast | `pipeline/context-aware-renderer.ts` | 上下文敏感渲染（`{{tokenId}}` SVG 注入、侧位交替等） |
   | 9 | injectDecorations | hast → hast | `pipeline/decoration-injector.ts` | 八类装饰经 M-005 `BlockDefinition.decorate` 注册表分发注入槽位 / 字面样式 |
   | 10 | **applyCustomCss（hast 树域）** | hast → hast | `pipeline/custom-css.ts` | L3 custom CSS cascade pass（§8.2 Q3.9/Q3.16）：juice 级联后 re-parse 回 hast、全树重过 `css-attr-filter`；收编入树域，output 相**之前**（无 customCss 时整 pass 跳过，token 路径产物字节级不变） |
-  | 11 | **ruleset — output 相** | hast → hast | `applyRuleset(hast, rules, "output")` | 产物合规域：serialize 前最后一个树变换，对全部生成样式（主题 tag 样式 / block baseStyle / 槽位 / `decorate` 字面样式 / 装饰注入 / customCss 级联结果）建模平台过滤；target profile 决定 output 规则集 |
+  | 11 | **ruleset — output 相** | hast → hast | `applyRuleset(hast, rules, "output")`（经 `wechatAdapter.patch` 具名封装，同一执行点） | 产物合规域：serialize 前最后一个树变换，对全部生成样式（主题 tag 样式 / block baseStyle / 槽位 / `decorate` 字面样式 / 装饰注入 / customCss 级联结果）建模平台过滤；此步即 M-004 `PlatformAdapter.patch`，非 render 后再跑一遍 |
   | 12 | collectNightRiskIssues | hast → DiagnosticReport | `packages/core/src/pipeline/readability.ts` | 对 stage 11 output 相之后的**最终树**算夜间风险 / 对比度（消费真实产物计算样式）；仅产 `nightRiskIssues`，readability-* 三条字号/行高/段长诊断由 stage 11 `applyRuleset(...,"output")` 产出，不在此重复 |
   | 13 | serialize | hast → string | `pipeline/serialize.ts` | canonical 稳定排序字符串化 |
 
-  `composeRender` 输出 = stage 13 结束的 inline-styled HTML（`postPaste: false`）。**不在 renderMarkdown 主路径执行独立 M-004 walker**——output 相（stage 11）已对产物建模平台合规；composeCopy 路径经 M-004 `simulatePaste`（= M-003 output 域规则集 predict 模式）对最终产物做预测 + per-node diff。两相分域依据、45 条规则 stage 归属、开闸风险与用户决策矩阵见 §2.M-003 附录 A / B。
+  `composeRender` 输出 = stage 13 结束的 inline-styled HTML——output 相（stage 11 = `wechatAdapter.patch`）已对产物建模平台合规，即已达平台稳定态。复制 / 导出剪贴板路径**直接复制 render 产物**（`render().html`，预览 ≡ 复制天然成立）。对**任意外部 HTML** 的平台兼容体检由 M-004 `PlatformAdapter.inspect` 承载，非渲染主路径职责。两相分域依据、45 条规则 stage 归属、开闸风险与用户决策矩阵见 §2.M-003 附录 A / B。
 - **两相执行契约**: authoring 相与 output 相共用单一注册表 `applyRuleset(hast, rules, stage)` 按 `RuleDefinition.stage` 过滤执行；authoring 相位于 inlineStyle 之前（作者输入域，保留源位置诊断），output 相位于全部样式合成 / 装饰注入 / customCss 之后、serialize 之前（产物合规域，serialize 前最后一个树变换）。规则 stage 归属由 metadata 显式声明（无缺省），归域裁定见 §2.M-003 附录 A。output 相对样式合成 / 装饰 / customCss 生成的声明建模平台过滤——主题 tag 样式的 `font-family`、pull-quote 槽位的 `position: relative` 等声明在样式合成后方存在，仅 output 相可见并拦截；置于 authoring 相（inlineStyle 之前）的产物合规规则对这些生成声明不可见。
-- **收敛不变量**: `simulatePaste(render(x)).nodeDiffs === []`（视觉域比较，忽略 `data-node-id` 等非视觉脚手架属性）对自家产物全 specimen 集成立——render 的 output 相已将产物落到平台稳定态，M-004 output 域 predict 再跑零变更。是 PRD 产品契约「粘贴过滤后视觉一致」的机器可验证形式，入 CI 性质测试（详 §2.M-004、§2.M-003 收敛不变量条）。
-- **目标平台 profile**: output 域规则集 + 平台常量（`@wechat-flow/contracts` `platform/wechat-paste.ts`：`WECHAT_PASTE_UNSAFE_TAGS` / `WECHAT_PASTE_STRIPPED_STYLE_PROPS`）+ sanitize schema 参数统一由 target profile 承载，`wechat` 为首个 profile；为未来多平台 / 长图导出预留——`font-family` 按 profile 分治：wechat profile 开启 `strip-font-family` 剥除，非微信 profile（长图导出等）保留（详 §2.M-003 附录 B 决策①）。
-- **postPaste 字段语义**: `RenderResult` 含 `postPaste: boolean`；renderMarkdown / Preview / MCP `render_markdown` 路径 `postPaste === false`（output 相已建模平台合规，但仍保留 `data-node-id` 等交互脚手架）；composeCopy / `export_clipboard_payload` 路径在 stage 13 之后经 M-004 `simulatePaste`，置 `postPaste === true`。三路径产物可通过此字段对账，禁止双跑 simulatePaste。
+- **平台稳定态自证（原收敛不变量的诚实形式）**: `PlatformAdapter.inspect(render(x).html)` 对自家产物返回空 changes = 证明产物已达平台稳定态（output 相已将其落到稳定态，inspect 再跑零变更）。此为**按需触发的自证性质，非 CI 恒跑不变量**——`inspect` 只跑 output 域的**平台过滤规则子集**（strip / patch 族；排除 `clamp-*` / `readability-*` / `transform-em-to-px` / 夜间风险等产品归一，见 §2.M-003），render output 相已跑过该子集、inspect 幂等再跑零变更；且 render 产物 **div-free 由构造保证**（`allowDangerousHtml:false` + 容器原语 `section` + 零 div 创建，核实见 §2.M-003），inspect 专用 schema 的 div 剥离对自家产物零命中——故标签与规则两维均返回空。此为自证而非微信真机保真；正向真机保真由 §2.M-003「等效保真门禁」（全主题×全组合 CSS 模式 + 标签扫描）+ 附录 B 少量真机确认承载（避免 render/inspect 共享盲点假绿）。
+- **render target 与平台 patch（render target 二选，非 TargetProfile 分治）**: 微信剪贴板 / 粘贴目标（renderMarkdown 默认、`composeCopy`、`export_clipboard_payload`、MCP `render_markdown`）在 output 相施加 `wechatAdapter.patch`——微信专属调整（`font-size` 夹 14、`rgba` 夹 0.15、SVG `#ffffff`→`#fefefe`、`position` 族剥除、`display:flex`→block 等）。**长图导出 / 封面导出为独立 render target**（M-008 `composeExportLongImage` / `composeExportCover` 经 M-010 Playwright 服务端光栅化）：**不施加微信平台 patch**——图片经服务端确定性光栅化、不经微信粘贴过滤，微信专属调整对图片无意义（SVG 可留 `#ffffff`、淡背景可留低 alpha）。此区分是**每 render target「微信平台适配层 vs 无适配」的二选**（`platform` 选 `wechat` 或不选），本架构无 `TargetProfile` 分治参数化类型。
+- **font-family 在所有 render target 缺席（构造守卫的逻辑后果）**: `font-family` 纳入 §2.M-005 构造守卫 `FORBIDDEN_CSS_PROPS`，注册期拒绝声明（分阶段 T-189），故主题 / 块样式**根本不声明** font-family——它在微信剪贴板与图片导出两条 render target 均缺席，主题字体身份统一由字号层级 / 配色 / 间距 / 装饰承载。图片路径无 font-family 源可保留；**用户裁定（2026-07-09）接受全缺席、不引入 `fontStack` 机制**——图片导出与剪贴板一致均不携带 font-family（详 §2.M-003 附录 B 决策①）。重开条件：图片导出功能落地时产品重估需保留主题字体身份，届时再引入豁免块级构造守卫、仅图片光栅化消费的主题级 `fontStack` 元数据。
+- **RenderResult.report 语义（postPaste 已删）**: `RenderResult` 不含 `postPaste` 布尔字段；含 `report: { nodeChangeRecords, nightRiskIssues }`——output 相 `applyRuleset` 的 `executeStrip/executeTransform` 产出的逐节点变更（含 customCss 被平台规则剥除的声明，如 font-family，以 warn 诊断对消费方 / LLM 可见）与夜间风险条目。复制 / 导出路径不再置"已过滤"布尔标记——复制即 render 产物，无对账双跑。
 - **通用渲染机制（管线不含块名特化分支）**:
   1. **指令属性透传**（transform stage）: M-005 `BlockDefinition.directiveAttrs` 声明的指令 `{}` 属性经 strict 校验后，按 `data-{block}-{attr}` 命名透传至容器 hast 元素（如 `data-dialog-speaker` / `data-pull-quote-author` / `data-compare-left-label`）；块级子结构生成与装饰经 M-005 `decorate(element, ctx)` 钩子收编。transform 与 inline-style 均按通用规则驱动，不含 per-block 名分支。
   2. **容器 typography 下推 cascade**（inline-style stage）: 容器块 root 合成样式中的可继承属性集——`text-align` / `color` / `font-size` / `line-height` / `font-family` / `letter-spacing`——显式合并进容器内**无 slot 子元素**；优先级 **slot 样式 > 容器下推 > 全局 tag token**。全 inline 契约下不依赖运行时 CSS 继承（微信编辑器自带样式表不可控），容器 typography 意图须在合成期显式下推坐实。
@@ -76,7 +81,7 @@ required_sections:
   - `pipeline/transform.ts` — mdast → hast (rehype 适配 + directive 组件展开)；指令声明属性按 `data-{block}-{attr}` 透传 + M-005 `decorate(element, ctx)` 钩子调用（见「通用渲染机制」，无块名特化分支）
   - `pipeline/inline-style.ts` — 分层样式合成（§8.2 Q3.15）：L1 block base-style（M-005 注册查询）⊕ L2 主题 token override，按 (block, variant) 键与标签名索引展开为元素 inline style，`sortedEntries` 确定性遍历；容器 typography 下推 cascade——容器块 root 合成样式的可继承属性集显式合并进无 slot 子元素（见「通用渲染机制」）
   - `pipeline/custom-css.ts` — L3 custom CSS cascade pass（hast 树域，管线 stage 10，output 相之前）：customCss / 注册 variant 样式存在时，经 `juice/client` `inlineContent` 做选择器匹配 + specificity 级联后 re-parse 回 hast 并**全树重过** `css-attr-filter`，产物以 hast 树交付 output 相与 serialize；无 custom CSS 时跳过整个 pass，token 路径产物字节级不变（CI fixture 基线不受扰动）；被白名单拒绝的选择器/声明以结构化诊断汇入 `RenderResult.diagnostics`
-  - `pipeline/sanitize.ts` — 调用 `rehype-sanitize` 6.x，使用 `wechatFlowSanitizeSchema`（导出自 `sanitize/schema.ts`，基于 `hast-util-sanitize` 5.x 的 `defaultSchema` deepmerge，参数化为 target profile）；位置：mdast→hast (`transform.ts`) **之后**、authoring 相规则集 **之前**；是 hast 进入 stage 链下游的**单一守门点**
+  - `pipeline/sanitize.ts` — 调用 `rehype-sanitize` 6.x，使用 `wechatFlowSanitizeSchema`（导出自 `sanitize/schema.ts`，基于 `hast-util-sanitize` 5.x 的 `defaultSchema` deepmerge，按目标平台参数化；渲染管线 schema **保留 div**，与 M-004 inspect 专用 schema 不同——见 §2.M-004）；位置：mdast→hast (`transform.ts`) **之后**、authoring 相规则集 **之前**；是 hast 进入 stage 链下游的**单一守门点**
   - `pipeline/css-attr-filter.ts` — sanitizer 之后的 CSS 属性二级白名单（解析 `style` 值为 declaration 列表，按 `packages/ruleset` 的 CSS 子集声明放行；拒绝 `expression(` / `javascript:` / `behavior:` / `@import`）
   - `pipeline/serialize.ts` — 稳定排序的 HTML 字符串化；统一调 `utils/canonical-json.ts` + `utils/deterministic.ts` 的辅助函数，禁用任何隐式迭代顺序
   - `sanitize/schema.ts` — 导出 `wechatFlowSanitizeSchema: Schema`（`Schema` 类型来自 `hast-util-sanitize`）；通过 `@wechat-flow/contracts` 提供的 `extendSanitizeSchema` 共享契约把自定义 Block 标签合入白名单，由 M-002 在初始化时消费 Block 注册中心 M-005 注入的 (tagSet, attrMap) 增量
@@ -86,7 +91,8 @@ required_sections:
 
 ### M-003: 过滤规则集引擎
 
-- **职责**: 微信平台过滤规则的版本化运行时——规则注册、按作用域（strip / clamp / transform / patch / lint）分类执行、**按语义域（`stage: authoring | output`）两相执行**、规则集版本号管理、规则补丁热加载（F-011 AC-005）；过滤执行时为受影响节点产 `NodeChangeRecord[]`、为低对比度节点产 `NightRiskEntry[]`，统一入 `DiagnosticReport` 供 M-001 消费。output 域规则集是「平台对任意输入的过滤行为」的单一事实源，被三消费方共享：注册期校验（M-005）、渲染 output 相（M-002 stage 11）、粘贴模拟器（M-004 predict 模式）
+- **职责**: 微信平台过滤规则的版本化运行时——规则注册、按作用域（strip / clamp / transform / patch / lint）分类执行、**按语义域（`stage: authoring | output`）两相执行**、规则集版本号管理、规则补丁热加载（F-011 AC-005）；过滤执行时为受影响节点产 `NodeChangeRecord[]`、为低对比度节点产 `NightRiskEntry[]`，统一入 `DiagnosticReport` 供 M-001 消费。output 域规则集是「平台对任意输入的过滤行为」的单一事实源，被三消费方共享：注册期校验（M-005）、渲染 output 相（M-002 stage 11）、平台适配 inspect（M-004 `PlatformAdapter.inspect`）。**平台过滤规则子集（strip / patch 族）**是 output 域内建模「微信真机会剥/改什么」的那一子集（`strip-*` / `patch-*` / `transform-svg-*` 等）；`clamp-*` / `readability-*` / `transform-em-to-px` / `transform-uppercase-hex-lower` / 夜间风险等是**产品诊断 / 归一**（不建模微信平台行为），**不进 inspect 的平台判定**（`AMENDMENT-platform-fidelity-r1#§9` R5）——inspect 只跑平台过滤子集，`render` output 相跑全 output 域（平台过滤 ∪ 产品归一）
+- **output 域 ruleset 本身即 hast 幂等 patch 层**: `strip-position` / `strip-font-family` / `patch-flex-to-block` / `transform-svg-white-offset` 等已是幂等 hast `RuleDefinition`、已在 `render.ts` output 相（stage 11）跑一次、`nodeChangeRecords` 已由 `apply.ts` 的 `executeStrip/executeTransform` 产出。采用 wechat-typeset 平台保真模型后，output ruleset = 平台 patch 链、`nodeChangeRecords` = inspect 报告——无须抽取 / 重写为独立 patch 层。**T-183 归域基础设施（`packages/ruleset` 37 条 output 域规则 + `stage-domain.test.ts` / `output-stage-behavior.test.ts` 基线）保留不拆**；平台保真重构只删重复的独立模拟器（见 §2.M-004），并在 output ruleset 之上做「补全平台常量单一源 + 补齐扫描面 + 兼容性报告/复制/MCP 改指向 output ruleset」三件事。
 - **映射功能**: F-007 (AC-001..AC-004) / F-011 (AC-001 规则级 fixture / AC-005 补丁库 / AC-006 可读性 / AC-007 关键词)
 - **规则语义域契约（stage，唯一权威）**: `RuleDefinition` 增 `stage: "authoring" | "output"` 字段；`metadata.json` schema 强制显式声明（无缺省值，缺失即 `E_SCHEMA` 校验 FAIL）。单一注册表两相执行——`applyRuleset(hast, ruleset, stage)` 先按 `stage` 过滤规则子集再执行：**该注册表 = `builtinRules`（42 条）+ `readabilityRules`（3 条）的 `RuleDefinition` 全集，作用于 hast 树**。`keyword-lint` **不在此注册表内**：它是独立函数 `lintMarkdown(content: string) → Diagnostic[]`（`lints/keyword-lint.ts`），作用于 Markdown 源文本而非 hast 树、语义归作者输入域但**不经 `applyRuleset` 分发**，故不计入 45 条注册、亦不占管线 stage 行（独立调用于 M-001 违规词检测与 M-009 `lint_markdown` Tool，诊断带 `ruleId: "keyword-lint"`，按 UC-013 分组判别契约归违规词组）。
   - **authoring 相（作者输入域）**: 运行于渲染管线 inlineStyle 之前（M-002 stage 5），保留 mdast/hast 源位置诊断。归此的规则其目标构造**只出现在作者输入、且管线从不生成**，或**迁至 output 会破坏管线语义脚手架**（`data-node-id` / `data-block` / `data-variant` / `data-slot` / `data-{block}-{attr}` 透传）。经 `applyRuleset(...,"authoring")` 分发的 `RuleDefinition` 清单：`strip-script` / `strip-style-tag` / `strip-js-events` / `strip-id-attr` / `strip-data-attr` / `strip-aria-hidden`。违规关键词检测（`lints/keyword-lint.ts` 的 `lintMarkdown`）语义同属作者输入域，但作用于 Markdown 源文本、独立调用（非 `applyRuleset` 分发），源位置诊断在此保真。
@@ -95,8 +101,9 @@ required_sections:
 - **对外接口**:
   - 包级 API：`applyRuleset(hast, ruleset, stage: "authoring" | "output") → {hast, report}`，其中 `report: DiagnosticReport`；`getRulesetVersion() → string`；被 M-002 两相调用（stage 5 传 `"authoring"`、stage 11 传 `"output"`）。`stage` 缺省行为不存在——调用方必须显式传相，防止误将全集在单点执行
   - **outbound 数据契约**：`DiagnosticReport.nodeChangeRecords[] → M-001 UC-013.1 CompatibilityDiffView 消费`；`DiagnosticReport.nightRiskIssues[] → M-001 DiagnosticsPanel `night-risk-alert` 状态消费`
-- **依赖模块**: M-012 (schema 契约层 — Rule schema 含 `stage` 字段、DiagnosticReport schema) / `@wechat-flow/contracts` (`platform/wechat-paste.ts` 平台常量 `WECHAT_PASTE_UNSAFE_TAGS` / `WECHAT_PASTE_STRIPPED_STYLE_PROPS`，output 域规则与注册校验共享的平台事实源)
-- **目标平台 profile**: output 域规则集参数化为 target profile（`wechat` 首个），与 M-002 sanitize schema 参数、`@wechat-flow/contracts` 平台常量同源。平台知识更新只改常量 + 规则定义，三消费方（注册校验 / output 相 / 模拟器）同步演进。为未来多平台 / 长图导出预留——`font-family` 按 profile 分治：wechat profile 开启 `strip-font-family` 剥除，长图导出 profile 因光栅化不经微信粘贴过滤保留 font-family（详附录 B 决策①）
+- **依赖模块**: M-012 (schema 契约层 — Rule schema 含 `stage` 字段、DiagnosticReport schema) / `@wechat-flow/contracts` (`platform/wechat-paste.ts` 平台常量**单一源**，output 域规则、注册期构造守卫、平台适配 inspect 三消费方共享的平台事实源)
+- **平台常量单一源**: `contracts/platform/wechat-paste.ts` 承载完整平台事实集（移植 wechat-typeset `rules.ts`）：`FORBIDDEN_CSS_PROPS` = [font-family, position, float]、`FORBIDDEN_DISPLAY_VALUES` = {flex, inline-flex, grid, inline-grid}、`FORBIDDEN_POSITION_PROPS`、`HARD_REMOVE_TAGS`、`FORBIDDEN_VALUE_PATTERNS` = [-webkit-, @media, @keyframes, :hover, :active]、`IFRAME_SRC_ALLOW` = [v.qq.com]、`NEAR_WHITE` = #fefefe。旧名 `WECHAT_PASTE_UNSAFE_TAGS` / `WECHAT_PASTE_STRIPPED_STYLE_PROPS` 保留为 re-export 别名（不破既有测试消费）。**S1 同步断言（单一源派生 + 单向 ⊆，非两份清单双向对账）**：S1 裁定「保留双编码（可读常量 + strip 规则）+ 同步断言测试」以**可满足的单向形式**落地——(a) 构造守卫的禁集**直接从本常量源派生**（`FORBIDDEN_CSS_PROPS ∪ FORBIDDEN_DISPLAY_VALUES ∪ FORBIDDEN_POSITION_PROPS`），不另立第二份守卫清单，无第二份即无漂移可对账，原「常量集 == 规则覆盖集」双向等式（float / grid / 定位族无对应 output 规则，字面恒不相等、不可满足）自然不需要；(b) output 补救规则（运行期 strip / patch：`strip-position` / `strip-font-family` / `patch-flex-to-block`）保留**单向轻断言「其靶向属性/值 ⊆ 平台常量集」**（防 output 规则漂出常量集、引入常量未登记的平台假设），不反向要求常量每一项都有 output 规则；(c) float / grid / 定位族等**无运行期规则**的平台事实由构造守卫（注册资产，从常量派生）+ 全覆盖扫描（产物）兜，不进 output 规则同步断言。`FORBIDDEN_VALUE_PATTERNS` 的 `-webkit-` 前缀带例外白名单——`print-color-adjust`（juice 注入）/ `overflow-scrolling`（iOS 动量滚动）/ `-webkit-text-emphasis`（`packages/marks/src/marks/emphasis.ts` 着重号真实排版）不误杀；扫描接入前须 grep 全仓 `-webkit-` 用例逐一裁定例外或处置
+- **平台合规经 output 相 + render target 承载**（非 profile 参数化）: output 域规则集是微信平台过滤单一事实源，与 M-002 sanitize schema 参数、平台常量同源；平台知识更新只改常量 + 规则定义，三消费方（注册期构造守卫 / output 相 patch / 平台适配 inspect）同步演进。渲染目标区分为 render target 二选而非 `TargetProfile` 分治参数化（本架构无此类型）：微信剪贴板 / 粘贴路径经 `wechatAdapter.patch` 施加微信专属 output 平台规则；长图 / 封面导出为独立 render target，不施加微信平台 patch（微信专属调整对图片无意义）。`font-family` 因构造守卫注册期禁声明（§2.M-005），在两条 render target 均缺席（详 §2.M-002「render target 与平台 patch」「font-family 在所有 render target 缺席」与附录 B 决策①）
 - **内部关键组件**:
   - `rules/registry.ts` — 规则注册中心；`RuleDefinition` 含 `stage` 字段；`applyRuleset(hast, ruleset, stage)` 按 stage 过滤执行
   - `rules/scope/strip.ts`、`clamp.ts`、`transform.ts`、`patch.ts`、`lint.ts` — 五类作用域执行器（scope 正交于 stage：scope 决定「如何改」，stage 决定「何时改」）
@@ -145,7 +152,8 @@ required_sections:
     - 夜间风险组 ← `nightRiskIssues` 独立数组（非 `diagnostics` 成员）
 
     判别在 `Diagnostic.ruleId` 现有字段上进行，不引入 `category` / `group` 新字段；`ruleId` 前缀 `lint-`（`lint-filter-backdrop` / `lint-grid-layout` / `lint-position-fixed` 等 `scope: lint` 兼容性规则）语义归兼容性组，与可读性组的 `readability-` 前缀互不相交。分组判别正交于 `stage` 归域——同一规则的分组语义（面板呈现）与两相执行位点（管线时序）互不影响。
-- **收敛不变量（产品契约的机器可验证形式）**: `simulatePaste(render(x)).nodeDiffs === []` 对自家产物全 specimen 集（40 块 × 变体 + realworld samples）成立——render 的 output 相已将产物落到平台稳定态，M-004 output 域 predict 模式再跑零变更。diff 比较域为**视觉域**（样式声明 + 标签 + 结构），忽略 `data-node-id` 等非视觉脚手架属性（在比较前归一化剔除）。这是 PRD 产品契约「粘贴过滤后视觉一致」从口号到机器可验证性质的形式化，入 CI；任何新增块 / 主题 / 规则破坏不变量即门禁红（详 M-004、M-002 收敛不变量条）
+- **等效保真门禁（替代 CI 恒跑收敛不变量）**: 删除独立模拟器后，PRD 产品契约「粘贴过滤后视觉一致」由两条机制承载——(1) **平台稳定态自证**：`PlatformAdapter.inspect(render(x).html)` 对自家产物返回空 changes（inspect 只跑**平台过滤规则子集**且 render output 相已跑过该子集、幂等再跑零变更；inspect 专用 schema 的标签剥离对 render 产物亦零命中，因 render 产物 **div-free**——见下），为按需触发的自证性质，非 CI 恒跑不变量；(2) **等效保真门禁**：扫**全注册主题 × 全 block × 全 variant** 的最终 HTML，含 `FORBIDDEN_CSS_PATTERNS` CSS 模式扫描（带 `-webkit-` 例外白名单）+ 不安全标签扫描（`WECHAT_PASTE_UNSAFE_TAGS`），任一命中即门禁红——这是删收敛不变量后的等效保真门禁（`tests/blocks/wechat-paste-safe-output.test.ts` 升级为全主题全组合 + 标签扫描）。**收敛不变量 `simulatePaste(render(x)) === []` 是自证性质非微信真机保真**：inspect 用的是 output 域的平台过滤子集、与 render 同源，对自家产物零变更会掩盖二者共同的平台建模盲点（如未剥某属性则两侧同盲）；正向真机保真须由等效保真门禁 + 少量微信真机粘贴确认（附录 A.4 dropcap 真机前置 / 附录 B 样张 sign-off）承载，不能以自证不变量假绿代替
+  - **render 产物 div-free（核实结论，2026-07-09）**: 自证「inspect 对自家产物返回空」在标签维度成立的前提是 render 产物不含 `div`（inspect 专用 schema 剥 `div`，见 §2.M-004）。已核实 render 产物 **div-free 由构造保证**：① `packages/core/src/pipeline/transform.ts` 的 `remarkRehype({ allowDangerousHtml: false })` 使 Markdown 源中的裸 `<div>`（及任意裸 HTML）**不被转成 hast 元素**、在 mdast→hast 阶段即丢弃，从不进入 sanitize / 下游树（并非「经 sanitize 存活」）；② 全 source 零 `div` 元素创建——block 容器原语为 `section`（`transform.ts` 指令 `hName="section"`、`blocks/steps.ts`、`blocks/decorate-utils.ts`），`decorate` 钩子不注入 `div`；③ customCss 级联 `pipeline/custom-css.ts` 的 `fromHtml(juicedHtml, { fragment: true })` re-parse 的是 juice 内联后的产物字符串——juice 只对既有元素内联 style、不新建 `div` 容器，输入 div-free 则输出 div-free。故 `inspect(render(x)).changes === []` 命题成立、非过度声明；**inspect 专用 schema 剥 div 的存在理由是 inspect 面向的任意外部 HTML 可含 div，与自家产物无关**
 - **规则文件存放**: 规则定义在 `packages/ruleset/src/rules/builtin/{rule-id}.ts`；fixture 在同名子目录 `packages/ruleset/src/rules/builtin/{rule-id}/`，目录结构：
   - `input.html` — 进入规则前的 hast 序列化
   - `expected.html` — 规则应用后的 hast 序列化
@@ -181,7 +189,7 @@ required_sections:
 | strip-css-var | strip | 槽位/decorate 样式以 `var(--token)` 占位生成（实证 `var(--color-brand)`/`var(--font-family-heading)`） | 命中全部 var 占位槽位/装饰样式；须确认 token 解析后无残留，否则展开顺序与 inlineStyle 交互需定 |
 | strip-calc-expression | strip | `calc()` 可由 baseStyle/customCss 生成 | 命中生成样式中的 calc |
 | strip-flex-gap | strip | flex 容器 gap/justify-content/align-items 可由 baseStyle 生成 | 命中生成 flex 布局声明；与 patch-flex-to-block 联动 |
-| strip-font-family | strip | 主题 tag 样式 / block baseStyle 全量生成 font-family（旗舰实证：主题 font-family 全量绕过） | 命中全部主题 tag 样式与块 baseStyle 的 font-family——决策①已裁定剥除（wechat profile 开启 strip-font-family），归域后直接开闸 |
+| strip-font-family | strip | 主题 tag 样式 / block baseStyle 全量生成 font-family（旗舰实证：主题 font-family 全量绕过） | 命中全部主题 tag 样式与块 baseStyle 的 font-family——决策① 已裁定**无差别剥除**（不设 system-font 白名单豁免，撤销 system-only）。分阶段（T-189）：现运行期 `strip-font-family` 兜底 → 清理主题 / mark 声明 → §2.M-005 构造守卫注册期禁声明；终态 font-family 在两条 render target 均缺席（图片路径亦无源可保留，详附录 B 决策①） |
 | strip-negative-margin | strip | 负 margin 可由 baseStyle/decorate 生成 | 命中生成负 margin |
 | strip-position | strip | 槽位样式生成 position（实证先例 pull-quote 槽位 `position: relative`） | **命中 pull-quote 等槽位 position——真实潜伏违规，开闸即修复样式** |
 | strip-pseudo-classes | strip | 伪类/伪元素 inline 残影来自 customCss juice 级联 | 命中 customCss 处理残留；须置于 applyCustomCss 之后 |
@@ -222,6 +230,19 @@ required_sections:
 |---|---|---|
 | strip-width-height-inline | strip | 已裁移除——生产实证过严，误伤 img/table 合法固定尺寸；不参与两相执行，归域表仅留档 |
 
+##### A.4 平台事实纠正（wechat-typeset 权威 > 网络调研 > 现状）
+
+采用 wechat-typeset 平台保真模型后，以下平台事实以 wechat-typeset（同作者多年真机实测）为权威修订，覆盖网络调研与现状：
+
+| 项 | 裁定 | 说明 |
+|---|---|---|
+| CSS `transform` 属性 | **不剥** | wechat-typeset 禁区无 `transform`；本就无 `strip-transform` 规则，维持。注：A.2 的 `transform-*` 系列（`transform-em-to-px` 等）是**值变换作用域**规则，与 CSS `transform` 属性无关，照常保留 |
+| `font-family` | **无差别剥除**（微信剪贴板路径） | 撤销 system-only 白名单；`strip-font-family` 命中全部生成 font-family。图片导出 render target 不施加平台 patch、font-family 保留（§2.M-002） |
+| `float` | **构造期禁止 + 扫描抓漏** | 纳入 `FORBIDDEN_CSS_PROPS`，注册期构造守卫拒绝；output ruleset 无运行期 strip-float，decorate 动态注入的 float 由 §2.M-005 全覆盖扫描（层 3）抓漏，非运行期剥（缺口登记见 `AMENDMENT-platform-fidelity-r1#§9` R3） |
+| `-webkit-` / `@media` / `@keyframes` / `:hover` / `:active` | **纳入 `FORBIDDEN_VALUE_PATTERNS` + 扫描** | 带例外白名单：`print-color-adjust`（juice 注入）/ `overflow-scrolling`（iOS 动量滚动）/ `-webkit-text-emphasis`（`packages/marks/src/marks/emphasis.ts` 着重号真实排版）不误杀；扫描接入前须 grep 全仓 `-webkit-` 用例逐一处置 |
+| SVG 纯白 `#ffffff` | **→ `#fefefe`（`NEAR_WHITE`）** | `transform-svg-white-offset` 保留；仅 SVG 上下文，非 SVG 背景白色不受影响（微信实测纯白光栅化透明风险） |
+| dropcap `width:1%; white-space:nowrap` | **真 bug，改显式 px 宽** | paragraph/quote dropcap 与 dialog shrink cell 用 `width:1%; white-space:nowrap` 依赖 `nowrap` 阻止 1% shrink-cell 塌陷；**微信剥 `white-space:nowrap` 留 `1%` → 单元格塌陷**。改按字号推导的显式 px 宽（非硬编码 44px）；`display:table` 本体存活须 ≤6 份真机确认**作为前置**（T-188），塌陷则装饰布局改真 `<table>` |
+
 ---
 
 #### 附录 B: 用户决策矩阵（已裁定 2026-07-08）
@@ -230,13 +251,14 @@ required_sections:
 
 ##### 决策①: font-family 策略
 
-- **选项 A（微信 profile 剥除 font-family）**: output 相 `strip-font-family` 命中全部主题 tag 样式与块 baseStyle 的 font-family，产物不含 font-family，微信系统字体栈接管。诚实「所见即所粘」。
-  - **影响面**: 全部 5 主题（default / magazine / literary / business / tech）的字体身份不再体现于产物；literary 宋体、tech 等宽等字体标识须靠字号层级 / 配色 / 间距 / 装饰承载；ui-spec §10.5 及相关字体条款须 amendment（owner=ui-designer）；预览须同步反映微信实际字体或明示「预览字体 ≠ 粘贴字体」；主题字体保留语义收窄至非微信 profile。
-- **选项 B（保留 font-family + 模拟器警告）**: wechat profile 关闭 `strip-font-family`，产物保留 font-family，预览美观且主题身份完整；`simulatePaste` predict 模式报「font-family 将被微信剥除」诊断。
-  - **影响面**: 预览与实际粘贴视觉系统性不一致（失真）；**破坏收敛不变量**——render 保留 font-family 而 predict 剥除 → 非零 diff，CI 性质测试无法成立。
-- **推荐**: **选项 A（剥除）**。理由：(1) 产品契约核心 =「粘贴过滤后视觉一致」，font-family 是微信实测剥除项（wechat-typeset 生产实证：剥 inline font-family），保留即制造预览/产物系统性失真，违背契约根基；(2) 收敛不变量 `simulatePaste(render(x)) === render(x)` 要求 render 产物已达平台稳定态，保留 font-family 直接破坏不变量；(3) 主题身份可由字号层级 / 配色 / 间距 / 装饰 SVG 充分承载，字体非唯一身份载体。
-- **用户裁定（2026-07-08）**: **选项 A（剥除）**。wechat profile 开启 `strip-font-family`，产物不含 font-family，微信系统字体栈接管，守收敛不变量。下游：ui-spec §10.5 及相关字体条款须 amendment（owner=ui-designer）；主题字体保留语义收窄至非微信 profile（长图导出等 profile 保留 font-family）。
-- **重评估条件**: 微信编辑器后续版本停止剥除 inline font-family（须实测验证），或产品新增「非微信目标平台」（长图 / PDF / 其他平台）成为主用例——font-family 保留策略按 profile 分治重启评估。
+- **选项 A（微信剪贴板路径无差别剥除 font-family）**: output 相 `strip-font-family` 命中全部主题 tag 样式与块 baseStyle 的 font-family，产物不含 font-family，微信系统字体栈接管。诚实「所见即所粘」。
+  - **影响面**: 全部 5 主题（default / magazine / literary / business / tech）的字体身份不再体现于剪贴板产物；literary 宋体、tech 等宽等字体标识须靠字号层级 / 配色 / 间距 / 装饰承载；ui-spec §10.5 及相关字体条款须 amendment（owner=ui-designer）；预览须同步反映微信实际字体或明示「预览字体 ≠ 粘贴字体」；主题字体保留语义收窄至图片导出 render target。
+- **选项 B（保留 font-family + 兼容性诊断警告）**: 微信剪贴板路径不剥 `font-family`，产物保留 font-family，预览美观且主题身份完整；`inspect` / 兼容性报告标注「font-family 将被微信剥除」诊断。
+  - **影响面**: 预览与实际粘贴视觉系统性不一致（失真）——复制产物保留 font-family 而微信真机剥除，「所见即所粘」在剪贴板路径不成立。
+- **推荐**: **选项 A（剥除）**。理由：(1) 产品契约核心 =「粘贴过滤后视觉一致」，font-family 是微信实测剥除项（wechat-typeset 生产实证：剥 inline font-family），保留即制造预览/产物系统性失真，违背契约根基；(2) 复制即 render 产物、无独立模拟器对账——产物须在 output 相已达平台稳定态，保留 font-family 则产物含微信必剥项、`inspect` 对自家产物非空（平台稳定态自证失败）；(3) 主题身份可由字号层级 / 配色 / 间距 / 装饰 SVG 充分承载，字体非唯一身份载体。
+- **用户裁定（2026-07-09）**: **选项 A（无差别剥除 + 禁声明）**。微信剪贴板 / 粘贴路径经 `wechatAdapter.patch` 在 output 相无差别剥除 font-family（不设 system-font 白名单，撤销 system-only）；且 §2.M-005 构造守卫将 font-family 纳入 `FORBIDDEN_CSS_PROPS`，主题 / mark 注册期禁声明（分阶段 T-189）。故 font-family 在**所有 render target 缺席**——主题字体身份统一由字号层级 / 配色 / 间距 / 装饰承载。下游：ui-spec §10.5 及相关字体条款须 amendment（owner=ui-designer）。
+- **[用户裁定 2026-07-09] 图片导出路径的字体保真 = 接受全缺席**: TargetProfile 删除 + 构造守卫禁声明后，0.9.5 本决策括注「长图导出等 profile 保留 font-family」**已被推翻**——图片路径（长图 / 封面光栅化）无 font-family 源可保留。用户裁定**接受全缺席、不引入 `fontStack` 机制**：图片导出与剪贴板一致均不携带 font-family，主题字体身份统一由字号 / 配色 / 间距 / 装饰承载。重开条件：图片导出功能真正落地时产品重估需保留主题字体身份，届时再引入豁免块级构造守卫、仅供图片光栅化 render target 消费的主题级 `fontStack` 元数据。
+- **重评估条件**: 微信编辑器后续版本停止剥除 inline font-family（须实测验证），或产品新增「非微信剪贴板目标平台」成为主用例——font-family 处置按 render target 重新标定。
 
 ##### 决策②: clamp / transform 阈值与现有块样式冲突清单
 
@@ -258,17 +280,26 @@ required_sections:
 - **推荐总则**: 阈值冲突一律按客观权威标准裁定（WCAG / 微信实测下限 / 平台白名单），**禁止反推阈值以令现状产物通过**（拟合现状 = 循环论证、放过真缺陷）。逐条命中在开闸时以基线 diff 审计坐实：命中即二选一——「真实潜伏违规 → 修复样式」或「规则过严 → 按权威依据修订规则匹配范围/阈值」（`position:relative` 与 `strip-width-height-inline` 分别代表两类裁定方向）。
 - **重评估条件**: 微信编辑器渲染下限变化（须实测），或新目标平台 profile 引入不同阈值时，各阈值随 profile 重新标定。
 
-### M-004: 粘贴过滤模拟器
+### M-004: 平台适配层 PlatformAdapter
 
-- **职责**: 预测目标平台（微信公众号编辑器）对**任意输入** HTML 的粘贴过滤行为，供兼容性报告；输出粘贴前后逐节点的精确变更对照。实现为 M-003 output 域规则集的 **predict 模式**（同一规则引擎双模式：normalize 修改树 / predict 预测变更并产 per-node diff 而不改交付树），不再持有独立过滤 walker——职责收窄为「对任意输入预测平台行为」，产物管线自身的平台合规由 M-002 output 相（stage 11）承载
+- **职责**: output 域规则集**之上**的薄编排 + 报告层（非独立过滤 walker、非重新实现平台模型）——把「渲染管线 output 相 patch」与「对任意外部 HTML 的平台兼容体检 inspect」封装为统一平台抽象；为多平台（xhs / zhihu 预留）留扩展点，当前仅实 `wechat`。**不持有独立平台模型**：`patch` / `inspect` 共用 M-003 output 域规则集这一单一平台事实源，删除了与 output ruleset 重复建模的独立模拟器（`simulate-paste.ts` / `simulator/*` / `diff/per-node-diff.ts`）与收敛不变量对账机器
 - **映射功能**: F-002 (AC-005 / AC-006 兼容性报告) / F-004 (AC-004 / AC-005 视觉一致性) / F-011 (AC-002)
-- **对外接口**: 包级 API：`simulatePaste(html: string, profile?: TargetProfile) → {filteredHtml, nodeDiffs, droppedAttrs}` = M-003 output 域规则集 predict 模式执行 + per-node diff（`profile` 缺省 `wechat`）；**由 M-008 `composeCopy` 在 inline-style HTML stage 之后显式调用**；同时被 M-009 `simulate_paste` Tool 直接调用。**不在 M-002 renderMarkdown 主路径自动执行**——渲染 output 相已建模平台合规，simulatePaste 仅在 copy / 独立模拟入口对最终产物或任意外部输入运行
-- **依赖模块**: M-003 (规则集引擎 — 复用 output 域规则集 predict 模式；`div` 携带样式剥离 / `position` 族 / `font-family` 建模由归域后的 output 规则承载，非本模块独立实现)
-- **内部关键组件**:
-  - `simulate-paste.ts` — predict 模式入口：取 M-003 output 域规则集，对输入 hast 逐规则跑 predict（记录若 normalize 会产生的变更而不改交付树），汇总 `filteredHtml`（预测过滤后 HTML）/ `droppedAttrs`
-  - `diff/per-node-diff.ts` — 节点级 diff 输出（兼容性详情面板核心数据）；与 M-003 `report/node-change-recorder.ts` 的 `NodeChangeRecord` 同构，供 UC-013.1 CompatibilityDiffView 消费
-  - 独立 `simulator/strip-tags.ts` / `strip-attrs.ts` / `rewrite-structure.ts` walker 与 `packages/ruleset/src/shared/paste-strip.ts` 子集由 T-184 统一为 M-003 output 域规则集 predict 模式后移除（**目标态；当前仍存在，见 §2 实现状态**）——落地后平台过滤知识单一收敛于 output 域规则集，注册校验（M-005）/ 渲染 output 相（M-002）/ 模拟器（M-004）三消费方同源
-- **收敛不变量**: `simulatePaste(render(x)).nodeDiffs === []` 对自家产物全 specimen 集（40 块 × 变体 + realworld samples，视觉域比较）成立——render 的 output 相与 simulatePaste 共用同一 output 域规则集，产物已达平台稳定态则 predict 零变更。CI 性质测试断言此不变量；「div 携带样式」等负向 fixture 探针保留，验证对**非自家产物**的任意输入 predict 仍报告真实剥除。任何新增块 / 主题 / 规则破坏不变量即门禁红
+- **对外接口**:
+  ```ts
+  interface PlatformAdapter {
+    id: string; name: string;
+    patch(hast): hast;               // = render output 相既有 applyRuleset(hast, rules, "output") 的具名封装（同一执行点）
+    inspect(html: string): PatchLog; // 对任意外部 HTML：专用 inspect schema 标签剥离 ⊕ output 平台过滤规则子集 → 报告
+  }
+  ```
+  - `wechatAdapter` 为首个（当前唯一）实现；`patch` 面向渲染管线（我方 hast），`inspect` 面向任意外部 HTML 字符串，入口不同。**规则集关系：`inspect` 规则集 ⊆ `patch` 规则集**——`patch` = 全 output 域规则（平台过滤 ∪ 产品归一 `clamp-*` / `readability-*` / `em→px` / 夜间风险），`inspect` **仅跑平台过滤规则子集**（strip / patch 族，建模微信真机剥/改；排除产品归一，见 §2.M-003 与 `AMENDMENT-platform-fidelity-r1#§9` R5）；二者非同一集，`inspect` 不对外部 HTML 报告产品归一（否则把「字号夹 14 / em→px / hex 转小写」当微信平台行为误报）。
+  - `patch` **不是 render 后再跑一遍**——它就是 `render.ts` output 相既有 `applyRuleset(afterCustomCss, rules, "output")` 那一次执行的具名封装（M-002 stage 11）；render.ts 内部经 `wechatAdapter.patch` 调用同一执行点，render 与 adapter 不各维护一份 output-stage 调用逻辑而随时间漂移。
+- **inspect 诚实语义**: inspect 面向**任意外部 HTML**（LLM 兼容性自查），语义 = 「wechat-flow 平台模型（标签剥离 ⊕ output 平台规则）会对这段 HTML 做什么」。
+  - **专用 inspect schema（关键实现约束）**: `inspect` **不能复用渲染管线 schema**——`wechatFlowSanitizeSchema` 与 `hast-util-sanitize` `defaultSchema` 的**标签白名单都含 div**（不主动剥 div）。inspect 须构造**专用 inspect schema** = `defaultSchema.tagNames` 减去 `WECHAT_PASTE_UNSAFE_TAGS ∪ HARD_REMOVE_TAGS`，方能真剥 div / script 等；否则 `inspect(<div style="position:absolute">)` 仍返回空、对**任意外部 HTML** 不诚实。此专用 schema 的存在理由是 **inspect 面向任意外部 HTML（外部输入可含 div）**——**并非**渲染管线「留了 div」：渲染管线故意在 schema 白名单保留 div 标签，但 render 产物本身 **div-free 由构造保证**（`transform.ts` `allowDangerousHtml:false` 拦截 Markdown 裸 `<div>`、容器原语 `section`、零 div 创建，见 §2.M-003）。inspect = 专用 schema 标签剥离 ⊕ output 平台过滤规则报告。
+  - **对自家 render 产物返回空 = 产物已达平台稳定态**（原收敛不变量的诚实形式，按需触发**非 CI 恒跑**）。**不宣称「预测微信真机」**——它报的是我方平台模型；真机保真由 §2.M-003「等效保真门禁」（全主题×全组合扫描）+ 少量真机确认承载。MCP request schema 钉死 `{ html: string }`（外部 HTML），tool description 明确「面向任意 HTML 的平台兼容体检；对已渲染产物返回空即干净」。
+- **PatchLog 数据形**: `{ patchedHtml: string, changes: PatchChange[] }`；`PatchChange = { patch: string, label: string, count: number, samples: { selector: string, before: string }[] }`。兼容性报告 `nodeChangeRecords` 仍由 M-003 `apply.ts` 的 `executeStrip/executeTransform` 产出（现状即如此，删模拟器不影响此来源，见 §2.M-003）——DiagnosticsPanel / CompatibilityDiffView 消费源保持单一模型、无面板侧双源复活。
+- **删除清单（独立模拟器）**: `simulate-paste.ts`、`simulator/{strip-attrs,strip-tags,rewrite-structure}.ts`、`diff/per-node-diff.ts` 删除；包级 `simulatePaste` / `SimulatePasteResult` / `NodeDiff` / `DroppedAttr` 导出删除（breaking npm API，见 `AMENDMENT-platform-fidelity-r1#§5`）；收敛不变量 CI 性质测试删除；`RenderResult.postPaste` 删除；`TargetProfile` / P-Q-N 三分 / platformFidelity 标记 / oracle-as-CI-gate 删除。删 `diff/per-node-diff.ts` 顺带消解位置下标 diff bug（数组下标 `beforeEls[i]` vs `afterEls[i]` 在节点删除后索引移位致级联错位）。
+- **依赖模块**: M-003 (规则集引擎 — `patch` / `inspect` 复用 output 域规则集，非独立实现；`div` 携带样式剥离由 inspect 专用 schema 承载、`position` 族 / `font-family` 建模由 output 规则承载) / M-012 (schema 契约层 — PatchLog schema)
 - **context_load**: [prd#§2.F-002, prd#§2.F-004, prd#§2.F-011, arch#§2.M-002, arch#§2.M-003]
 
 ### M-005: 主题与组件注册中心
@@ -276,7 +307,7 @@ required_sections:
 - **职责**: 内置主题、Block / Mark / Variant / Token、主题装饰资产的注册与查询；Block 携带 `category` 功能分类（驱动 UC-015 InsertDrawer 分类 tab 数据化）与 base-style（§8.2 Q3.15 L1 层）——base-style 随 `defineBlock` 注册持有，按 (blockId, variantId) 查询供 M-002 stage 5 合成，内置 variant 与 `default` variant 均可携带静态 base-style；自定义样式容器 variant 双路径注册（plugin-api `defineVariant` 与 MCP API-034 `register_variant`，共享 `registry/variant.ts` 存储与 F-010 AC-005 校验链路，进程内生命周期，§8.2 Q3.16）；主题守护 9 维静态校验（含「内置 template 完整性」维度，F-011 AC-009）；主题热切换；template 作为主题命名空间下的预设变体登记（F-008）；扩展点支持第三方主题与 template pack 注册
 - **映射功能**: F-003 (AC-001..AC-012) / F-008 (AC-001 注册, AC-002 白名单覆盖, AC-003 frontmatter 语义, AC-004 describe_theme/describe_template) / F-009 (AC-001 继承 + AC-002 品牌包) / F-011 (AC-003 主题守护 9 维 / AC-009 template 完整性)
 - **对外接口**: 包级 API：
-  - 主题层：`registerTheme(definition)`、`listThemes()`、`describeTheme(id)`、`listBlocks()`、`describeBlock(id)`、`listBlockVariants(blockId)`、`registerVariant({ blockId, id, label, style }) → void`（style 即该 variant 的 base-style；校验失败抛结构化错误，含被拒绝声明清单）、`getBlockBaseStyle(blockId, variantId) → Record<string, string>`（M-002 stage 5 合成入口；解析顺序见「Block / Variant 注册契约」）、`derivePalette(seed)`、`validateThemeGuard(theme) → GuardResult`
+  - 主题层：`registerTheme(definition)`、`listThemes()`、`describeTheme(id)`、`listBlocks()`、`describeBlock(id)`、`listBlockVariants(blockId)`、`registerVariant({ blockId, id, label, style }) → void`（style 即该 variant 的 base-style；命中平台禁区时**核心函数抛出**含 `rejectedDeclarations`（`{ slot, property, value, reason }`）的结构化错误——拒绝清单挂在被抛出的 Error 对象上，成功路径无返回值；**MCP `register_variant` 边界层 catch 该异常后转 `{ registered: false, rejectedDeclarations }` 非抛出响应**，非直传——见「注册期构造守卫」）、`getBlockBaseStyle(blockId, variantId) → Record<string, string>`（M-002 stage 5 合成入口；解析顺序见「Block / Variant 注册契约」）、`derivePalette(seed)`、`validateThemeGuard(theme) → GuardResult`
   - **template 层（主题命名空间隔离）**：
     - `defineTemplate({ themeId, templateId, render }) → void` — 独立注册 API；与 `defineTheme.templates` 字段语义等价
     - `listThemeTemplates(themeId: string): TemplateMeta[]` — 返回该主题已注册的全部 template 元数据（轻量，不含 Markdown 正文）
@@ -284,9 +315,11 @@ required_sections:
     - `validateTemplateCoverage(themeId: string, templateId: string): CoverageReport` — 静态校验 template 是否覆盖 F-003 AC-012 白名单（9 基础元素 + ≥ 6 核心 Block 容器），返回逐项缺失清单
     - `validateThemeTemplates(themeId: string): ThemeTemplateValidationResult` — 9 维守护第 9 维（内置 template 完整性）执行器；遍历该主题全部 template 调 `validateTemplateCoverage`，任一未覆盖即整体 `pass: false`；由 `guard/validate-theme-templates.ts` 实现，于 CI 守护流程阻断发布
   - 被 M-002 / M-008 / M-009 调用
-- **注册期平台合规校验（前移平台约束）**: `registerBlock` / `registerVariant` / `registerTheme` 的样式校验接 `@wechat-flow/contracts` 平台常量（`platform/wechat-paste.ts`：`WECHAT_PASTE_UNSAFE_TAGS` / `WECHAT_PASTE_STRIPPED_STYLE_PROPS`）——注册样式声明命中 `WECHAT_PASTE_STRIPPED_STYLE_PROPS`（`position` / `top` / `right` / `bottom` / `left` / `z-index` / `float` —— profile 无关、在微信粘贴过滤下永不合法的定位/浮动属性）或平台禁用值域即 `E_SCHEMA` 拒绝并附被拒声明清单。此校验沿既有 `registry/css-property-whitelist.ts`（`CSS_SAFE_PROPERTIES` / `isWhitelistedProperty`）**单一机制扩展**——白名单放行 ∩ 平台禁用剔除，不建平行校验器。
-  - **font-family 走「声明—按 output profile 剥除」模型，排除出注册期拒绝集**: 主题 tag 样式 / 块 baseStyle **允许声明 font-family**（注册期放行，非 `WECHAT_PASTE_STRIPPED_STYLE_PROPS` 成员），其平台处置为 profile 分治——wechat profile 在 output 相经 `strip-font-family` 剥除、非微信 profile（长图导出等）保留（详 §2.M-003 附录 B 决策①）。font-family 不进注册期拒绝集，因其非「永不合法」而是「按目标平台取舍」，由 output 域 profile-gated 规则承载，非注册期一刀切拒绝。
-  - 作用是把「产物在 output 相被 strip」的失效前移到注册期显式拒绝，使 output 相对内置样式源的命中收敛为零——**profile-gated 属性（font-family）除外**：其由内置主题声明并按 profile 于 output 相剥除，是设计内命中而非潜伏失效。output 相对非 profile-gated 声明的实际拦截目标退化为动态 customCss / 第三方注入；平台知识与 M-003 output 域规则、M-002 sanitize schema 同源于 target profile
+- **注册期构造守卫（主防线，构造期硬防已注册设计资产）**: `registerBlock` / `registerVariant` / `registerTheme` / `registerMark` 的样式声明命中平台禁区即**拒绝**——禁区 = `FORBIDDEN_CSS_PROPS`（`font-family` / `position` / `float`）∪ `FORBIDDEN_DISPLAY_VALUES`（`display: flex / inline-flex / grid / inline-grid`）∪ `FORBIDDEN_POSITION_PROPS`（`top` / `right` / `bottom` / `left` / `z-index`）∪ 平台禁用值域（§2.M-003 平台常量单一源）。**核心 register* 函数命中即抛出**含 `rejectedDeclarations`（`{ slot, property, value, reason }` 结构化清单）的错误——`rejectedDeclarations` 挂在被抛出的 Error 上、成功路径无返回值携带清单（对齐 `registerVariant` 现状 `packages/core/src/registry/variant.ts:100-107` 的 `throw Object.assign(new Error(...), { rejectedDeclarations })` 模式）；`reason` 含可执行替代指引（如「主题身份用字号 / 字重 / 配色 / 间距 / 布局承载，勿用 font-family」）。**MCP 边界层（`register_variant` 等 Tool wrapper）catch 该异常后转 `{ registered: false, rejectedDeclarations }` 非抛出响应**——Block / Theme / Mark 守卫同此模式（core throw + MCP 边界 catch-and-restructure），非「core 不抛、MCP 直传」。此校验沿既有 `registry/css-property-whitelist.ts`（`CSS_SAFE_PROPERTIES` / `isWhitelistedProperty`）单一机制扩展——白名单放行 ∩ 平台禁区剔除，不建平行校验器；`CSS_SAFE_PROPERTIES` **移除 font-family**（令 customCss / register 对 font-family 也 fail-fast 而非静默剥）。
+  - **按输入来源分工（守卫 vs output 补救，非按属性分两级）**: 构造守卫（主防线）拦截**已注册设计资产**——内置 block / variant / theme / mark，以及第三方 / LLM 经 `register*` 提交的资产。运行期 output 补救规则（`patch-flex-to-block` / `strip-position` / `strip-font-family` 等，M-003 output 相）拦截**唯一无 register 步、守卫拦不住的输入 = 运行期 `customCss`**（用户 / LLM 渲染时注入）。二者覆盖**不同输入源**、非冗余：同一属性（如 `display: flex`）在已注册资产里被守卫**源头拒绝**（资产须改写为微信安全布局），在运行期 customCss 里被 `patch-flex-to-block` **兜底转 block**——「守卫禁 flex」与「output 补 flex」不矛盾（管不同输入），本架构不建「构造禁集 vs output 补救集」两级属性分类法。
+  - **现状差异（构造守卫须据实建设，非「复用」）**: 仅 `registerVariant` 现有 `validateStyle` / `rejectedDeclarations` 机制可直接复用；`registerBlock` 只校验 slot 形状、`registerTheme` 零校验、`registerMark` 零校验且 `MarkDefinition.style` 是**字符串**（如 `inline-code` 的 `font-family: monospace`、`emphasis` 的 `-webkit-text-emphasis`）须先 CSS 字符串解析——Block / Theme / Mark 三者的守卫基础设施须**从零建构**，与 Variant 声明式结构不同形（T-187）。
+  - **内置资产 FORBIDDEN 声明须源头清理（守卫上线前置，非仅 font-family）**: 构造守卫抛出前，**全部内置设计资产**（block / variant / theme / mark）不得再声明任何 `FORBIDDEN_CSS_PROPS` ∪ `FORBIDDEN_DISPLAY_VALUES` ∪ `FORBIDDEN_POSITION_PROPS` 成员，否则进程启动注册内置资产时守卫抛异常 → 注册中断 → 全 suite 无法加载注册表（硬阻塞）。清理**不限于 font-family**：已核实 `packages/blocks/src/blocks/author-card.ts` 静态 baseStyle 声明 `display: flex`（内置块真 bug）——须**源头迁移**为微信安全布局（`display: table` / `inline-block` 等），不靠 output `patch-flex-to-block` 蒙混（该规则管运行期 customCss，不为内置块违规兜底）。守卫上线前须 grep 全仓内置资产静态声明（`display:(flex|grid)` / `position:` / `float:` / `font-family:` / 定位族），逐项源头改写清零。分阶段落地：运行期 output 规则兜底（现状）→ **审计并清理全内置资产 FORBIDDEN 声明**（font-family：5 主题 tokens / heading / paragraph / code-block + `packages/blocks/src/blocks/{paragraph,quote}.ts` dropcap 装饰 + `packages/marks/src/marks/inline-code.ts`；flex：`author-card` 迁 table/inline-block；扫描出的其余违规同批）→ 上构造守卫。构造守卫禁声明的**逻辑后果**：font-family 在所有 render target 缺席（图片路径亦无源可保留，详附录 B 决策①）。
+  - 作用是把「产物在 output 相被 strip」的失效前移到注册期显式拒绝，使 output 相对内置样式源的命中收敛为零；output 相对生成声明的实际拦截目标退化为动态 customCss / 第三方注入 / T-189 分阶段清理未竟的残留。平台知识与 M-003 output 域规则、M-002 sanitize schema 同源于平台常量单一源
 - **依赖模块**: M-006 (调色板派生) / M-007 (plugin-api 类型) / M-012 (schema 契约层 — TemplateDef / CoverageReport schema + `extendSanitizeSchema` 共享契约；M-005 通过此契约把自定义 Block 标签合入 M-002 sanitize 白名单，避免与 M-002 形成模块环) / `@wechat-flow/contracts` (平台常量 `platform/wechat-paste.ts`，注册期校验的平台事实源)
 - **内部关键组件**:
   - `registry/theme.ts`、`block.ts`、`mark.ts`、`variant.ts`、`token.ts` — 五类注册表
@@ -382,7 +415,7 @@ required_sections:
   3. 否则回退 `registry/variant.ts` 运行时 store（`registerVariant` / `defineVariant` 注册的动态样式容器 variant）→ 读 `entry.style.root`；
   4. 均未命中 → `{}`。
 
-  内置静态 base-style 与 `registerVariant` 运行时动态样式容器 variant 两路径并存：前者在 block 定义时随 `defineBlock` 声明，后者在进程内动态注册（§8.2 Q3.16），二者经同一 `css-attr-filter` 白名单校验（白名单放行 ∩ target profile 平台禁用剔除，见「注册期平台合规校验」），L1 合成入口统一为 `getBlockBaseStyle`。
+  内置静态 base-style 与 `registerVariant` 运行时动态样式容器 variant 两路径并存：前者在 block 定义时随 `defineBlock` 声明，后者在进程内动态注册（§8.2 Q3.16），二者经同一 `css-attr-filter` 白名单校验（白名单放行 ∩ 平台禁区剔除，见「注册期构造守卫」），L1 合成入口统一为 `getBlockBaseStyle`。
 
 - **主题 token 契约**: token 字典契约由 E-002 承载（五大类别 open record，`ThemeTokens = Record<string, string>`；个别 token 名不在 arch 层枚举，落在各主题包 `packages/themes/{theme}/src/tokens.ts`）。现有 token 字典已含 `--font-size-h1..h6`、`--color-code-bg` / `--color-code-text`（inline code）、`--font-size-sm` / `--align-text-caption`（caption 小字复用）等完整视觉槽位；Block / Markdown 基础元素视觉升级在此 open record 内新增 token 属非破坏性变更，不改 E-002 契约结构，不在 arch 层新增 token 名。
 
@@ -450,13 +483,13 @@ required_sections:
 - **职责**: 编辑器、MCP server、CLI 三端共享的"语义级用户意图"封装层——把"渲染 + 复制"、"渲染 + 导出 HTML"、"渲染 + 长图 job"、"中文排版修订"等任务串接为单个调用入口，不持有 UI 状态，不持有 DOM
 - **映射功能**: F-001 / F-004 / F-005 (AC-001 长图 / AC-002 封面 / AC-003 素材库上传 / AC-004 异步 job) / F-006 / F-013 (AC-001 共享 use case) / F-014
 - **对外接口**: 包级 API：`composeRender(input) → RenderResult`、`composeCopy(input) → ClipboardPayload`、`composeExportHtml(input) → string`、`composeExportLongImage(input) → JobHandle`、`composeExportCover(input) → JobHandle`、`composeUploadImage(input) → JobHandle`、`composeUploadWechatAsset(input) → JobHandle`、`composeApplyZhTypo(input) → {fixed, perRule, totalChanges, diff: DiffEntry[]}`
-- **依赖模块**: M-002 (渲染管线核心) / M-004 (粘贴过滤模拟器) / M-005 (主题与组件注册中心) / M-010 (中继服务客户端) / `@wechat-flow/zh-typo`
+- **依赖模块**: M-002 (渲染管线核心) / M-005 (主题与组件注册中心) / M-010 (中继服务客户端) / `@wechat-flow/zh-typo`（copy 路径直接复制 render 产物，无 M-004 依赖）
 - **内部关键组件**:
   - `composers/render.ts`、`copy.ts`、`export-html.ts`、`export-long-image.ts`、`export-cover.ts`
   - `composers/upload-image.ts`、`upload-wechat-asset.ts`
   - `composers/apply-zh-typo.ts`
   - `clipboard/dual-mime-payload.ts` — F-004 AC-001 html + text 双 MIME 组装
-- **`composeCopy` pipeline 约束**：`composeRender → simulatePaste → buildDualMimePayload → navigator.clipboard.write`；剪贴板写入前必经 M-004 `simulatePaste`（= M-003 output 域规则集 predict 模式，对 `composeRender` 产物预测平台过滤）节点，禁止跳过；该顺序由 `composers/copy.ts` 内联注释固定（PRD F-004 AC-004）。因 `composeRender` 的 output 相（§2.M-002 stage 11）已对产物建模平台合规，收敛不变量 `simulatePaste(composeRender(x)).nodeDiffs === []`（视觉域）成立——此处 `simulatePaste` 对自家产物零变更，仅置 `postPaste === true` 并组装剪贴板 payload；对**外部粘贴输入**的兼容性预测由 M-009 `simulate_paste` 独立入口承载
+- **`composeCopy` pipeline 约束**：`composeRender → buildDualMimePayload → navigator.clipboard.write`；剪贴板 HTML 载荷**直接取 `composeRender` 产物**（`render().html`）——因 output 相（§2.M-002 stage 11 = `wechatAdapter.patch`）已对产物建模平台合规、产物即平台稳定态，预览 ≡ 复制天然成立（PRD F-004 AC-004）。**copy 三路（`composeCopy` / CLI `runCopy` / MCP `export_clipboard_payload`）的 render 调用须 `injectNodeIds: false`**——`data-node-id` 交互脚手架仅预览路径注入，禁止为省一次 render 而复用预览已注入 node-id 的结果，否则脚手架泄漏进微信剪贴板。对**外部粘贴输入**的兼容性体检由 M-009 `simulate_paste`（= `inspect`）独立入口承载
 - **context_load**: [prd#§2.F-001, prd#§2.F-004, prd#§2.F-005, prd#§2.F-006, prd#§2.F-013, prd#§2.F-014, arch#§2.M-002, arch#§2.M-003, arch#§2.M-004, arch#§2.M-010]
 
 ### M-009: MCP server
@@ -464,13 +497,19 @@ required_sections:
 - **职责**: 对 LLM Agent 暴露 24 个 Tool（20 同步 + 4 异步长任务；含 `get_job` 与 `get_ruleset_version`；含 `describe_template` 提供 F-008 主题预设变体查询；含 `register_variant` 提供 F-010 AC-010 注册式自定义样式容器 variant）；stdio + HTTP/SSE 双 transport；API key + per-key 配额；Idempotency-Key 去重；版本三元组透传到响应；**鉴权基线**两级（`scope=user` Tool 调用 vs `scope=admin` 管理端点；admin key 只走 M-010 admin 路由，不能调 Tool）
 - **映射功能**: F-013 (AC-001..AC-006) / F-008 (AC-004 describe_template Tool) / F-010 (AC-010 register_variant Tool)
 - **对外接口**: MCP Tool（24 个，20 同步 + 4 异步）— 详见 [`arch-wechat-flow-api.md`](./arch-wechat-flow-api.md) API-001..API-016 + API-033 + API-034
+- **MCP 工具契约（采用平台保真模型的 re-map，breaking 见 `AMENDMENT-platform-fidelity-r1#§5`）**:
+  - `simulate_paste` (API-014)：语义 = `PlatformAdapter.inspect`，resp 为 PatchLog 形 `{ patchedHtml, changes: [{ patch, label, count, samples: [{ selector, before }] }] }`。**保留工具 key `simulate_paste`**（改 key 破 tool-count / 外部配置），但**必须带 tool `description`** 澄清语义（面向任意外部 HTML 的平台兼容体检；对已渲染产物返回空即干净）；`filteredHtml` 作 `patchedHtml` 别名保留一个过渡窗口（breaking，见 `AMENDMENT-platform-fidelity-r1#§5`）。
+  - `render_markdown` (API-001)：**删 `postPaste`**；resp 带 `report{ nodeChangeRecords, nightRiskIssues }`——使 customCss 被平台规则剥除的声明（含 font-family）以 warn 诊断对 LLM 可见；可选 `platform` 参数 `z.enum(["wechat"])`，未注册平台显式 `E_UNSUPPORTED_PLATFORM`（**禁静默回退**）。
+  - `export_clipboard_payload` (API-015)：返回 `render().html`（复制即 render 产物）。
+  - **全 24 工具补 `description`**：`router.ts` 现仅注册 inputSchema、零 description（既有 LLM 友好度硬伤），借本次补齐。
+  - **breaking 版本化**：`postPaste` 删除、`simulate_paste` 字段重命名与结构变、`@wechat-flow/core` `simulatePaste` 导出删除属 breaking API 变更——`@wechat-flow/core` 与 mcp-server major/minor bump + CHANGELOG 逐项迁移条目；MCP 契约版本信号现仅 `rulesetVersion` 探测不到工具形变，由 CHANGELOG 承担、release go/no-go 清单加「MCP 契约 breaking 说明」。产品文档 `skill/SKILL.md` / `skill/references/tool-catalog.md`（现硬编码 `simulate_paste→{filteredHtml,diffNodes,droppedAttrs}`）须重写为新语义。
 - **依赖模块**: M-008 (应用层 use case) / M-002 / M-005 / M-006 / M-010 / M-012
 - **内部关键组件**:
   - `transport/stdio.ts`、`transport/http-sse.ts` — 双 transport entry
   - `auth/api-key.ts` — API key 鉴权 + per-key 配额；校验 `scope` 字段；user / admin 两级 key 哈希存储于 E-010 ApiKey 表；明文仅在创建时由 admin API 返回一次
   - `auth/scope-guard.ts` — Tool 路由前置守卫：仅 `scope=user` 可达 Tool 路由表；admin scope 直接 403 `E_PERMISSION_DENIED`
   - `idempotency/dedup.ts` — `sha256(input + toolsetVersion)` 去重缓存
-  - `tools/router.ts` — 24 个 Tool 的 dispatcher，映射到 M-008 composer 或 M-005 查询（`describe_template` 直达 M-005 `describeTemplate(themeId, templateId)`；`register_variant` 直达 M-005 `registerVariant(...)`，注册条目进程内生命周期见 §8.2 Q3.16）；Tool 层为 thin wrapper，禁止持有业务逻辑（业务逻辑统一在 M-008 / M-006 / M-005 / M-004）
+  - `tools/router.ts` — 24 个 Tool 的 dispatcher，映射到 M-008 composer 或 M-005 查询（`describe_template` 直达 M-005 `describeTemplate(themeId, templateId)`；`register_variant` 直达 M-005 `registerVariant(...)` 并回传 `{ registered, rejectedDeclarations }`，注册条目进程内生命周期见 §8.2 Q3.16；`simulate_paste` 直达 M-004 `wechatAdapter.inspect`）；**每个 Tool 注册须带 `description`**（补齐既有零 description 硬伤）；Tool 层为 thin wrapper，禁止持有业务逻辑（业务逻辑统一在 M-008 / M-006 / M-005 / M-004）
   - `version/triple-injection.ts` — 响应注入版本三元组
 - **Skill bundle 协同**: `skill/SKILL.md` 引用本模块 24 个 Tool 的调用顺序约定（典型链：`list_themes` → `describe_theme` → `describe_template` → `render_markdown` → `simulate_paste` → `upload_to_wechat_asset`），由 LLM Agent 解析为语义任务；Skill bundle 与 MCP server 共版本号发布
 - **两阶段取数语义**: `describe_theme.templates` 仅返回 `TemplateMeta[]`（轻量元数据，含 `id` / `themeId` / `metadata`，不含 Markdown 正文），用于 LLM Agent 浏览主题命名空间下可选 template；`describe_template` 返回完整 `TemplateDefinition`（含可用于创建文档的 Markdown 正文 + 覆盖统计 + mdast 摘要 + 依赖清单），**仅在 one-time 创建文档时拷贝** —— 拷贝完成后 frontmatter 中的 `theme` / `template` 字段不再持续消费 Markdown 正文，仅作为审计标记保留
