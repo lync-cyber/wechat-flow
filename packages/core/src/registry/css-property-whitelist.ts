@@ -1,6 +1,5 @@
 export const CSS_SAFE_PROPERTIES: ReadonlySet<string> = new Set([
   // Font
-  "font-family",
   "font-size",
   "font-weight",
   "font-style",
