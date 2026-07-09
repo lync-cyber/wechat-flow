@@ -83,7 +83,7 @@ const FALLBACK_SLOT_TOKENS: Record<string, string> = {
   "--color-text-muted": "#78716C",
 };
 
-const TOKEN_PLACEHOLDER_PATTERN = /^var\((--[\w-]+)\)$/;
+const TOKEN_PLACEHOLDER_PATTERN = /var\((--[\w-]+)\)/g;
 
 // Mirrors clamp-line-height's readability floor (packages/ruleset/src/rules/builtin/clamp-line-height.ts).
 // Decorative slot line-heights below this floor get a transient marker so the output-stage clamp
@@ -98,10 +98,10 @@ function isBelowLineHeightFloor(value: string | undefined): boolean {
 }
 
 function resolveTokenPlaceholder(value: string, designTokens?: ThemeTokens): string {
-  const match = TOKEN_PLACEHOLDER_PATTERN.exec(value.trim());
-  if (!match) return value;
-  const tokenName = match[1];
-  return designTokens?.[tokenName] ?? FALLBACK_SLOT_TOKENS[tokenName] ?? value;
+  if (!value.includes("var(")) return value;
+  return value.replace(TOKEN_PLACEHOLDER_PATTERN, (placeholder, tokenName: string) => {
+    return designTokens?.[tokenName] ?? FALLBACK_SLOT_TOKENS[tokenName] ?? placeholder;
+  });
 }
 
 function resolveSlotDeclarations(
@@ -206,7 +206,10 @@ function applyInlineStyles(
       const l1 = getBlockBaseStyle(dataBlock, variantId);
       const l2 = themeTokens[dataBlock]?.[variantId];
 
-      const merged: Record<string, string> = { ...l1, ...(l2 ?? {}) };
+      const merged: Record<string, string> = resolveSlotDeclarations(
+        { ...l1, ...(l2 ?? {}) },
+        designTokens
+      );
       if (propsWithoutClass["data-block-slot-last"] === "true" && "margin-bottom" in merged) {
         merged["margin-bottom"] = "0";
       }

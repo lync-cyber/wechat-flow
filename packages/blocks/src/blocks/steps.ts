@@ -79,7 +79,7 @@ export const steps = defineBlock(
       label: "卡片步骤",
       baseStyle: {
         root: {
-          background: "#f3f0eb",
+          background: "var(--color-surface-alt)",
           border: "1px solid #d6d3ce",
           "border-radius": "6px",
           padding: "12px 16px",
@@ -89,8 +89,8 @@ export const steps = defineBlock(
           "font-weight": "600",
         },
         description: {
-          color: "#44403c",
-          "font-size": "13px",
+          color: "var(--color-text-secondary)",
+          "font-size": "var(--font-size-sm)",
         },
       },
     },

@@ -1,4 +1,8 @@
-import type { Diagnostic, ThemeDefinition } from "@wechat-flow/contracts";
+import {
+  type Diagnostic,
+  E_UNSUPPORTED_PLATFORM,
+  type ThemeDefinition,
+} from "@wechat-flow/contracts";
 import { applyRuleset, builtinRules, getRulesetVersion } from "@wechat-flow/ruleset";
 import { contextAwareRender } from "./pipeline/context-aware-renderer.ts";
 import { applyCustomCss } from "./pipeline/custom-css.ts";
@@ -13,15 +17,24 @@ import { sanitizeHast } from "./pipeline/sanitize.ts";
 import { serializeHast } from "./pipeline/serialize.ts";
 import { applyBaseColorToBlocks, applyPaintToBlocks } from "./pipeline/theme-override.ts";
 import { transformToHast } from "./pipeline/transform.ts";
+import { type PlatformAdapter, wechatAdapter } from "./platform/wechat-adapter.ts";
 import { describeTheme } from "./registry/theme.ts";
 import { wechatFlowSanitizeSchema } from "./sanitize/schema.ts";
 import type { RenderOptions, RenderResult } from "./types.ts";
 import { coreVersion } from "./version/triple.ts";
 
+const PLATFORM_ADAPTERS: Record<string, PlatformAdapter> = {
+  [wechatAdapter.id]: wechatAdapter,
+};
+
 export async function renderMarkdown(
   input: string,
   options?: RenderOptions
 ): Promise<RenderResult> {
+  if (options?.platform !== undefined && !Object.hasOwn(PLATFORM_ADAPTERS, options.platform)) {
+    return { code: E_UNSUPPORTED_PLATFORM } as unknown as RenderResult;
+  }
+
   const { content, meta } = parseFrontmatter(input);
 
   // paint > base-color > theme default priority
@@ -90,7 +103,7 @@ export async function renderMarkdown(
     hast: outputHast,
     diagnostics: outputDiagnostics,
     nodeChangeRecords: outputNodeChangeRecords,
-  } = applyRuleset(afterCustomCss, rules, "output");
+  } = wechatAdapter.patch(afterCustomCss, rules);
 
   const nightRiskIssues = collectNightRiskIssues(outputHast);
   const html = serializeHast(outputHast);

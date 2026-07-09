@@ -2,6 +2,8 @@ import { z } from "zod";
 import { versionTripleSchema } from "../version/triple-structure.ts";
 import { registerVariantRequestSchema } from "./register-variant.ts";
 
+export const E_UNSUPPORTED_PLATFORM = "E_UNSUPPORTED_PLATFORM";
+
 // ---- render_markdown (API-001) ----
 export const renderMarkdownRequestSchema = z.object({
   markdown: z.string(),
@@ -10,6 +12,7 @@ export const renderMarkdownRequestSchema = z.object({
   paint: z.record(z.string(), z.string()).optional(),
   baseColor: z.string().optional(),
   customCss: z.string().optional(),
+  platform: z.enum(["wechat"]).optional(),
 });
 
 export const renderMarkdownResponseSchema = z.object({

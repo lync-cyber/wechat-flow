@@ -28,7 +28,6 @@ export const paragraph = defineBlock(
           "font-weight": "700",
           "line-height": "1",
           color: "var(--color-brand)",
-          "font-family": "var(--font-family-heading)",
         },
         "dropcap-table": {
           display: "table",

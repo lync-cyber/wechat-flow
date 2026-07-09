@@ -12,10 +12,10 @@ export const announcement = defineBlock(
       label: "危险横幅公告",
       baseStyle: {
         root: {
-          "border-top": "4px solid #b94a3e",
-          "border-left": "3px solid #b94a3e",
+          "border-top": "4px solid var(--color-accent)",
+          "border-left": "3px solid var(--color-accent)",
           padding: "12px 16px",
-          background: "#f3f0eb",
+          background: "var(--color-surface-alt)",
         },
       },
     },
@@ -25,8 +25,8 @@ export const announcement = defineBlock(
       baseStyle: {
         root: {
           padding: "8px 12px",
-          "border-left": "3px solid #2d5a4e",
-          "font-size": "13px",
+          "border-left": "3px solid var(--color-brand)",
+          "font-size": "var(--font-size-sm)",
         },
       },
     },

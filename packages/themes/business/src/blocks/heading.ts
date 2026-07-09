@@ -3,7 +3,6 @@ import type { ThemeBlocks } from "@wechat-flow/contracts";
 export const headingBlocks: ThemeBlocks = {
   h1: {
     default: {
-      "font-family": "'Inter', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif",
       "font-size": "22px",
       "font-weight": "600",
       color: "#0d1b2a",
@@ -16,7 +15,6 @@ export const headingBlocks: ThemeBlocks = {
   },
   h2: {
     default: {
-      "font-family": "'Inter', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif",
       "font-size": "19px",
       "font-weight": "600",
       color: "#0d1b2a",
@@ -29,7 +27,6 @@ export const headingBlocks: ThemeBlocks = {
   },
   h3: {
     default: {
-      "font-family": "'Inter', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif",
       "font-size": "17px",
       "font-weight": "600",
       color: "#0d1b2a",
@@ -40,7 +37,6 @@ export const headingBlocks: ThemeBlocks = {
   },
   h4: {
     default: {
-      "font-family": "'Inter', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif",
       "font-size": "15px",
       "font-weight": "600",
       color: "#0d1b2a",
@@ -51,7 +47,6 @@ export const headingBlocks: ThemeBlocks = {
   },
   h5: {
     default: {
-      "font-family": "'Inter', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif",
       "font-size": "14px",
       "font-weight": "500",
       color: "#0d1b2a",
@@ -62,7 +57,6 @@ export const headingBlocks: ThemeBlocks = {
   },
   h6: {
     default: {
-      "font-family": "'Inter', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif",
       "font-size": "13px",
       "font-weight": "500",
       color: "#2d4057",

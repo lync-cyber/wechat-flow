@@ -1,15 +1,20 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   describeBlock,
+  registerTheme,
   renderMarkdown,
   resetBlockRegistry,
+  resetThemeRegistry,
   resetVariantRegistry,
 } from "../../../packages/core/src/index.ts";
 import "../../../packages/blocks/src/index.ts";
+import defaultTheme from "../../../packages/themes/default/src/index.ts";
 
 beforeEach(() => {
   resetVariantRegistry();
   resetBlockRegistry();
+  resetThemeRegistry();
+  registerTheme(defaultTheme);
 });
 
 const TWO_MESSAGE_MD = [

@@ -3,7 +3,6 @@ import type { ThemeBlocks } from "@wechat-flow/contracts";
 export const headingBlocks: ThemeBlocks = {
   h1: {
     default: {
-      "font-family": "'SF Pro Display', 'Inter', 'Helvetica Neue', Arial, sans-serif",
       "font-size": "24px",
       "font-weight": "600",
       color: "#e6edf3",
@@ -14,7 +13,6 @@ export const headingBlocks: ThemeBlocks = {
   },
   h2: {
     default: {
-      "font-family": "'SF Pro Display', 'Inter', 'Helvetica Neue', Arial, sans-serif",
       "font-size": "20px",
       "font-weight": "600",
       color: "#e6edf3",
@@ -27,7 +25,6 @@ export const headingBlocks: ThemeBlocks = {
   },
   h3: {
     default: {
-      "font-family": "'SF Pro Display', 'Inter', 'Helvetica Neue', Arial, sans-serif",
       "font-size": "18px",
       "font-weight": "600",
       color: "#e6edf3",
@@ -38,7 +35,6 @@ export const headingBlocks: ThemeBlocks = {
   },
   h4: {
     default: {
-      "font-family": "'SF Pro Display', 'Inter', 'Helvetica Neue', Arial, sans-serif",
       "font-size": "16px",
       "font-weight": "500",
       color: "#e6edf3",
@@ -49,7 +45,6 @@ export const headingBlocks: ThemeBlocks = {
   },
   h5: {
     default: {
-      "font-family": "'SF Pro Display', 'Inter', 'Helvetica Neue', Arial, sans-serif",
       "font-size": "15px",
       "font-weight": "500",
       color: "#e6edf3",
@@ -60,7 +55,6 @@ export const headingBlocks: ThemeBlocks = {
   },
   h6: {
     default: {
-      "font-family": "'SF Pro Display', 'Inter', 'Helvetica Neue', Arial, sans-serif",
       "font-size": "14px",
       "font-weight": "500",
       color: "#8b949e",
