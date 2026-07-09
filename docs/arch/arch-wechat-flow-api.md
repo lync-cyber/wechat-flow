@@ -1,6 +1,6 @@
 ---
 id: "arch-wechat-flow-api"
-version: "0.7.1"
+version: "0.8.1"
 doc_type: arch
 author: architect
 status: approved
@@ -70,6 +70,8 @@ required_sections:
 
 ### 3.1 MCP Tool 契约 (API-001..API-016, API-033..API-034)
 
+> **实现状态提示（平台保真 re-map 的目标态，2026-07-09）**：**API-001**（`platform` 参数 / `report` 字段 / `E_UNSUPPORTED_PLATFORM` / 删 `postPaste`）、**API-014**（`simulate_paste` re-back 为 `inspect`、`patchedHtml`/`changes` 响应形 + `filteredHtml` 过渡别名）、**API-015**（`export_clipboard_payload` 返回 `render().html`）描述的是**采用 wechat-typeset 平台保真模型后的目标契约**，经 `AMENDMENT-platform-fidelity-r1` 裁定、由 dev-plan **T-184..T-189 落地**（截至本版本 T-182/T-183 已交付、T-184..T-189 未开始）。**当前过渡态**：`simulate_paste` 仍返回旧模拟器 `{filteredHtml,diffNodes,droppedAttrs}`、`render_markdown` 仍带 `postPaste`——MCP 契约消费方（含 LLM Agent）勿据本节目标态措辞误判为已生效，实际字段以 dev-plan T-185/T-186 交付状态为准。其余 API 条目为现状契约，不受此提示约束。
+
 #### API-001: render_markdown
 
 ```yaml
@@ -84,15 +86,18 @@ request:
     paint: { type: "Record<string, string>", required: false, desc: "单文档配色覆盖（受 theme.paintable 约束）" }
     baseColor: { type: string, required: false, desc: "调色板派生 seed（hex / lch）" }
     customCss: { type: string, required: false, desc: "原生 CSS 文本（无状态 per-call，F-013 AC-002）；经 juice cascade pass 内联进产物（§8.2 Q3.9/Q3.16），逐声明过 css-attr-filter 白名单；被拒绝的选择器/声明以 Diagnostic 汇入 response.diagnostics（source=custom-css），不阻断渲染；伪类/媒体查询/keyframes 不参与内联（产物契约为 inline-styled HTML）" }
+    platform: { type: "'wechat'", required: false, desc: "目标平台适配（z.enum([\"wechat\"])，缺省 wechat）；决定 output 相是否施加 wechatAdapter.patch。未注册平台显式 E_UNSUPPORTED_PLATFORM，禁静默回退" }
 response:
   schema:
-    html: { type: string, desc: "最终 inline-styled HTML" }
-    diagnostics: { type: "Diagnostic[]", desc: "渲染管线全 stage 汇聚的诊断" }
+    html: { type: string, desc: "最终 inline-styled HTML（已经 output 相 wechatAdapter.patch 平台建模，即平台稳定态）" }
+    diagnostics: { type: "Diagnostic[]", desc: "渲染管线全 stage 汇聚的诊断；含 customCss 被平台规则剥除的声明（如 font-family）的 warn 诊断，对 LLM 可见" }
+    report: { type: "{ nodeChangeRecords: NodeChangeRecord[], nightRiskIssues: NightRiskEntry[] }", desc: "output 相 applyRuleset executeStrip/executeTransform 产出的逐节点平台变更 + 夜间风险，供 LLM 感知产物在平台侧的过滤结果" }
     versionTriple: { type: "VersionTriple", desc: "{coreVersion, themeVersion, rulesetVersion}" }
   errors:
     SchemaValidationError: { code: "E_SCHEMA", desc: "Markdown frontmatter / directive 参数 schema 校验失败" }
     ThemeNotFound: { code: "E_THEME_NOT_FOUND" }
     RulesetVersionMismatch: { code: "E_RULESET_VERSION_MISMATCH" }
+    UnsupportedPlatform: { code: "E_UNSUPPORTED_PLATFORM", desc: "platform 参数指向未注册平台适配器；不静默回退" }
 ```
 
 #### API-002: lint_markdown
@@ -304,20 +309,23 @@ response:
     totalChanges: { type: number }
 ```
 
-#### API-014: simulate_paste
+#### API-014: simulate_paste（语义 = inspect，平台兼容体检）
+
+工具 key 保留 `simulate_paste`（改 key 破 tool-count / 外部配置），语义 re-back 为 `PlatformAdapter.inspect`：面向任意外部 HTML 的平台兼容体检（专用 inspect schema 标签剥离 ⊕ output 平台规则），非「预测微信真机」。
 
 ```yaml
 tool: simulate_paste
 module: M-009
 maps_to: F-013 AC-002 / F-011 AC-002
+description: "面向任意外部 HTML 的平台兼容体检——报告 wechat-flow 平台模型（专用 inspect schema 标签剥离 ⊕ output 平台规则）会对这段 HTML 做什么；对已渲染产物返回空 changes 即已达平台稳定态、干净。报的是我方平台模型，不宣称预测微信真机。"
 request:
   body:
-    html: { type: string, required: true, desc: "待模拟粘贴的 HTML（通常为已 inline-styled 的渲染产物）" }
+    html: { type: string, required: true, desc: "待体检的任意 HTML（外部 HTML 或已 inline-styled 的渲染产物）" }
 response:
   schema:
-    filteredHtml: { type: string }
-    diffNodes: { type: "NodeDiff[]", desc: "粘贴前后逐节点差异" }
-    droppedAttrs: { type: "Record<string, string[]>", desc: "按节点路径列出被剥除的属性" }
+    patchedHtml: { type: string, desc: "施加专用 inspect schema 标签剥离 + output 平台规则后的 HTML" }
+    changes: { type: "PatchChange[]", desc: "逐 patch 变更：{ patch, label, count, samples: [{ selector, before }] }" }
+    filteredHtml: { type: string, desc: "[过渡别名] = patchedHtml；保留一个过渡窗口后移除（breaking，见 `AMENDMENT-platform-fidelity-r1#§5`）" }
 ```
 
 #### API-015: export_clipboard_payload
@@ -326,13 +334,14 @@ response:
 tool: export_clipboard_payload
 module: M-009
 maps_to: F-013 AC-002 / F-004 AC-001
+description: "组装 text/html + text/plain 双 MIME 剪贴板载荷；html 载荷即 render().html（output 相已建模平台合规，复制即 render 产物），不再经独立模拟器前置。"
 request:
   body:
     markdown: { type: string, required: true }
     themeId: { type: string, required: false }
 response:
   schema:
-    html: { type: string, desc: "text/html MIME 载荷（已经过粘贴过滤模拟前置）" }
+    html: { type: string, desc: "text/html MIME 载荷 = render().html（output 相 wechatAdapter.patch 后即平台稳定态；render 调用 injectNodeIds:false，脚手架不入剪贴板）" }
     text: { type: string, desc: "text/plain MIME 载荷（W3C 要求 HTML 必须配 plain fallback）" }
 ```
 
