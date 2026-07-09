@@ -30,7 +30,7 @@ jobs:
       - name: Seed core + full variant baselines for this platform
         env:
           VISUAL_FULL: "1"
-        run: pnpm playwright test --update-snapshots
+        run: pnpm playwright test e2e/visual/theme-matrix.spec.ts e2e/visual/variant-matrix.spec.ts --update-snapshots
 
       - name: Commit regenerated baselines
         run: |

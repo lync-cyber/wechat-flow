@@ -2,15 +2,20 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   describeBlock,
   getBlockBaseStyle,
+  registerTheme,
   renderMarkdown,
   resetBlockRegistry,
+  resetThemeRegistry,
   resetVariantRegistry,
 } from "../../../packages/core/src/index.ts";
 import "../../../packages/blocks/src/index.ts";
+import defaultTheme from "../../../packages/themes/default/src/index.ts";
 
 beforeEach(() => {
   resetVariantRegistry();
   resetBlockRegistry();
+  resetThemeRegistry();
+  registerTheme(defaultTheme);
 });
 
 // AC-001: announcement.variants 不再含 banner，改为 danger-bar
@@ -32,21 +37,21 @@ describe("AC-001: announcement variants 收敛，banner 改名为 danger-bar", (
 
 // AC-002: danger-bar 变体 — 顶部 accent 实条 + 左边框 + 浅底
 describe("AC-002: danger-bar 变体解析含顶部 accent 实条与左边框", () => {
-  it("getBlockBaseStyle('announcement','danger-bar') 的 border-top 为 4px solid 含 accent 色值", () => {
+  it("getBlockBaseStyle('announcement','danger-bar') 的 border-top 为 4px solid 引用 accent token", () => {
     const base = getBlockBaseStyle("announcement", "danger-bar");
     expect(base["border-top"]).toContain("4px solid");
-    expect(base["border-top"]).toContain("#b94a3e");
+    expect(base["border-top"]).toContain("var(--color-accent)");
   });
 
-  it("getBlockBaseStyle('announcement','danger-bar') 的 border-left 为 3px solid 含 accent 色值", () => {
+  it("getBlockBaseStyle('announcement','danger-bar') 的 border-left 为 3px solid 引用 accent token", () => {
     const base = getBlockBaseStyle("announcement", "danger-bar");
     expect(base["border-left"]).toContain("3px solid");
-    expect(base["border-left"]).toContain("#b94a3e");
+    expect(base["border-left"]).toContain("var(--color-accent)");
   });
 
-  it("getBlockBaseStyle('announcement','danger-bar') 的 background 为 surface-alt 色值", () => {
+  it("getBlockBaseStyle('announcement','danger-bar') 的 background 引用 surface-alt token", () => {
     const base = getBlockBaseStyle("announcement", "danger-bar");
-    expect(base.background).toBe("#f3f0eb");
+    expect(base.background).toBe("var(--color-surface-alt)");
   });
 
   it("danger-bar 端到端渲染后容器 style 属性含关键声明", async () => {
@@ -71,10 +76,10 @@ describe("AC-003: compact 变体解析为紧凑单行且无顶部条", () => {
     expect(base.padding).toBe("8px 12px");
   });
 
-  it("getBlockBaseStyle('announcement','compact') 的 border-left 为 3px solid 含 brand 色值", () => {
+  it("getBlockBaseStyle('announcement','compact') 的 border-left 为 3px solid 引用 brand token", () => {
     const base = getBlockBaseStyle("announcement", "compact");
     expect(base["border-left"]).toContain("3px solid");
-    expect(base["border-left"]).toContain("#2d5a4e");
+    expect(base["border-left"]).toContain("var(--color-brand)");
   });
 
   it("getBlockBaseStyle('announcement','compact') 不含 border-top 声明", () => {
@@ -82,9 +87,9 @@ describe("AC-003: compact 变体解析为紧凑单行且无顶部条", () => {
     expect(base["border-top"]).toBeUndefined();
   });
 
-  it("getBlockBaseStyle('announcement','compact') 的 font-size 等于 default 主题 --font-size-sm 计算值", () => {
+  it("getBlockBaseStyle('announcement','compact') 的 font-size 引用 --font-size-sm token", () => {
     const base = getBlockBaseStyle("announcement", "compact");
-    expect(base["font-size"]).toBe("13px");
+    expect(base["font-size"]).toBe("var(--font-size-sm)");
   });
 
   it("compact 端到端渲染后容器 style 不含 border-top 声明", async () => {

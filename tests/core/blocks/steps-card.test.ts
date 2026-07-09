@@ -1,15 +1,20 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   getBlockBaseStyle,
+  registerTheme,
   renderMarkdown,
   resetBlockRegistry,
+  resetThemeRegistry,
   resetVariantRegistry,
 } from "../../../packages/core/src/index.ts";
 import "../../../packages/blocks/src/index.ts";
+import defaultTheme from "../../../packages/themes/default/src/index.ts";
 
 beforeEach(() => {
   resetVariantRegistry();
   resetBlockRegistry();
+  resetThemeRegistry();
+  registerTheme(defaultTheme);
 });
 
 const STEPS_MD = `:::steps{.card}
@@ -53,9 +58,9 @@ function extractSlotStyle(html: string, slot: "title" | "description", index: nu
 
 // AC-001: card 每个 step 项 — 背景/border/border-radius
 describe("AC-001: card 每个 step 项渲染背景/border/border-radius", () => {
-  it("getBlockBaseStyle('steps','card') 的 background 计算值为 --color-surface-alt 主题实值", () => {
+  it("getBlockBaseStyle('steps','card') 的 background 声明值引用 --color-surface-alt token", () => {
     const base = getBlockBaseStyle("steps", "card");
-    expect(base.background).toBe("#f3f0eb");
+    expect(base.background).toBe("var(--color-surface-alt)");
   });
 
   it("getBlockBaseStyle('steps','card') 的 border 计算值含 1px solid 与 --color-border 主题实值", () => {

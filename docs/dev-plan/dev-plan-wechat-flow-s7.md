@@ -1760,12 +1760,12 @@ graph LR
 - **security_sensitive**: false
 - **dependencies**: [T-184]
 - **acceptance_criteria**:
-  - [ ] AC-001: `PlatformAdapter` 接口新建（`patch(hast): hast`、`inspect(html: string): PatchLog`、`id`/`name` 字段）；`wechatAdapter` 实现导出，`wechatAdapter.id === "wechat"`
-  - [ ] AC-002: `packages/core/src/render.ts:93` 原 `applyRuleset(afterCustomCss, rules, "output")` 调用改为经 `wechatAdapter.patch(afterCustomCss)`（或等价具名封装）；全仓 grep 验证不存在第二处独立的 output-stage `applyRuleset(..., "output")` 调用点
-  - [ ] AC-003: `wechatAdapter.inspect(html)` 的规则集**钉死为平台过滤子集**（strip/patch 族，建模微信真机剥/改：`div`-schema-strip ∪ `strip-position` ∪ `strip-font-family` ∪ `patch-flex-to-block` 等），**排除** `clamp-font-size`/`readability-font-size-min`/`transform-em-to-px`/`transform-uppercase-hex-lower`/夜间风险等产品归一·诊断规则（`amendment-platform-fidelity-r1#§2.4` inspect ⊆ patch·非同一集、§9 R5 产品归一不进平台判定）；构造专用 inspect schema = `defaultSchema.tagNames` 减去 `WECHAT_PASTE_UNSAFE_TAGS ∪ HARD_REMOVE_TAGS`。**正向探针** `inspect('<div style="position:absolute">x</div>')` 的 `PatchLog.changes` 含 div 标签 + `position` 剥离记录（非空，修复 amendment R1-F1/N-1 字面实现缺口）；**负向探针** `inspect('<p style="font-size:12px">x</p>')` **不**报告「夹至 14px」类产品归一变更（clamp 非微信平台行为——若报告即证 inspect 越界跑了产品归一规则）
-  - [ ] AC-004: `inspect` 对已渲染产物（`render()` 输出）返回 `PatchLog.changes === []`——该稳定态命题由 render 产物 **div-free 构造保证**支撑（`amendment-platform-fidelity-r1#§2.4` 三条构造保证：`remarkRehype({allowDangerousHtml:false})` 丢弃 Markdown 源中裸 `<div>` ＋全 source 零 div 创建·容器原语为 `section` ＋customCss re-parse 保持 div-free），标签维度零 div 命中、规则维度平台过滤子集幂等已应用零变更。AC 夹具须**显式坐实 div-free 前提**（断言 `render(含裸 <div> 的 markdown).html` 不含 div 标签），使「返回空 = 已达平台稳定态」有构造依据、非裸声明；按需触发非 CI 恒跑
-  - [ ] AC-005: `render_markdown` 请求 schema（`packages/contracts/src/mcp/tool-contracts.ts` `renderMarkdownRequestSchema`）新增可选 `platform: z.enum(["wechat"])`；传入未注册平台值时响应 `{code: "E_UNSUPPORTED_PLATFORM"}`（不静默回退到默认平台）
-  - [ ] AC-006: 全仓四门禁绿；`render()` 产物在 output 相前后字节级不变（具名封装不改变行为，仅改变调用路径）
+  - [x] AC-001: `PlatformAdapter` 接口新建（`patch(hast): hast`、`inspect(html: string): PatchLog`、`id`/`name` 字段）；`wechatAdapter` 实现导出，`wechatAdapter.id === "wechat"`
+  - [x] AC-002: `packages/core/src/render.ts:93` 原 `applyRuleset(afterCustomCss, rules, "output")` 调用改为经 `wechatAdapter.patch(afterCustomCss)`（或等价具名封装）；全仓 grep 验证不存在第二处独立的 output-stage `applyRuleset(..., "output")` 调用点
+  - [x] AC-003: `wechatAdapter.inspect(html)` 的规则集**钉死为平台过滤子集**（strip/patch 族，建模微信真机剥/改：`div`-schema-strip ∪ `strip-position` ∪ `strip-font-family` ∪ `patch-flex-to-block` 等），**排除** `clamp-font-size`/`readability-font-size-min`/`transform-em-to-px`/`transform-uppercase-hex-lower`/夜间风险等产品归一·诊断规则（`amendment-platform-fidelity-r1#§2.4` inspect ⊆ patch·非同一集、§9 R5 产品归一不进平台判定）；构造专用 inspect schema = `defaultSchema.tagNames` 减去 `WECHAT_PASTE_UNSAFE_TAGS ∪ HARD_REMOVE_TAGS`。**正向探针** `inspect('<div style="position:absolute">x</div>')` 的 `PatchLog.changes` 含 div 标签 + `position` 剥离记录（非空，修复 amendment R1-F1/N-1 字面实现缺口）；**负向探针** `inspect('<p style="font-size:12px">x</p>')` **不**报告「夹至 14px」类产品归一变更（clamp 非微信平台行为——若报告即证 inspect 越界跑了产品归一规则）
+  - [x] AC-004: `inspect` 对已渲染产物（`render()` 输出）返回 `PatchLog.changes === []`——该稳定态命题由 render 产物 **div-free 构造保证**支撑（`amendment-platform-fidelity-r1#§2.4` 三条构造保证：`remarkRehype({allowDangerousHtml:false})` 丢弃 Markdown 源中裸 `<div>` ＋全 source 零 div 创建·容器原语为 `section` ＋customCss re-parse 保持 div-free），标签维度零 div 命中、规则维度平台过滤子集幂等已应用零变更。AC 夹具须**显式坐实 div-free 前提**（断言 `render(含裸 <div> 的 markdown).html` 不含 div 标签），使「返回空 = 已达平台稳定态」有构造依据、非裸声明；按需触发非 CI 恒跑
+  - [x] AC-005: `render_markdown` 请求 schema（`packages/contracts/src/mcp/tool-contracts.ts` `renderMarkdownRequestSchema`）新增可选 `platform: z.enum(["wechat"])`；传入未注册平台值时响应 `{code: "E_UNSUPPORTED_PLATFORM"}`（不静默回退到默认平台）
+  - [x] AC-006: 全仓四门禁绿；`render()` 产物在 output 相前后字节级不变（具名封装不改变行为，仅改变调用路径）
 - **deliverables**:
   - [ ] `packages/core/src/platform/wechat-adapter.ts` — PlatformAdapter 接口 + wechat 实现
   - [ ] `packages/core/src/render.ts` — output 相调用改经 adapter
@@ -1894,14 +1894,14 @@ graph LR
 - **security_sensitive**: false
 - **dependencies**: [T-184]
 - **acceptance_criteria**:
-  - [ ] AC-001: 5 主题 tokens/heading/paragraph/code-block 声明面（`packages/themes/*/src/index.ts`）中全部 `font-family` 声明移除；`packages/blocks/src/blocks/paragraph.ts:31`/`quote.ts:58` dropcap 装饰的 `"font-family": "var(--font-family-heading)"` 声明移除；`packages/marks/src/marks/inline-code.ts:6` 的 `font-family: monospace` 声明移除
-  - [ ] AC-002: 移除后全部 5 主题 + paragraph/quote dropcap + inline-code mark 的定义面无残留 `font-family` 声明（源码级断言，独立于守卫——本卡先于 T-187 落地，守卫此刻尚未建）；守卫对这批已清理实体不误杀的验证在 T-187 落地时随全主题注册回归坐实（本卡为其清理前置）
-  - [ ] AC-003: `packages/blocks/src/blocks/author-card.ts:16` 静态 baseStyle `root` 的 `display:"flex"` 声明改写为 `display:"table"`（或 `inline-block`，实现按视觉等价取舍并记入 notes）；author-card 渲染产物（`renderMarkdown` 真实管线，全部已注册主题）计算布局结构与迁移前视觉等价，基线更新逐条列依据
-  - [ ] AC-004: 全仓 grep 审计内置资产（`packages/blocks/src/blocks/*.ts`、`packages/themes/*/src/index.ts`、`packages/marks/src/marks/*.ts`）静态声明中 `display:(flex|grid|inline-flex|inline-grid)`/`position:`/`float:`/定位族（`top`/`right`/`bottom`/`left`/`z-index`）声明清零；author-card（AC-003 处置）为已核实的唯一真实命中，审计结果（零命中确认或逐项处置清单）记入 notes——作为 T-187 构造守卫上线前 `FORBIDDEN_CSS_PROPS ∪ FORBIDDEN_DISPLAY_VALUES ∪ FORBIDDEN_POSITION_PROPS` 全量清理的坐实点
-  - [ ] AC-005: 渲染产物（40 块 × 全部变体，全部已注册主题）hast 遍历零 `font-family` 内联样式声明；负向探针测试证明源头声明不复活（源头清理 + output 相兜底剥离双重验证一致）
-  - [ ] AC-006: 六块变体（steps/gallery/compare/dialog/callout/announcement）baseStyle 中有主题 token 对应语义的色值/字体全部 `var(--token)` 占位化（原 T-179 AC-001）；default/literary/tech 三主题渲染产物装饰色随主题变化且等于各主题 token 权威值（不再跨主题字节级相同）
-  - [ ] AC-007: default 主题渲染产物视觉等价（token 解析回落 default 权威值；基线更新逐条列依据，原 T-179 AC-002）；无 token 语义的结构性字面值（布局尺寸/百分比宽度/圆角结构值）保持字面不过度 token 化，产物无 `var()` 残留（原 T-179 AC-003）
-  - [ ] AC-008: 全仓四门禁绿；跨主题渲染对照测试扩展（原 T-179 交付物），typography-cascade/block-variants 相关快照基线更新逐条列依据
+  - [x] AC-001: 5 主题 tokens/heading/paragraph/code-block 声明面（`packages/themes/*/src/index.ts`）中全部 `font-family` 声明移除；`packages/blocks/src/blocks/paragraph.ts:31`/`quote.ts:58` dropcap 装饰的 `"font-family": "var(--font-family-heading)"` 声明移除；`packages/marks/src/marks/inline-code.ts:6` 的 `font-family: monospace` 声明移除
+  - [x] AC-002: 移除后全部 5 主题 + paragraph/quote dropcap + inline-code mark 的定义面无残留 `font-family` 声明（源码级断言，独立于守卫——本卡先于 T-187 落地，守卫此刻尚未建）；守卫对这批已清理实体不误杀的验证在 T-187 落地时随全主题注册回归坐实（本卡为其清理前置）
+  - [x] AC-003: `packages/blocks/src/blocks/author-card.ts:16` 静态 baseStyle `root` 的 `display:"flex"` 声明改写为 `display:"table"`（或 `inline-block`，实现按视觉等价取舍并记入 notes）；author-card 渲染产物（`renderMarkdown` 真实管线，全部已注册主题）计算布局结构与迁移前视觉等价，基线更新逐条列依据
+  - [x] AC-004: 全仓 grep 审计内置资产（`packages/blocks/src/blocks/*.ts`、`packages/themes/*/src/index.ts`、`packages/marks/src/marks/*.ts`）静态声明中 `display:(flex|grid|inline-flex|inline-grid)`/`position:`/`float:`/定位族（`top`/`right`/`bottom`/`left`/`z-index`）声明清零；author-card（AC-003 处置）为已核实的唯一真实命中，审计结果（零命中确认或逐项处置清单）记入 notes——作为 T-187 构造守卫上线前 `FORBIDDEN_CSS_PROPS ∪ FORBIDDEN_DISPLAY_VALUES ∪ FORBIDDEN_POSITION_PROPS` 全量清理的坐实点
+  - [x] AC-005: 渲染产物（40 块 × 全部变体，全部已注册主题）hast 遍历零 `font-family` 内联样式声明；负向探针测试证明源头声明不复活（源头清理 + output 相兜底剥离双重验证一致）
+  - [x] AC-006: 六块变体（steps/gallery/compare/dialog/callout/announcement）baseStyle 中有主题 token 对应语义的色值/字体全部 `var(--token)` 占位化（原 T-179 AC-001）；default/literary/tech 三主题渲染产物装饰色随主题变化且等于各主题 token 权威值（不再跨主题字节级相同）
+  - [x] AC-007: default 主题渲染产物视觉等价（token 解析回落 default 权威值；基线更新逐条列依据，原 T-179 AC-002）；无 token 语义的结构性字面值（布局尺寸/百分比宽度/圆角结构值）保持字面不过度 token 化，产物无 `var()` 残留（原 T-179 AC-003）
+  - [x] AC-008: 全仓四门禁绿；跨主题渲染对照测试扩展（原 T-179 交付物），typography-cascade/block-variants 相关快照基线更新逐条列依据
 - **deliverables**:
   - [ ] `packages/themes/{default,literary,tech,business,magazine}/src/index.ts` — font-family 声明清理
   - [ ] `packages/blocks/src/blocks/{paragraph,quote}.ts` — dropcap font-family 清理

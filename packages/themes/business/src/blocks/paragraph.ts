@@ -3,7 +3,6 @@ import type { ThemeBlocks } from "@wechat-flow/contracts";
 export const paragraphBlocks: ThemeBlocks = {
   p: {
     default: {
-      "font-family": "'Inter', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif",
       "font-size": "15px",
       "font-weight": "400",
       color: "#0d1b2a",

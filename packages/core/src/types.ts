@@ -18,4 +18,5 @@ export interface RenderOptions {
   injectNodeIds?: boolean;
   rules?: RuleDefinition[];
   customCss?: string;
+  platform?: string;
 }

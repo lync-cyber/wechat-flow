@@ -4,7 +4,6 @@ import { tokens } from "../tokens.ts";
 export const codeBlocks: ThemeBlocks = {
   code: {
     default: {
-      "font-family": "SF Mono, JetBrains Mono, Fira Code, Menlo, Consolas, Courier New, monospace",
       "background-color": "#1a1a2e",
       color: "#e6edf3",
       padding: "2px 4px",
@@ -14,7 +13,6 @@ export const codeBlocks: ThemeBlocks = {
   },
   pre: {
     default: {
-      "font-family": "SF Mono, JetBrains Mono, Fira Code, Menlo, Consolas, Courier New, monospace",
       get "background-color"() {
         return tokens["--color-code-block-bg"];
       },

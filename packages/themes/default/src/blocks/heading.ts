@@ -3,7 +3,6 @@ import type { ThemeBlocks } from "@wechat-flow/contracts";
 export const headingBlocks: ThemeBlocks = {
   h1: {
     default: {
-      "font-family": "'LXGW WenKai', 'Source Han Serif CN', 'Noto Serif CJK SC', Georgia, serif",
       "font-size": "22px",
       "font-weight": "700",
       color: "#1c1917",
@@ -14,7 +13,6 @@ export const headingBlocks: ThemeBlocks = {
   },
   h2: {
     default: {
-      "font-family": "'LXGW WenKai', 'Source Han Serif CN', 'Noto Serif CJK SC', Georgia, serif",
       "font-size": "19px",
       "font-weight": "700",
       color: "#1c1917",
@@ -25,7 +23,6 @@ export const headingBlocks: ThemeBlocks = {
   },
   h3: {
     default: {
-      "font-family": "'LXGW WenKai', 'Source Han Serif CN', 'Noto Serif CJK SC', Georgia, serif",
       "font-size": "17px",
       "font-weight": "700",
       color: "#1c1917",
@@ -36,7 +33,6 @@ export const headingBlocks: ThemeBlocks = {
   },
   h4: {
     default: {
-      "font-family": "'LXGW WenKai', 'Source Han Serif CN', 'Noto Serif CJK SC', Georgia, serif",
       "font-size": "16px",
       "font-weight": "500",
       color: "#1c1917",
@@ -47,7 +43,6 @@ export const headingBlocks: ThemeBlocks = {
   },
   h5: {
     default: {
-      "font-family": "'LXGW WenKai', 'Source Han Serif CN', 'Noto Serif CJK SC', Georgia, serif",
       "font-size": "15px",
       "font-weight": "500",
       color: "#1c1917",
@@ -58,7 +53,6 @@ export const headingBlocks: ThemeBlocks = {
   },
   h6: {
     default: {
-      "font-family": "'LXGW WenKai', 'Source Han Serif CN', 'Noto Serif CJK SC', Georgia, serif",
       "font-size": "14px",
       "font-weight": "500",
       color: "#44403c",
