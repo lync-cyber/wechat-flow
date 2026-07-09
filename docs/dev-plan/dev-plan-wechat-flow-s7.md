@@ -1728,15 +1728,15 @@ graph LR
 - **security_sensitive**: true
 - **dependencies**: [T-183]
 - **acceptance_criteria**:
-  - [ ] AC-001: `packages/contracts/src/platform/wechat-paste.ts` 新增只读导出 `FORBIDDEN_CSS_PROPS`（含 `font-family`/`position`/`float`）、`FORBIDDEN_DISPLAY_VALUES`（`{flex,inline-flex,grid,inline-grid}`）、`FORBIDDEN_POSITION_PROPS`、`HARD_REMOVE_TAGS`、`FORBIDDEN_VALUE_PATTERNS`（`-webkit-`/`@media`/`@keyframes`/`:hover`/`:active`，例外见 AC-002）、`IFRAME_SRC_ALLOW`（含 `v.qq.com`）、`NEAR_WHITE`（`#fefefe`）；既有 `WECHAT_PASTE_UNSAFE_TAGS`/`WECHAT_PASTE_STRIPPED_STYLE_PROPS` 保留为对新常量的 re-export 别名，`tests/blocks/wechat-paste-safe-output.test.ts` 现有导入零改动即通过
-  - [ ] AC-002: 全仓 grep `-webkit-` 用例核实生产代码现状（当前仅 `packages/marks/src/marks/emphasis.ts:6` 一处 `-webkit-text-emphasis: filled circle`）；该模式与通用的 `print-color-adjust`/`overflow-scrolling` 一并纳入 `FORBIDDEN_VALUE_PATTERNS` 例外白名单，避免误杀已上线功能
-  - [ ] AC-003: `packages/core/src/registry/css-property-whitelist.ts` 移除 `CSS_SAFE_PROPERTIES` 中的 `"font-family"` 条目；`isWhitelistedProperty("font-family")` 返回 `false`；`registerVariant`（`packages/core/src/registry/variant.ts:28-53` 既有 `validateStyle` 路径，非新建校验分支）对含 `font-family` 声明的 style 调用产出 `rejectedDeclarations` 含 `{property: "font-family", ...}` 条目
-  - [ ] AC-004: 新增同步断言测试（S1 裁定落地，按构造/output/扫描三层防御分工拆三条**单向**断言，非双向相等）：① 构造守卫禁集（`FORBIDDEN_CSS_PROPS`/`FORBIDDEN_DISPLAY_VALUES`/`FORBIDDEN_POSITION_PROPS`）从本卡新增的平台常量单一源派生，仓内无第二份独立维护的同语义禁集清单（grep 验证）；② output 补救规则各自的靶属性/靶值 ⊆ 对应平台常量集（`strip-position` 靶 `position` ⊆ `FORBIDDEN_CSS_PROPS`、`strip-font-family` 靶 `font-family` ⊆ `FORBIDDEN_CSS_PROPS`、`patch-flex-to-block` 靶 `flex`/`inline-flex` ⊆ `FORBIDDEN_DISPLAY_VALUES`；单向子集断言，非相等）；③ `float`/`grid`/`inline-grid`/定位族（`top`/`right`/`bottom`/`left`/`z-index`）无对应 output 域运行期规则、由 T-187 构造守卫 + 全组合扫描兜底，本卡断言范围显式排除此子集（不纳入 output 同步断言，避免因无运行期规则而恒红）；construct-only 子集与构造守卫覆盖集 + 扫描覆盖集的同步断言随 T-187 落地（T-187 依赖本卡，本卡先行故只能断言 runtime 子集）
-  - [ ] AC-005: 全仓四门禁绿；`wechat-paste-safe-output.test.ts` 等既有消费方零回归破坏（别名兼容验证）
+  - [x] AC-001: `packages/contracts/src/platform/wechat-paste.ts` 新增只读导出 `FORBIDDEN_CSS_PROPS`（含 `font-family`/`position`/`float`）、`FORBIDDEN_DISPLAY_VALUES`（`{flex,inline-flex,grid,inline-grid}`）、`FORBIDDEN_POSITION_PROPS`、`HARD_REMOVE_TAGS`、`FORBIDDEN_VALUE_PATTERNS`（`-webkit-`/`@media`/`@keyframes`/`:hover`/`:active`，例外见 AC-002）、`IFRAME_SRC_ALLOW`（含 `v.qq.com`）、`NEAR_WHITE`（`#fefefe`）；既有 `WECHAT_PASTE_UNSAFE_TAGS`/`WECHAT_PASTE_STRIPPED_STYLE_PROPS` 保留为对新常量的 re-export 别名，`tests/blocks/wechat-paste-safe-output.test.ts` 现有导入零改动即通过
+  - [x] AC-002: 全仓 grep `-webkit-` 用例核实生产代码现状（当前仅 `packages/marks/src/marks/emphasis.ts:6` 一处 `-webkit-text-emphasis: filled circle`）；该模式与通用的 `print-color-adjust`/`overflow-scrolling` 一并纳入 `FORBIDDEN_VALUE_PATTERNS` 例外白名单，避免误杀已上线功能
+  - [x] AC-003: `packages/core/src/registry/css-property-whitelist.ts` 移除 `CSS_SAFE_PROPERTIES` 中的 `"font-family"` 条目；`isWhitelistedProperty("font-family")` 返回 `false`；`registerVariant`（`packages/core/src/registry/variant.ts:28-53` 既有 `validateStyle` 路径，非新建校验分支）对含 `font-family` 声明的 style 调用产出 `rejectedDeclarations` 含 `{property: "font-family", ...}` 条目
+  - [x] AC-004: 新增同步断言测试（S1 裁定落地，按构造/output/扫描三层防御分工拆三条**单向**断言，非双向相等）：① 构造守卫禁集（`FORBIDDEN_CSS_PROPS`/`FORBIDDEN_DISPLAY_VALUES`/`FORBIDDEN_POSITION_PROPS`）从本卡新增的平台常量单一源派生，仓内无第二份独立维护的同语义禁集清单（grep 验证）；② output 补救规则各自的靶属性/靶值 ⊆ 对应平台常量集（`strip-position` 靶 `position` ⊆ `FORBIDDEN_CSS_PROPS`、`strip-font-family` 靶 `font-family` ⊆ `FORBIDDEN_CSS_PROPS`、`patch-flex-to-block` 靶 `flex`/`inline-flex` ⊆ `FORBIDDEN_DISPLAY_VALUES`；单向子集断言，非相等）；③ `float`/`grid`/`inline-grid`/定位族（`top`/`right`/`bottom`/`left`/`z-index`）无对应 output 域运行期规则、由 T-187 构造守卫 + 全组合扫描兜底，本卡断言范围显式排除此子集（不纳入 output 同步断言，避免因无运行期规则而恒红）；construct-only 子集与构造守卫覆盖集 + 扫描覆盖集的同步断言随 T-187 落地（T-187 依赖本卡，本卡先行故只能断言 runtime 子集）
+  - [x] AC-005: 全仓四门禁绿；`wechat-paste-safe-output.test.ts` 等既有消费方零回归破坏（别名兼容验证）
 - **deliverables**:
-  - [ ] `packages/contracts/src/platform/wechat-paste.ts` — 完整平台事实集 + 旧名别名
-  - [ ] `packages/core/src/registry/css-property-whitelist.ts` — 移除 font-family
-  - [ ] 同步断言测试（新文件，如 `tests/contracts/platform-constants-sync.test.ts`）
+  - [x] `packages/contracts/src/platform/wechat-paste.ts` — 完整平台事实集 + 旧名别名
+  - [x] `packages/core/src/registry/css-property-whitelist.ts` — 移除 font-family
+  - [x] 同步断言测试（新文件，如 `tests/contracts/platform-constants-sync.test.ts`）
 - **context_load**:
   - amendment-platform-fidelity-r1#§2.1
   - amendment-platform-fidelity-r1#§4
