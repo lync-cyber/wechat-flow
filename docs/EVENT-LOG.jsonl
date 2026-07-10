@@ -785,3 +785,4 @@
 {"ts": "2026-07-09T12:37:14+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD GREEN: T-185 PlatformAdapter{patch,inspect} 最小实现"}
 {"ts": "2026-07-09T12:43:47+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD GREEN: T-189 全 FORBIDDEN 内置声明退出最小实现"}
 {"ts": "2026-07-09T13:16:48+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD REFACTOR: T-185（required + in→Object.hasOwn 修正）"}
+{"ts": "2026-07-10T00:49:41+00:00", "event": "tdd_phase", "phase": "development", "detail": "TDD LIGHT-DISPATCH: T-177 四块 default 变体登记", "agent": "orchestrator", "ref": "T-177"}
