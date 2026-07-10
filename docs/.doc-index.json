@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-10T04:40:58.153324+00:00",
+  "generated_at": "2026-07-10T06:41:17.489842+00:00",
   "documents": {
     "amendment-platform-fidelity-r1": {
       "file_path": "docs/arch/AMENDMENT-platform-fidelity-r1.md",
@@ -3739,6 +3739,18 @@
       "sections": {},
       "deps": [
         "T-149"
+      ]
+    },
+    "code-review-T-176-r1": {
+      "file_path": "docs/reviews/code/CODE-REVIEW-T-176-r1.md",
+      "doc_type": "code-review",
+      "status": "approved",
+      "total_lines": 65,
+      "est_tokens": 1679,
+      "content_hash": "67597470",
+      "sections": {},
+      "deps": [
+        "T-176"
       ]
     },
     "code-review-t-177-r1": {
