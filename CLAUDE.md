@@ -34,13 +34,12 @@
 
 ## 项目状态 (orchestrator专属写入区，其他Agent禁止修改)
 - 当前阶段: development（Sprint 7 收尾：无人值守 building 波——`cataforge unattended build "Sprint 7"` 在 feature/unattended-s7 沙盒 worktree 驱动剩余实现卡，按 `.cataforge/references/unattended-overrides.md` 执行；执行模型 = wechat-typeset，output 域 ruleset 即幂等 hast patch 层）
-- 上次完成: T-177 四块 default 变体登记（三块登记 + callout 依 ui-spec §10.1 排除，commit 34aaa28，approved_with_notes）+ T-178 strip-width-height-inline 规则移除（arch#§2.M-003 附录 A.3 裁整体移除，code-review approved）均已提交 feature/unattended-s7；前序 T-185 PlatformAdapter{patch,inspect} 薄层 + T-189 全 FORBIDDEN 内置声明退出 PR #116 已合并，修复批 T-160..T-175 + 架构专项 T-181..T-184 均 DONE（PR #108-#115）。实现细节见 git log / docs/EVENT-LOG.jsonl / docs/reviews/code/。
+- 上次完成: T-187 构造守卫（含 Mark）+ 全主题全组合扫描门禁（新增 style-guard.ts Block/Theme/Mark 构造期 FORBIDDEN 结构化拒绝 + validateThemeTokensForbidden token 值校验；code-review r2 approved——r1 唯一 HIGH R-001 tokens 校验遗漏已闭合，security_sensitive）已提交 feature/unattended-s7；前序 T-177 四块 default 变体登记（commit 34aaa28）+ T-178 strip-width-height-inline 规则移除均 DONE；T-185 PlatformAdapter{patch,inspect} 薄层 + T-189 全 FORBIDDEN 内置声明退出 PR #116 已合并，修复批 T-160..T-175 + 架构专项 T-181..T-184 均 DONE（PR #108-#115）。实现细节见 git log / docs/EVENT-LOG.jsonl / docs/reviews/code/。
 - 下一步行动（无人值守波次指令，headless orchestrator 每轮按此执行；attended 会话亦以此为准）:
   - 可推进卡（每卡：tdd-engine RED→GREEN(→REFACTOR) → code-review approved → git commit 到当前 feature 分支；状态经 `cataforge context update` 写 KG 并更新本节）:
-    - **T-187** 构造守卫含 Mark + 全主题全组合扫描（deps T-184/T-189 ✓，security_sensitive）
     - **T-186** 删模拟器 + 全消费方/MCP/文档同步 + 版本化（deps T-185 ✓；large 单卡原子交付，skeleton-first 增量落盘）
     - **T-176** 槽位 typography 下推（deps T-175/T-183 ✓）
-    - （T-177 四块 default 变体登记 ✓ DONE · T-178 strip-width-height-inline 移除 ✓ DONE）
+    - （T-187 构造守卫+全组合扫描 ✓ DONE · T-177 四块 default 变体登记 ✓ DONE · T-178 strip-width-height-inline 移除 ✓ DONE）
   - **用户门卡**（视同 blocked 勿尝试、勿反复发卡级 circuit_open）: T-188（真机确认硬前置）· T-172 r3 / T-157 / T-159（用户走查与 validation 收尾链）· T-180（AC-001 需 ui-spec finalize，受上游 #472 限制，attended 处理）
   - **收束规则**: 可推进卡全部 approved 后 emit 目标级熔断 `cataforge event log --event circuit_open --phase development --agent orchestrator --ref "dev-plan#Sprint 7" --detail "剩余卡均用户门"`；未全卡 approved 禁止 emit sprint_complete
   - **门禁纪律**: 每卡收敛全仓 `pnpm typecheck`（含 tests/tsconfig）+ `pnpm vitest run` + `pnpm biome check .`；渲染产物变更须 `pnpm test:cross-runtime` 或 `pnpm gen:cross-runtime-hashes`（四门禁不覆盖该 job）

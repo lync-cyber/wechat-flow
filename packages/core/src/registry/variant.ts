@@ -1,13 +1,9 @@
 import { filterCssAttrs } from "../pipeline/css-attr-filter.ts";
 import { describeBlock, listBlocks } from "./block.ts";
 import { isWhitelistedProperty } from "./css-property-whitelist.ts";
+import type { RejectedDeclaration } from "./style-guard.ts";
 
-export interface RejectedDeclaration {
-  slot: string;
-  property: string;
-  value: string;
-  reason: string;
-}
+export type { RejectedDeclaration } from "./style-guard.ts";
 
 export interface VariantDefinition {
   id: string;

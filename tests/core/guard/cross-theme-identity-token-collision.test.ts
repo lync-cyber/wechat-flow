@@ -81,7 +81,7 @@ const BASELINE_BLOCKS: Record<string, Record<string, Record<string, string>>> = 
   h6: { root: { "font-size": "0.9em" } },
   p: { root: { "line-height": "1.8" } },
   blockquote: { root: { "border-left": "4px solid #ccc" } },
-  code: { root: { "font-family": "monospace" } },
+  code: { root: { "background-color": "#f5f5f5" } },
   hr: { root: { "border-top": "1px solid #ccc" } },
 };
 
