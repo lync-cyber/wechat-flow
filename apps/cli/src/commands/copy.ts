@@ -1,5 +1,5 @@
 import * as fs from "node:fs";
-import { renderMarkdown, simulatePaste } from "@wechat-flow/core";
+import { renderMarkdown } from "@wechat-flow/core";
 import { registerBuiltins } from "../bootstrap.ts";
 
 export interface CopyOptions {
@@ -38,10 +38,9 @@ export async function runCopy(opts: CopyOptions): Promise<CopyResult> {
     return { exitCode: 1, stdout: "", stderr: `Render error: ${message}` };
   }
 
-  const pasteResult = simulatePaste(html);
   const payload: CopyPayload = {
-    html: pasteResult.filteredHtml,
-    text: pasteResult.filteredHtml.replace(/<[^>]+>/g, ""),
+    html,
+    text: html.replace(/<[^>]+>/g, ""),
   };
 
   return {

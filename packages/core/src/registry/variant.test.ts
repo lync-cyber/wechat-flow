@@ -1,7 +1,12 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { z } from "zod";
 import { registerBlock, resetBlockRegistry } from "./block.ts";
-import { getBlockBaseStyle, registerVariant, resetVariantRegistry } from "./variant.ts";
+import {
+  getBlockBaseStyle,
+  listBlockVariants,
+  registerVariant,
+  resetVariantRegistry,
+} from "./variant.ts";
 
 afterEach(() => {
   resetBlockRegistry();
@@ -105,5 +110,136 @@ describe("getBlockBaseStyle four-step resolution", () => {
   it("step 4: returns {} (not undefined, does not throw) when blockId is not registered at all", () => {
     expect(() => getBlockBaseStyle("no-such-block", "default")).not.toThrow();
     expect(getBlockBaseStyle("no-such-block", "default")).toEqual({});
+  });
+});
+
+describe("registerVariant 值级 FORBIDDEN 声明校验", () => {
+  it("style 含 display:grid 时抛错，rejectedDeclarations 含 forbidden 语义 reason", () => {
+    registerBlock({
+      id: "block-forbidden-display",
+      name: "Block Forbidden Display",
+      category: "structured",
+      directiveAttrs: z.object({}),
+      variants: [],
+      slots: ["root"],
+    });
+
+    let thrown: unknown;
+    try {
+      registerVariant({
+        blockId: "block-forbidden-display",
+        id: "grid-variant",
+        label: "Grid",
+        style: { root: { display: "grid" } },
+      });
+    } catch (e) {
+      thrown = e;
+    }
+
+    expect(thrown).toBeDefined();
+    const err = thrown as {
+      rejectedDeclarations?: Array<{
+        slot: string;
+        property: string;
+        value: string;
+        reason: string;
+      }>;
+    };
+    expect(Array.isArray(err.rejectedDeclarations)).toBe(true);
+    const decl = err.rejectedDeclarations?.find((d) => d.property === "display");
+    expect(decl?.value).toBe("grid");
+    expect(decl?.reason.toLowerCase()).toContain("forbidden");
+  });
+
+  it("display:grid 抛错后 listBlockVariants 查不到该 variant（无部分注册）", () => {
+    registerBlock({
+      id: "block-forbidden-display-2",
+      name: "Block Forbidden Display 2",
+      category: "structured",
+      directiveAttrs: z.object({}),
+      variants: [],
+      slots: ["root"],
+    });
+
+    try {
+      registerVariant({
+        blockId: "block-forbidden-display-2",
+        id: "grid-variant",
+        label: "Grid",
+        style: { root: { display: "grid" } },
+      });
+    } catch {
+      // expected
+    }
+
+    const variants = listBlockVariants("block-forbidden-display-2");
+    expect(variants.find((v) => v.id === "grid-variant")).toBeUndefined();
+  });
+});
+
+describe("R-006: registerVariant FORBIDDEN 校验大小写不敏感", () => {
+  function registerProbeBlock(id: string): void {
+    registerBlock({
+      id,
+      name: id,
+      category: "structured",
+      directiveAttrs: z.object({}),
+      variants: [],
+      slots: ["root"],
+    });
+  }
+
+  it.each([
+    ["Display: Grid", "Display", "Grid"],
+    ["DISPLAY: GRID", "DISPLAY", "GRID"],
+    ["display: INLINE-GRID", "display", "INLINE-GRID"],
+  ])("%s 时仍抛错并保留原始大小写的 rejectedDeclarations", (_label, property, value) => {
+    const blockId = `block-r006-${property}-${value}`.toLowerCase();
+    registerProbeBlock(blockId);
+
+    let thrown: unknown;
+    try {
+      registerVariant({
+        blockId,
+        id: "grid-variant",
+        label: "Grid",
+        style: { root: { [property]: value } },
+      });
+    } catch (e) {
+      thrown = e;
+    }
+
+    expect(thrown).toBeDefined();
+    const err = thrown as {
+      rejectedDeclarations?: Array<{ property: string; value: string }>;
+    };
+    expect(Array.isArray(err.rejectedDeclarations)).toBe(true);
+    const decl = err.rejectedDeclarations?.find(
+      (d) => d.property === property && d.value === value
+    );
+    expect(
+      decl,
+      `rejectedDeclarations must report the original casing "${property}: ${value}"`
+    ).toBeDefined();
+  });
+
+  it("background: -WEBKIT-linear-gradient(...) 值级大写 webkit 前缀时仍抛错", () => {
+    registerProbeBlock("block-r006-webkit-upper");
+
+    let thrown: unknown;
+    try {
+      registerVariant({
+        blockId: "block-r006-webkit-upper",
+        id: "webkit-variant",
+        label: "Webkit",
+        style: { root: { background: "-WEBKIT-linear-gradient(red,blue)" } },
+      });
+    } catch (e) {
+      thrown = e;
+    }
+
+    expect(thrown).toBeDefined();
+    const err = thrown as { rejectedDeclarations?: Array<{ property: string }> };
+    expect(err.rejectedDeclarations?.some((d) => d.property === "background")).toBe(true);
   });
 });

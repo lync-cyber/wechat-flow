@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { z } from "zod";
 import {
+  ALL_TOOL_SCHEMAS,
   type ClipboardPayload,
   type DiagnosticReport,
+  TOOL_DESCRIPTIONS,
   type TemplateDefinition,
   renderMarkdownRequestSchema,
   renderMarkdownResponseSchema,
@@ -49,13 +51,13 @@ describe("AC-002: toJSON produces JSON Schema Draft-7 shape", () => {
 });
 
 describe("AC-003: renderMarkdownResponseSchema valid parse", () => {
-  it("parses valid response", () => {
+  it("parses valid response with structured report", () => {
     const result = renderMarkdownResponseSchema.safeParse({
       html: "<p>test</p>",
       diagnostics: [],
       rulesetVersion: "1.0.0",
       themeVersion: "1.0.0",
-      postPaste: false,
+      report: { nodeChangeRecords: [], nightRiskIssues: [] },
     });
     expect(result.success).toBe(true);
   });
@@ -68,7 +70,7 @@ describe("AC-003b: renderMarkdownResponseSchema accepts optional versionTriple",
       diagnostics: [],
       rulesetVersion: "1.0.0",
       themeVersion: "1.0.0",
-      postPaste: false,
+      report: { nodeChangeRecords: [], nightRiskIssues: [] },
       versionTriple: { coreVersion: "0.0.0", themeVersion: "0.0.0", rulesetVersion: "0.0.0" },
     });
     expect(result.success).toBe(true);
@@ -80,9 +82,39 @@ describe("AC-003b: renderMarkdownResponseSchema accepts optional versionTriple",
       diagnostics: [],
       rulesetVersion: "1.0.0",
       themeVersion: "1.0.0",
-      postPaste: false,
+      report: { nodeChangeRecords: [], nightRiskIssues: [] },
     });
     expect(result.success).toBe(true);
+  });
+});
+
+describe("AC-004: renderMarkdownResponseSchema requires report", () => {
+  it("fails when report is missing", () => {
+    const result = renderMarkdownResponseSchema.safeParse({
+      html: "<p>test</p>",
+      diagnostics: [],
+      rulesetVersion: "1.0.0",
+      themeVersion: "1.0.0",
+    });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      const paths = result.error.issues.map((i) => i.path[0]);
+      expect(paths).toContain("report");
+    }
+  });
+});
+
+describe("AC-004: TOOL_DESCRIPTIONS covers every tool with a non-empty string", () => {
+  it("has a non-empty description for each ALL_TOOL_SCHEMAS key", () => {
+    for (const name of Object.keys(ALL_TOOL_SCHEMAS)) {
+      const description = TOOL_DESCRIPTIONS[name as keyof typeof ALL_TOOL_SCHEMAS];
+      expect(typeof description).toBe("string");
+      expect(description.trim().length).toBeGreaterThan(0);
+    }
+  });
+
+  it("declares no extra descriptions beyond the registered tools", () => {
+    expect(Object.keys(TOOL_DESCRIPTIONS).sort()).toEqual(Object.keys(ALL_TOOL_SCHEMAS).sort());
   });
 });
 

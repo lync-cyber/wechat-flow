@@ -4,7 +4,7 @@ import {
   renderMarkdown,
   resetBlockRegistry,
   resetVariantRegistry,
-  simulatePaste,
+  wechatAdapter,
 } from "../../../packages/core/src/index.ts";
 import "../../../packages/blocks/src/index.ts";
 import defaultTheme from "../../../packages/themes/default/src/index.ts";
@@ -93,11 +93,11 @@ describe("AC-004 regression-guard: 非容器上下文普通元素样式 byte-ide
   });
 });
 
-describe("AC-005: simulatePaste 过滤后下推的 text-align 属性完整保留", () => {
-  it("pull-quote decorated 渲染产物经 simulatePaste 过滤后，正文 <p> style 仍含 text-align: center", async () => {
+describe("AC-005: 平台过滤后下推的 text-align 属性完整保留", () => {
+  it("pull-quote decorated 渲染产物经 wechatAdapter.inspect 后，正文 <p> style 仍含 text-align: center", async () => {
     const result = await renderMarkdown(PULL_QUOTE_DECORATED_MD, { theme: defaultTheme });
-    const pasted = simulatePaste(result.html);
-    const pMatch = pasted.filteredHtml.match(/<p style="([^"]*)">/);
+    const { patchedHtml } = wechatAdapter.inspect(result.html);
+    const pMatch = patchedHtml.match(/<p style="([^"]*)">/);
     expect(pMatch).not.toBeNull();
     expect(pMatch?.[1]).toContain("text-align: center");
   });

@@ -7,6 +7,7 @@ export const announcement = defineBlock(
   z.object({}).strict(),
   "emphasis",
   [
+    { id: "default", label: "标准公告" },
     {
       id: "danger-bar",
       label: "危险横幅公告",

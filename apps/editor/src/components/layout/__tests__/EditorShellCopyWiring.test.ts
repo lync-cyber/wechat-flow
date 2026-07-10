@@ -16,7 +16,6 @@ vi.mock("../../../use-cases/render.ts", () => ({
   composeRender: vi.fn().mockResolvedValue({
     html: "<p>test</p>",
     diagnostics: [],
-    postPaste: false,
     coreVersion: "0.0.0",
     themeVersion: "0.0.0",
     rulesetVersion: "0.0.0",

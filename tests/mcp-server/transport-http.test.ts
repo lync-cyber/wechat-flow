@@ -146,7 +146,7 @@ describe("GET /metrics: Prometheus text exposition of MCP server SLIs", () => {
     expect(text).toContain("render_markdown_latency_ms_count 1");
   });
 
-  it("POST simulate_paste then GET /metrics contains paste_simulation_diff_ratio_count 1", async () => {
+  it("POST simulate_paste then GET /metrics contains fallback_platform_patch_hits_count 1", async () => {
     const app = createHttpTransportApp();
 
     await app.request("/mcp/tools/simulate_paste", {
@@ -158,7 +158,7 @@ describe("GET /metrics: Prometheus text exposition of MCP server SLIs", () => {
     const res = await app.request("/metrics");
     expect(res.status).toBe(200);
     const text = await res.text();
-    expect(text).toContain("paste_simulation_diff_ratio_count 1");
+    expect(text).toContain("fallback_platform_patch_hits_count 1");
   });
 
   it("GET /metrics with no authorization header still returns 200 (not gated by Bearer auth)", async () => {

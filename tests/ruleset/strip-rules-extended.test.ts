@@ -33,7 +33,6 @@ describe("T-056 AC-002: new strip rules have required shape fields", () => {
   const newStripRuleIds = [
     "strip-data-attr",
     "strip-aria-hidden",
-    "strip-width-height-inline",
     "strip-negative-margin",
     "strip-calc-expression",
   ];
@@ -133,79 +132,6 @@ describe("T-056 AC-003: strip-aria-hidden removes aria-hidden attribute", () => 
 
     expect(out).not.toContain("aria-hidden");
     expect(out).toContain(`type="button"`);
-  });
-});
-
-// ── strip-width-height-inline ────────────────────────────────────────────────
-
-describe("T-056 AC-003: strip-width-height-inline removes width and height from style", () => {
-  it("removes width and height declarations, preserves color and font-size", async () => {
-    const mod = await import(
-      "../../packages/ruleset/src/rules/builtin/strip-width-height-inline.ts"
-    );
-    const rule: RuleDefinition = mod.default;
-
-    const el = makeElement("div", { style: "width:200px;height:100px;color:red;font-size:16px" });
-    const hast = makeHast([el]);
-
-    const result = applyRuleset(hast, [rule]);
-    const div = (result.hast as Root).children[0] as Element;
-    const style = div.properties.style as string;
-
-    expect(style).not.toMatch(/width\s*:/);
-    expect(style).not.toMatch(/height\s*:/);
-    expect(style).toMatch(/color\s*:\s*red/);
-    expect(style).toMatch(/font-size\s*:\s*16px/);
-  });
-
-  it("removes only width when height is absent", async () => {
-    const mod = await import(
-      "../../packages/ruleset/src/rules/builtin/strip-width-height-inline.ts"
-    );
-    const rule: RuleDefinition = mod.default;
-
-    const el = makeElement("p", { style: "width:100%;margin:0" });
-    const hast = makeHast([el]);
-
-    const result = applyRuleset(hast, [rule]);
-    const p = (result.hast as Root).children[0] as Element;
-    const style = p.properties.style as string;
-
-    expect(style).not.toMatch(/width\s*:/);
-    expect(style).toMatch(/margin\s*:\s*0/);
-  });
-
-  it("does not match an element without width or height in style", async () => {
-    const mod = await import(
-      "../../packages/ruleset/src/rules/builtin/strip-width-height-inline.ts"
-    );
-    const rule: RuleDefinition = mod.default;
-
-    const el = makeElement("span", { style: "color:blue;padding:4px" });
-    const hast = makeHast([el]);
-
-    const result = applyRuleset(hast, [rule]);
-    const span = (result.hast as Root).children[0] as Element;
-    const style = span.properties.style as string;
-
-    expect(style).toMatch(/color\s*:\s*blue/);
-    expect(style).toMatch(/padding\s*:\s*4px/);
-  });
-
-  it("returns node unchanged when style attribute is absent", async () => {
-    const mod = await import(
-      "../../packages/ruleset/src/rules/builtin/strip-width-height-inline.ts"
-    );
-    const rule: RuleDefinition = mod.default;
-
-    const el = makeElement("div", { class: "box" });
-    const hast = makeHast([el]);
-
-    const result = applyRuleset(hast, [rule]);
-    const div = (result.hast as Root).children[0] as Element;
-
-    expect(div.properties).toHaveProperty("class", "box");
-    expect(div.properties).not.toHaveProperty("style");
   });
 });
 

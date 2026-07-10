@@ -13,7 +13,6 @@ vi.mock("@wechat-flow/core", async (importOriginal) => {
       { id: "doc-1", title: "文档一", updatedAt: 1000 },
       { id: "doc-2", title: "文档二", updatedAt: 900 },
     ]),
-    simulatePaste: vi.fn().mockReturnValue({ filteredHtml: "<p>html</p>" }),
     renderMarkdown: vi.fn().mockResolvedValue("<p>html</p>"),
   };
 });

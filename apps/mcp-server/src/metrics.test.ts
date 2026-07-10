@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
-  observePasteSimulationDiffRatio,
+  observeFallbackPlatformPatchHits,
   observeRenderMarkdownLatency,
   renderMetrics,
   resetMetrics,
@@ -26,12 +26,12 @@ describe("render_markdown_latency_ms", () => {
   });
 });
 
-describe("paste_simulation_diff_ratio", () => {
+describe("fallback_platform_patch_hits", () => {
   it("renderMetrics output contains the metric name and help text after an observation", async () => {
-    observePasteSimulationDiffRatio(0.3);
+    observeFallbackPlatformPatchHits(3);
     const text = await renderMetrics();
-    expect(text).toContain("# HELP paste_simulation_diff_ratio");
-    expect(text).toContain("paste_simulation_diff_ratio_count 1");
+    expect(text).toContain("# HELP fallback_platform_patch_hits");
+    expect(text).toContain("fallback_platform_patch_hits_count 1");
   });
 });
 

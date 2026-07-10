@@ -85,6 +85,7 @@ export const gallery = defineBlock(
   z.object({}).strict(),
   "media",
   [
+    { id: "default", label: "标准图集" },
     {
       id: "duo",
       label: "双列图集",

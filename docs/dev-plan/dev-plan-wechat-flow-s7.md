@@ -2,7 +2,7 @@
 id: "dev-plan-wechat-flow-s7"
 doc_type: dev-plan
 author: tech-lead
-status: draft
+status: approved
 consumers: [developer, qa-engineer, ui-designer]
 version: "0.3.2"
 sprint: 7

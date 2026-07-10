@@ -3,7 +3,7 @@ import { exportClipboardPayloadTool } from "../../../apps/mcp-server/src/tools/e
 
 const SAMPLE_MD = "# Hello\n\nThis is a **test** paragraph.";
 
-// ---- AC-001: returns { html, text } with inline-styled + simulatePaste-filtered html ----
+// ---- AC-001: returns { html, text } with the inline-styled render product ----
 
 describe("AC-001: exportClipboardPayloadTool returns { html, text } from the composeCopy pipeline", () => {
   it("returns an object with html and text string fields for basic markdown input", async () => {
@@ -33,8 +33,8 @@ describe("AC-001: exportClipboardPayloadTool returns { html, text } from the com
 
 // ---- AC-002: returned html does not contain <style> tags ----
 
-describe("AC-002: html field must not contain <style> tags after simulatePaste filtering", () => {
-  it("html field does not match /<style/ after the paste simulation pipeline", async () => {
+describe("AC-002: html field must not contain <style> tags (render output is paste-safe)", () => {
+  it("html field does not match /<style/ in the render product", async () => {
     const result = await exportClipboardPayloadTool({ markdown: SAMPLE_MD, themeId: "default" });
     expect(result.html).not.toMatch(/<style/i);
   });
@@ -46,9 +46,9 @@ describe("AC-002: html field must not contain <style> tags after simulatePaste f
   });
 });
 
-// ---- AC-003: Tool delegates to core renderMarkdown + simulatePaste (behavioral verification) ----
+// ---- AC-003: Tool delegates to core renderMarkdown (behavioral verification) ----
 
-describe("AC-003: Tool output is consistent with the renderMarkdown + simulatePaste pipeline", () => {
+describe("AC-003: Tool output is consistent with the renderMarkdown pipeline", () => {
   it("text field equals html with all tags stripped", async () => {
     const result = await exportClipboardPayloadTool({
       markdown: "# Test\n\nParagraph.",

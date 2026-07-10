@@ -204,27 +204,28 @@ describe("AC-005: orchestration chain — real tool handlers, mocked external de
       diagnostics: unknown[];
       rulesetVersion: string;
       themeVersion: string;
-      postPaste: boolean;
+      report: { nodeChangeRecords: unknown[]; nightRiskIssues: unknown[] };
     }>(client, "render_markdown", { markdown, themeId: "tech" });
     expect(typeof result.html).toBe("string");
     expect(result.html.length).toBeGreaterThan(0);
     expect(result.html).toContain("Hello");
     expect(Array.isArray(result.diagnostics)).toBe(true);
     expect(typeof result.rulesetVersion).toBe("string");
-    expect(typeof result.postPaste).toBe("boolean");
+    expect(Array.isArray(result.report.nodeChangeRecords)).toBe(true);
+    expect(Array.isArray(result.report.nightRiskIssues)).toBe(true);
   });
 
-  it("Step 5 — simulate_paste returns filteredHtml with diffNodes and droppedAttrs", async () => {
-    const html = '<p style="font-family: Arial; color: red;">内容</p>';
+  it("Step 5 — simulate_paste returns patchedHtml, changes and a filteredHtml alias", async () => {
+    const html = '<div id="x" style="font-family: Arial; color: red;">内容</div>';
     const result = await callTool<{
+      patchedHtml: string;
+      changes: unknown[];
       filteredHtml: string;
-      diffNodes: unknown[];
-      droppedAttrs: Record<string, string[]>;
     }>(client, "simulate_paste", { html });
-    expect(typeof result.filteredHtml).toBe("string");
-    expect(result.filteredHtml.length).toBeGreaterThan(0);
-    expect(Array.isArray(result.diffNodes)).toBe(true);
-    expect(typeof result.droppedAttrs).toBe("object");
+    expect(typeof result.patchedHtml).toBe("string");
+    expect(result.patchedHtml.length).toBeGreaterThan(0);
+    expect(Array.isArray(result.changes)).toBe(true);
+    expect(result.filteredHtml).toBe(result.patchedHtml);
   });
 
   it("Step 6a — upload_to_wechat_asset returns jobId (async, mocked)", async () => {

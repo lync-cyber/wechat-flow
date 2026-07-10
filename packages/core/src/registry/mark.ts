@@ -1,3 +1,5 @@
+import { buildRejectionError, validateMarkStyleForbidden } from "./style-guard.ts";
+
 export interface MarkDefinition {
   id: string;
   name: string;
@@ -8,6 +10,13 @@ const store = new Map<string, MarkDefinition>();
 const resetHooks: Array<() => void> = [];
 
 export function registerMark(definition: MarkDefinition): void {
+  const rejectedDeclarations = validateMarkStyleForbidden(definition.style);
+  if (rejectedDeclarations.length > 0) {
+    throw buildRejectionError(
+      `registerMark: rejected declarations for mark "${definition.id}"`,
+      rejectedDeclarations
+    );
+  }
   store.set(definition.id, definition);
 }
 

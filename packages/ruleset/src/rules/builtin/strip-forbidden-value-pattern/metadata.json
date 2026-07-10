@@ -1,0 +1,7 @@
+{
+  "ruleId": "strip-forbidden-value-pattern",
+  "scope": "strip",
+  "priority": 85,
+  "description": "Remove CSS declarations whose value matches a FORBIDDEN_VALUE_PATTERNS entry (-webkit- prefix, @media, @keyframes, :hover, :active) — these constructs are dropped or mis-rendered by the WeChat article renderer",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-// Only mock composeRender; simulatePaste runs with its real implementation.
 vi.mock("../../apps/editor/src/use-cases/render.ts", () => ({
   composeRender: vi.fn(),
 }));
@@ -10,10 +9,10 @@ import { composeRender } from "../../apps/editor/src/use-cases/render.ts";
 
 const mockComposeRender = vi.mocked(composeRender);
 
-// Raw HTML that a real theme render might produce: contains a <style> block (stripped by simulatePaste)
-// and inline styles with concrete values (CSS variables are resolved upstream by renderMarkdown, not here).
-const RAW_HTML_WITH_STYLE_TAG =
-  '<section style="color:#333"><h1 style="font-size:24px">Hello</h1><style>.cls{color:red}</style></section>';
+// render() applies the output ruleset, so its html is already paste-safe:
+// <style> blocks and var(--) are resolved/stripped before composeCopy sees it.
+const PASTE_SAFE_HTML =
+  '<section style="color:#333"><h1 style="font-size:24px">Hello</h1></section>';
 
 const emptyReport = {
   diagnostics: [],
@@ -59,9 +58,8 @@ beforeEach(() => {
   });
 
   mockComposeRender.mockResolvedValue({
-    html: RAW_HTML_WITH_STYLE_TAG,
+    html: PASTE_SAFE_HTML,
     diagnostics: [],
-    postPaste: false,
     coreVersion: "0.0.0",
     themeVersion: "0.0.0",
     rulesetVersion: "0.0.0",
@@ -72,17 +70,17 @@ beforeEach(() => {
 });
 
 // ─────────────────────────────────────────────────────────────
-// AC-002 integration: real simulatePaste strips <style> and var(-- from raw render output
+// AC-002: composeCopy forwards the paste-safe render output verbatim to the clipboard
 // ─────────────────────────────────────────────────────────────
-describe("AC-002 integration: real simulatePaste strips <style> blocks from raw render output", () => {
-  it("text/html ClipboardItem blob has no <style> tags after real simulatePaste", async () => {
-    // simulatePaste strips <style> elements from raw render HTML regardless of their content.
+describe("AC-002: composeCopy forwards render output to the clipboard text/html blob", () => {
+  it("text/html ClipboardItem blob equals the render html and has no <style> tags", async () => {
     await composeCopy({ markdown: "# Hello", themeId: "default" });
 
     const htmlItem = capturedItems.find((i) => i.types.includes("text/html"));
     if (!htmlItem) throw new Error("text/html ClipboardItem not found");
     const blob = await htmlItem.getType("text/html");
     const text = await blob.text();
+    expect(text).toBe(PASTE_SAFE_HTML);
     expect(text).not.toMatch(/<style[\s>]/i);
   });
 

@@ -1,5 +1,11 @@
 import type { ThemeDefinition, ThemeListEntry } from "@wechat-flow/contracts";
 import { mergeDelta } from "../inheritance/delta-merge.ts";
+import {
+  type RejectedDeclaration,
+  buildRejectionError,
+  validateThemeBlocksForbidden,
+  validateThemeTokensForbidden,
+} from "./style-guard.ts";
 import { defineTemplate } from "./template.ts";
 
 const store = new Map<string, ThemeDefinition>();
@@ -7,6 +13,20 @@ const store = new Map<string, ThemeDefinition>();
 const getRaw = (id: string): ThemeDefinition | undefined => store.get(id);
 
 export function registerTheme(definition: ThemeDefinition): void {
+  const rejectedDeclarations: RejectedDeclaration[] = [];
+  if (definition.tokens) {
+    rejectedDeclarations.push(...validateThemeTokensForbidden(definition.tokens));
+  }
+  if (definition.blocks) {
+    rejectedDeclarations.push(...validateThemeBlocksForbidden(definition.blocks));
+  }
+  if (rejectedDeclarations.length > 0) {
+    throw buildRejectionError(
+      `registerTheme: rejected declarations for theme "${definition.id}"`,
+      rejectedDeclarations
+    );
+  }
+
   store.set(definition.id, {
     paintable: {},
     assets: {},

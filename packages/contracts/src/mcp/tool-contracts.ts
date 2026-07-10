@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { nightRiskEntrySchema, nodeChangeRecordSchema } from "../diagnostic/diagnostic-report.ts";
 import { versionTripleSchema } from "../version/triple-structure.ts";
 import { registerVariantRequestSchema } from "./register-variant.ts";
 
@@ -20,7 +21,10 @@ export const renderMarkdownResponseSchema = z.object({
   diagnostics: z.array(z.looseObject({})),
   rulesetVersion: z.string(),
   themeVersion: z.string(),
-  postPaste: z.boolean(),
+  report: z.object({
+    nodeChangeRecords: z.array(nodeChangeRecordSchema),
+    nightRiskIssues: z.array(nightRiskEntrySchema),
+  }),
   versionTriple: versionTripleSchema.optional(),
 });
 
@@ -85,13 +89,32 @@ export const derivePaletteResponseSchema = z.looseObject({});
 export const applyZhTypoRequestSchema = z.looseObject({});
 export const applyZhTypoResponseSchema = z.looseObject({});
 
+const patchSampleSchema = z.object({
+  selector: z.string().optional(),
+  before: z.string(),
+});
+
+const patchChangeSchema = z.object({
+  patch: z.string(),
+  label: z.string().optional(),
+  count: z.number(),
+  samples: z.array(patchSampleSchema),
+});
+
 // ---- simulate_paste (API-014) ----
-export const simulatePasteRequestSchema = z.looseObject({});
-export const simulatePasteResponseSchema = z.looseObject({});
+export const simulatePasteRequestSchema = z.object({ html: z.string() });
+export const simulatePasteResponseSchema = z.object({
+  patchedHtml: z.string(),
+  changes: z.array(patchChangeSchema),
+  filteredHtml: z.string(),
+});
 
 // ---- export_clipboard_payload (API-015) ----
 export const exportClipboardPayloadRequestSchema = z.looseObject({});
-export const exportClipboardPayloadResponseSchema = z.looseObject({});
+export const exportClipboardPayloadResponseSchema = z.object({
+  html: z.string(),
+  text: z.string(),
+});
 
 // ---- upload_image async (API-016a) ----
 export const uploadImageRequestSchema = z.looseObject({});
@@ -175,3 +198,33 @@ export const ALL_TOOL_SCHEMAS = {
 export const SYNC_TOOL_COUNT = 20;
 export const ASYNC_TOOL_COUNT = 4;
 export const TOTAL_TOOL_COUNT = SYNC_TOOL_COUNT + ASYNC_TOOL_COUNT;
+
+/**
+ * Per-tool human-readable description surfaced to MCP clients via registerTool().
+ */
+export const TOOL_DESCRIPTIONS: Record<keyof typeof ALL_TOOL_SCHEMAS, string> = {
+  render_markdown: "将 Markdown 渲染为微信公众号可直接粘贴的 inline-styled HTML",
+  lint_markdown: "检查 Markdown 排版问题，不生成渲染产物",
+  list_themes: "列出内置主题",
+  describe_theme: "查询主题详情与可用模板列表",
+  list_blocks: "列出已注册的 Block 组件",
+  describe_block: "查询 Block 组件的属性 schema 与变体",
+  list_marks: "列出已注册的 Mark 组件",
+  describe_mark: "查询 Mark 组件的样式与属性 schema",
+  list_tokens: "列出设计 Token",
+  describe_token: "查询单个设计 Token 的实值",
+  list_block_variants: "列出 Block 的已注册 Variant 皮肤",
+  describe_variant: "查询 Variant 皮肤的样式与依赖",
+  derive_palette: "由主色派生调色板",
+  apply_zh_typo: "应用中文排版规范化规则",
+  simulate_paste: "检查一段 HTML 中会被微信平台输出规则命中改写的部分",
+  export_clipboard_payload: "导出可直接写入剪贴板的 html/text 双格式 payload",
+  get_job: "查询异步任务状态",
+  get_ruleset_version: "查询 core/theme/ruleset 三段版本号",
+  describe_template: "查询主题模板正文与覆盖清单",
+  register_variant: "注册自定义 Block Variant 皮肤",
+  upload_image: "异步上传图片，返回 jobId",
+  upload_to_wechat_asset: "异步上传微信素材库，返回 jobId",
+  export_long_image: "异步导出长图，返回 jobId",
+  export_cover: "异步导出封面图，返回 jobId",
+};

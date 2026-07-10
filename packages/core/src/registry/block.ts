@@ -1,5 +1,6 @@
 import type { Element } from "hast";
 import type { ZodType } from "zod";
+import { buildRejectionError, validateForbiddenDeclarations } from "./style-guard.ts";
 
 export type BlockCategory = "text" | "media" | "emphasis" | "structured" | "marketing" | "meta";
 
@@ -48,6 +49,23 @@ export function registerBlock(definition: BlockDefinition): void {
     );
     throw err;
   }
+
+  const rejectedDeclarations: ReturnType<typeof validateForbiddenDeclarations> = [];
+  if (definition.baseStyle) {
+    rejectedDeclarations.push(...validateForbiddenDeclarations(definition.baseStyle));
+  }
+  for (const variant of definition.variants) {
+    if (variant.baseStyle) {
+      rejectedDeclarations.push(...validateForbiddenDeclarations(variant.baseStyle));
+    }
+  }
+  if (rejectedDeclarations.length > 0) {
+    throw buildRejectionError(
+      `registerBlock: rejected declarations for block "${definition.id}"`,
+      rejectedDeclarations
+    );
+  }
+
   store.set(definition.id, definition);
 }
 

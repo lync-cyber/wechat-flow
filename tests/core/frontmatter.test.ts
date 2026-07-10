@@ -38,7 +38,6 @@ const techLikeTheme: ThemeDefinition = {
   blocks: {
     pre: {
       default: {
-        "font-family": "SF Mono, JetBrains Mono, Menlo, Consolas, monospace",
         "background-color": "#1A1A2E",
         color: "#E6EDF3",
         padding: "12px 16px",
@@ -50,7 +49,6 @@ const techLikeTheme: ThemeDefinition = {
     },
     code: {
       default: {
-        "font-family": "SF Mono, JetBrains Mono, Menlo, Consolas, monospace",
         background: "#1A1A2E",
         color: "#E6EDF3",
         padding: "2px 4px",
@@ -342,7 +340,6 @@ describe("options.themeId 经注册中心解析主题", () => {
         pre: {
           default: {
             "background-color": "#FFFFFF",
-            "font-family": "Arial, sans-serif",
             color: "#000000",
             padding: "4px",
             "font-size": "14px",

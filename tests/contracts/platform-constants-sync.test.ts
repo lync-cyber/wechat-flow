@@ -183,6 +183,39 @@ describe("AC-002: FORBIDDEN_VALUE_PATTERNS 例外白名单不误杀已上线功�
     expect(isForbiddenCssValue("color: #333333; font-size: 16px")).toBe(false);
   });
 });
+describe("R-006: isForbiddenCssValue 比较大小写不敏感", () => {
+  it("background: -WEBKIT-linear-gradient(...)（全大写值）被判定为 FORBIDDEN", () => {
+    expect(isForbiddenCssValue("background: -WEBKIT-linear-gradient(red,blue)")).toBe(true);
+  });
+
+  it("background: -WebKit-linear-gradient(...)（大小写混合值）被判定为 FORBIDDEN", () => {
+    expect(isForbiddenCssValue("background: -WebKit-linear-gradient(red,blue)")).toBe(true);
+  });
+
+  it("@MEDIA（大写）注入被判定为 FORBIDDEN", () => {
+    expect(isForbiddenCssValue("@MEDIA (max-width: 600px) { color: red }")).toBe(true);
+  });
+
+  it("A:HOVER（大写伪类）注入被判定为 FORBIDDEN", () => {
+    expect(isForbiddenCssValue("a:HOVER { color: blue }")).toBe(true);
+  });
+
+  it("大写变体的 emphasis.ts 例外声明（-WEBKIT-TEXT-EMPHASIS）不被误判为 FORBIDDEN（例外白名单比较同步归一化）", () => {
+    expect(
+      isForbiddenCssValue(
+        "TEXT-EMPHASIS: filled circle; TEXT-EMPHASIS-POSITION: under left; -WEBKIT-TEXT-EMPHASIS: filled circle"
+      )
+    ).toBe(false);
+  });
+
+  it("大写变体的 -WEBKIT-PRINT-COLOR-ADJUST 例外声明不被误判为 FORBIDDEN", () => {
+    expect(isForbiddenCssValue("-WEBKIT-PRINT-COLOR-ADJUST: exact")).toBe(false);
+  });
+
+  it("大写变体的 -WEBKIT-OVERFLOW-SCROLLING 例外声明不被误判为 FORBIDDEN", () => {
+    expect(isForbiddenCssValue("-WEBKIT-OVERFLOW-SCROLLING: touch")).toBe(false);
+  });
+});
 describe("AC-004①: 构造禁集单一源派生", () => {
   it("barrel 导出的 FORBIDDEN_CSS_PROPS/FORBIDDEN_DISPLAY_VALUES/FORBIDDEN_POSITION_PROPS 与 platform 模块导出为同一对象引用（barrel 只转发，非拷贝副本）", () => {
     expect(FORBIDDEN_CSS_PROPS).toBe(platformExports.FORBIDDEN_CSS_PROPS);

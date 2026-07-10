@@ -53,15 +53,16 @@ export const IFRAME_SRC_ALLOW: ReadonlySet<string> = new Set(["v.qq.com", "mp.we
 export const NEAR_WHITE = "#fefefe";
 
 export function isForbiddenCssValue(value: string): boolean {
-  let stripped = value;
+  let stripped = value.toLowerCase();
   for (const exception of FORBIDDEN_VALUE_PATTERN_EXCEPTIONS) {
-    stripped = stripped.split(`-webkit-${exception}`).join("");
+    const exceptionLower = exception.toLowerCase();
+    stripped = stripped.split(`-webkit-${exceptionLower}`).join("");
   }
   for (const exception of FORBIDDEN_VALUE_PATTERN_EXCEPTIONS) {
-    stripped = stripped.split(exception).join("");
+    stripped = stripped.split(exception.toLowerCase()).join("");
   }
   for (const pattern of FORBIDDEN_VALUE_PATTERNS) {
-    if (stripped.includes(pattern)) return true;
+    if (stripped.includes(pattern.toLowerCase())) return true;
   }
   return false;
 }
