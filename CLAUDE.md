@@ -33,26 +33,38 @@
 - 构建/任务编排: Turborepo 2.3（`turbo build`）；apps/editor 用 Vite 6
 
 ## 项目状态 (orchestrator专属写入区，其他Agent禁止修改)
-- 当前阶段: development（Sprint 7 架构专项批实现波，执行模型 = wechat-typeset：复用 output 域 ruleset 为幂等 hast patch 层，不建独立模拟器）。修复批一 T-160..T-174 + 架构专项批 T-181/T-182/T-183 均 DONE（PR #108-#114）；T-184（平台常量单一源 + S1 断言）已合并 PR #115。**T-185 DONE**（PlatformAdapter{patch,inspect} 薄层 + render output 相经 adapter + render_markdown platform 参数 + E_UNSUPPORTED_PLATFORM）、**T-189 DONE**（5 主题+dropcap+inline-code font-family 声明面退出、author-card flex→table、六块 baseStyle token 化、全 FORBIDDEN 静态审计仅 author-card 一处已清；顺带修 inline-style.ts 嵌入式 var() 解析 bug）——RED→GREEN→(T-185 REFACTOR: in→Object.hasOwn) 全链路，合并树四门禁+cross-runtime 全绿（vitest 3631 pass），本波单合并 PR 待用户合并。实现波剩余：T-187（构造守卫，deps [T-184,T-189] 就绪）‖ T-186（删模拟器，deps [T-185]）→ T-188（dropcap/dialog px，真机门）→ 批二 T-176..T-180 → T-172 r3。
-- 上次完成: **T-185 PlatformAdapter 薄层 + T-189 全 FORBIDDEN 内置声明退出（并行实现波，合并树四门禁+cross-runtime 全绿，vitest 3631 pass）**：T-185 新建 `PlatformAdapter{id,name,patch,inspect}`+`wechatAdapter`（`core/platform/wechat-adapter.ts`）——`patch(hast,rules?)` 是 output 相 `applyRuleset` 零行为改变具名封装（render.ts 改经它，AC-002 字节等价坐实）；`inspect(html)` 先跑平台过滤子集（builtinRules 中 stage=output∧scope∈{strip,patch}，排除 clamp/transform/lint 产品归一）映射 nodeChangeRecords→PatchChange，再剥 UNSAFE_TAGS∪HARD_REMOVE_TAGS 标签（ruleset 先行避免 div 带走 position）；`renderMarkdown` 加 `platform?` + 未注册平台早返回 `{code:E_UNSUPPORTED_PLATFORM}`（返回类型不变、`Object.hasOwn` 防原型链绕过）；`renderMarkdownRequestSchema` 加 `platform:z.enum(["wechat"]).optional()`；`PatchLog`/`PatchChange` 类型入 contracts（对齐 T-186 MCP 响应形状）。T-189 清 5 主题 blocks/{heading,paragraph,code-block} 硬编码 font-family（45 处）+ paragraph/quote dropcap `var(--font-family-heading)` + inline-code mark、`author-card display:flex→table`、六块（steps/gallery/compare/dialog/callout/announcement）baseStyle 色值 `var(--token)` 化（tokens.ts 的 --font-family-* 定义保留）；发现并修 `inline-style.ts` 真实 bug（`resolveTokenPlaceholder` 整值匹配→全局子串替换+正确 fallback、容器根 L1⊕L2 合并补 token 解析——嵌入式 var() 如 `1px solid var(--color-border)` 原会双写损坏）。TDD RED→GREEN，T-185 REFACTOR（in→Object.hasOwn），T-189 skip。前序 T-184 见 PR #115。
-- 下一步行动: ① **本波单合并 PR 用户审阅合并**（`feature/arch-batch-T-185-T-189`：T-185+T-189 源+测试 + AC 勾选 + §项目状态；gh 分类器拦自合并故手合）② 合并后实现波续推：**T-187**（构造守卫含 Mark + 全主题全组合扫描，deps [T-184,T-189] 就绪）‖ **T-186**（删模拟器 + 全消费方/MCP/文档同步 + 版本化，deps [T-185]）→ **T-188**（dropcap/dialog px 宽，deps [T-184]，真机确认硬前置）→ 批二 T-176/177/178/180 → T-172 r3 交用户 ③ **手工真机确认前置**（T-188/T-172 r3，owner=user，无自动 oracle：≤6 份微信粘贴确认 `display:table` 存活，两卡合并采集；失败→真 `<table>` 改造 T-188 已预置；写 `event=user_decision` 载 design_signoff 语义，非法枚举 design_signoff 勿用）→ T-157 blocking_conditions 清空 → T-159 AC-004 ④ **命题4**：`inspect(render(x))===[]` 自证性质、render/inspect 共享盲点会假绿，正向保真须外部真机 fixture 作 oracle（上游 #473/#474）；T-185 AC-004 已限定为诚实稳定态证明非预测真机 ⑤ release go/no-go（mcp-server private 翻转前置 CODE-SCAN P0 tokenResolver 替换 / 包版本 0.0.0 / npm reviewers / Docker / CVE——见 deploy-spec §9）⑥ 裁定待办：arch M-002 slot token 措辞（owner=architect）、ui-spec §10.5 quote root #555 token 映射（owner=ui-designer，需 sign-off）。【环境限制订正 2026-07-09】`cataforge event log` 与 `cataforge context read` 本地实测可用；`context finalize`（越权前科）/`index`/doc-code-review Layer 1 未逐一核实，逐个实测再用勿一刀切；docs/.doc-index.json 仍可能 stale；四代码门禁不受影响。
+- 当前阶段: development（Sprint 7 收尾：无人值守 building 波——`cataforge unattended build "Sprint 7"` 在 feature/unattended-s7 沙盒 worktree 驱动剩余实现卡，按 `.cataforge/references/unattended-overrides.md` 执行；执行模型 = wechat-typeset，output 域 ruleset 即幂等 hast patch 层）
+- 上次完成: T-185 PlatformAdapter{patch,inspect} 薄层 + T-189 全 FORBIDDEN 内置声明退出（顺带修 inline-style.ts 嵌入式 var() 解析 bug），PR #116 已合并；前序修复批 T-160..T-175 + 架构专项 T-181..T-184 均 DONE（PR #108-#115）。实现细节见 git log / docs/EVENT-LOG.jsonl / docs/reviews/code/。
+- 下一步行动（无人值守波次指令，headless orchestrator 每轮按此执行；attended 会话亦以此为准）:
+  - 可推进卡（每卡：tdd-engine RED→GREEN(→REFACTOR) → code-review approved → git commit 到当前 feature 分支；状态经 `cataforge context update` 写 KG 并更新本节）:
+    - **T-187** 构造守卫含 Mark + 全主题全组合扫描（deps T-184/T-189 ✓，security_sensitive）
+    - **T-186** 删模拟器 + 全消费方/MCP/文档同步 + 版本化（deps T-185 ✓；large 单卡原子交付，skeleton-first 增量落盘）
+    - **T-176** 槽位 typography 下推（deps T-175/T-183 ✓）
+    - **T-177** 四块 default 变体登记（deps T-175 ✓）→ **T-178** strip-width-height-inline 移除（deps T-175 ✓）
+  - **用户门卡**（视同 blocked 勿尝试、勿反复发卡级 circuit_open）: T-188（真机确认硬前置）· T-172 r3 / T-157 / T-159（用户走查与 validation 收尾链）· T-180（AC-001 需 ui-spec finalize，受上游 #472 限制，attended 处理）
+  - **收束规则**: 可推进卡全部 approved 后 emit 目标级熔断 `cataforge event log --event circuit_open --phase development --agent orchestrator --ref "dev-plan#Sprint 7" --detail "剩余卡均用户门"`；未全卡 approved 禁止 emit sprint_complete
+  - **门禁纪律**: 每卡收敛全仓 `pnpm typecheck`（含 tests/tsconfig）+ `pnpm vitest run` + `pnpm biome check .`；渲染产物变更须 `pnpm test:cross-runtime` 或 `pnpm gen:cross-runtime-hashes`（四门禁不覆盖该 job）
+  - **禁区**: 禁改 `strip-data-attr.ts`/`strip-aria-hidden.ts`（用户独立会话处理中勿双改）；禁 git stash；`context finalize` 勿强推（#472）；`event log`/`context read`/`context update` 本地实测可用
 - 已完成阶段: [requirements, architecture, ui_design, dev_planning, cross_doc_amendment_r2, arch_special_review_css_inlining, dev_plan_amendment_custom_styles, development, testing, deployment, s7_visual_upgrade_planning]
-- 当前Sprint: 7（视觉升级批 + 修复批 + 架构专项批）。修复批 T-160..T-174 DONE；T-172 = T-157 r2 复验待用户走查（升 r3），T-159 validation 待 T-172 闭环。**sprint-review 待记 open 注记**：UC-021 AND 语义 fixture 单命中盲点 · UC-015 帧变体计数 staleness + 参数区变体选择器 spec gap（owner=ui-designer）· DESIGN-REVIEW-quote-decorations-r2 余 LOW×3（quote-mark 字体 / root #555 待裁定 / literary p 宋体 pre-existing）· T-170 分组渲染 template duplication。Sprint 0-6 全 DONE 合 main（PR #1-#72），历史见 git/dev-plan/EVENT-LOG。
+- 当前Sprint: 7（视觉升级批 + 修复批 + 批二 + 架构专项批）。Sprint 0-6 全 DONE 合 main（PR #1-#72）。
+  - sprint-review 待记 open 注记: UC-021 AND 语义 fixture 单命中盲点 · UC-015 帧变体计数 staleness + 参数区变体选择器 spec gap（owner=ui-designer）· DESIGN-REVIEW-quote-decorations-r2 余 LOW×3 · T-170 分组渲染 template duplication
 - 待办(deferred)（仅列 open 项；已解决项见 git/PR 历史）:
-  - **对抗性架构审查残余（2026-07-08）open 项**: ⓐ `strip-data-attr.ts:8` matcher `/^data[A-Z0-9]/` 只命中 camelCase、管线 kebab 键（`data-block` 等）永不命中（PRESERVE 集缺 `dataNodeId`/`data-{block}-{attr}`，arch A.1 明列须排除未实现；strip-aria-hidden 同因 camel/kebab 表征分裂被打穿）——**用户独立会话「strip-data-attr 假绿修复」处理中，勿双改** ⓑ `readability-font-size-min.ts:6` `MIN_FONT_SIZE_PX=12` vs 附录 B 决策②-i 裁定 14——待核实是否已随 T-183 开闸提至 14 ⓒ **命题4 收敛不变量真伪**（见 下一步行动④，T-185 关键约束）。（S1 双编码 / S2 两相 / output 相归域已随 T-182/T-183/T-184 落地闭环；per-node-diff 稳定 key 对齐归 T-186 删模拟器范围。）
-  - **占位收编 backlog（`docs/reviews/code/CODE-SCAN-20260708-r1.md`）**: ① **安全 P0**：MCP tokenResolver 真实化（`http-entry.ts` 未注入、`passthroughResolver` 对任意 Bearer 放行 user scope）——mcp-server private 翻转/公网暴露前必须替换，入 release go/no-go ② relay 管理密钥 DB 持久化（内存 Map 重启即丢，E-010）③ 接线型收编（`content-insert-component`→InsertDrawer、`content-zh-typo`→zhTypo、`export-copy-html`→composeCopy、`view-toggle-viewport`、`doc-new`→store.createDoc）④ 功能卡（undo/redo、find/replace、doc-jump/delete、封面导出组、theme-custom-color、help-whats-new、设置页三 section）⑤ 低优先 core `rewriteStructure` 恒等函数。
-  - **arch amendment 待登记（owner=architect）**: M-003 `lint/readability.ts` 归 ruleset 措辞 vs 实现（对比度须渲染后算，落 `core/pipeline/readability.ts`；nightRiskIssues/versionTriple 上移 render.ts）；arch §2.M-003/§85/§159 待 amend 措辞对齐（不改行为契约，待核实是否已随平台保真 amendment 覆盖）。
+  - **对抗性架构审查残余 open 项**: ⓐ strip-data-attr camel/kebab 假绿（**用户独立会话处理中，勿双改**）ⓒ **命题4**：`inspect(render(x))===[]` 是自证性质，正向保真须外部真机 fixture 作 oracle（上游 #473/#474）
+  - （审查残余已闭合项：ⓑ MIN_FONT_SIZE_PX=14 核实闭合；S1/S2/归域随 T-182..T-184 闭环；per-node-diff 归 T-186 删除范围）
+  - **手工真机确认前置**（owner=user，T-188/T-172 r3 硬前置）: 无自动 oracle；确认通过写 `event=user_decision` 载 design_signoff 语义（非法枚举 design_signoff 勿用）→ T-157 blocking_conditions 清空 → T-159 AC-004。
+  - **release go/no-go**（mcp-server private 翻转前置，见 deploy-spec §9）: CODE-SCAN P0 tokenResolver 替换（passthroughResolver 对任意 Bearer 放行）/ 包版本 0.0.0 / npm reviewers / Docker / CVE。
+  - **占位收编 backlog**（`docs/reviews/code/CODE-SCAN-20260708-r1.md`）: ② relay 管理密钥 DB 持久化（E-010，含 T-091 R-007 API key 哈希）③ 接线型收编 ④ 功能卡 ⑤ 低优先项——明细见该报告。
+  - **裁定待办**: arch M-002 slot token 措辞 + M-003 readability 归域措辞 amend（owner=architect）· ui-spec §10.5 quote root #555 token 映射（owner=ui-designer，需 sign-off）。
   - **T-033 图床**: COS Content-Type 签名 · oss/cos/smms/custom env-gated 集成测试（需真实云凭据）。
-  - **T-091 relay**: R-007 API key 哈希（属 E-010）。
   - **真实环境 E2E**: T-124 Worker delete 全局 · T-126 微信真实 API（需 AppID/Secret + wechat-asset-upload 队列消费）。
-  - **upstream/CataForge**: 已提报 [#421](https://github.com/lync-cyber/CataForge/issues/421)/[#422](https://github.com/lync-cyber/CataForge/issues/422)/[#423](https://github.com/lync-cyber/CataForge/issues/423)（finalize 越权 / reconcile drift / doc-consistency 假阳性）+ 早前 #340/#350/#357/#358/#374/#375/#376。
+  - **upstream/CataForge**: #421/#422/#423 已修（v0.16.0 验证）；#472（ingest 不刷新导出基线）/#473/#474 open；早前 #340/#350/#357/#358/#374/#375/#376。
 - 文档状态:
   - prd: approved
   - arch: approved
   - ui-spec: approved
-  - dev-plan: approved
-  - test-report: approved（v1.1.0，verdict=approved，r1→r2 全程见 docs/reviews/doc/ 与 EVENT-LOG）
-  - deploy-spec: approved（v0.1.0，r1 needs_revision → r2 approved）
+  - dev-plan: approved（s7 卷 frontmatter status 随 REVIEW-dev-plan-wechat-flow-s7-r1 收口判定对齐 approved）
+  - test-report: approved（v1.1.0）
+  - deploy-spec: approved（v0.1.0）
   <!-- changelog 由 devops 产出但不纳入门禁追踪 -->
 - Learnings Registry: (compacted; archive in .cataforge/learnings/registry-archive.md)
   <!-- 上限：framework.json#claude_md_limits.learnings_registry_max_entries；超限运行 `cataforge claude-md compact` -->
