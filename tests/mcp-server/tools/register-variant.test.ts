@@ -189,6 +189,28 @@ describe("R-001: display:grid 经 MCP register_variant 被值级 FORBIDDEN 校�
   });
 });
 
+describe("R-006: 大小写变体经 MCP register_variant 同样被值级 FORBIDDEN 校验拒绝", () => {
+  it("style 含 DISPLAY: GRID（全大写）→ registered:false", async () => {
+    const res = await callRegisterVariant({
+      blockId: "callout",
+      variantId: "upper-grid:variant",
+      label: "Upper Grid",
+      style: { root: { DISPLAY: "GRID" } },
+    });
+    expect(res.registered).toBe(false);
+  });
+
+  it("style 含 background: -WEBKIT-linear-gradient(...)（大写 webkit 值）→ registered:false", async () => {
+    const res = await callRegisterVariant({
+      blockId: "callout",
+      variantId: "upper-webkit:variant",
+      label: "Upper Webkit",
+      style: { root: { background: "-WEBKIT-linear-gradient(red,blue)" } },
+    });
+    expect(res.registered).toBe(false);
+  });
+});
+
 describe("AC-007: production path — register_variant 已挂载到 router", () => {
   it("apps/mcp-server/src/tools/router.ts 含 register_variant 注册语句", () => {
     const src = readFileSync(join(process.cwd(), "apps/mcp-server/src/tools/router.ts"), "utf-8");

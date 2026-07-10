@@ -216,6 +216,24 @@ describe("AC-003: registerMark 构造期 FORBIDDEN 样式守卫", () => {
     ).not.toThrow();
     expect(listMarks().some((m) => m.id === "guard-probe-badge-safe")).toBe(true);
   });
+
+  it("R-006: style 字符串含大写 -WEBKIT-BOX-SHADOW（非例外白名单）时 registerMark 仍抛出", () => {
+    const rejected = expectRejected(() =>
+      registerMark(buildProbeMark("-WEBKIT-BOX-SHADOW: 0 0 4px rgba(0,0,0,.5); color: #000000"))
+    );
+    expect(rejected.length).toBeGreaterThan(0);
+  });
+
+  it("R-006: emphasis 例外白名单声明的大写变体（-WEBKIT-TEXT-EMPHASIS）注册不抛出，不因大小写归一化被误杀", () => {
+    expect(() =>
+      registerMark(
+        buildProbeMark(
+          "TEXT-EMPHASIS: filled circle; TEXT-EMPHASIS-POSITION: under left; -WEBKIT-TEXT-EMPHASIS: filled circle"
+        )
+      )
+    ).not.toThrow();
+    expect(listMarks().some((m) => m.id === "guard-probe-mark")).toBe(true);
+  });
 });
 
 describe("AC-006: 内置资产经注册路径重放守卫零拒绝", () => {

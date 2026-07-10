@@ -176,3 +176,70 @@ describe("registerVariant 值级 FORBIDDEN 声明校验", () => {
     expect(variants.find((v) => v.id === "grid-variant")).toBeUndefined();
   });
 });
+
+describe("R-006: registerVariant FORBIDDEN 校验大小写不敏感", () => {
+  function registerProbeBlock(id: string): void {
+    registerBlock({
+      id,
+      name: id,
+      category: "structured",
+      directiveAttrs: z.object({}),
+      variants: [],
+      slots: ["root"],
+    });
+  }
+
+  it.each([
+    ["Display: Grid", "Display", "Grid"],
+    ["DISPLAY: GRID", "DISPLAY", "GRID"],
+    ["display: INLINE-GRID", "display", "INLINE-GRID"],
+  ])("%s 时仍抛错并保留原始大小写的 rejectedDeclarations", (_label, property, value) => {
+    const blockId = `block-r006-${property}-${value}`.toLowerCase();
+    registerProbeBlock(blockId);
+
+    let thrown: unknown;
+    try {
+      registerVariant({
+        blockId,
+        id: "grid-variant",
+        label: "Grid",
+        style: { root: { [property]: value } },
+      });
+    } catch (e) {
+      thrown = e;
+    }
+
+    expect(thrown).toBeDefined();
+    const err = thrown as {
+      rejectedDeclarations?: Array<{ property: string; value: string }>;
+    };
+    expect(Array.isArray(err.rejectedDeclarations)).toBe(true);
+    const decl = err.rejectedDeclarations?.find(
+      (d) => d.property === property && d.value === value
+    );
+    expect(
+      decl,
+      `rejectedDeclarations must report the original casing "${property}: ${value}"`
+    ).toBeDefined();
+  });
+
+  it("background: -WEBKIT-linear-gradient(...) 值级大写 webkit 前缀时仍抛错", () => {
+    registerProbeBlock("block-r006-webkit-upper");
+
+    let thrown: unknown;
+    try {
+      registerVariant({
+        blockId: "block-r006-webkit-upper",
+        id: "webkit-variant",
+        label: "Webkit",
+        style: { root: { background: "-WEBKIT-linear-gradient(red,blue)" } },
+      });
+    } catch (e) {
+      thrown = e;
+    }
+
+    expect(thrown).toBeDefined();
+    const err = thrown as { rejectedDeclarations?: Array<{ property: string }> };
+    expect(err.rejectedDeclarations?.some((d) => d.property === "background")).toBe(true);
+  });
+});

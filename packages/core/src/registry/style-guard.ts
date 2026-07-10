@@ -18,26 +18,31 @@ function evaluateDeclaration(
   rawValue: string
 ): { reason: string; reportedValue: string } | null {
   const trimmedValue = rawValue.trim();
+  const propertyLower = property.toLowerCase();
+  const valueLower = trimmedValue.toLowerCase();
 
-  if (FORBIDDEN_CSS_PROPS.has(property)) {
+  if (FORBIDDEN_CSS_PROPS.has(propertyLower)) {
     return {
       reason: `property "${property}" is on the FORBIDDEN denylist`,
       reportedValue: trimmedValue,
     };
   }
-  if (property === "display" && FORBIDDEN_DISPLAY_VALUES.has(trimmedValue)) {
+  if (propertyLower === "display" && FORBIDDEN_DISPLAY_VALUES.has(valueLower)) {
     return {
       reason: `display value "${trimmedValue}" is on the FORBIDDEN denylist`,
       reportedValue: trimmedValue,
     };
   }
-  if (FORBIDDEN_POSITION_PROPS.has(property)) {
+  if (FORBIDDEN_POSITION_PROPS.has(propertyLower)) {
     return {
       reason: `property "${property}" is a forbidden position offset`,
       reportedValue: trimmedValue,
     };
   }
-  if (property.startsWith("-webkit-") && !FORBIDDEN_VALUE_PATTERN_EXCEPTIONS.has(property)) {
+  if (
+    propertyLower.startsWith("-webkit-") &&
+    !FORBIDDEN_VALUE_PATTERN_EXCEPTIONS.has(propertyLower)
+  ) {
     return {
       reason: `property "${property}" uses a forbidden -webkit- prefix`,
       reportedValue: `${property}: ${trimmedValue}`,

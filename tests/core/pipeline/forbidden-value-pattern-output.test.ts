@@ -37,3 +37,35 @@ describe("R-002: customCss 的 -webkit- 值模式被 output 相剥离，不渗�
     expect(result.html).toMatch(/-webkit-text-emphasis/);
   });
 });
+
+describe("R-006: customCss 的 -webkit- 值模式大小写不敏感剥离", () => {
+  it("background: -WEBKIT-linear-gradient(...)（全大写）不出现在渲染产物中", async () => {
+    const result = await renderMarkdown("正文段落。", {
+      themeId: "default",
+      customCss: "p{background:-WEBKIT-linear-gradient(red,blue)}",
+    });
+
+    expect(result.html.toLowerCase()).not.toMatch(/-webkit-linear-gradient/);
+  });
+
+  it("background: -WebKit-linear-gradient(...)（大小写混合）不出现在渲染产物中", async () => {
+    const result = await renderMarkdown("正文段落。", {
+      themeId: "default",
+      customCss: "p{background:-WebKit-linear-gradient(red,blue)}",
+    });
+
+    expect(result.html.toLowerCase()).not.toMatch(/-webkit-linear-gradient/);
+  });
+
+  it("大小写变体剥离同样产生 nodeChangeRecords 记录", async () => {
+    const result = await renderMarkdown("正文段落。", {
+      themeId: "default",
+      customCss: "p{background:-WEBKIT-linear-gradient(red,blue)}",
+    });
+
+    const stripRecord = result.report.nodeChangeRecords.find(
+      (record) => record.triggerRuleId === "strip-forbidden-value-pattern"
+    );
+    expect(stripRecord).toBeDefined();
+  });
+});
