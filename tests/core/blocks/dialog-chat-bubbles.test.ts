@@ -64,7 +64,9 @@ function extractBubbleContainerStyles(html: string): string[] {
 }
 
 function extractCellTextAligns(html: string): string[] {
-  const matches = [...html.matchAll(/<section style="([^"]*text-align:[^"]*)">/g)];
+  const matches = [...html.matchAll(/<section style="([^"]*)">/g)].filter((m) =>
+    m[1].includes("display: table-cell")
+  );
   return matches.map((m) => {
     const alignMatch = m[1].match(/text-align:\s*([a-z]+)/);
     return alignMatch?.[1] ?? "";

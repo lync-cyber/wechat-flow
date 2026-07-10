@@ -146,7 +146,8 @@ function serializeDeclarations(declarations: Record<string, string>): string {
 interface AmbientBlockContext {
   blockId: string;
   variantId: string;
-  inherited: Record<string, string>;
+  blockInherited: Record<string, string>;
+  slotInherited: Record<string, string>;
 }
 
 const INHERITABLE_PROPS = [
@@ -172,6 +173,7 @@ function applyInlineStyles(
   node: HastRoot | Element,
   styleMap: Map<string, string>,
   themeTokens: BlockStyleTable,
+  bodyBaseline: Record<string, string>,
   isEvenBodyRow = false,
   ambientBlock?: AmbientBlockContext,
   designTokens?: ThemeTokens
@@ -182,20 +184,32 @@ function applyInlineStyles(
     const propsWithoutClass = stripClassFromProperties(props);
 
     let tagStyle: string;
-    let containerInherited: Record<string, string> | undefined;
+    let childAmbientBlock: AmbientBlockContext | undefined = ambientBlock;
     let slotLineHeightExempt = false;
 
     const blockSlot = propsWithoutClass["data-block-slot"];
     const dataBlock = propsWithoutClass["data-block"];
     if (typeof blockSlot === "string" && blockSlot.length > 0 && ambientBlock) {
+      // Slot path: bodyBaseline ⊕ container declared inheritable ⊕ slot own declarations.
+      // Resets to blockInherited (drops ancestor-slot layout props like a cell's text-align),
+      // so a slot's own typography, not a wrapping slot's, is what cascades to its children.
       const slotStyle = getBlockSlotStyle(
         ambientBlock.blockId,
         ambientBlock.variantId,
         blockSlot,
         designTokens
       );
-      tagStyle = Object.keys(slotStyle).length > 0 ? serializeDeclarations(slotStyle) : "";
-      slotLineHeightExempt = isBelowLineHeightFloor(slotStyle["line-height"]);
+      const merged: Record<string, string> = {
+        ...bodyBaseline,
+        ...ambientBlock.blockInherited,
+        ...slotStyle,
+      };
+      tagStyle = Object.keys(merged).length > 0 ? serializeDeclarations(merged) : "";
+      slotLineHeightExempt = isBelowLineHeightFloor(merged["line-height"]);
+      childAmbientBlock = {
+        ...ambientBlock,
+        slotInherited: extractInheritedStyle(slotStyle),
+      };
     } else if (typeof dataBlock === "string" && dataBlock.length > 0) {
       // Container block path: L1 ⊕ L2
       const variantId =
@@ -214,12 +228,19 @@ function applyInlineStyles(
         merged["margin-bottom"] = "0";
       }
       tagStyle = Object.keys(merged).length > 0 ? serializeDeclarations(merged) : "";
-      containerInherited = extractInheritedStyle(merged);
+      childAmbientBlock = {
+        blockId: dataBlock,
+        variantId,
+        blockInherited: extractInheritedStyle(merged),
+        slotInherited: {},
+      };
     } else {
       // Tag path: byte-identical when no container ambient typography applies
       const base = themeTokens[el.tagName]?.default;
       const evenOverride = isEvenBodyRow ? themeTokens[el.tagName]?.even : undefined;
-      const inherited = ambientBlock?.inherited;
+      const inherited = ambientBlock
+        ? { ...ambientBlock.blockInherited, ...ambientBlock.slotInherited }
+        : undefined;
       const hasInherited = inherited !== undefined && Object.keys(inherited).length > 0;
       if (evenOverride || hasInherited) {
         const merged: Record<string, string> = {
@@ -260,18 +281,6 @@ function applyInlineStyles(
     const isTbody = el.tagName === "tbody";
     let bodyRowCounter = 0;
 
-    const childAmbientBlock: AmbientBlockContext | undefined =
-      typeof dataBlock === "string" && dataBlock.length > 0
-        ? {
-            blockId: dataBlock,
-            variantId:
-              typeof propsWithoutClass["data-variant"] === "string"
-                ? propsWithoutClass["data-variant"]
-                : "default",
-            inherited: containerInherited ?? {},
-          }
-        : ambientBlock;
-
     return {
       ...el,
       properties: newProps,
@@ -287,6 +296,7 @@ function applyInlineStyles(
             childEl,
             styleMap,
             themeTokens,
+            bodyBaseline,
             childIsEvenRow,
             childAmbientBlock,
             designTokens
@@ -305,6 +315,7 @@ function applyInlineStyles(
           child as Element,
           styleMap,
           themeTokens,
+          bodyBaseline,
           isEvenBodyRow,
           ambientBlock,
           designTokens
@@ -335,5 +346,16 @@ export function inlineStyle(
 ): HastRoot {
   const tokens = themeTokens ?? DEFAULT_TOKENS;
   const styleMap = buildStyleMap(tokens);
-  return applyInlineStyles(hast, styleMap, tokens, false, undefined, designTokens) as HastRoot;
+  const bodyBaseline = extractInheritedStyle(
+    resolveSlotDeclarations(tokens.p?.default ?? {}, designTokens)
+  );
+  return applyInlineStyles(
+    hast,
+    styleMap,
+    tokens,
+    bodyBaseline,
+    false,
+    undefined,
+    designTokens
+  ) as HastRoot;
 }
