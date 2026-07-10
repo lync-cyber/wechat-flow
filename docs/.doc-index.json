@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-10T06:41:17.489842+00:00",
+  "generated_at": "2026-07-10T12:25:31.514606+00:00",
   "documents": {
     "amendment-platform-fidelity-r1": {
       "file_path": "docs/arch/AMENDMENT-platform-fidelity-r1.md",
@@ -3824,6 +3824,54 @@
       "deps": [
         "T-034",
         "T-035"
+      ]
+    },
+    "code-review-s7-unattended-wave-r1": {
+      "file_path": "docs/reviews/code/CODE-REVIEW-s7-unattended-wave-r1.md",
+      "doc_type": "code-review",
+      "status": "approved",
+      "total_lines": 102,
+      "est_tokens": 5070,
+      "content_hash": "acb4c603",
+      "sections": {},
+      "deps": [
+        "T-176",
+        "T-177",
+        "T-178",
+        "T-186",
+        "T-187"
+      ]
+    },
+    "code-review-s7-unattended-wave-r2": {
+      "file_path": "docs/reviews/code/CODE-REVIEW-s7-unattended-wave-r2.md",
+      "doc_type": "code-review",
+      "status": "approved",
+      "total_lines": 118,
+      "est_tokens": 4173,
+      "content_hash": "0e773a37",
+      "sections": {},
+      "deps": [
+        "T-176",
+        "T-177",
+        "T-178",
+        "T-186",
+        "T-187"
+      ]
+    },
+    "code-review-s7-unattended-wave-r3": {
+      "file_path": "docs/reviews/code/CODE-REVIEW-s7-unattended-wave-r3.md",
+      "doc_type": "code-review",
+      "status": "approved",
+      "total_lines": 106,
+      "est_tokens": 2889,
+      "content_hash": "3ad651db",
+      "sections": {},
+      "deps": [
+        "T-176",
+        "T-177",
+        "T-178",
+        "T-186",
+        "T-187"
       ]
     },
     "code-review-t131-b1-r1": {
