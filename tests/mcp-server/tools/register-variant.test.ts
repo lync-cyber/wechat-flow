@@ -163,6 +163,32 @@ describe("AC-006: 入参 schema 校验失败返回 E_SCHEMA", () => {
   });
 });
 
+describe("R-001: display:grid 经 MCP register_variant 被值级 FORBIDDEN 校验拒绝", () => {
+  it("style 含 display:grid → registered:false，rejectedDeclarations 含 property:display/value:grid", async () => {
+    const res = await callRegisterVariant({
+      blockId: "callout",
+      variantId: "grid:variant",
+      label: "Grid",
+      style: { root: { display: "grid" } },
+    });
+    expect(res.registered).toBe(false);
+    const rejected = res.rejectedDeclarations as Array<Record<string, unknown>>;
+    expect(Array.isArray(rejected)).toBe(true);
+    const decl = rejected.find((d) => d.property === "display" && d.value === "grid");
+    expect(decl).toBeDefined();
+  });
+
+  it("display:inline-grid 同样被拒绝", async () => {
+    const res = await callRegisterVariant({
+      blockId: "callout",
+      variantId: "inline-grid:variant",
+      label: "Inline Grid",
+      style: { root: { display: "inline-grid" } },
+    });
+    expect(res.registered).toBe(false);
+  });
+});
+
 describe("AC-007: production path — register_variant 已挂载到 router", () => {
   it("apps/mcp-server/src/tools/router.ts 含 register_variant 注册语句", () => {
     const src = readFileSync(join(process.cwd(), "apps/mcp-server/src/tools/router.ts"), "utf-8");

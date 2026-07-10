@@ -2,6 +2,7 @@ import { filterCssAttrs } from "../pipeline/css-attr-filter.ts";
 import { describeBlock, listBlocks } from "./block.ts";
 import { isWhitelistedProperty } from "./css-property-whitelist.ts";
 import type { RejectedDeclaration } from "./style-guard.ts";
+import { validateForbiddenDeclarations } from "./style-guard.ts";
 
 export type { RejectedDeclaration } from "./style-guard.ts";
 
@@ -45,6 +46,7 @@ function validateStyle(style: Record<string, Record<string, string>>): RejectedD
       }
     }
   }
+  rejected.push(...validateForbiddenDeclarations(style));
   return rejected;
 }
 

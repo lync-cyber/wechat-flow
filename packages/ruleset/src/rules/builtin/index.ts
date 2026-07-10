@@ -22,6 +22,7 @@ import stripCssVar from "./strip-css-var.ts";
 import stripDataAttr from "./strip-data-attr.ts";
 import stripFlexGap from "./strip-flex-gap.ts";
 import stripFontFamily from "./strip-font-family.ts";
+import stripForbiddenValuePattern from "./strip-forbidden-value-pattern.ts";
 import stripIdAttr from "./strip-id-attr.ts";
 import stripJsEvents from "./strip-js-events.ts";
 import stripNegativeMargin from "./strip-negative-margin.ts";
@@ -65,6 +66,7 @@ const ALL_RULES: RuleDefinition[] = [
   stripAriaHidden,
   stripNegativeMargin,
   stripCalcExpression,
+  stripForbiddenValuePattern,
   clampFontSize,
   clampLineHeight,
   clampImageWidth,
