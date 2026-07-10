@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-10T03:18:02.240794+00:00",
+  "generated_at": "2026-07-10T04:40:58.153324+00:00",
   "documents": {
     "amendment-platform-fidelity-r1": {
       "file_path": "docs/arch/AMENDMENT-platform-fidelity-r1.md",
@@ -944,9 +944,9 @@
       "file_path": "docs/changelog/changelog-wechat-flow.md",
       "doc_type": "changelog",
       "status": "draft",
-      "total_lines": 41,
-      "est_tokens": 832,
-      "content_hash": "edd7afce",
+      "total_lines": 55,
+      "est_tokens": 1161,
+      "content_hash": "bcf62c4d",
       "sections": {}
     },
     "deploy-spec-wechat-flow": {
@@ -3763,6 +3763,18 @@
       "sections": {},
       "deps": [
         "T-178"
+      ]
+    },
+    "code-review-t-186-r1": {
+      "file_path": "docs/reviews/code/CODE-REVIEW-T-186-r1.md",
+      "doc_type": "code-review",
+      "status": "approved",
+      "total_lines": 57,
+      "est_tokens": 2044,
+      "content_hash": "6df75950",
+      "sections": {},
+      "deps": [
+        "T-186"
       ]
     },
     "code-review-T-187-r1": {

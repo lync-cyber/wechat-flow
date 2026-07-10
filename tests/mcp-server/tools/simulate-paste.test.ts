@@ -6,72 +6,70 @@ beforeEach(() => {
   resetMetrics();
 });
 
-// AC-001: handler returns { filteredHtml, diffNodes, droppedAttrs } with diffNodes mapped from core nodeDiffs
-describe("AC-001: simulatePasteTool returns filteredHtml, diffNodes, droppedAttrs", () => {
-  it("returns filteredHtml string, diffNodes array, droppedAttrs array for simple html", () => {
+// AC-003: handler delegates to wechatAdapter.inspect (PatchLog shape) — thin wrapper
+describe("AC-003: simulatePasteTool returns patchedHtml, changes and a filteredHtml alias", () => {
+  it("returns patchedHtml string, changes array for simple html", () => {
     const result = simulatePasteTool({ html: "<p>hello</p>" }) as Record<string, unknown>;
-    expect(typeof result.filteredHtml).toBe("string");
-    expect(result.filteredHtml).toContain("hello");
-    expect(Array.isArray(result.diffNodes)).toBe(true);
-    expect(Array.isArray(result.droppedAttrs)).toBe(true);
+    expect(typeof result.patchedHtml).toBe("string");
+    expect(result.patchedHtml).toContain("hello");
+    expect(Array.isArray(result.changes)).toBe(true);
   });
 
-  it("output field is named diffNodes (not nodeDiffs)", () => {
+  it("filteredHtml alias equals patchedHtml (transition-window compatibility)", () => {
     const result = simulatePasteTool({ html: "<p>test</p>" }) as Record<string, unknown>;
-    expect(result).toHaveProperty("diffNodes");
-    expect(result).not.toHaveProperty("nodeDiffs");
+    expect(result.filteredHtml).toBe(result.patchedHtml);
   });
-});
 
-// AC-002: <style> tag in input → droppedAttrs contains entry with nodeSelector:'style' and attrName:'__tag__'
-describe("AC-002: style tag stripped and recorded in droppedAttrs with correct DroppedAttr structure", () => {
-  it("droppedAttrs contains { nodeSelector: 'style', attrName: '__tag__' } when input has <style> tag", () => {
-    const html = "<p>content</p><style>body { color: red; }</style>";
+  it("each change entry has patch/count/samples fields matching PatchChange shape", () => {
+    const html = '<div id="x" style="position:fixed;color:red">text</div>';
     const result = simulatePasteTool({ html }) as {
-      filteredHtml: string;
-      diffNodes: unknown[];
-      droppedAttrs: Array<{ nodeSelector: string; attrName: string }>;
+      patchedHtml: string;
+      changes: Array<{ patch: string; count: number; samples: Array<{ before: string }> }>;
     };
-    const styleEntry = result.droppedAttrs.find(
-      (d) => d.nodeSelector === "style" && d.attrName === "__tag__"
-    );
-    expect(styleEntry).toBeDefined();
-    expect(styleEntry?.nodeSelector).toBe("style");
-    expect(styleEntry?.attrName).toBe("__tag__");
+    for (const change of result.changes) {
+      expect(typeof change.patch).toBe("string");
+      expect(typeof change.count).toBe("number");
+      expect(Array.isArray(change.samples)).toBe(true);
+      for (const sample of change.samples) {
+        expect(typeof sample.before).toBe("string");
+      }
+    }
   });
 });
 
-// AC-003: tool only delegates to simulatePaste from core (thin wrapper, no extra business logic)
-describe("AC-003: simulatePasteTool is a thin wrapper — args.html is passed through to core", () => {
-  it("reads html from args.html and returns consistent output with no extra transformation", () => {
-    const html = '<p id="x">paragraph</p>';
+// AC-003: tool only delegates to wechatAdapter.inspect (thin wrapper, no extra business logic)
+describe("AC-003: simulatePasteTool is a thin wrapper — args.html is passed through to the adapter", () => {
+  it("reads html from args.html; unsafe tags stripped from patchedHtml", () => {
+    const html = "<style>body{color:red}</style><p>content</p>";
     const result = simulatePasteTool({ html }) as {
-      filteredHtml: string;
-      diffNodes: unknown[];
-      droppedAttrs: Array<{ nodeSelector: string; attrName: string }>;
+      patchedHtml: string;
+      changes: Array<{ patch: string }>;
     };
-    // id attr should be stripped by core (DroppedAttr with attrName:'id')
-    const idDropped = result.droppedAttrs.find((d) => d.attrName === "id");
-    expect(idDropped).toBeDefined();
-    // filteredHtml should not contain id attribute
-    expect(result.filteredHtml).not.toContain('id="x"');
+    expect(result.patchedHtml).not.toMatch(/<style[\s>]/i);
+    const styleStripped = result.changes.some((c) => c.patch === "strip-tag:style");
+    expect(styleStripped).toBe(true);
+  });
+
+  it("empty html arg falls back to empty string, not throwing", () => {
+    const result = simulatePasteTool({}) as Record<string, unknown>;
+    expect(result.patchedHtml).toBe("");
+    expect(result.changes).toEqual([]);
   });
 });
 
-// AC-004: simulatePasteTool observes paste_simulation_diff_ratio; sourceNodeCount stays internal
-describe("AC-004: simulatePasteTool observes paste_simulation_diff_ratio on each call", () => {
-  it("a single call increments the paste_simulation_diff_ratio observation count by 1", async () => {
+// AC-004: simulatePasteTool observes fallback_platform_patch_hits per call
+describe("AC-004: simulatePasteTool observes fallback_platform_patch_hits on each call", () => {
+  it("a single call increments the fallback_platform_patch_hits observation count by 1", async () => {
     simulatePasteTool({ html: '<div id="x">hello</div>' });
     const text = await renderMetrics();
-    expect(text).toContain("paste_simulation_diff_ratio_count 1");
+    expect(text).toContain("fallback_platform_patch_hits_count 1");
   });
 
-  it("tool return shape stays { filteredHtml, diffNodes, droppedAttrs } — sourceNodeCount not exposed", () => {
+  it("tool return shape stays { patchedHtml, changes, filteredHtml }", () => {
     const result = simulatePasteTool({ html: '<div id="x">hello</div>' }) as Record<
       string,
       unknown
     >;
-    expect(Object.keys(result).sort()).toEqual(["diffNodes", "droppedAttrs", "filteredHtml"]);
-    expect(result).not.toHaveProperty("sourceNodeCount");
+    expect(Object.keys(result).sort()).toEqual(["changes", "filteredHtml", "patchedHtml"]);
   });
 });

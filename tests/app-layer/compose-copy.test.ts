@@ -6,16 +6,10 @@ vi.mock("../../apps/editor/src/use-cases/render.ts", () => ({
   composeRender: vi.fn(),
 }));
 
-vi.mock("../../packages/core/src/simulate-paste.ts", () => ({
-  simulatePaste: vi.fn(),
-}));
-
 import { composeCopy } from "../../apps/editor/src/use-cases/copy.ts";
 import { composeRender } from "../../apps/editor/src/use-cases/render.ts";
-import { simulatePaste } from "../../packages/core/src/simulate-paste.ts";
 
 const mockComposeRender = vi.mocked(composeRender);
-const mockSimulatePaste = vi.mocked(simulatePaste);
 
 // ─────────────────────────────────────────────────────────────
 // Test infrastructure: ClipboardItem stub
@@ -43,10 +37,29 @@ let capturedItems: StubClipboardItem[] = [];
 // navigator.clipboard.write stub
 let clipboardWriteStub: ReturnType<typeof vi.fn>;
 
-const SAMPLE_RAW_HTML =
-  '<section style="color:var(--color-text)"><h1 style="font-size:24px">Hello</h1><style>.cls{}</style></section>';
-const SAMPLE_FILTERED_HTML =
-  '<section style="color:#333"><h1 style="font-size:24px">Hello</h1></section>';
+// composeRender output is already paste-safe (output ruleset strips <style>/var(--)
+// at render time); composeCopy forwards it to the clipboard verbatim.
+const SAMPLE_HTML = '<section style="color:#333"><h1 style="font-size:24px">Hello</h1></section>';
+
+const emptyReport = {
+  diagnostics: [],
+  nodeChangeRecords: [],
+  nightRiskIssues: [],
+  versionTriple: { coreVersion: "0.0.0", themeVersion: "0.0.0", rulesetVersion: "0.0.0" },
+};
+
+function renderResult(html: string) {
+  return {
+    html,
+    diagnostics: [],
+    coreVersion: "0.0.0",
+    themeVersion: "0.0.0",
+    rulesetVersion: "0.0.0",
+    report: emptyReport,
+    versionTriple: { coreVersion: "0.0.0", themeVersion: "0.0.0", rulesetVersion: "0.0.0" },
+    nodeLocations: [],
+  };
+}
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -68,30 +81,7 @@ beforeEach(() => {
     configurable: true,
   });
 
-  const emptyReport = {
-    diagnostics: [],
-    nodeChangeRecords: [],
-    nightRiskIssues: [],
-    versionTriple: { coreVersion: "0.0.0", themeVersion: "0.0.0", rulesetVersion: "0.0.0" },
-  };
-  mockComposeRender.mockResolvedValue({
-    html: SAMPLE_RAW_HTML,
-    diagnostics: [],
-    postPaste: false,
-    coreVersion: "0.0.0",
-    themeVersion: "0.0.0",
-    rulesetVersion: "0.0.0",
-    report: emptyReport,
-    versionTriple: { coreVersion: "0.0.0", themeVersion: "0.0.0", rulesetVersion: "0.0.0" },
-    nodeLocations: [],
-  });
-
-  mockSimulatePaste.mockReturnValue({
-    filteredHtml: SAMPLE_FILTERED_HTML,
-    nodeDiffs: [],
-    droppedAttrs: [],
-    sourceNodeCount: 0,
-  });
+  mockComposeRender.mockResolvedValue(renderResult(SAMPLE_HTML));
 });
 
 // ─────────────────────────────────────────────────────────────
@@ -159,67 +149,15 @@ describe("AC-003: composeCopy triggers notify callback on success", () => {
 });
 
 // ─────────────────────────────────────────────────────────────
-// AC-005: pipeline 顺序 composeRender → simulatePaste → clipboard.write
+// AC-005: pipeline 顺序 composeRender → clipboard.write
 // ─────────────────────────────────────────────────────────────
-describe("AC-005: pipeline order: composeRender → simulatePaste → clipboard.write", () => {
-  it("composeRender is called before simulatePaste", async () => {
+describe("AC-005: pipeline order: composeRender → clipboard.write", () => {
+  it("composeRender is called before clipboard.write", async () => {
     const callOrder: string[] = [];
 
     mockComposeRender.mockImplementation(async () => {
       callOrder.push("composeRender");
-      return {
-        html: SAMPLE_RAW_HTML,
-        diagnostics: [],
-        postPaste: false,
-        coreVersion: "0.0.0",
-        themeVersion: "0.0.0",
-        rulesetVersion: "0.0.0",
-        report: {
-          diagnostics: [],
-          nodeChangeRecords: [],
-          nightRiskIssues: [],
-          versionTriple: { coreVersion: "0.0.0", themeVersion: "0.0.0", rulesetVersion: "0.0.0" },
-        },
-        versionTriple: { coreVersion: "0.0.0", themeVersion: "0.0.0", rulesetVersion: "0.0.0" },
-        nodeLocations: [],
-      };
-    });
-
-    mockSimulatePaste.mockImplementation(() => {
-      callOrder.push("simulatePaste");
-      return {
-        filteredHtml: SAMPLE_FILTERED_HTML,
-        nodeDiffs: [],
-        droppedAttrs: [],
-        sourceNodeCount: 0,
-      };
-    });
-
-    await composeCopy({ markdown: "# Hello", themeId: "default" });
-
-    const renderIdx = callOrder.indexOf("composeRender");
-    const pasteIdx = callOrder.indexOf("simulatePaste");
-    expect(renderIdx).toBeGreaterThanOrEqual(0);
-    expect(pasteIdx).toBeGreaterThan(renderIdx);
-  });
-
-  it("simulatePaste receives the raw html from composeRender output", async () => {
-    await composeCopy({ markdown: "# Hello", themeId: "default" });
-
-    expect(mockSimulatePaste).toHaveBeenCalledWith(SAMPLE_RAW_HTML);
-  });
-
-  it("clipboard.write is called only after simulatePaste completes", async () => {
-    const callOrder: string[] = [];
-
-    mockSimulatePaste.mockImplementation(() => {
-      callOrder.push("simulatePaste");
-      return {
-        filteredHtml: SAMPLE_FILTERED_HTML,
-        nodeDiffs: [],
-        droppedAttrs: [],
-        sourceNodeCount: 0,
-      };
+      return renderResult(SAMPLE_HTML);
     });
 
     clipboardWriteStub.mockImplementation(async () => {
@@ -228,20 +166,19 @@ describe("AC-005: pipeline order: composeRender → simulatePaste → clipboard.
 
     await composeCopy({ markdown: "# Hello", themeId: "default" });
 
-    const pasteIdx = callOrder.indexOf("simulatePaste");
+    const renderIdx = callOrder.indexOf("composeRender");
     const writeIdx = callOrder.indexOf("clipboard.write");
-    expect(pasteIdx).toBeGreaterThanOrEqual(0);
-    expect(writeIdx).toBeGreaterThan(pasteIdx);
+    expect(renderIdx).toBeGreaterThanOrEqual(0);
+    expect(writeIdx).toBeGreaterThan(renderIdx);
   });
 
-  it("buildDualMimePayload uses filteredHtml (not rawHtml) as text/html source", async () => {
+  it("buildDualMimePayload uses the render html as text/html source", async () => {
     await composeCopy({ markdown: "# Hello", themeId: "default" });
 
     const htmlItem = capturedItems.find((i) => i.types.includes("text/html"));
     if (!htmlItem) throw new Error("text/html ClipboardItem not found");
     const blob = await htmlItem.getType("text/html");
     const text = await blob.text();
-    expect(text).toBe(SAMPLE_FILTERED_HTML);
-    expect(text).not.toBe(SAMPLE_RAW_HTML);
+    expect(text).toBe(SAMPLE_HTML);
   });
 });

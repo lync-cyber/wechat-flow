@@ -20,7 +20,7 @@ render_markdown({
   diagnostics: Diagnostic[],
   rulesetVersion: string,
   themeVersion: string,
-  postPaste: string
+  report: { nodeChangeRecords: NodeChangeRecord[], nightRiskIssues: NightRiskEntry[] }
 }
 ```
 
@@ -137,11 +137,12 @@ apply_zh_typo({
 ```
 
 ### simulate_paste
+诊断一段 HTML 中会被微信平台输出规则命中改写的部分（`patchedHtml` 为过滤后 HTML，`changes` 为命中的规则记录）。`filteredHtml` 为 `patchedHtml` 的过渡别名。
 ```
 simulate_paste({ html: string }) → {
-  filteredHtml: string,
-  diffNodes: unknown[],
-  droppedAttrs: Record<string, string[]>
+  patchedHtml: string,
+  changes: { patch: string, label?: string, count: number, samples: { selector?: string, before: string }[] }[],
+  filteredHtml: string
 }
 ```
 

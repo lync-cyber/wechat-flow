@@ -103,7 +103,9 @@ describe("AC-005 response schema exports: all 24 response schemas are exported f
         name !== "registerVariantResponseSchema" &&
         name !== "describeTemplateResponseSchema" &&
         name !== "listTokensResponseSchema" &&
-        name !== "describeTokenResponseSchema"
+        name !== "describeTokenResponseSchema" &&
+        name !== "simulatePasteResponseSchema" &&
+        name !== "exportClipboardPayloadResponseSchema"
     );
     for (const [name, schema] of placeholders) {
       const result = schema.safeParse({});
@@ -120,7 +122,7 @@ describe("AC-005 response schema exports: all 24 response schemas are exported f
       diagnostics: [],
       rulesetVersion: "1.0.0",
       themeVersion: "1.0.0",
-      postPaste: false,
+      report: { nodeChangeRecords: [], nightRiskIssues: [] },
     });
     expect(valid.success).toBe(true);
   });

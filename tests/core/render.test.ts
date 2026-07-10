@@ -73,7 +73,7 @@ describe("AC-004: result contains coreVersion field", () => {
   it("coreVersion matches @wechat-flow/core package.json version", async () => {
     const result = await renderMarkdown("hello");
     expect(typeof result.coreVersion).toBe("string");
-    expect(result.coreVersion).toBe("0.0.0");
+    expect(result.coreVersion).toBe("0.1.0");
   });
 });
 

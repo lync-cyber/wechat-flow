@@ -9,10 +9,10 @@ const renderMarkdownLatencyMs = new Histogram({
   registers: [registry],
 });
 
-const pasteSimulationDiffRatio = new Histogram({
-  name: "paste_simulation_diff_ratio",
-  help: "simulate_paste diffed-node ratio (nodeDiffs.length / sourceNodeCount, capped at 1)",
-  buckets: [0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 1],
+const fallbackPlatformPatchHits = new Histogram({
+  name: "fallback_platform_patch_hits",
+  help: "simulate_paste output-rule patch hit count per wechatAdapter.inspect() call",
+  buckets: [0, 1, 2, 5, 10, 25, 50],
   registers: [registry],
 });
 
@@ -20,8 +20,8 @@ export function observeRenderMarkdownLatency(ms: number): void {
   renderMarkdownLatencyMs.observe(ms);
 }
 
-export function observePasteSimulationDiffRatio(ratio: number): void {
-  pasteSimulationDiffRatio.observe(ratio);
+export function observeFallbackPlatformPatchHits(count: number): void {
+  fallbackPlatformPatchHits.observe(count);
 }
 
 export function renderMetrics(): Promise<string> {

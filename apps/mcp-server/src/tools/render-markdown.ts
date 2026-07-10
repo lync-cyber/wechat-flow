@@ -14,7 +14,10 @@ export async function renderMarkdownTool(args: Record<string, unknown>) {
     diagnostics: r.diagnostics,
     rulesetVersion: r.rulesetVersion,
     themeVersion: r.themeVersion,
-    postPaste: r.postPaste,
+    report: {
+      nodeChangeRecords: r.report.nodeChangeRecords,
+      nightRiskIssues: r.report.nightRiskIssues,
+    },
     versionTriple: getVersionTriple(themeDefaultPkg.version),
   };
 }

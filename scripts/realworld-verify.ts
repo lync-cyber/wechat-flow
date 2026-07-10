@@ -3,7 +3,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import "../packages/blocks/src/index.ts";
 import "../packages/marks/src/index.ts";
-import { registerTheme, renderMarkdown, simulatePaste } from "../packages/core/src/index.ts";
+import { registerTheme, renderMarkdown, wechatAdapter } from "../packages/core/src/index.ts";
 import businessTheme from "../packages/themes/business/src/index.ts";
 import defaultTheme from "../packages/themes/default/src/index.ts";
 import literaryTheme from "../packages/themes/literary/src/index.ts";
@@ -74,17 +74,17 @@ export async function runRealworldVerify(
       const markdown = readFileSync(samplePath, "utf8");
 
       const { html } = await renderMarkdown(markdown, { themeId: theme.id });
-      const { filteredHtml, droppedAttrs } = simulatePaste(html);
+      const { patchedHtml, changes } = wechatAdapter.inspect(html);
 
       const outPath = join(themeOutDir, `${sampleName}.html`);
 
-      const page = buildComparePage(theme.id, sampleName, html, filteredHtml, droppedAttrs);
+      const page = buildComparePage(theme.id, sampleName, html, patchedHtml, changes);
       writeFileSync(outPath, page, "utf8");
 
       rendered.push({ theme: theme.id, sample: sampleName, outPath });
 
-      const droppedCount = droppedAttrs.length;
-      const detail = `realworld_verify ${theme.id}/${sampleName}: ${droppedCount} attrs dropped on paste, ${droppedAttrs.map((d) => d.attrName).join(",")}`;
+      const changeCount = changes.length;
+      const detail = `realworld_verify ${theme.id}/${sampleName}: ${changeCount} platform patch hits, ${changes.map((c) => c.patch).join(",")}`;
 
       const record: Record<string, string> = {
         ts: new Date().toISOString(),
@@ -106,8 +106,8 @@ function buildComparePage(
   theme: string,
   sample: string,
   renderedHtml: string,
-  pastedHtml: string,
-  droppedAttrs: Array<{ attrName: string }>
+  patchedHtml: string,
+  changes: Array<{ patch: string }>
 ): string {
   const templatePath = join(
     dirname(fileURLToPath(import.meta.url)),
@@ -115,19 +115,18 @@ function buildComparePage(
   );
   let template = readFileSync(templatePath, "utf8");
 
-  const droppedList =
-    droppedAttrs.length > 0 ? droppedAttrs.map((d) => d.attrName).join(", ") : "(none)";
+  const changeList = changes.length > 0 ? changes.map((c) => c.patch).join(", ") : "(none)";
 
   template = template
     .replace(/\{\{THEME\}\}/g, theme)
     .replace(/\{\{SAMPLE\}\}/g, sample)
     .replace(/\{\{GENERATED_AT\}\}/g, new Date().toISOString())
     .replace(/\{\{RULE_COUNT\}\}/g, "n/a")
-    .replace(/\{\{DROPPED_COUNT\}\}/g, String(droppedAttrs.length))
+    .replace(/\{\{DROPPED_COUNT\}\}/g, String(changes.length))
     .replace(/\{\{RENDERED_HTML\}\}/g, renderedHtml)
-    .replace(/\{\{PASTED_HTML\}\}/g, pastedHtml)
+    .replace(/\{\{PASTED_HTML\}\}/g, patchedHtml)
     .replace(/\{\{RENDERED_BYTES\}\}/g, String(Buffer.byteLength(renderedHtml, "utf8")))
-    .replace(/\{\{DROPPED_ATTRS\}\}/g, droppedList);
+    .replace(/\{\{DROPPED_ATTRS\}\}/g, changeList);
 
   return template;
 }

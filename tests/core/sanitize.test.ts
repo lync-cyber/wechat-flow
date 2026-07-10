@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { renderMarkdown } from "../../packages/core/src/index.ts";
 import { filterCssAttrs } from "../../packages/core/src/pipeline/css-attr-filter.ts";
 
 // AC-001 & AC-003 depend on the not-yet-implemented sanitize pipeline.
@@ -127,70 +126,5 @@ describe("R-002/R-005: css-attr-filter CSS 转义绕过防御", () => {
     const output = filterCssAttrs(input);
     expect(output).toContain("color:red");
     expect(output).not.toBe("");
-  });
-});
-
-describe("AC-005: renderMarkdown 返回值包含 postPaste: false 字段", () => {
-  it("renderMarkdown 返回的 RenderResult 包含 postPaste 字段且值为 false", async () => {
-    const result = await renderMarkdown("# 标题\n\n段落");
-
-    expect((result as Record<string, unknown>).postPaste).toBe(false);
-  });
-
-  it("renderMarkdownResponseSchema 能解析含 postPaste 字段的响应", async () => {
-    const { renderMarkdownResponseSchema } = await import(
-      "../../packages/contracts/src/mcp/tool-contracts.ts"
-    );
-
-    const parsed = renderMarkdownResponseSchema.safeParse({
-      html: "<p>hi</p>",
-      diagnostics: [],
-      rulesetVersion: "0.0.0",
-      themeVersion: "0.0.0",
-      postPaste: false,
-    });
-
-    expect(parsed.success).toBe(true);
-    if (parsed.success) {
-      expect((parsed.data as Record<string, unknown>).postPaste).toBe(false);
-    }
-  });
-
-  it("postPaste: true 经 schema 解析后穿透保留（composeCopy 路径契约）", async () => {
-    const { renderMarkdownResponseSchema } = await import(
-      "../../packages/contracts/src/mcp/tool-contracts.ts"
-    );
-
-    const parsed = renderMarkdownResponseSchema.safeParse({
-      html: "<p>hi</p>",
-      diagnostics: [],
-      rulesetVersion: "0.0.0",
-      themeVersion: "0.0.0",
-      postPaste: true,
-    });
-
-    expect(parsed.success).toBe(true);
-    if (parsed.success) {
-      expect((parsed.data as Record<string, unknown>).postPaste).toBe(true);
-    }
-  });
-
-  it("缺失 postPaste 字段的响应解析失败（字段为必填，禁止静默缺省）", async () => {
-    const { renderMarkdownResponseSchema } = await import(
-      "../../packages/contracts/src/mcp/tool-contracts.ts"
-    );
-
-    const parsed = renderMarkdownResponseSchema.safeParse({
-      html: "<p>hi</p>",
-      diagnostics: [],
-      rulesetVersion: "0.0.0",
-      themeVersion: "0.0.0",
-    });
-
-    expect(parsed.success).toBe(false);
-    if (!parsed.success) {
-      const paths = parsed.error.issues.map((i) => i.path[0]);
-      expect(paths).toContain("postPaste");
-    }
   });
 });

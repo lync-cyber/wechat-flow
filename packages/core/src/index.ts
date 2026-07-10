@@ -51,10 +51,8 @@ export {
 } from "./storage/credentials.ts";
 export { closeDb } from "./storage/indexeddb-adapter.ts";
 export type { DocumentRecord, DocumentMeta } from "./storage/indexeddb-adapter.ts";
-export { simulatePaste } from "./simulate-paste.ts";
-export type { SimulatePasteResult } from "./simulate-paste.ts";
-export type { NodeDiff } from "./diff/per-node-diff.ts";
-export type { DroppedAttr } from "./simulator/strip-attrs.ts";
+export { wechatAdapter } from "./platform/wechat-adapter.ts";
+export type { PlatformAdapter } from "./platform/wechat-adapter.ts";
 export {
   registerBlock,
   listBlocks,

@@ -132,7 +132,7 @@ describe("AC-005: renderMarkdownTool observes render_markdown_latency_ms on each
   it("tool return shape is unchanged (no metrics-related fields leak into the response)", async () => {
     const result = await renderMarkdownTool({ markdown: "# Hi", themeId: "default" });
     expect(Object.keys(result).sort()).toEqual(
-      ["diagnostics", "html", "postPaste", "rulesetVersion", "themeVersion", "versionTriple"].sort()
+      ["diagnostics", "html", "report", "rulesetVersion", "themeVersion", "versionTriple"].sort()
     );
   });
 });

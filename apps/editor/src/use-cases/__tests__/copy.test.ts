@@ -1,4 +1,3 @@
-import { simulatePaste } from "@wechat-flow/core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { composeCopy } from "../copy.ts";
 import { composeRender } from "../render.ts";
@@ -130,7 +129,7 @@ describe("composeCopy: 现代浏览器成功路径不回归 (AC-003)", () => {
     expect(notifySpy).toHaveBeenCalledWith(expect.objectContaining({ type: "success" }));
   });
 
-  it("T-169 AC-002: clipboard.write payload 是单个 ClipboardItem，同时含 text/html 与 text/plain，html Blob 内容等于 filteredHtml", async () => {
+  it("T-169 AC-002: clipboard.write payload 是单个 ClipboardItem，同时含 text/html 与 text/plain，html Blob 内容等于 render 产物", async () => {
     const writeMock = navigator.clipboard.write as unknown as ReturnType<typeof vi.fn>;
 
     await composeCopy({ markdown: "# Hi", notify: vi.fn() });
@@ -144,11 +143,10 @@ describe("composeCopy: 现代浏览器成功路径不回归 (AC-003)", () => {
     expect(item.types).toContain("text/plain");
 
     const rendered = await composeRender({ markdown: "# Hi" });
-    const { filteredHtml } = simulatePaste(rendered.html);
 
     const htmlBlob = await item.getType("text/html");
     const htmlText = await htmlBlob.text();
-    expect(htmlText).toBe(filteredHtml);
+    expect(htmlText).toBe(rendered.html);
   });
 });
 

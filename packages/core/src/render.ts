@@ -122,7 +122,6 @@ export async function renderMarkdown(
     diagnostics: allDiagnostics,
     rulesetVersion: getRulesetVersion(),
     themeVersion: effectiveTheme?.meta?.version ?? "0.0.0",
-    postPaste: false,
     coreVersion,
     report: {
       diagnostics: allDiagnostics,

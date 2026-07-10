@@ -1,5 +1,5 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { ALL_TOOL_SCHEMAS } from "@wechat-flow/contracts";
+import { ALL_TOOL_SCHEMAS, TOOL_DESCRIPTIONS } from "@wechat-flow/contracts";
 import type { ApiKeyRecord } from "../auth/api-key.ts";
 import { type AuthError, guardUserScope } from "../auth/scope-guard.ts";
 import type { JobsClient } from "../jobs/client.ts";
@@ -108,22 +108,27 @@ export function registerAllTools(
 ): void {
   const handlers = buildHandlers(jobsClient);
   for (const [name, schema] of Object.entries(ALL_TOOL_SCHEMAS)) {
-    server.registerTool(name, { inputSchema: schema }, async (_args: Record<string, unknown>) => {
-      const authError = guardUserScope(keyRecord);
-      if (authError) {
+    const description = TOOL_DESCRIPTIONS[name as keyof typeof ALL_TOOL_SCHEMAS];
+    server.registerTool(
+      name,
+      { inputSchema: schema, description },
+      async (_args: Record<string, unknown>) => {
+        const authError = guardUserScope(keyRecord);
+        if (authError) {
+          return {
+            content: [{ type: "text" as const, text: JSON.stringify(authError) }],
+            isError: true,
+          };
+        }
+        const handler = handlers[name];
+        const result = handler
+          ? ((await handler(_args)) as Record<string, unknown>)
+          : ({ code: "E_NOT_IMPLEMENTED", tool: name } as Record<string, unknown>);
         return {
-          content: [{ type: "text" as const, text: JSON.stringify(authError) }],
-          isError: true,
+          content: [{ type: "text" as const, text: JSON.stringify(result) }],
+          isError: isErrorResult(result),
         };
       }
-      const handler = handlers[name];
-      const result = handler
-        ? ((await handler(_args)) as Record<string, unknown>)
-        : ({ code: "E_NOT_IMPLEMENTED", tool: name } as Record<string, unknown>);
-      return {
-        content: [{ type: "text" as const, text: JSON.stringify(result) }],
-        isError: isErrorResult(result),
-      };
-    });
+    );
   }
 }

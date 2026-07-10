@@ -8,6 +8,20 @@ consumers: [all]
 ---
 # Changelog: wechat-flow
 
+## [Unreleased]
+### Changed
+- `@wechat-flow/core` 与 `@wechat-flow/mcp-server` 版本 `0.0.0` → `0.1.0`（SemVer 0.x 破坏性变更走 minor）
+- MCP `simulate_paste` 语义由「模拟粘贴过滤」改为「诊断平台输出规则命中」：响应体由 `{ filteredHtml, diffNodes, droppedAttrs }` 改为 `{ patchedHtml, changes, filteredHtml }`（`filteredHtml` 为 `patchedHtml` 的过渡别名）
+- MCP `render_markdown` 响应删除 `postPaste` 字段，改带 `report: { nodeChangeRecords, nightRiskIssues }`；被输出规则剥除的声明（含 customCss `font-family`）以 warn 诊断在 `diagnostics` 中对调用方可见
+- 复制三路（editor `composeCopy` / CLI `copy` / MCP `export_clipboard_payload`）改指向 `render()` 产物，不再经模拟器过滤——渲染期输出规则已保证产物平台安全
+- `metrics` 指标 `paste_simulation_diff_ratio` 重定为 `fallback_platform_patch_hits`（输出规则命中数/次调用）
+- MCP 全 24 工具补齐 `description`
+
+### Removed
+- **Breaking（`@wechat-flow/core` 对外 API）**：删除导出 `simulatePaste` / `SimulatePasteResult` / `NodeDiff` / `DroppedAttr`
+- `RenderResult.postPaste` 字段删除
+- 独立模拟器实现（`simulate-paste.ts` / `simulator/*` / `diff/per-node-diff.ts`）——平台过滤统一复用 output 域 ruleset 作为幂等 patch 层
+
 ## [0.1.0] - 2026-07-02
 ### Added
 - Editor SPA（Vue 3.5 三栏布局、CodeMirror 6 源码面板、iframe 沙箱预览）[F-001]

@@ -3,7 +3,7 @@ name: wechat-flow
 description: >
   把已经写好的 Markdown 排版渲染成微信公众号可直接粘贴的 inline-styled HTML 并发布——
   通过 wechat-flow 的 MCP tool 编排：推荐/切换内置主题、渲染排版、注册 variant 皮肤、
-  生成 callout、模拟微信粘贴过滤、导出长图/封面、上传微信素材库。当用户想把 Markdown
+  生成 callout、诊断平台输出规则命中、导出长图/封面、上传微信素材库。当用户想把 Markdown
   排版成公众号推文、给公众号文章配主题皮肤或 callout/variant、检查粘贴到微信编辑器后会
   掉哪些样式、导出公众号长图或封面、或上传图文到微信素材库时使用本 skill，即使没明说
   "用工具"或"MCP"。本 skill 负责排版与发布编排，不负责代写文章内容，也不用于 Notion /
@@ -82,25 +82,25 @@ register_variant({ blockId, variantId, label, style })
 
 ```
 render_markdown({ markdown, themeId, customCss?, paint?, baseColor? })
-  → 返回 { html, diagnostics, rulesetVersion, themeVersion, postPaste }
+  → 返回 { html, diagnostics, rulesetVersion, themeVersion, report }
 ```
 
-- `diagnostics` 含排版警告（`WARNING` 级别），优先检查后再发布。
-- `postPaste` 是 simulate_paste 的预估结果，可作参考但不替代下一步真实过滤。
+- `html` 即微信可直接粘贴的产物——输出规则在渲染期已剥除平台不支持的 CSS 属性与 HTML 节点，无需额外过滤步骤。
+- `diagnostics` 含排版警告（`WARNING` 级别），包括被输出规则剥除的声明（如 customCss 中的 `font-family`），发布前优先检查。
+- `report.nodeChangeRecords` / `report.nightRiskIssues` 记录输出规则对节点的改写与夜间模式对比度风险。
 - 若文章含中文排版问题，先用 `apply_zh_typo` 修正再渲染。
 
 ---
 
-### 5. 粘贴模拟：最后一道关卡
+### 5. 检查平台命中（可选诊断）
 
-**为什么 `simulate_paste` 必须在 `upload` 前？**
-微信编辑器在用户粘贴时会剥离 wechat-flow 不支持的 CSS 属性与 HTML 节点。`simulate_paste`
-精确模拟该过滤，`diffNodes` 与 `droppedAttrs` 告知哪些样式被丢弃，让你在发布前有机会
-调整主题或自定义 CSS，避免"发布后才发现样式丢失"。
+render_markdown 的 `html` 已是平台安全产物（输出规则在渲染期生效）。`simulate_paste` 作为
+诊断工具，检查任意一段 HTML 中会被微信平台输出规则命中改写的部分，用于排查自定义 CSS 或
+外部 HTML 的兼容性；对 render_markdown 产物调用时通常返回空 `changes`。
 
 ```
-simulate_paste({ html: "<render_markdown 返回的 html>" })
-  → 返回 { filteredHtml, diffNodes, droppedAttrs }
+simulate_paste({ html })
+  → 返回 { patchedHtml, changes }
 ```
 
 ---
@@ -113,7 +113,7 @@ simulate_paste({ html: "<render_markdown 返回的 html>" })
 `"succeeded"` 或 `"failed"`。
 
 ```
-upload_to_wechat_asset({ imageUrl: "<filteredHtml 中图片 URL>", type: "image" })
+upload_to_wechat_asset({ imageUrl: "<html 中图片 URL>", type: "image" })
   → 返回 { jobId }
 
 # 轮询，建议间隔 2s，最多重试 30 次
@@ -131,8 +131,8 @@ get_job({ jobId })
 ```
 list_themes → describe_theme → describe_template (两阶段取数)
   → [register_variant]              可选，render 前注册自定义皮肤
-  → render_markdown                 Markdown → inline-styled HTML
-  → simulate_paste                  粘贴过滤，发布前最后关卡
+  → render_markdown                 Markdown → 平台安全 inline-styled HTML
+  → [simulate_paste]                可选，诊断外部 HTML 的平台输出规则命中
   → upload_to_wechat_asset          异步上传 → get_job 轮询完成
 ```
 
@@ -155,7 +155,7 @@ list_themes → describe_theme → describe_template (两阶段取数)
 | 查询 design token | `list_tokens` + `describe_token` |
 | 检查排版规则版本 | `get_ruleset_version` |
 | 仅检查 Markdown 排版问题（不渲染） | `lint_markdown` |
-| 模拟微信粘贴过滤 | `simulate_paste` |
+| 诊断 HTML 的平台输出规则命中 | `simulate_paste` |
 | 导出剪贴板 payload | `export_clipboard_payload` |
 | 异步导出长图 | `export_long_image` → `get_job` |
 | 异步导出封面 | `export_cover` → `get_job` |
