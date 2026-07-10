@@ -30,7 +30,6 @@ import stripPseudoClasses from "./strip-pseudo-classes.ts";
 import stripScript from "./strip-script.ts";
 import stripStyleTag from "./strip-style-tag.ts";
 import stripTransformOrigin from "./strip-transform-origin.ts";
-import stripWidthHeightInline from "./strip-width-height-inline.ts";
 import transformDataUriUnquote from "./transform-data-uri-unquote.ts";
 import transformEmToPx from "./transform-em-to-px.ts";
 import transformHslToRgb from "./transform-hsl-to-rgb.ts";
@@ -64,7 +63,6 @@ const ALL_RULES: RuleDefinition[] = [
   stripPseudoClasses,
   stripDataAttr,
   stripAriaHidden,
-  stripWidthHeightInline,
   stripNegativeMargin,
   stripCalcExpression,
   clampFontSize,

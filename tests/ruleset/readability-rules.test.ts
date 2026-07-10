@@ -313,7 +313,7 @@ describe("T-061 AC-003: compliant inputs (14px / 1.6 / 100 chars) produce 0 diag
 
 // ── AC-005: readabilityRules integrated into builtinRules ────────────────────
 
-describe("T-061 AC-005: readabilityRules are integrated into builtinRules (count >= 45)", () => {
+describe("T-061 AC-005: readabilityRules are integrated into builtinRules (count >= 44)", () => {
   it("builtinRules includes all 3 readability rule ids", async () => {
     const { builtinRules } = await import("../../packages/ruleset/src/index.ts");
     const ids = builtinRules.map((r) => r.id);
@@ -322,8 +322,8 @@ describe("T-061 AC-005: readabilityRules are integrated into builtinRules (count
     expect(ids).toContain("readability-paragraph-length");
   });
 
-  it("builtinRules total count >= 45 after adding 3 readability rules", async () => {
+  it("builtinRules total count >= 44 after adding 3 readability rules", async () => {
     const { builtinRules } = await import("../../packages/ruleset/src/index.ts");
-    expect(builtinRules.length).toBeGreaterThanOrEqual(45);
+    expect(builtinRules.length).toBeGreaterThanOrEqual(44);
   });
 });

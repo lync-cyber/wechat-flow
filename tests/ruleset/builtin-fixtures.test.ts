@@ -47,7 +47,7 @@ async function normalizeHtml(html: string): Promise<string> {
 
 // ── fixture runner ────────────────────────────────────────────────────────────
 
-describe("T-014 AC-005 + T-015 AC-005 + SR-003: builtin fixture suite (all 42 rules)", async () => {
+describe("T-014 AC-005 + T-015 AC-005 + SR-003: builtin fixture suite (all 41 rules)", async () => {
   const ruleIds = await loadBuiltinRuleIds().catch(() => [] as string[]);
 
   if (ruleIds.length === 0) {
@@ -118,8 +118,8 @@ describe("T-014 AC-005 + T-015 AC-005 + SR-003: builtin fixture suite (all 42 ru
 describe("SR-003: fixture drift guard — every builtin rule has a complete co-located fixture", async () => {
   const ruleIds = await loadBuiltinRuleIds().catch(() => [] as string[]);
 
-  it("discovers at least 42 builtin rules", () => {
-    expect(ruleIds.length).toBeGreaterThanOrEqual(42);
+  it("discovers at least 41 builtin rules", () => {
+    expect(ruleIds.length).toBeGreaterThanOrEqual(41);
   });
 
   for (const ruleId of ruleIds) {

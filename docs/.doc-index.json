@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-10T00:39:47.586239+00:00",
+  "generated_at": "2026-07-10T01:44:39.494723+00:00",
   "documents": {
     "amendment-platform-fidelity-r1": {
       "file_path": "docs/arch/AMENDMENT-platform-fidelity-r1.md",
@@ -3739,6 +3739,30 @@
       "sections": {},
       "deps": [
         "T-149"
+      ]
+    },
+    "code-review-t-177-r1": {
+      "file_path": "docs/reviews/code/CODE-REVIEW-T-177-r1.md",
+      "doc_type": "code-review",
+      "status": "approved",
+      "total_lines": 77,
+      "est_tokens": 1762,
+      "content_hash": "e8a11a5c",
+      "sections": {},
+      "deps": [
+        "T-177"
+      ]
+    },
+    "code-review-t-178-r1": {
+      "file_path": "docs/reviews/code/CODE-REVIEW-T-178-r1.md",
+      "doc_type": "code-review",
+      "status": "approved",
+      "total_lines": 43,
+      "est_tokens": 897,
+      "content_hash": "badb250f",
+      "sections": {},
+      "deps": [
+        "T-178"
       ]
     },
     "code-review-T034-T035-r1": {

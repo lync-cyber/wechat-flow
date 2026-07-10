@@ -82,8 +82,4 @@ describe("T-183 AC-001: ruleset stage domain migration (arch 附录 A)", () => {
       expect.soft(findRule(id).stage, `${id}.stage`).toBe("authoring");
     }
   });
-
-  it('strip-width-height-inline 不在本卡范围，保持 stage==="authoring"（T-178 范畴，非 T-183）', () => {
-    expect(findRule("strip-width-height-inline").stage).toBe("authoring");
-  });
 });
