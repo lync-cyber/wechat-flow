@@ -1538,7 +1538,7 @@ graph LR
   - [ ] cross-runtime golden SHA 重生成（`tests/cross-runtime/fixtures.ts`，`pnpm gen:cross-runtime-hashes`）——本卡改变渲染产物，四门禁不覆盖 cross-runtime job
 - **context_load**:
   - arch-wechat-flow-modules#§2.M-003
-- **notes**: LOC_SIGNAL: 30。复制链路 payload 解耦（原 T-178 AC-001）由 T-186 承载：`composeCopy`（`apps/editor/src/use-cases/copy.ts`）/`runCopy`（`apps/cli/src/commands/copy.ts`）/`export_clipboard_payload`（`apps/mcp-server/src/tools/export-clipboard-payload.ts`）统一改指向 `render()` 产物，不在本卡范围。原 notes 提及的「模拟器保真度提升」路线已被 `AMENDMENT-platform-fidelity-r1` 废弃——复用 output ruleset 为 patch 层，不重建独立模拟器。
+- **notes**: LOC_SIGNAL: 30。复制链路 payload 解耦（原 T-178 AC-001）由 T-186 承载：`composeCopy`（`apps/editor/src/use-cases/copy.ts`）/`runCopy`（`apps/cli/src/commands/copy.ts`）/`export_clipboard_payload`（`apps/mcp-server/src/tools/export-clipboard-payload.ts`）统一改指向 `render()` 产物，不在本卡范围。原 notes 提及的「模拟器保真度提升」路线已被 `AMENDMENT-platform-fidelity-r1` 废弃——复用 output ruleset 为 patch 层，不重建独立模拟器。「生产实证」范围精确化：authoring 相早于 `inlineStyle()` 注入，gallery/compare/dropcap 的 table-cell width 在该规则实际执行时刻尚不存在 style 属性，规则对这三类场景在真实管线中从未生效——真实生效且需回归锁定的仅 img 作者内联固定尺寸场景；table-cell 场景的回归测试是防规则误置（重新引入 authoring 相剥离规则或移到样式注入之后）的结构锁，另有经 `renderMarkdown()` 全管线的 width 存活断言兜底。
 
 ---
 

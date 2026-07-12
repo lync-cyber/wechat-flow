@@ -25,6 +25,18 @@ export const FIXTURES: CrossRuntimeFixture[] = [
     markdown:
       "---\ntitle: 测试文档\ntheme: default\n---\n\n## 正文标题\n\n段落 with **粗体** 和 CJK 字符。",
   },
+  {
+    name: "dialog-slot-typography",
+    markdown:
+      ':::dialog{.chat-bubbles speaker="对方"}\n开场白\n:::\n\n:::dialog{.chat-bubbles speaker="己方"}\n你好 :underline[重点] 呀\n:::',
+    themeId: "default",
+  },
+  {
+    name: "gallery-table-cell",
+    markdown:
+      ":::gallery{.duo}\n- ![图一](https://example.com/a.png)\n- ![图二](https://example.com/b.png)\n:::",
+    themeId: "default",
+  },
 ];
 
 type RenderFn = (input: string, options?: { themeId?: string }) => Promise<{ html: string }>;
@@ -67,4 +79,6 @@ export const EXPECTED_HASHES: Record<string, string> = {
   "cjk-heading": "8650b22716773748e56a36f754c72ebb83d561895e4f2e8f62a61cf51859e9aa",
   "block-directive": "9e65c0927fcc6956a20c9fc3f54227940988c5cd6bd948ab2a0d61f6353615f3",
   frontmatter: "8d3eebcff21e9e92c0b9083a2e93aef0d4788f53e388dd181c0b06c4742d0a7e",
+  "dialog-slot-typography": "c31db571cb3edaa8704406093297c45e86a675217c5d2a55e7e5ddcdfcb99fc1",
+  "gallery-table-cell": "8790cc0cb001f21c0ac5b6688a45b312247d590aabc8d4a3fe9604c8339de392",
 };

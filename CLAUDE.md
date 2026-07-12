@@ -33,13 +33,13 @@
 - 构建/任务编排: Turborepo 2.3（`turbo build`）；apps/editor 用 Vite 6
 
 ## 项目状态 (orchestrator专属写入区，其他Agent禁止修改)
-- 当前阶段: development（Sprint 7 收尾：无人值守波已收敛——exit 3 目标级熔断；波级红队审查三轮闭环 r1 needs_revision→r3 approved；本波单 PR 待用户晨检合并，剩余卡均用户门）
-- 上次完成: 无人值守波五卡 DONE 并提交（T-177 34aaa28 / T-178 8cabc9e / T-187 d25c969 / T-186 5b2ba48 / T-176 ca91063；细节见各卡 CODE-REVIEW 与 git log）；循环运行数据与改进建议已提报上游 CataForge #479/#480。
-  - 波级红队三轮：r1 出 R-001 CRITICAL（registerVariant MCP 活面缺值级 FORBIDDEN 守卫）+ R-002 HIGH（customCss 值内嵌 -webkit- 绕过 output 相）→ 修复 2e18b81；r2 出 R-006 HIGH（比较大小写绕过）→ 修复 812fec6；r3 approved（Unicode/空白边角绕过无果，例外白名单无误杀）。报告 CODE-REVIEW-s7-unattended-wave-r1/r2/r3。
+- 当前阶段: development（Sprint 7 收尾：波 PR #117 已由用户合并入 main（979b940）；红队 MEDIUM/LOW 遗留 R-003/R-004/R-005/R-007 四项已闭合，提交于分支 claude/start-orchestrator-continue-2hx9cs 待用户审阅合并；剩余卡均用户门）
+- 上次完成: 红队波审 MEDIUM/LOW 遗留四项闭合（分支 claude/start-orchestrator-continue-2hx9cs）——R-003 T-178 测试叙事收窄+全管线 width 存活断言+dev-plan notes 精确化 / R-004 边界警示 5 锁定 slotInherited 不含 bodyBaseline 约束（不改实现：merged 方案会击穿 golden 字节契约）/ R-005 cross-runtime fixture 3→5（dialog 槽位排版+gallery table-cell，四运行时实跑全绿）/ R-007 token.test.ts 动态 import 提升模块级。四门禁全绿（vitest 4467/29 skipped 为 relay 环境门控/typecheck turbo50+tests exit0/biome 866/cross-runtime node+edge+browser+worker 5 fixture）。
+  - 波级红队三轮（已闭环）：r1 R-001 CRITICAL + R-002 HIGH→修复 2e18b81；r2 R-006 HIGH→修复 812fec6；r3 approved。报告 CODE-REVIEW-s7-unattended-wave-r1/r2/r3。
 - 下一步行动:
-  - ① **本波 PR 用户审阅合并**（feature/unattended-s7：五卡 + 红队修复 ×2 + 记账；gh 分类器拦自合并故手合）
+  - ① **红队遗留闭合分支用户审阅合并**（claude/start-orchestrator-continue-2hx9cs：R-003/R-004/R-005/R-007 处置 + 记账）
   - ② 用户门卡: T-188 / T-172 r3 真机确认（≤6 份微信粘贴确认 display:table 存活，通过→T-157 blocking_conditions 清空→T-159 AC-004；确认写 event=user_decision 载 design_signoff 语义）· T-180（ui-spec finalize 受上游 #472 限制，attended 处理）
-  - ③ 红队 MEDIUM/LOW 遗留处置与 sprint-review（含既有 open 注记，见 待办 与 当前Sprint）
+  - ③ sprint-review（待用户门卡收口后执行；含既有 open 注记，见 当前Sprint）
   - ④ release go/no-go（见 待办）
   - **禁区（长期有效）**: 禁改 `strip-data-attr.ts`/`strip-aria-hidden.ts`（用户独立会话处理中勿双改）；禁 git stash；`context finalize` 勿强推（#472）
 - 已完成阶段: [requirements, architecture, ui_design, dev_planning, cross_doc_amendment_r2, arch_special_review_css_inlining, dev_plan_amendment_custom_styles, development, testing, deployment, s7_visual_upgrade_planning]
@@ -50,7 +50,6 @@
   - （审查残余已闭合项：ⓑ MIN_FONT_SIZE_PX=14 核实闭合；S1/S2/归域随 T-182..T-184 闭环；per-node-diff 归 T-186 删除范围）
   - **手工真机确认前置**（owner=user，T-188/T-172 r3 硬前置）: 无自动 oracle；确认通过写 `event=user_decision` 载 design_signoff 语义（非法枚举 design_signoff 勿用）→ T-157 blocking_conditions 清空 → T-159 AC-004。
   - **release go/no-go**（mcp-server private 翻转前置，见 deploy-spec §9）: CODE-SCAN P0 tokenResolver 替换（passthroughResolver 对任意 Bearer 放行）/ 包版本 0.0.0 / npm reviewers / Docker / CVE。
-  - **红队波审 MEDIUM/LOW 遗留**（明细见 CODE-REVIEW-s7-unattended-wave-r1/r3）: R-003 T-178 测试叙事高于实证面 · R-004 slot cascade mark 场景潜伏缝隙（休眠）· R-005 cross-runtime fixture 覆盖薄 · R-007 预存慢测试逼近超时。
   - **占位收编 backlog**（`docs/reviews/code/CODE-SCAN-20260708-r1.md`）: ② relay 管理密钥 DB 持久化（E-010，含 T-091 R-007 API key 哈希）③ 接线型收编 ④ 功能卡 ⑤ 低优先项——明细见该报告。
   - **裁定待办**: arch M-002 slot token 措辞 + M-003 readability 归域措辞 amend（owner=architect）· ui-spec §10.5 quote root #555 token 映射（owner=ui-designer，需 sign-off）。
   - **T-033 图床**: COS Content-Type 签名 · oss/cos/smms/custom env-gated 集成测试（需真实云凭据）。
