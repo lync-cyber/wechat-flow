@@ -9,6 +9,7 @@ import {
   resetVariantRegistry,
 } from "../../../packages/core/src/index.ts";
 import "../../../packages/blocks/src/index.ts";
+import "../../../packages/marks/src/index.ts";
 import defaultTheme from "../../../packages/themes/default/src/index.ts";
 import literaryTheme from "../../../packages/themes/literary/src/index.ts";
 
@@ -259,5 +260,42 @@ describe("边界: themeTokens 缺 p.default 时 bodyBaseline 退化，槽位保�
     const rightParagraphStyle = extractParagraphStyle(rows[1] ?? "");
     expect(rightParagraphStyle).toContain("color: #fafaf9");
     expect(rightParagraphStyle).not.toContain("line-height: 1.85");
+  });
+});
+
+// 边界警示 5: slotInherited 只携带槽位自身声明的可继承属性，不重播 bodyBaseline ——
+// 槽位内嵌套的 mark（无主题 token base 的裸 span）拿到色值的唯一来源是槽位自声明；
+// 槽位若不声明某可继承属性，嵌套 mark 静默缺失该属性（依赖 CSS 自然继承兜底）。
+const MARK_IN_BUBBLE_MD = [
+  ':::dialog{.chat-bubbles speaker="对方"}',
+  "开场白",
+  ":::",
+  "",
+  ':::dialog{.chat-bubbles speaker="己方"}',
+  "你好 :underline[重点] 呀",
+  ":::",
+].join("\n");
+
+function extractUnderlineMarkStyle(rowHtml: string): string {
+  const match = rowHtml.match(/<span style="([^"]*text-decoration: underline[^"]*)">重点<\/span>/);
+  expect(match, `no underline mark span found in row: ${rowHtml}`).not.toBeNull();
+  return match?.[1] ?? "";
+}
+
+describe("边界: 槽位内嵌套 mark 的可继承属性仅来自槽位自声明（slotInherited 不含 bodyBaseline）", () => {
+  it("己方气泡内 :underline mark span 计算 color 等于气泡槽位自声明的 --color-text-inverse 实值（#fafaf9）", async () => {
+    const result = await renderMarkdown(MARK_IN_BUBBLE_MD, { themeId: "default" });
+    const rows = extractDialogRows(result.html);
+    expect(rows.length).toBe(2);
+    const markStyle = extractUnderlineMarkStyle(rows[1] ?? "");
+    expect(markStyle).toContain("color: #fafaf9");
+  });
+
+  it("该 mark span 不被注入 bodyBaseline 的 font-size/line-height（槽位未自声明的可继承属性不下传，靠 CSS 自然继承）", async () => {
+    const result = await renderMarkdown(MARK_IN_BUBBLE_MD, { themeId: "default" });
+    const rows = extractDialogRows(result.html);
+    const markStyle = extractUnderlineMarkStyle(rows[1] ?? "");
+    expect(markStyle).not.toContain("font-size");
+    expect(markStyle).not.toContain("line-height");
   });
 });

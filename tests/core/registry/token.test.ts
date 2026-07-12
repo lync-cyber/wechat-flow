@@ -8,6 +8,9 @@ import {
   seedTokenRegistry,
 } from "../../../packages/core/src/registry/token.ts";
 
+// Shared across AC-006 cases: importing the core barrel per-test costs seconds each run.
+const coreModulePromise = import("../../../packages/core/src/index.ts");
+
 beforeEach(() => {
   resetTokenRegistry();
   seedTokenRegistry();
@@ -337,7 +340,7 @@ describe("AC-005: alignment category has ≥2 breakpoint tokens", () => {
 // ---------------------------------------------------------------------------
 describe("AC-006: registerToken / listTokens / describeToken are exported from core index", () => {
   it("registerToken exported from core index is a function", async () => {
-    const coreModule = await import("../../../packages/core/src/index.ts");
+    const coreModule = await coreModulePromise;
     // Validate callable by calling with a known-valid token
     coreModule.registerToken({ id: "color.ac006-probe", category: "color", value: "#000000" });
     const found = coreModule.describeToken("color.ac006-probe");
@@ -346,14 +349,14 @@ describe("AC-006: registerToken / listTokens / describeToken are exported from c
   });
 
   it("listTokens exported from core index returns an array with ≥60 entries", async () => {
-    const coreModule = await import("../../../packages/core/src/index.ts");
+    const coreModule = await coreModulePromise;
     const tokens = coreModule.listTokens();
     expect(Array.isArray(tokens)).toBe(true);
     expect(tokens.length).toBeGreaterThanOrEqual(60);
   });
 
   it("describeToken exported from core index returns undefined for missing token", async () => {
-    const coreModule = await import("../../../packages/core/src/index.ts");
+    const coreModule = await coreModulePromise;
     const result = coreModule.describeToken("does.not.exist.ac006");
     expect(result).toBeUndefined();
   });
