@@ -124,7 +124,7 @@ describe("AC-002: view-collapse-left 命令面板接线 + 左栏收起按钮双�
     wrapper.unmount();
   });
 
-  it("点击 rail 图标（组件）恢复展开并激活「组件」Tab", async () => {
+  it("点击 rail 展开按钮恢复展开态", async () => {
     const wrapper = mount(EditorShell, {
       attachTo: document.body,
       global: { plugins: [createPinia()] },
@@ -134,13 +134,11 @@ describe("AC-002: view-collapse-left 命令面板接线 + 左栏收起按钮双�
     await wrapper.find('[data-testid="collapse-btn"]').trigger("click");
     await nextTick();
 
-    await wrapper.find('[data-testid="rail-icon-components"]').trigger("click");
+    await wrapper.find('[data-testid="rail-expand-btn"]').trigger("click");
     await nextTick();
 
     expect(wrapper.find('[data-testid="left-panel-rail"]').exists()).toBe(false);
-    expect(wrapper.find('[data-testid="tab-components"]').classes()).toContain(
-      "left-panel-tabs__tab--active"
-    );
+    expect(wrapper.find('[data-testid="tab-theme"]').exists()).toBe(true);
     wrapper.unmount();
   });
 });

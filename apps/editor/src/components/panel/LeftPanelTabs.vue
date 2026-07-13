@@ -23,18 +23,6 @@ const props = withDefaults(
   }
 );
 
-const RAIL_TAB_LABELS: Record<TabId, string> = {
-  theme: "主题",
-  components: "组件",
-  docs: "文档",
-};
-
-const RAIL_TAB_GLYPHS: Record<TabId, string> = {
-  theme: "🎨",
-  components: "🧩",
-  docs: "📄",
-};
-
 const emit = defineEmits<{
   "palette-derive": [];
   "custom-color": [];
@@ -77,11 +65,6 @@ function collapsePanel(): void {
 function expandPanel(): void {
   props.onCollapsedChange?.(false);
 }
-
-function selectRailTab(tab: TabId): void {
-  switchTab(tab);
-  props.onCollapsedChange?.(false);
-}
 </script>
 
 <template>
@@ -96,17 +79,6 @@ function selectRailTab(tab: TabId): void {
         title="展开面板"
         @click="expandPanel"
       >⟩⟩</button>
-      <button
-        v-for="tab in (['theme', 'components', 'docs'] as TabId[])"
-        :key="tab"
-        type="button"
-        class="left-panel-tabs__rail-btn left-panel-tabs__rail-icon"
-        :class="{ 'left-panel-tabs__rail-icon--active': activeTab === tab }"
-        :data-testid="`rail-icon-${tab}`"
-        :aria-label="RAIL_TAB_LABELS[tab]"
-        :title="RAIL_TAB_LABELS[tab]"
-        @click="selectRailTab(tab)"
-      ><span aria-hidden="true">{{ RAIL_TAB_GLYPHS[tab] }}</span></button>
     </div>
 
     <!-- Expanded -->
@@ -311,9 +283,5 @@ function selectRailTab(tab: TabId): void {
 .left-panel-tabs__rail-btn:hover {
   background: var(--color-surface-overlay);
   color: var(--color-text-primary);
-}
-
-.left-panel-tabs__rail-icon--active {
-  color: var(--color-brand);
 }
 </style>
