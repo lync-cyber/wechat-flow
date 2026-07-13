@@ -33,21 +33,21 @@
 - 构建/任务编排: Turborepo 2.3（`turbo build`）；apps/editor 用 Vite 6
 
 ## 项目状态 (orchestrator专属写入区，其他Agent禁止修改)
-- 当前阶段: development（Sprint 7 收尾：波 PR #117 已由用户合并入 main（979b940）；红队 MEDIUM/LOW 遗留 R-003/R-004/R-005/R-007 四项已闭合，提交于分支 claude/start-orchestrator-continue-2hx9cs 待用户审阅合并；剩余卡均用户门）
-- 上次完成: 红队波审 MEDIUM/LOW 遗留四项闭合（分支 claude/start-orchestrator-continue-2hx9cs）——R-003 T-178 测试叙事收窄+全管线 width 存活断言+dev-plan notes 精确化 / R-004 边界警示 5 锁定 slotInherited 不含 bodyBaseline 约束（不改实现：merged 方案会击穿 golden 字节契约）/ R-005 cross-runtime fixture 3→5（dialog 槽位排版+gallery table-cell，四运行时实跑全绿）/ R-007 token.test.ts 动态 import 提升模块级。四门禁全绿（vitest 4467/29 skipped 为 relay 环境门控/typecheck turbo50+tests exit0/biome 866/cross-runtime node+edge+browser+worker 5 fixture）。
-  - 波级红队三轮（已闭环）：r1 R-001 CRITICAL + R-002 HIGH→修复 2e18b81；r2 R-006 HIGH→修复 812fec6；r3 approved。报告 CODE-REVIEW-s7-unattended-wave-r1/r2/r3。
+- 当前阶段: development（Sprint 7 收尾：两分支待用户审阅合并——claude/start-orchestrator-continue-2hx9cs 红队遗留闭合 · claude/cataforge-cli-uv-install-lhlag6 平台保真缺口闭合+rail 简化；剩余卡均用户门）
+- 上次完成: 平台保真缺口闭合 + 左栏 rail 简化（分支 claude/cataforge-cli-uv-install-lhlag6，四门禁全绿：vitest 4486/typecheck/biome 871/cross-runtime 四运行时）。明细：strip-data-attr camel/kebab 归一修复（PRESERVE 对齐真实管线 17 键）· patch-grid-to-block 新增（grid 与 flex 对称，删 lint-grid-layout）· lint-nowrap-percent-width 组合诊断新增 · author-card 死属性清理 · 左栏收纳态删 3 个 emoji Tab 图标（ui-spec UC-006 同步）。
+  - 历史批次（红队波审闭环、PR #117 合 main 等）见 git/PR 历史与 EVENT-LOG，不在此累积。
 - 下一步行动:
-  - ① **红队遗留闭合分支用户审阅合并**（claude/start-orchestrator-continue-2hx9cs：R-003/R-004/R-005/R-007 处置 + 记账）
+  - ① **两分支用户审阅合并**: claude/start-orchestrator-continue-2hx9cs（红队 R-003/R-004/R-005/R-007 处置）· claude/cataforge-cli-uv-install-lhlag6（平台保真缺口闭合 + rail 简化）
   - ② 用户门卡: T-188 / T-172 r3 真机确认（≤6 份微信粘贴确认 display:table 存活，通过→T-157 blocking_conditions 清空→T-159 AC-004；确认写 event=user_decision 载 design_signoff 语义）· T-180（ui-spec finalize 受上游 #472 限制，attended 处理）
   - ③ sprint-review（待用户门卡收口后执行；含既有 open 注记，见 当前Sprint）
   - ④ release go/no-go（见 待办）
-  - **禁区（长期有效）**: 禁改 `strip-data-attr.ts`/`strip-aria-hidden.ts`（用户独立会话处理中勿双改）；禁 git stash；`context finalize` 勿强推（#472）
+  - **禁区（长期有效）**: 禁 git stash；`context finalize` 勿强推（#472）。（strip-data-attr/strip-aria-hidden 双改禁区已解除——用户确认无其它会话处理，修复落于 claude/cataforge-cli-uv-install-lhlag6）
 - 已完成阶段: [requirements, architecture, ui_design, dev_planning, cross_doc_amendment_r2, arch_special_review_css_inlining, dev_plan_amendment_custom_styles, development, testing, deployment, s7_visual_upgrade_planning]
 - 当前Sprint: 7（视觉升级批 + 修复批 + 批二 + 架构专项批）。Sprint 0-6 全 DONE 合 main（PR #1-#72）。
   - sprint-review 待记 open 注记: UC-021 AND 语义 fixture 单命中盲点 · UC-015 帧变体计数 staleness + 参数区变体选择器 spec gap（owner=ui-designer）· DESIGN-REVIEW-quote-decorations-r2 余 LOW×3 · T-170 分组渲染 template duplication
 - 待办(deferred)（仅列 open 项；已解决项见 git/PR 历史）:
-  - **对抗性架构审查残余 open 项**: ⓐ strip-data-attr camel/kebab 假绿（**用户独立会话处理中，勿双改**）ⓒ **命题4**：`inspect(render(x))===[]` 是自证性质，正向保真须外部真机 fixture 作 oracle（上游 #473/#474）
-  - （审查残余已闭合项：ⓑ MIN_FONT_SIZE_PX=14 核实闭合；S1/S2/归域随 T-182..T-184 闭环；per-node-diff 归 T-186 删除范围）
+  - **对抗性架构审查残余 open 项**: ⓒ **命题4**：`inspect(render(x))===[]` 是自证性质，正向保真须外部真机 fixture 作 oracle（上游 #473/#474）
+  - （审查残余已闭合项：ⓐ strip-data-attr 假绿修复于 claude/cataforge-cli-uv-install-lhlag6；ⓑ MIN_FONT_SIZE_PX=14 核实闭合；S1/S2/归域随 T-182..T-184 闭环；per-node-diff 归 T-186 删除范围）
   - **手工真机确认前置**（owner=user，T-188/T-172 r3 硬前置）: 无自动 oracle；确认通过写 `event=user_decision` 载 design_signoff 语义（非法枚举 design_signoff 勿用）→ T-157 blocking_conditions 清空 → T-159 AC-004。
   - **release go/no-go**（mcp-server private 翻转前置，见 deploy-spec §9）: CODE-SCAN P0 tokenResolver 替换（passthroughResolver 对任意 Bearer 放行）/ 包版本 0.0.0 / npm reviewers / Docker / CVE。
   - **占位收编 backlog**（`docs/reviews/code/CODE-SCAN-20260708-r1.md`）: ② relay 管理密钥 DB 持久化（E-010，含 T-091 R-007 API key 哈希）③ 接线型收编 ④ 功能卡 ⑤ 低优先项——明细见该报告。
