@@ -408,17 +408,17 @@ describe("AC-001: 左栏收纳 rail 形态（UC-006）", () => {
     expect(wrapper.find('[data-testid="collapse-btn"]').exists()).toBe(false);
   });
 
-  it("rail 态渲染三个语义图标（主题/组件/文档）+ 展开按钮", async () => {
+  it("rail 态仅渲染展开按钮，不渲染 Tab 图标", async () => {
     const wrapper = mount(LeftPanelTabs, {
       props: { defaultTab: "theme", collapsed: true },
       global: { plugins: [makeRouter()] },
     });
     await nextTick();
 
-    expect(wrapper.find('[data-testid="rail-icon-theme"]').exists()).toBe(true);
-    expect(wrapper.find('[data-testid="rail-icon-components"]').exists()).toBe(true);
-    expect(wrapper.find('[data-testid="rail-icon-docs"]').exists()).toBe(true);
     expect(wrapper.find('[data-testid="rail-expand-btn"]').exists()).toBe(true);
+    expect(wrapper.find('[data-testid="rail-icon-theme"]').exists()).toBe(false);
+    expect(wrapper.find('[data-testid="rail-icon-components"]').exists()).toBe(false);
+    expect(wrapper.find('[data-testid="rail-icon-docs"]').exists()).toBe(false);
   });
 
   it("点击收起按钮时 onCollapsedChange 以 true 调用", async () => {
@@ -447,40 +447,6 @@ describe("AC-001: 左栏收纳 rail 形态（UC-006）", () => {
     await nextTick();
 
     expect(onCollapsedChange).toHaveBeenCalledWith(false);
-  });
-
-  it("点击 rail 图标（组件）时展开面板并激活对应 Tab", async () => {
-    const onCollapsedChange = vi.fn();
-    const onTabChange = vi.fn();
-    const wrapper = mount(LeftPanelTabs, {
-      props: { defaultTab: "theme", collapsed: true, onCollapsedChange, onTabChange },
-      global: { plugins: [makeRouter()] },
-    });
-    await nextTick();
-
-    await wrapper.find('[data-testid="rail-icon-components"]').trigger("click");
-    await nextTick();
-
-    expect(onCollapsedChange).toHaveBeenCalledWith(false);
-    expect(onTabChange).toHaveBeenCalledWith("components");
-  });
-
-  it("点击 rail 图标后，父级据 onCollapsedChange 将 collapsed 翻为 false，展开后对应 Tab 处于 active 态", async () => {
-    listDocumentsMock.mockResolvedValue([]);
-    const wrapper = mount(LeftPanelTabs, {
-      props: { defaultTab: "theme", collapsed: true },
-      global: { plugins: [makeRouter()] },
-    });
-    await nextTick();
-
-    await wrapper.find('[data-testid="rail-icon-docs"]').trigger("click");
-    await nextTick();
-    await wrapper.setProps({ collapsed: false });
-    await nextTick();
-
-    expect(wrapper.find('[data-testid="tab-docs"]').classes()).toContain(
-      "left-panel-tabs__tab--active"
-    );
   });
 });
 

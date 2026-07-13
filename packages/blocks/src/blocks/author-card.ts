@@ -14,8 +14,6 @@ export const authorCard = defineBlock(
   {
     root: {
       display: "table",
-      "align-items": "center",
-      gap: "12px",
       padding: "16px",
       margin: "16px 0",
       "border-radius": "8px",

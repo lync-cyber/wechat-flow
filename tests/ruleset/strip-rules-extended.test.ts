@@ -87,15 +87,15 @@ describe("T-056 AC-003: strip-data-attr removes all data-* attributes", () => {
     expect(out).toBe("<section>Z</section>");
   });
 
-  it("preserves pipeline-semantic data-block/data-variant/data-slot, strips the rest", async () => {
+  it("preserves pipeline-semantic data-block/data-variant/data-block-slot, strips the rest", async () => {
     const out = await runRule(
       "strip-data-attr",
-      `<div data-block="hero" data-variant="a" data-slot="s" data-foo="x">Box</div>`
+      `<div data-block="hero" data-variant="a" data-block-slot="body" data-foo="x">Box</div>`
     );
 
     expect(out).toContain(`data-block="hero"`);
     expect(out).toContain(`data-variant="a"`);
-    expect(out).toContain(`data-slot="s"`);
+    expect(out).toContain(`data-block-slot="body"`);
     expect(out).not.toContain("data-foo");
   });
 });

@@ -191,11 +191,11 @@ graph LR
 
 - **R1 主题 font-family 退出面**：不止 5 主题——含 blocks dropcap 装饰 + inline-code mark。T-189 分阶段（strip 兜底→清理→守卫）；期间「构造未拦运行兜」窗口由扫描守。
 - **R2 display:table 存活未真机证**：§4 已定位真 bug=nowrap+1% 塌陷。display:table 本体存活仍须 ≤6 份真机确认（T-188 前置）；塌陷则装饰布局改真 `<table>`（更大返工）。
-- **R3 decorate/customCss 的 div/float 缝**：output patch 无 strip-div、float 只构造禁；decorate 注入 div/float 仅第 3 层扫描兜。裁定：float/div 靠**全覆盖扫描**（§2.2 第 3 层含标签扫描后闭合），若未来 decorate 动态注入面扩大再评估补运行期 strip。
-- **R4 customCss 是用户/LLM 责任边界**：`nowrap+1%` 组合在任意 customCss 下不可 lint（合法属性组合，非单属性禁区）——preview≡paste 对 customCss 任意输入**不可完全闭合**，诚实标注（非隐含全覆盖）。
+- **R3 decorate/customCss 的 div/float 缝（已收窄至扫描兜底）**：div 无运行期注入面（core/blocks 零 `tagName:"div"` 构造点，结构闭死）；float/定位族在 customCss 白名单（`css-property-whitelist.ts`）外且受构造守卫（`style-guard.ts`）拦截，双层闭死；display 白名单放行面上 grid/inline-grid 由 output 相 `patch-grid-to-block` 改写（与 flex 对称，镜像微信剥离后回退值，inspect 面同获覆盖）。残余：decorate 动态注入面扩大时按原裁定补运行期 strip，全覆盖扫描兜底照旧。
+- **R4 customCss 是用户/LLM 责任边界**：`nowrap+百分比宽` 已知致命组合由 output 相 `lint-nowrap-percent-width` 组合诊断警示（同节点 `white-space:nowrap` + 百分比 `width` 即报 warning，单属性禁区不可行的登记不变）；除已知组合外，preview≡paste 对 customCss 任意输入**不可完全闭合**，诚实标注（非隐含全覆盖）。
 - **R5 clamp/readability 定位**：保留为产品诊断/归一（不进平台判定）；「静默 clamp vs 作者诊断」是独立产品问题，登记待议，不在本重构。
 - **R6 多平台 YAGNI**：PlatformAdapter 为 xhs/zhihu 预留但只实 wechat；`platform` z.enum 仅 wechat，未支持平台显式报错不静默回退。
-- **R7 内置资产 FORBIDDEN 清理面 = 全 FORBIDDEN 非仅 font-family（计划 R-001 修订）**：构造守卫拦全 `FORBIDDEN_CSS_PROPS ∪ FORBIDDEN_DISPLAY_VALUES ∪ FORBIDDEN_POSITION_PROPS`，故守卫 throw 前须清零**全部**内置资产的 FORBIDDEN 声明——不止 font-family。已核实违规：`packages/blocks/src/blocks/author-card.ts` `display:flex`（内置真 bug，须迁 table/inline-block）。裁定「守卫禁 flex（注册资产）」与「output `patch-flex-to-block` 补 flex（运行期 customCss）」**按输入分工非矛盾**（§2.2）——`patch-flex-to-block` 不为内置块违规兜底，内置违规须**源头迁移**。T-189 扩范围 = grep 全仓内置静态声明逐项清零 + T-187 AC 补「内置资产全量注册回归绿」；否则守卫上线时 author-card 注册抛异常 → 全 suite 红硬阻塞。
+- **R7 内置资产 FORBIDDEN 清理面（已闭合）**：T-189 已完成全 `FORBIDDEN_CSS_PROPS ∪ FORBIDDEN_DISPLAY_VALUES ∪ FORBIDDEN_POSITION_PROPS` 内置声明清零（author-card `display:flex` 已源头迁 `table`，全仓 grep 零命中），构造守卫（`style-guard.ts`）在位。裁定「守卫禁 flex（注册资产）」与「output `patch-flex-to-block` 补 flex（运行期 customCss）」**按输入分工非矛盾**（§2.2）不变。
 
 ## 10. 锁定决策（用户 2026-07-09）
 

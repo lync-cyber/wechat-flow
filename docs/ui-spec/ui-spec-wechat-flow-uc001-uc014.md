@@ -252,8 +252,8 @@ required_sections:
 **收纳交互（桌面态）**：
 
 - Tab 标题行右端固定一个收起按钮（`⟨⟨` 双角括图标，`20px`，`--color-text-muted`，hover 文字 `--color-text-primary` + 背景 `--color-surface-overlay`，tooltip「收起面板」）
-- 收纳态（rail）：面板收窄为 `48px` 纵向图标条，背景不变；三个 Tab 化为语义图标（主题=色板 / 组件=积木 / 文档=文档页，`20px`，纵向排列，每项 hit target `48×40px`，间距 `8px`，顶部对齐）；rail 顶部为展开按钮（`⟩⟩`，同收起按钮规格）
-- rail 图标 hover：背景 `--color-surface-overlay` + tooltip 显示 Tab 名；点击 rail 图标：展开面板并激活对应 Tab
+- 收纳态（rail）：面板收窄为 `48px` 纵向窄条，背景不变；仅含顶部展开按钮（`⟩⟩`，同收起按钮规格，hit target `48×40px`），不放 Tab 快捷图标——Tab 切换在展开态完成，避免与 Tab 头形成重复导航
+- rail 展开按钮 hover：背景 `--color-surface-overlay`，文字 `--color-text-primary`；点击：展开面板，恢复此前激活的 Tab
 - 与 UC-009 命令面板「视图 → 折叠左栏」命令双向同步（命令 toggle 与按钮 toggle 状态一致）
 - 收纳状态写入编辑器偏好持久化（会话间保持）
 

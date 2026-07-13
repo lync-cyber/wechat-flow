@@ -1,0 +1,7 @@
+{
+  "ruleId": "patch-grid-to-block",
+  "scope": "patch",
+  "priority": 50,
+  "description": "Replace display:grid with display:block and display:inline-grid with display:inline-block — the WeChat article renderer strips grid display values, so patching mirrors the post-paste fallback and keeps preview consistent",
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}
