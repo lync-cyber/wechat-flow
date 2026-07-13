@@ -1,11 +1,36 @@
 import type { Element, Node } from "hast";
 import type { RuleDefinition } from "../registry.ts";
 
-// hast property keys are camelCased by property-information (data-foo → dataFoo, data-123 → data123);
-// preserve wechat-flow pipeline-semantic data attributes used by downstream renderers.
-const PRESERVE = new Set(["dataBlock", "dataVariant", "dataSlot"]);
+// Pipeline-semantic data attributes consumed downstream, in kebab canonical form.
+// hast property keys carry two notations depending on construction path:
+// camelCased by property-information when parsed from HTML (data-foo → dataFoo),
+// kebab-cased literals when built programmatically — both are normalized before lookup.
+const PRESERVE = new Set([
+  "data-block",
+  "data-variant",
+  "data-block-slot",
+  "data-block-slot-last",
+  "data-steps-item",
+  "data-dialog-avatar",
+  "data-dialog-speaker",
+  "data-quote-decoration",
+  "data-paragraph-decoration",
+  "data-pull-quote-author",
+  "data-compare-left-label",
+  "data-compare-left-value",
+  "data-compare-right-label",
+  "data-compare-right-value",
+  "data-compare-title",
+  "data-lh-exempt",
+  "data-node-id",
+]);
 
-const isStrippableData = (key: string): boolean => /^data[A-Z0-9]/.test(key) && !PRESERVE.has(key);
+const isDataKey = (key: string): boolean => /^data(?:[A-Z0-9]|-)/.test(key);
+
+const toKebab = (key: string): string =>
+  key.startsWith("data-") ? key.toLowerCase() : key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
+
+const isStrippableData = (key: string): boolean => isDataKey(key) && !PRESERVE.has(toKebab(key));
 
 const stripDataAttr: RuleDefinition = {
   id: "strip-data-attr",

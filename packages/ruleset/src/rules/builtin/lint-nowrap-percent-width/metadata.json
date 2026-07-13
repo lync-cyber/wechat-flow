@@ -1,0 +1,8 @@
+{
+  "ruleId": "lint-nowrap-percent-width",
+  "scope": "lint",
+  "priority": 40,
+  "description": "Diagnose white-space:nowrap combined with a percentage width on the same element — legal properties individually, but the shrink-to-fit combination collapses after WeChat paste; an explicit px width is required",
+  "expectedDiagnostics": [{ "severity": "warning", "ruleId": "lint-nowrap-percent-width" }],
+  "wechatVersion": { "minSupported": "7.0.0", "knownBuggy": [] }
+}

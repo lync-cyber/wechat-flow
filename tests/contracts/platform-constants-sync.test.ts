@@ -281,7 +281,7 @@ describe("AC-004②: output 补救规则靶值单向 ⊆ 常量集", () => {
     expect(result.properties?.style).toBe("display: inline-block");
   });
 });
-describe("AC-004③: 无运行期规则子集显式排除（float/定位族/grid 未纳入本卡 output 同步范围，由 T-187 兜底）", () => {
+describe("AC-004③: 运行期规则覆盖边界（float/定位族由构造守卫+customCss 白名单双层闭死；grid 显示值有 output patch 覆盖）", () => {
   const outputStripOrPatchRules = builtinRules.filter(
     (r) => r.stage === "output" && (r.scope === "strip" || r.scope === "patch")
   );
@@ -301,14 +301,18 @@ describe("AC-004③: 无运行期规则子集显式排除（float/定位族/grid
     }
   );
 
-  it.each(["grid", "inline-grid"])(
-    "display:%s 无任何 output 域 strip/patch 规则匹配（有意排除出本卡 output 同步范围，非遗漏，由 T-187 构造守卫兜底）",
-    (displayValue) => {
+  it.each([
+    ["grid", "display: block"],
+    ["inline-grid", "display: inline-block"],
+  ])(
+    "display:%s 由 output 域 patch-grid-to-block 改写为微信剥离后回退值（customCss 白名单放行 display，运行期须有覆盖）",
+    (displayValue, expected) => {
+      expect(FORBIDDEN_DISPLAY_VALUES.has(displayValue)).toBe(true);
+      const rule = findRule("patch-grid-to-block");
       const el = makeElement("div", { style: `display: ${displayValue}` });
-      const matchedRuleIds = outputStripOrPatchRules
-        .filter((rule) => rule.matcher(el))
-        .map((rule) => rule.id);
-      expect(matchedRuleIds).toEqual([]);
+      expect(rule.matcher(el)).toBe(true);
+      const result = rule.transform(el) as Element;
+      expect(result.properties?.style).toBe(expected);
     }
   );
 });

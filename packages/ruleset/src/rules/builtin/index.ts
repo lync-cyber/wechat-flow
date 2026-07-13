@@ -12,9 +12,10 @@ import clampRgbaAlpha from "./clamp-rgba-alpha.ts";
 import clampTextIndent from "./clamp-text-indent.ts";
 import clampWordSpacing from "./clamp-word-spacing.ts";
 import lintFilterBackdrop from "./lint-filter-backdrop.ts";
-import lintGridLayout from "./lint-grid-layout.ts";
+import lintNowrapPercentWidth from "./lint-nowrap-percent-width.ts";
 import lintPositionFixed from "./lint-position-fixed.ts";
 import patchFlexToBlock from "./patch-flex-to-block.ts";
+import patchGridToBlock from "./patch-grid-to-block.ts";
 import patchPseudoElementMaterialize from "./patch-pseudo-element-materialize.ts";
 import stripAriaHidden from "./strip-aria-hidden.ts";
 import stripCalcExpression from "./strip-calc-expression.ts";
@@ -90,9 +91,10 @@ const ALL_RULES: RuleDefinition[] = [
   transformHslToRgb,
   transformUppercaseHexLower,
   patchFlexToBlock,
+  patchGridToBlock,
   patchPseudoElementMaterialize,
   lintFilterBackdrop,
-  lintGridLayout,
+  lintNowrapPercentWidth,
   lintPositionFixed,
   ...readabilityRules,
 ];

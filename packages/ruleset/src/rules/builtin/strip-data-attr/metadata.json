@@ -2,7 +2,7 @@
   "ruleId": "strip-data-attr",
   "scope": "strip",
   "priority": 85,
-  "description": "Remove data-* attributes except pipeline-semantic ones (data-block, data-variant, data-slot) — arbitrary data attributes are dead weight in the WeChat article renderer",
+  "description": "Remove data-* attributes except pipeline-semantic ones consumed downstream (data-block / data-variant / data-block-slot family); camelCase and kebab-case hast property notations are normalized before lookup — arbitrary data attributes are dead weight in the WeChat article renderer",
   "wechatVersion": {
     "minSupported": "7.0.0",
     "knownBuggy": []

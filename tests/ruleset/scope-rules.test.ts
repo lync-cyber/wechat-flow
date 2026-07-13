@@ -144,35 +144,50 @@ describe("T-015 AC-003: clamp-rgba-alpha clamps alpha < 0.15 up to 0.15", () => 
   });
 });
 
-// ── AC-004: lint-grid-layout ─────────────────────────────────────────────────
+// ── AC-004: patch-grid-to-block ──────────────────────────────────────────────
 
-describe("T-015 AC-004: lint-grid-layout produces diagnostic for display:grid elements", () => {
-  it("produces a diagnostic with severity error and ruleId lint-grid-layout", async () => {
-    const mod = await import("../../packages/ruleset/src/rules/builtin/lint-grid-layout.ts");
+describe("T-015 AC-004: patch-grid-to-block 将 grid 显示值降级为微信粘贴后的实际回退值", () => {
+  it("display:grid 改写为 display:block，其余声明保留", async () => {
+    const mod = await import("../../packages/ruleset/src/rules/builtin/patch-grid-to-block.ts");
     const rule: RuleDefinition = mod.default;
 
     const el = makeElement("div", { style: "display:grid;grid-template-columns:1fr 1fr" }, []);
     const hast = makeHast([el]);
 
     const result = applyRuleset(hast, [rule]);
+    const div = (result.hast as Root).children[0] as Element;
+    const style = div.properties.style as string;
 
-    expect(result.diagnostics.length).toBeGreaterThanOrEqual(1);
-    const diag = result.diagnostics.find((d) => d.ruleId === "lint-grid-layout");
-    if (!diag) throw new Error("Expected diagnostic with ruleId lint-grid-layout not found");
-    expect(diag.severity).toBe("error");
-    expect(diag.ruleId).toBe("lint-grid-layout");
+    expect(style).toMatch(/display\s*:\s*block/);
+    expect(style).not.toMatch(/display\s*:\s*grid/);
+    expect(style).toMatch(/grid-template-columns\s*:\s*1fr 1fr/);
   });
 
-  it("does not produce a grid diagnostic for display:block elements", async () => {
-    const mod = await import("../../packages/ruleset/src/rules/builtin/lint-grid-layout.ts");
+  it("display:inline-grid 改写为 display:inline-block", async () => {
+    const mod = await import("../../packages/ruleset/src/rules/builtin/patch-grid-to-block.ts");
+    const rule: RuleDefinition = mod.default;
+
+    const el = makeElement("span", { style: "display:inline-grid;color:blue" }, []);
+    const hast = makeHast([el]);
+
+    const result = applyRuleset(hast, [rule]);
+    const span = (result.hast as Root).children[0] as Element;
+    const style = span.properties.style as string;
+
+    expect(style).toMatch(/display\s*:\s*inline-block/);
+    expect(style).toMatch(/color\s*:\s*blue/);
+  });
+
+  it("display:block 元素不受影响", async () => {
+    const mod = await import("../../packages/ruleset/src/rules/builtin/patch-grid-to-block.ts");
     const rule: RuleDefinition = mod.default;
 
     const el = makeElement("div", { style: "display:block" }, []);
     const hast = makeHast([el]);
 
     const result = applyRuleset(hast, [rule]);
+    const div = (result.hast as Root).children[0] as Element;
 
-    const gridDiag = result.diagnostics.filter((d) => d.ruleId === "lint-grid-layout");
-    expect(gridDiag).toHaveLength(0);
+    expect(div.properties.style).toBe("display:block");
   });
 });

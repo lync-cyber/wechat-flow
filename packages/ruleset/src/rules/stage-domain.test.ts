@@ -38,10 +38,11 @@ const OUTPUT_DOMAIN_RULE_IDS = [
   "transform-ul-marker-type",
   // patch
   "patch-flex-to-block",
+  "patch-grid-to-block",
   "patch-pseudo-element-materialize",
   // lint
   "lint-filter-backdrop",
-  "lint-grid-layout",
+  "lint-nowrap-percent-width",
   "lint-position-fixed",
   "readability-font-size-min",
   "readability-line-height-min",
@@ -66,12 +67,12 @@ function findRule(id: string): { id: string; stage: string } {
 }
 
 describe("T-183 AC-001: ruleset stage domain migration (arch 附录 A)", () => {
-  it("OUTPUT_DOMAIN_RULE_IDS 覆盖 arch 附录 A.2 output 域 37 条规则", () => {
-    expect(new Set(OUTPUT_DOMAIN_RULE_IDS).size).toBe(37);
-    expect(OUTPUT_DOMAIN_RULE_IDS).toHaveLength(37);
+  it("OUTPUT_DOMAIN_RULE_IDS 覆盖 arch 附录 A.2 output 域 38 条规则", () => {
+    expect(new Set(OUTPUT_DOMAIN_RULE_IDS).size).toBe(38);
+    expect(OUTPUT_DOMAIN_RULE_IDS).toHaveLength(38);
   });
 
-  it('全部 37 条 output 域规则 stage==="output"', () => {
+  it('全部 38 条 output 域规则 stage==="output"', () => {
     for (const id of OUTPUT_DOMAIN_RULE_IDS) {
       expect.soft(findRule(id).stage, `${id}.stage`).toBe("output");
     }

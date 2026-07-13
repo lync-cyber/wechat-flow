@@ -67,7 +67,7 @@ required_sections:
   | 12 | collectNightRiskIssues | hast → DiagnosticReport | `packages/core/src/pipeline/readability.ts` | 对 stage 11 output 相之后的**最终树**算夜间风险 / 对比度（消费真实产物计算样式）；仅产 `nightRiskIssues`，readability-* 三条字号/行高/段长诊断由 stage 11 `applyRuleset(...,"output")` 产出，不在此重复 |
   | 13 | serialize | hast → string | `pipeline/serialize.ts` | canonical 稳定排序字符串化 |
 
-  `composeRender` 输出 = stage 13 结束的 inline-styled HTML——output 相（stage 11 = `wechatAdapter.patch`）已对产物建模平台合规，即已达平台稳定态。复制 / 导出剪贴板路径**直接复制 render 产物**（`render().html`，预览 ≡ 复制天然成立）。对**任意外部 HTML** 的平台兼容体检由 M-004 `PlatformAdapter.inspect` 承载，非渲染主路径职责。两相分域依据、45 条规则 stage 归属、开闸风险与用户决策矩阵见 §2.M-003 附录 A / B。
+  `composeRender` 输出 = stage 13 结束的 inline-styled HTML——output 相（stage 11 = `wechatAdapter.patch`）已对产物建模平台合规，即已达平台稳定态。复制 / 导出剪贴板路径**直接复制 render 产物**（`render().html`，预览 ≡ 复制天然成立）。对**任意外部 HTML** 的平台兼容体检由 M-004 `PlatformAdapter.inspect` 承载，非渲染主路径职责。两相分域依据、46 条规则 stage 归属、开闸风险与用户决策矩阵见 §2.M-003 附录 A / B。
 - **两相执行契约**: authoring 相与 output 相共用单一注册表 `applyRuleset(hast, rules, stage)` 按 `RuleDefinition.stage` 过滤执行；authoring 相位于 inlineStyle 之前（作者输入域，保留源位置诊断），output 相位于全部样式合成 / 装饰注入 / customCss 之后、serialize 之前（产物合规域，serialize 前最后一个树变换）。规则 stage 归属由 metadata 显式声明（无缺省），归域裁定见 §2.M-003 附录 A。output 相对样式合成 / 装饰 / customCss 生成的声明建模平台过滤——主题 tag 样式的 `font-family`、pull-quote 槽位的 `position: relative` 等声明在样式合成后方存在，仅 output 相可见并拦截；置于 authoring 相（inlineStyle 之前）的产物合规规则对这些生成声明不可见。
 - **平台稳定态自证（原收敛不变量的诚实形式）**: `PlatformAdapter.inspect(render(x).html)` 对自家产物返回空 changes = 证明产物已达平台稳定态（output 相已将其落到稳定态，inspect 再跑零变更）。此为**按需触发的自证性质，非 CI 恒跑不变量**——`inspect` 只跑 output 域的**平台过滤规则子集**（strip / patch 族；排除 `clamp-*` / `readability-*` / `transform-em-to-px` / 夜间风险等产品归一，见 §2.M-003），render output 相已跑过该子集、inspect 幂等再跑零变更；且 render 产物 **div-free 由构造保证**（`allowDangerousHtml:false` + 容器原语 `section` + 零 div 创建，核实见 §2.M-003），inspect 专用 schema 的 div 剥离对自家产物零命中——故标签与规则两维均返回空。此为自证而非微信真机保真；正向真机保真由 §2.M-003「等效保真门禁」（全主题×全组合 CSS 模式 + 标签扫描）+ 附录 B 少量真机确认承载（避免 render/inspect 共享盲点假绿）。
 - **render target 与平台 patch（render target 二选，非 TargetProfile 分治）**: 微信剪贴板 / 粘贴目标（renderMarkdown 默认、`composeCopy`、`export_clipboard_payload`、MCP `render_markdown`）在 output 相施加 `wechatAdapter.patch`——微信专属调整（`font-size` 夹 14、`rgba` 夹 0.15、SVG `#ffffff`→`#fefefe`、`position` 族剥除、`display:flex`→block 等）。**长图导出 / 封面导出为独立 render target**（M-008 `composeExportLongImage` / `composeExportCover` 经 M-010 Playwright 服务端光栅化）：**不施加微信平台 patch**——图片经服务端确定性光栅化、不经微信粘贴过滤，微信专属调整对图片无意义（SVG 可留 `#ffffff`、淡背景可留低 alpha）。此区分是**每 render target「微信平台适配层 vs 无适配」的二选**（`platform` 选 `wechat` 或不选），本架构无 `TargetProfile` 分治参数化类型。
@@ -94,10 +94,10 @@ required_sections:
 - **职责**: 微信平台过滤规则的版本化运行时——规则注册、按作用域（strip / clamp / transform / patch / lint）分类执行、**按语义域（`stage: authoring | output`）两相执行**、规则集版本号管理、规则补丁热加载（F-011 AC-005）；过滤执行时为受影响节点产 `NodeChangeRecord[]`、为低对比度节点产 `NightRiskEntry[]`，统一入 `DiagnosticReport` 供 M-001 消费。output 域规则集是「平台对任意输入的过滤行为」的单一事实源，被三消费方共享：注册期校验（M-005）、渲染 output 相（M-002 stage 11）、平台适配 inspect（M-004 `PlatformAdapter.inspect`）。**平台过滤规则子集（strip / patch 族）**是 output 域内建模「微信真机会剥/改什么」的那一子集（`strip-*` / `patch-*` / `transform-svg-*` 等）；`clamp-*` / `readability-*` / `transform-em-to-px` / `transform-uppercase-hex-lower` / 夜间风险等是**产品诊断 / 归一**（不建模微信平台行为），**不进 inspect 的平台判定**（`AMENDMENT-platform-fidelity-r1#§9` R5）——inspect 只跑平台过滤子集，`render` output 相跑全 output 域（平台过滤 ∪ 产品归一）
 - **output 域 ruleset 本身即 hast 幂等 patch 层**: `strip-position` / `strip-font-family` / `patch-flex-to-block` / `transform-svg-white-offset` 等已是幂等 hast `RuleDefinition`、已在 `render.ts` output 相（stage 11）跑一次、`nodeChangeRecords` 已由 `apply.ts` 的 `executeStrip/executeTransform` 产出。采用 wechat-typeset 平台保真模型后，output ruleset = 平台 patch 链、`nodeChangeRecords` = inspect 报告——无须抽取 / 重写为独立 patch 层。**T-183 归域基础设施（`packages/ruleset` 37 条 output 域规则 + `stage-domain.test.ts` / `output-stage-behavior.test.ts` 基线）保留不拆**；平台保真重构只删重复的独立模拟器（见 §2.M-004），并在 output ruleset 之上做「补全平台常量单一源 + 补齐扫描面 + 兼容性报告/复制/MCP 改指向 output ruleset」三件事。
 - **映射功能**: F-007 (AC-001..AC-004) / F-011 (AC-001 规则级 fixture / AC-005 补丁库 / AC-006 可读性 / AC-007 关键词)
-- **规则语义域契约（stage，唯一权威）**: `RuleDefinition` 增 `stage: "authoring" | "output"` 字段；`metadata.json` schema 强制显式声明（无缺省值，缺失即 `E_SCHEMA` 校验 FAIL）。单一注册表两相执行——`applyRuleset(hast, ruleset, stage)` 先按 `stage` 过滤规则子集再执行：**该注册表 = `builtinRules`（42 条）+ `readabilityRules`（3 条）的 `RuleDefinition` 全集，作用于 hast 树**。`keyword-lint` **不在此注册表内**：它是独立函数 `lintMarkdown(content: string) → Diagnostic[]`（`lints/keyword-lint.ts`），作用于 Markdown 源文本而非 hast 树、语义归作者输入域但**不经 `applyRuleset` 分发**，故不计入 45 条注册、亦不占管线 stage 行（独立调用于 M-001 违规词检测与 M-009 `lint_markdown` Tool，诊断带 `ruleId: "keyword-lint"`，按 UC-013 分组判别契约归违规词组）。
+- **规则语义域契约（stage，唯一权威）**: `RuleDefinition` 增 `stage: "authoring" | "output"` 字段；`metadata.json` schema 强制显式声明（无缺省值，缺失即 `E_SCHEMA` 校验 FAIL）。单一注册表两相执行——`applyRuleset(hast, ruleset, stage)` 先按 `stage` 过滤规则子集再执行：**该注册表 = `builtinRules`（43 条）+ `readabilityRules`（3 条）的 `RuleDefinition` 全集，作用于 hast 树**。`keyword-lint` **不在此注册表内**：它是独立函数 `lintMarkdown(content: string) → Diagnostic[]`（`lints/keyword-lint.ts`），作用于 Markdown 源文本而非 hast 树、语义归作者输入域但**不经 `applyRuleset` 分发**，故不计入 46 条注册、亦不占管线 stage 行（独立调用于 M-001 违规词检测与 M-009 `lint_markdown` Tool，诊断带 `ruleId: "keyword-lint"`，按 UC-013 分组判别契约归违规词组）。
   - **authoring 相（作者输入域）**: 运行于渲染管线 inlineStyle 之前（M-002 stage 5），保留 mdast/hast 源位置诊断。归此的规则其目标构造**只出现在作者输入、且管线从不生成**，或**迁至 output 会破坏管线语义脚手架**（`data-node-id` / `data-block` / `data-variant` / `data-slot` / `data-{block}-{attr}` 透传）。经 `applyRuleset(...,"authoring")` 分发的 `RuleDefinition` 清单：`strip-script` / `strip-style-tag` / `strip-js-events` / `strip-id-attr` / `strip-data-attr` / `strip-aria-hidden`。违规关键词检测（`lints/keyword-lint.ts` 的 `lintMarkdown`）语义同属作者输入域，但作用于 Markdown 源文本、独立调用（非 `applyRuleset` 分发），源位置诊断在此保真。
   - **output 相（产物合规域）**: serialize 前最后一个树变换（M-002 stage 11），对**全部生成样式**——主题 tag 样式、block L1/L2 baseStyle、槽位样式、`decorate` 字面样式、装饰注入、`applyCustomCss` 级联结果——建模平台过滤。归此的规则其目标是 CSS 声明或 CSS 值变换，产物中绝大多数此类声明由样式合成阶段生成而非作者手写；置于 authoring 相（inlineStyle 之前）的规则对生成样式不可见——pull-quote 槽位的 `position: relative`、主题 tag 样式的 `font-family` 等声明在样式合成后方存在，须由 output 相拦截。
-  - 完整 43（现 45 注册）条归域裁定见**附录 A**。
+  - 完整归域裁定（现 46 注册）见**附录 A**。
 - **对外接口**:
   - 包级 API：`applyRuleset(hast, ruleset, stage: "authoring" | "output") → {hast, report}`，其中 `report: DiagnosticReport`；`getRulesetVersion() → string`；被 M-002 两相调用（stage 5 传 `"authoring"`、stage 11 传 `"output"`）。`stage` 缺省行为不存在——调用方必须显式传相，防止误将全集在单点执行
   - **outbound 数据契约**：`DiagnosticReport.nodeChangeRecords[] → M-001 UC-013.1 CompatibilityDiffView 消费`；`DiagnosticReport.nightRiskIssues[] → M-001 DiagnosticsPanel `night-risk-alert` 状态消费`
@@ -167,7 +167,7 @@ required_sections:
 
 #### 附录 A: 45 条内置规则归域裁定表（分组开闸执行清单）
 
-规则清册核实：`packages/ruleset/src/rules/builtin/` 42 条（metadata 支撑）+ `rules/readability/` 3 条 = 45 条注册；减 `strip-width-height-inline`（已裁移除）= 44 条参与两相执行。**归属依据**判据：目标构造是否由样式合成 / 装饰 / customCss **生成**（生成→output），或迁 output 是否破坏管线语义脚手架（破坏→authoring）。**开闸风险** = 迁至 output 相后对现有生成样式的预期命中，是开闸时逐组基线 diff 审计的预警。
+规则清册核实：`packages/ruleset/src/rules/builtin/` 43 条（metadata 支撑）+ `rules/readability/` 3 条 = 46 条注册并全量参与两相执行；`strip-width-height-inline` 已裁移除（A.3 留档）。**归属依据**判据：目标构造是否由样式合成 / 装饰 / customCss **生成**（生成→output），或迁 output 是否破坏管线语义脚手架（破坏→authoring）。**开闸风险** = 迁至 output 相后对现有生成样式的预期命中，是开闸时逐组基线 diff 审计的预警。
 
 ##### A.1 authoring 相（作者输入域，7 条 + keyword-lint）——不迁移
 
@@ -182,7 +182,7 @@ required_sections:
 | strip-aria-hidden | strip | `aria-hidden` 仅来自作者输入（已核实：divider/decoration 注入不产 aria-hidden） | 迁 output 无必要；注：现有 camelCase matcher 在真实解析路径 no-op（与归域正交，独立处理） |
 | keyword-lint（`lints/keyword-lint.ts`，非 `RuleDefinition`、不经 `applyRuleset` 分发） | lint | 违规词检测须映射作者源文位置；`lintMarkdown(content)` 作用于 Markdown 源文本 | 独立于两相注册表——语义域天然作者输入，源位置诊断在此保真；不计入 45 条注册、不占 stage 行 |
 
-##### A.2 output 相（产物合规域，37 条）——分组开闸
+##### A.2 output 相（产物合规域，38 条）——分组开闸
 
 | ruleId | scope | 归属依据（生成源） | 开闸风险（迁 output 后预期命中） |
 |---|---|---|---|
@@ -216,9 +216,10 @@ required_sections:
 | transform-data-uri-unquote | transform | data URI url() 引号（背景图生成） | 命中生成 data URI 引号 |
 | transform-ul-marker-type | transform | list-style-type 由主题生成，标记物化读生成值 | 命中主题列表样式；须在 inlineStyle 后读 list-style-type；transform-list-to-table 归 authoring 后 ul 已转 table，本规则对列表内容惰性（table 策略活跃） |
 | patch-flex-to-block | patch | display:flex 可由 baseStyle 生成 | 命中生成 flex→block |
+| patch-grid-to-block | patch | display:grid/inline-grid 可由 customCss 生成（白名单放行 display） | 命中生成 grid→block / inline-grid→inline-block，镜像微信剥离后回退值，预览 ≡ 粘贴后视觉 |
 | patch-pseudo-element-materialize | lint | ::before/::after 来自 customCss/主题装饰 | 诊断生成/customCss 伪元素；须置于 applyCustomCss 之后。`scope: lint`（非 patch）——伪元素物化仅能在 juice 处理后**诊断**而不改写树，故命名带 `patch-` 但作用域为 lint |
 | lint-filter-backdrop | lint | backdrop-filter 可由 baseStyle/customCss 生成 | 诊断生成 backdrop-filter |
-| lint-grid-layout | lint | display:grid 可由 baseStyle 生成 | 诊断生成 grid |
+| lint-nowrap-percent-width | lint | white-space:nowrap + 百分比 width 同节点组合可由 baseStyle/customCss 生成（合法单属性、致命组合，微信粘贴后 shrink-to-fit 塌陷） | 诊断致命组合，建议显式 px 宽；grid 显示值由 patch-grid-to-block 改写故无独立 grid lint |
 | lint-position-fixed | lint | position:fixed 可由生成样式产生 | 诊断生成 fixed |
 | readability-font-size-min | lint | 须读最终计算字号（token/baseStyle 生成）；现运行于 inlineStyle 前无法见生成字号（潜伏失效） | 命中全部生成小字号——与 clamp-font-size 同源，决策矩阵② |
 | readability-line-height-min | lint | 须读最终计算行高 | 命中生成低行高——与 clamp-line-height 同源 |

@@ -18,15 +18,15 @@ describe("T-182 AC-001: RuleDefinition.stage is mandatory with no default", () =
     expect(incomplete.id).toBe("t182-missing-stage-probe");
   });
 
-  it("builtinRules contains exactly 45 entries (42 non-readability + 3 readability)", () => {
-    expect(builtinRules).toHaveLength(45);
+  it("builtinRules contains exactly 46 entries (43 non-readability + 3 readability)", () => {
+    expect(builtinRules).toHaveLength(46);
   });
 
-  it("builtinRules declares exactly 7 authoring-stage entries and 38 output-stage entries (arch 附录 A)", () => {
+  it("builtinRules declares exactly 7 authoring-stage entries and 39 output-stage entries (arch 附录 A)", () => {
     const authoring = builtinRules.filter((r) => (r as { stage?: string }).stage === "authoring");
     const output = builtinRules.filter((r) => (r as { stage?: string }).stage === "output");
     expect(authoring).toHaveLength(7);
-    expect(output).toHaveLength(38);
+    expect(output).toHaveLength(39);
   });
 
   it("readabilityRules (3 entries) explicitly declare stage: 'output' (arch 附录 A.2 lint 域)", () => {

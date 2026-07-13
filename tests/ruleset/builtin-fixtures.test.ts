@@ -24,7 +24,13 @@ const NON_RULE_FILES = new Set(["index.ts", "css-helpers.ts"]);
 async function loadBuiltinRuleIds(): Promise<string[]> {
   const entries = await readdir(BUILTIN_DIR, { withFileTypes: true });
   return entries
-    .filter((e) => e.isFile() && e.name.endsWith(".ts") && !NON_RULE_FILES.has(e.name))
+    .filter(
+      (e) =>
+        e.isFile() &&
+        e.name.endsWith(".ts") &&
+        !e.name.endsWith(".test.ts") &&
+        !NON_RULE_FILES.has(e.name)
+    )
     .map((e) => e.name.replace(/\.ts$/, ""))
     .sort();
 }
