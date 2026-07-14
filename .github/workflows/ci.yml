@@ -86,6 +86,8 @@ jobs:
         run: pnpm guard:arch
       - name: 模块边界守卫（公共 API 边界 / 禁跨包深引用）
         run: pnpm guard:boundaries
+      - name: 视觉基线覆盖守卫（已注册场景 vs 已提交 linux 基线，缺失即报补 seed 指引）
+        run: pnpm guard:visual-baselines
       - name: 密钥扫描（全 git 历史，深度兜底）
         uses: gitleaks/gitleaks-action@v2
         env:

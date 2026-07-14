@@ -32,6 +32,7 @@
     "realworld-verify": "tsx scripts/realworld-verify.ts",
     "test:visual": "playwright test",
     "test:visual:update": "playwright test --update-snapshots",
+    "guard:visual-baselines": "tsx scripts/check-visual-baseline-coverage.ts",
     "guard:secrets": "secretlint --maskSecrets --secretlintignore .secretlintignore \"**/*\"",
     "design:token-diff": "tsx scripts/design-sync/token-diff.ts",
     "design:export-tokens": "tsx scripts/design-sync/export-penpot-tokens.ts",
