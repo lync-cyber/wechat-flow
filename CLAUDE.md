@@ -33,15 +33,14 @@
 - 构建/任务编排: Turborepo 2.3（`turbo build`）；apps/editor 用 Vite 6
 
 ## 项目状态 (orchestrator专属写入区，其他Agent禁止修改)
-- 当前阶段: development（Sprint 7 收尾：T-172 r3 走查进行中——阶段一编辑器走查完成并牵出变体渲染缺口重大发现（PR #121 r1+r2）；阶段二真机采集待用户执行）
+- 当前阶段: development（Sprint 7 收尾：用户裁定优先处理变体渲染缺口簇（设计问题+设计资产缺失，PR #121 报告为裁定输入）；T-172 r3/T-188 阶段二真机采集延后）
 - 上次完成: 变体渲染缺口全量清点 r1+r2（PR #121，docs/reviews/walkthrough/WALKTHROUGH-variant-render-gap-20260714-r{1,2}.md）：用户走查发现 12 变体纯文本 → 管线全量清点实为 155 注册变体中 96 个名不符实（A 类 59 丢失块级基线——getBlockBaseStyle 具名变体不回退块基线；B 类 37 与 default 字节级 no-op，含属性门控假阳性）；视觉基线门禁因「基线 seed 自坏渲染」循环论证全绿放行。r2 增补：命名对照证实缺口变体系 taxonomy 期自造清单（非 wechat-typeset 导入残留，真正导入的 §10 装饰变体批实测全部正常）+ wechat-typeset「注册即实现 + satisfies 对齐」机制参照写入处置建议。PR #120（视觉基线守卫 + T-172 r3 走查清单落库）已合 main。
   - 历史批次（残留收编 #120、红队波审闭环、PR #117 合 main 等）见 git/PR 历史与 EVENT-LOG，不在此累积。
 - 下一步行动:
-  - ① **PR #121 用户审阅合并**（变体渲染缺口走查报告 r1+r2——ui-designer/architect 裁定输入）
-  - ② 用户门卡: T-188 / T-172 r3 真机确认**阶段二**（阶段一编辑器走查已完成：AC-001 面板/四装饰变体视觉正常，缺口簇不阻塞 sign-off；剩真机粘贴采集——聚焦文档粘进微信确认 display:table 三类块存活 + dropcap 剥 font-family 观感裁定；通过→T-157 blocking_conditions 清空→T-159 AC-004；确认写 event=user_decision 载 design_signoff 语义）· T-180（ui-spec finalize 受上游 #472 限制，attended 处理）
-  - ③ **变体渲染缺口裁定立项**（依 PR #121 报告：ui-designer 以 wechat-typeset 171 资产库为基准逐项裁清单 → architect 裁「注册即实现」机制收敛 → 过渡期 no-op 守卫 → 基线全矩阵重 seed）
-  - ④ sprint-review（待用户门卡收口后执行；含既有 open 注记，见 当前Sprint；新增待记注记：readability-line-height-min 不尊重 data-lh-exempt 豁免致装饰槽位假警告 ×4（走查报告 r3 残差段）· 变体渲染缺口簇（PR #121））
-  - ⑤ release go/no-go（见 待办）
+  - ① **变体渲染缺口裁定立项（首要，user_decision 2026-07-14）**：依走查报告 walkthrough-variant-render-gap-20260714-r2 处置建议——并行派发 ui-designer（以 wechat-typeset 171 资产库为基准逐项裁 A 类 59+B 类 37 清单：保留成建制导入/删注册/属性门控豁免，产 amendment 草案待用户 sign-off）与 architect（机制裁定 amendment：具名变体基线回退止血 vs「注册即实现+satisfies 对齐」结构收敛 vs 混合；含 59 变体产物/基线/golden SHA 影响评估）→ 双草案 sign-off 后 task-decomp 拆卡实现 → 过渡期 no-op 守卫 → 基线全矩阵重 seed。锚点：packages/core/src/registry/variant.ts getBlockBaseStyle（机制根因）· wechat-typeset 仓 src/core/variants/（171 资产+registry.ts 三步注册）· ui-spec §10（已定稿 9 块装饰变体实测正常）
+  - ② 用户门卡（**延后，待 ① 收口后回捡**）: T-188 / T-172 r3 真机确认阶段二（阶段一编辑器走查已完成：AC-001 面板/四装饰变体视觉正常；剩真机粘贴采集——操作手册与聚焦文档见会话记录及 WALKTHROUGH-t172-paste-regression-20260709-r3.md；通过→T-157 blocking_conditions 清空→T-159 AC-004；确认写 event=user_decision 载 design_signoff 语义）· T-180（ui-spec finalize 受上游 #472 限制，attended 处理）
+  - ③ sprint-review（待用户门卡收口后执行；含既有 open 注记，见 当前Sprint；新增待记注记：readability-line-height-min 不尊重 data-lh-exempt 豁免致装饰槽位假警告 ×4（走查报告 r3 残差段）· 变体渲染缺口簇（walkthrough r2））
+  - ④ release go/no-go（见 待办）
   - **禁区（长期有效）**: 禁 git stash；`context finalize` 勿强推（#472）。（strip-data-attr/strip-aria-hidden 双改禁区已解除——用户确认无其它会话处理，修复落于 claude/cataforge-cli-uv-install-lhlag6）
 - 已完成阶段: [requirements, architecture, ui_design, dev_planning, cross_doc_amendment_r2, arch_special_review_css_inlining, dev_plan_amendment_custom_styles, development, testing, deployment, s7_visual_upgrade_planning]
 - 当前Sprint: 7（视觉升级批 + 修复批 + 批二 + 架构专项批）。Sprint 0-6 全 DONE 合 main（PR #1-#72）。
