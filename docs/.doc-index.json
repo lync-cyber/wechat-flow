@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-14T08:26:10.427467+00:00",
+  "generated_at": "2026-07-14T08:39:21.799350+00:00",
   "documents": {
     "amendment-platform-fidelity-r1": {
       "file_path": "docs/arch/AMENDMENT-platform-fidelity-r1.md",
@@ -5509,6 +5509,18 @@
       "total_lines": 102,
       "est_tokens": 1654,
       "content_hash": "134d72be",
+      "sections": {},
+      "deps": [
+        "T-172"
+      ]
+    },
+    "walkthrough-variant-render-gap-20260714-r2": {
+      "file_path": "docs/reviews/walkthrough/WALKTHROUGH-variant-render-gap-20260714-r2.md",
+      "doc_type": "walkthrough",
+      "status": "draft",
+      "total_lines": 131,
+      "est_tokens": 2575,
+      "content_hash": "ed27ef0b",
       "sections": {},
       "deps": [
         "T-172"
