@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-14T07:50:33.562466+00:00",
+  "generated_at": "2026-07-14T08:26:10.427467+00:00",
   "documents": {
     "amendment-platform-fidelity-r1": {
       "file_path": "docs/arch/AMENDMENT-platform-fidelity-r1.md",
@@ -5500,6 +5500,18 @@
       "deps": [
         "T-172",
         "T-157"
+      ]
+    },
+    "walkthrough-variant-render-gap-20260714-r1": {
+      "file_path": "docs/reviews/walkthrough/WALKTHROUGH-variant-render-gap-20260714-r1.md",
+      "doc_type": "walkthrough",
+      "status": "draft",
+      "total_lines": 102,
+      "est_tokens": 1654,
+      "content_hash": "134d72be",
+      "sections": {},
+      "deps": [
+        "T-172"
       ]
     },
     "test-report-wechat-flow": {
