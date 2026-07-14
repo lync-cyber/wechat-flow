@@ -33,13 +33,13 @@
 - 构建/任务编排: Turborepo 2.3（`turbo build`）；apps/editor 用 Vite 6
 
 ## 项目状态 (orchestrator专属写入区，其他Agent禁止修改)
-- 当前阶段: development（Sprint 7 收尾：两分支待用户审阅合并——claude/start-orchestrator-continue-2hx9cs 红队遗留闭合 · claude/cataforge-cli-uv-install-lhlag6 平台保真缺口闭合+rail 简化；剩余卡均用户门）
-- 上次完成: 平台保真缺口闭合 + 左栏 rail 简化（分支 claude/cataforge-cli-uv-install-lhlag6，四门禁全绿：vitest 4486/typecheck/biome 871/cross-runtime 四运行时）。明细：strip-data-attr camel/kebab 归一修复（PRESERVE 对齐真实管线 17 键）· patch-grid-to-block 新增（grid 与 flex 对称，删 lint-grid-layout）· lint-nowrap-percent-width 组合诊断新增 · author-card 死属性清理 · 左栏收纳态删 3 个 emoji Tab 图标（ui-spec UC-006 同步）。
+- 当前阶段: development（Sprint 7 收尾：残留收编 PR #120 待用户合并；剩余卡均用户门）
+- 上次完成: 会话残留收编（PR #120）：视觉基线覆盖守卫（scripts/check-visual-baseline-coverage.ts + guard:visual-baselines 接线 package.json/CI，本机实测 850 场景全覆盖绿）+ T-172 r3 走查清单落库（docs/reviews/walkthrough/WALKTHROUGH-t172-paste-regression-20260709-r3.md，真机确认用户门卡的持久化载体）+ doc-index 刷新 + 临时脚本 tmp-t172-full.ts 清理。此前两分支 PR #118（红队遗留闭合）/#119（平台保真缺口闭合+rail 简化）已由用户合并入 main。
   - 历史批次（红队波审闭环、PR #117 合 main 等）见 git/PR 历史与 EVENT-LOG，不在此累积。
 - 下一步行动:
-  - ① **两分支用户审阅合并**: claude/start-orchestrator-continue-2hx9cs（红队 R-003/R-004/R-005/R-007 处置）· claude/cataforge-cli-uv-install-lhlag6（平台保真缺口闭合 + rail 简化）
-  - ② 用户门卡: T-188 / T-172 r3 真机确认（≤6 份微信粘贴确认 display:table 存活，通过→T-157 blocking_conditions 清空→T-159 AC-004；确认写 event=user_decision 载 design_signoff 语义）· T-180（ui-spec finalize 受上游 #472 限制，attended 处理）
-  - ③ sprint-review（待用户门卡收口后执行；含既有 open 注记，见 当前Sprint）
+  - ① **PR #120 用户审阅合并**（会话残留收编：视觉基线守卫 + T-172 r3 走查清单）
+  - ② 用户门卡: T-188 / T-172 r3 真机确认（走查清单见 docs/reviews/walkthrough/WALKTHROUGH-t172-paste-regression-20260709-r3.md，含 dropcap 剥 font-family 观感裁定点；≤6 份微信粘贴确认 display:table 存活，通过→T-157 blocking_conditions 清空→T-159 AC-004；确认写 event=user_decision 载 design_signoff 语义）· T-180（ui-spec finalize 受上游 #472 限制，attended 处理）
+  - ③ sprint-review（待用户门卡收口后执行；含既有 open 注记，见 当前Sprint；新增待记注记：readability-line-height-min 不尊重 data-lh-exempt 豁免致装饰槽位假警告 ×4，见走查报告 r3 残差段）
   - ④ release go/no-go（见 待办）
   - **禁区（长期有效）**: 禁 git stash；`context finalize` 勿强推（#472）。（strip-data-attr/strip-aria-hidden 双改禁区已解除——用户确认无其它会话处理，修复落于 claude/cataforge-cli-uv-install-lhlag6）
 - 已完成阶段: [requirements, architecture, ui_design, dev_planning, cross_doc_amendment_r2, arch_special_review_css_inlining, dev_plan_amendment_custom_styles, development, testing, deployment, s7_visual_upgrade_planning]
