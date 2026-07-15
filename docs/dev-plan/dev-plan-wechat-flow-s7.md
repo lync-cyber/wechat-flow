@@ -2098,16 +2098,16 @@ graph LR
 - **security_sensitive**: false
 - **dependencies**: [T-190, T-191]
 - **acceptance_criteria**:
-  - [ ] AC-001: no-op 变体命中 — 给定测试探针块注册一个 `baseStyle.root = {}`（空 delta）的具名变体，When 差分守卫主函数运行，Then 返回的 finding 列表含 `{blockId:"probe-block", variantId:该探针variant}`
-  - [ ] AC-002: 真实差异变体不命中 — 给定 `callout.tip`（root style 含 `box-shadow`/`background` 等不同于 default 的声明），When 差分守卫运行，Then finding 列表不含 `{blockId:"callout", variantId:"tip"}`
-  - [ ] AC-003: plain-allowlist 豁免 — 给定变体命中 `intentional-plain-variants.ts` 的 allowlist 集合，即便其渲染字节 ≡ default，When 差分守卫运行，Then finding 列表不含该项
-  - [ ] AC-004: WARN 模式非阻断 — 给定当前真实注册表（含尚未落地的 A/B 类缺口变体），When 差分守卫测试用例运行，Then 用例本身 `expect` 断言通过（不因 finding 非空而失败），且对每条 finding 调用 `console.warn` 输出 `{blockId, variantId}` 可读信息（用 spy 断言 `console.warn` 被调用次数 === finding 数量）
-  - [ ] AC-005: 全量覆盖复用现有 fixture 生成器 — 差分守卫复用 `tests/blocks/wechat-paste-safe-output.test.ts` 现有 `buildDirectiveMarkdown`/`synthesizeDirectiveContent`（抽取为共享模块 `tests/blocks/directive-markdown-fixtures.ts`，两处 import，避免重复实现同一 fixture 生成逻辑）；覆盖范围排除 `packages/blocks/src/known-blocked-variants.ts`（T-207 产出）登记的 blocked 项，不对其运行差分比较（避免对 DOM 契约未定的块产生无意义 finding 噪声）
+  - [x] AC-001: no-op 变体命中 — 给定测试探针块注册一个 `baseStyle.root = {}`（空 delta）的具名变体，When 差分守卫主函数运行，Then 返回的 finding 列表含 `{blockId:"probe-block", variantId:该探针variant}`
+  - [x] AC-002: 真实差异变体不命中 — 给定 `callout.tip`（root style 含 `box-shadow`/`background` 等不同于 default 的声明），When 差分守卫运行，Then finding 列表不含 `{blockId:"callout", variantId:"tip"}`
+  - [x] AC-003: plain-allowlist 豁免 — 给定变体命中 `intentional-plain-variants.ts` 的 allowlist 集合，即便其渲染字节 ≡ default，When 差分守卫运行，Then finding 列表不含该项
+  - [x] AC-004: WARN 模式非阻断 — 给定当前真实注册表（含尚未落地的 A/B 类缺口变体），When 差分守卫测试用例运行，Then 用例本身 `expect` 断言通过（不因 finding 非空而失败），且对每条 finding 调用 `console.warn` 输出 `{blockId, variantId}` 可读信息（用 spy 断言 `console.warn` 被调用次数 === finding 数量）
+  - [x] AC-005: 全量覆盖复用现有 fixture 生成器 — 差分守卫复用 `tests/blocks/wechat-paste-safe-output.test.ts` 现有 `buildDirectiveMarkdown`/`synthesizeDirectiveContent`（抽取为共享模块 `tests/blocks/directive-markdown-fixtures.ts`，两处 import，避免重复实现同一 fixture 生成逻辑）；覆盖范围排除 `packages/blocks/src/known-blocked-variants.ts`（T-207 产出）登记的 blocked 项，不对其运行差分比较（避免对 DOM 契约未定的块产生无意义 finding 噪声）
 - **deliverables**:
-  - [ ] `packages/core/src/registry/variant-diff-guard.ts`（新文件）— 差分核心逻辑（渲染 + 归一化字节比较 + allowlist/blocked 排除）
-  - [ ] `tests/blocks/directive-markdown-fixtures.ts`（新文件，从 `tests/blocks/wechat-paste-safe-output.test.ts` 抽取 `buildDirectiveMarkdown`/`synthesizeDirectiveContent` 共享）
-  - [ ] `tests/blocks/wechat-paste-safe-output.test.ts` — 改为 import 共享 fixture 模块（非行为变更，纯去重）
-  - [ ] `tests/registry/variant-diff-guard.test.ts`（新文件）— WARN 模式验证
+  - [x] `packages/core/src/registry/variant-diff-guard.ts`（新文件）— 差分核心逻辑（渲染 + 归一化字节比较 + allowlist/blocked 排除）
+  - [x] `tests/blocks/directive-markdown-fixtures.ts`（新文件，从 `tests/blocks/wechat-paste-safe-output.test.ts` 抽取 `buildDirectiveMarkdown`/`synthesizeDirectiveContent` 共享）
+  - [x] `tests/blocks/wechat-paste-safe-output.test.ts` — 改为 import 共享 fixture 模块（非行为变更，纯去重）
+  - [x] `tests/registry/variant-diff-guard.test.ts`（新文件）— WARN 模式验证
 - **context_load**:
   - amendment-variant-mechanism-20260715-r1#§6
   - amendment-variant-mechanism-20260715-r1#§4
