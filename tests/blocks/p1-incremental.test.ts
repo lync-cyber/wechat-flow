@@ -101,7 +101,7 @@ describe("AC-004: listAllVariants 总量 ≥ 120，核心 Block variant 配额",
   });
 
   it.each([
-    ["quote", 10],
+    ["quote", 9],
     ["steps", 10],
   ] as const)("Block '%s' variants 数量 ≥ %d", (id, minCount) => {
     const def = mustDescribeBlock(id);
@@ -117,7 +117,7 @@ describe("AC-004: listAllVariants 总量 ≥ 120，核心 Block variant 配额",
     ["pull-quote", 5],
     ["table", 5],
     ["divider", 5],
-    ["card", 5],
+    ["card", 4],
     ["highlight-block", 5],
     ["compare", 5],
   ] as const)("Block '%s' variants 数量 ≥ %d", (id, minCount) => {

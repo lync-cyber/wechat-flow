@@ -24,7 +24,6 @@ export const subscribeCta = defineBlock(
   "marketing",
   [
     { id: "default", label: "标准订阅引导" },
-    { id: "centered", label: "居中订阅引导" },
     {
       id: "banner",
       label: "横幅订阅引导",

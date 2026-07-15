@@ -33,7 +33,6 @@ export const qrcode = defineBlock(
   "media",
   [
     { id: "default", label: "标准二维码" },
-    { id: "with-logo", label: "带 Logo 二维码" },
     {
       id: "card",
       label: "卡片二维码",

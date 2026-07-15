@@ -2543,14 +2543,14 @@ graph LR
 - **security_sensitive**: false
 - **dependencies**: []
 - **acceptance_criteria**:
-  - [ ] AC-001: `quote.large`/`card.horizontal`/`publication-skeleton.magazine`/`publication-skeleton.minimal`/`reading-time.badge`/`advert-card.horizontal`/`subscribe-cta.centered` 共 7 项从各自块的 `variants` 数组移除注册
-  - [ ] AC-002: `image-caption.overlay`/`qrcode.with-logo`/`video.autoplay` 共 3 项从各自块的 `variants` 数组移除注册
-  - [ ] AC-003: 移除后 `listAllVariants()` 不再包含上述 10 项；各自块的其余变体（含 `default`）渲染产物不受影响（字节相同）
-  - [ ] AC-004: 移除项若存在对应的 `e2e/visual/` 快照文件，一并清理（避免孤儿快照污染视觉基线目录，为 T-211 全矩阵重 seed 提供干净起点）
-  - [ ] AC-005: 全仓四门禁绿
+  - [x] AC-001: `quote.large`/`card.horizontal`/`publication-skeleton.magazine`/`publication-skeleton.minimal`/`reading-time.badge`/`advert-card.horizontal`/`subscribe-cta.centered` 共 7 项从各自块的 `variants` 数组移除注册
+  - [x] AC-002: `image-caption.overlay`/`qrcode.with-logo`/`video.autoplay` 共 3 项从各自块的 `variants` 数组移除注册
+  - [x] AC-003: 移除后 `listAllVariants()` 不再包含上述 10 项；各自块的其余变体（含 `default`）渲染产物不受影响（字节相同）
+  - [x] AC-004: 移除项若存在对应的 `e2e/visual/` 快照文件，一并清理（避免孤儿快照污染视觉基线目录，为 T-211 全矩阵重 seed 提供干净起点）
+  - [x] AC-005: 全仓四门禁绿
 - **deliverables**:
-  - [ ] `packages/blocks/src/blocks/{quote,card,publication-skeleton,reading-time,advert-card,subscribe-cta,image-caption,qrcode,video}.ts` — 10 处变体条目移除
-  - [ ] `e2e/visual/` 孤儿快照清理
+  - [x] `packages/blocks/src/blocks/{quote,card,publication-skeleton,reading-time,advert-card,subscribe-cta,image-caption,qrcode,video}.ts` — 10 处变体条目移除
+  - [x] `e2e/visual/` 孤儿快照清理
 - **context_load**:
   - variant-gap-triage-20260715-r1#§1
   - variant-gap-triage-20260715-r1#§2

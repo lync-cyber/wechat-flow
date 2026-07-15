@@ -71,7 +71,6 @@ export const quote = defineBlock(
         },
       },
     },
-    { id: "large", label: "大字引用" },
     {
       id: "italic",
       label: "斜体引用",

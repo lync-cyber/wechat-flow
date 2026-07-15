@@ -8,7 +8,6 @@ export const readingTime = defineBlock(
   "meta",
   [
     { id: "default", label: "标准阅读时长" },
-    { id: "badge", label: "徽章式阅读时长" },
     {
       id: "inline",
       label: "行内阅读时长",

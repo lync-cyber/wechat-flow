@@ -9,6 +9,9 @@ import "../../packages/blocks/src/index.ts";
 
 const P1_BLOCK_IDS = ["author-card", "publication-skeleton", "kpi-card", "qa", "footnote"] as const;
 
+// 具名变体全部 DELETE 后合法只剩 default 的单变体块，不适用 ≥2 变体下限。
+const SINGLE_VARIANT_BLOCKS = new Set<string>(["publication-skeleton"]);
+
 beforeEach(() => {
   resetBlockRegistry();
 });
@@ -35,9 +38,10 @@ describe("AC-001: listBlocks 长度 ≥ 30，5 个新 ID 全部注册", () => {
 });
 
 describe("AC-002: 每新增 Block 注册 ≥ 2 variant，directiveAttrs Zod parse 无异常", () => {
-  it.each(P1_BLOCK_IDS)("Block '%s' variants 数量 ≥ 2", (id) => {
+  it.each(P1_BLOCK_IDS)("Block '%s' variants 数量满足下限（单变体块 ≥1，其余 ≥2）", (id) => {
     const def = mustDescribeBlock(id);
-    expect(def.variants.length).toBeGreaterThanOrEqual(2);
+    const min = SINGLE_VARIANT_BLOCKS.has(id) ? 1 : 2;
+    expect(def.variants.length).toBeGreaterThanOrEqual(min);
   });
 
   it.each(P1_BLOCK_IDS)("Block '%s' variants 每项 id 非空字符串", (id) => {

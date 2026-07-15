@@ -14,8 +14,8 @@ describe("T-207 AC-001: audio/video 具名变体从 variants 数组移除", () =
     expect(audio.variants.map((v) => v.id)).toEqual(["default"]);
   });
 
-  it("video.variants 仅剩 default/autoplay，不再含 with-caption", () => {
-    expect(video.variants.map((v) => v.id)).toEqual(["default", "autoplay"]);
+  it("video.variants 仅剩 default，不再含 with-caption/autoplay", () => {
+    expect(video.variants.map((v) => v.id)).toEqual(["default"]);
   });
 });
 
@@ -27,7 +27,7 @@ describe("T-207 AC-002: KNOWN_BLOCKED_VARIANTS 登记三项 blocked 变体", () 
     expect(KNOWN_BLOCKED_VARIANTS.size).toBe(3);
   });
 
-  it("不含未受本卡处置的 video::autoplay（永久 DELETE，归 T-208）", () => {
+  it("不含 video::autoplay（T-208 永久 DELETE，非 feasibility-blocked）", () => {
     expect(KNOWN_BLOCKED_VARIANTS.has("video::autoplay")).toBe(false);
   });
 });
@@ -40,11 +40,11 @@ describe("T-207 AC-003: listAllVariants 与 default 渲染字节保真", () => {
     expect(keys.has("video::with-caption")).toBe(false);
   });
 
-  it("listAllVariants() 仍保留 audio::default / video::default / video::autoplay", () => {
+  it("listAllVariants() 仍保留 audio::default / video::default，不再含 video::autoplay（T-208 DELETE）", () => {
     const keys = new Set(listAllVariants().map((v) => `${v.blockId}::${v.id}`));
     expect(keys.has("audio::default")).toBe(true);
     expect(keys.has("video::default")).toBe(true);
-    expect(keys.has("video::autoplay")).toBe(true);
+    expect(keys.has("video::autoplay")).toBe(false);
   });
 
   it("audio default 渲染产物与移除前字节相同（golden 锁）", async () => {

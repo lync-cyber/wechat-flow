@@ -64,7 +64,6 @@ export const imageCaption = defineBlock(
   "media",
   [
     { id: "default", label: "底部说明" },
-    { id: "overlay", label: "覆盖说明" },
     {
       id: "side",
       label: "侧边说明",

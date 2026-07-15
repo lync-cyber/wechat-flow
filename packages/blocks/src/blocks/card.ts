@@ -31,7 +31,6 @@ export const card = defineBlock(
         },
       },
     },
-    { id: "horizontal", label: "横排卡片" },
     {
       id: "minimal",
       label: "简约卡片",
