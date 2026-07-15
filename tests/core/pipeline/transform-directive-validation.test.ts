@@ -160,9 +160,9 @@ describe("AC-004: 声明属性按 data-{block}-{attr} 统一透传，独立于�
     expect(el?.properties?.["data-pull-quote-author"]).toBe("鲁迅");
   });
 
-  it("dialog 非 chat-bubbles 变体（interview）携带 speaker/avatar → hast 根元素带对应 data-dialog-speaker / data-dialog-avatar", () => {
+  it("dialog 非结构化变体（default）携带 speaker/avatar → hast 根元素带对应 data-dialog-speaker / data-dialog-avatar", () => {
     const mdast = parseMarkdown(
-      ':::dialog{.interview speaker="甲" avatar="https://example.test/a.png"}\n你好\n:::'
+      ':::dialog{.default speaker="甲" avatar="https://example.test/a.png"}\n你好\n:::'
     );
     const hast = transformToHast(mdast, []);
     const el = findElementByDataBlock(hast, "dialog");

@@ -2409,14 +2409,14 @@ graph LR
 - **security_sensitive**: false
 - **dependencies**: [T-190, T-191]
 - **acceptance_criteria**:
-  - [ ] AC-001: `image.rounded` 渲染 root 含 `border-radius` 声明；`image.full-width` 渲染 root `width:100%`
-  - [ ] AC-002: `image-caption.side` 渲染呈现图片 cell + 文字说明 cell 并排的 `table-cell` 双列结构（复用 `gallery.duo` 已验证技术，不含 `position:absolute` 声明）
-  - [ ] AC-003: `dialog.interview` 渲染呈现左列姓名（含大写/加粗声明）+ 右列长答内容的双栏结构，含 hairline 沟槽声明（如 `border-left` 细线分隔两栏）
-  - [ ] AC-004: `timeline.horizontal` 渲染呈现横向主轴布局（与 `steps.horizontal` 视觉一致的实线主轴处理，各自独立实现不共享代码）；`timeline.compact` 渲染 root 间距/padding 数值小于 `default` 纵向时间线
-  - [ ] AC-005: 全仓四门禁绿；6 变体满足谓词①或②，差分守卫不判定为 finding
+  - [x] AC-001: `image.rounded` 渲染 root 含 `border-radius` 声明；`image.full-width` 渲染 root `width:100%`
+  - [x] AC-002: `image-caption.side` 渲染呈现图片 cell + 文字说明 cell 并排的 `table-cell` 双列结构（复用 `gallery.duo` 已验证技术，不含 `position:absolute` 声明）
+  - [x] AC-003: `dialog.interview` 渲染呈现左列姓名（含大写/加粗声明）+ 右列长答内容的双栏结构，含 hairline 沟槽声明（如 `border-left` 细线分隔两栏）
+  - [x] AC-004: `timeline.horizontal` 渲染呈现横向主轴布局（与 `steps.horizontal` 视觉一致的实线主轴处理，各自独立实现不共享代码）；`timeline.compact` 渲染 root 间距/padding 数值小于 `default` 纵向时间线
+  - [x] AC-005: 全仓四门禁绿；6 变体满足谓词①或②，差分守卫不判定为 finding
 - **deliverables**:
-  - [ ] `packages/blocks/src/blocks/{image,image-caption,dialog,timeline}.ts` — 6 具名变体 baseStyle/decorate 落地
-  - [ ] `tests/blocks/image-dialog-timeline-variants.test.ts`（新文件）
+  - [x] `packages/blocks/src/blocks/{image,image-caption,dialog,timeline}.ts` — 6 具名变体 baseStyle/decorate 落地
+  - [x] `tests/blocks/image-dialog-timeline-variants.test.ts`（新文件）
 - **context_load**:
   - variant-gap-triage-20260715-r1#§2
 - **notes**: LOC_SIGNAL: 150。`image-caption.overlay`（DELETE）不在本卡范围，归 T-208；`image-caption.ts` 同文件被 T-208 触碰，建议序列化落盘。`timeline.horizontal` 建议在实现后与 T-196 `steps.horizontal` 做一次视觉一致性交叉核对（`variant-gap-triage-20260715-r1#§1 [OQ-3]` 已记录两块概念交叠，本批不合并，仅要求视觉手法一致）。
@@ -2436,14 +2436,14 @@ graph LR
 - **security_sensitive**: false
 - **dependencies**: [T-190, T-191]
 - **acceptance_criteria**:
-  - [ ] AC-001: `qrcode.card` 渲染呈现左 QR + 右三行信息（kicker/标题/说明）的并排结构
-  - [ ] AC-002: `miniprogram-card.large` 渲染呈现图标 + 信息（标题/描述）并排结构（借用 `qrcode.card` 同构技术）；`miniprogram-card.compact` 渲染 padding 数值小于 `large`
-  - [ ] AC-003: `footer-cta.centered` 渲染呈现居中标题 + 主色胶囊按钮元素（`border-radius` 高值 + `background:var(--color-brand)` 或等效）；`footer-cta.full-width` 渲染呈现三栏动作元素（赞同/收藏/转发同构结构，满宽布局）
-  - [ ] AC-004: `recommendation.card` 渲染呈现粗体标题 + bullet 链接列表结构；`recommendation.compact` 渲染间距数值小于 `card`
-  - [ ] AC-005: 全仓四门禁绿；7 变体满足谓词①或②，差分守卫不判定为 finding
+  - [x] AC-001: `qrcode.card` 渲染呈现左 QR + 右三行信息（kicker/标题/说明）的并排结构
+  - [x] AC-002: `miniprogram-card.large` 渲染呈现图标 + 信息（标题/描述）并排结构（借用 `qrcode.card` 同构技术）；`miniprogram-card.compact` 渲染 padding 数值小于 `large`
+  - [x] AC-003: `footer-cta.centered` 渲染呈现居中标题 + 主色胶囊按钮元素（`border-radius` 高值 + `background:var(--color-brand)` 或等效）；`footer-cta.full-width` 渲染呈现三栏动作元素（赞同/收藏/转发同构结构，满宽布局）
+  - [x] AC-004: `recommendation.card` 渲染呈现粗体标题 + bullet 链接列表结构；`recommendation.compact` 渲染间距数值小于 `card`
+  - [x] AC-005: 全仓四门禁绿；7 变体满足谓词①或②，差分守卫不判定为 finding
 - **deliverables**:
-  - [ ] `packages/blocks/src/blocks/{qrcode,miniprogram-card,footer-cta,recommendation}.ts` — 7 具名变体 baseStyle/decorate 落地
-  - [ ] `tests/blocks/qrcode-miniprogram-card-footer-cta-recommendation-variants.test.ts`（新文件）
+  - [x] `packages/blocks/src/blocks/{qrcode,miniprogram-card,footer-cta,recommendation}.ts` — 7 具名变体 baseStyle/decorate 落地
+  - [x] `tests/blocks/qrcode-miniprogram-card-footer-cta-recommendation-variants.test.ts`（新文件）
 - **context_load**:
   - variant-gap-triage-20260715-r1#§2
 - **notes**: LOC_SIGNAL: 180。`qrcode.with-logo`（DELETE）不在本卡范围，归 T-208；`qrcode.ts` 同文件被 T-208 触碰，建议序列化落盘。`footer-cta` 块本身当前无块级 `baseStyle`（C 类"default 裸奔"问题），本卡新增两具名变体的独立 chrome 不依赖块基座补全，超出本批 A/B 范围的 C 类问题留归 backlog。
@@ -2463,14 +2463,14 @@ graph LR
 - **security_sensitive**: false
 - **dependencies**: [T-190, T-191]
 - **acceptance_criteria**:
-  - [ ] AC-001: `related-cards.compact` 渲染 padding/margin 数值小于 `default`；`related-cards.grid` 渲染呈现逐项独立 chrome（`border`）+ `table-cell` 双列网格布局
-  - [ ] AC-002: `social-cta.icon-left` 渲染呈现 pill 形态（高 `border-radius`）+ 图标元素 + 灰字文本；图标以文本/Unicode 字形或简单 CSS 图形表达（`[ASSUMPTION]`：本仓无专用图标资产系统，不引入外部图标资源）；`social-cta.full-width` 渲染 root 不含 `border-radius`/`border` 声明（去除圆角与边框做到贴边观感，与 `default` 的纯 `width:100%` 形成真实差异）
-  - [ ] AC-003: `subscribe-cta.banner` 渲染呈现居中标题 + 主色胶囊按钮元素
-  - [ ] AC-004: `advert-card.minimal` 渲染 root 不含 border/background 声明，保留 padding
-  - [ ] AC-005: 全仓四门禁绿；6 变体满足谓词①或②，差分守卫不判定为 finding
+  - [x] AC-001: `related-cards.compact` 渲染 padding/margin 数值小于 `default`；`related-cards.grid` 渲染呈现逐项独立 chrome（`border`）+ `table-cell` 双列网格布局
+  - [x] AC-002: `social-cta.icon-left` 渲染呈现 pill 形态（高 `border-radius`）+ 图标元素 + 灰字文本；图标以文本/Unicode 字形或简单 CSS 图形表达（`[ASSUMPTION]`：本仓无专用图标资产系统，不引入外部图标资源）；`social-cta.full-width` 渲染 root 不含 `border-radius`/`border` 声明（去除圆角与边框做到贴边观感，与 `default` 的纯 `width:100%` 形成真实差异）
+  - [x] AC-003: `subscribe-cta.banner` 渲染呈现居中标题 + 主色胶囊按钮元素
+  - [x] AC-004: `advert-card.minimal` 渲染 root 不含 border/background 声明，保留 padding
+  - [x] AC-005: 全仓四门禁绿；6 变体满足谓词①或②，差分守卫不判定为 finding
 - **deliverables**:
-  - [ ] `packages/blocks/src/blocks/{related-cards,social-cta,subscribe-cta,advert-card}.ts` — 6 具名变体 baseStyle/decorate 落地
-  - [ ] `tests/blocks/related-cards-social-cta-subscribe-cta-advert-card-variants.test.ts`（新文件）
+  - [x] `packages/blocks/src/blocks/{related-cards,social-cta,subscribe-cta,advert-card}.ts` — 6 具名变体 baseStyle/decorate 落地
+  - [x] `tests/blocks/related-cards-social-cta-subscribe-cta-advert-card-variants.test.ts`（新文件）
 - **context_load**:
   - variant-gap-triage-20260715-r1#§1
 - **notes**: LOC_SIGNAL: 130。`subscribe-cta.centered`/`advert-card.horizontal`（DELETE）不在本卡范围，归 T-208；`subscribe-cta.ts`/`advert-card.ts` 同文件被 T-208 触碰，建议序列化落盘。
@@ -2516,13 +2516,13 @@ graph LR
 - **security_sensitive**: false
 - **dependencies**: []
 - **acceptance_criteria**:
-  - [ ] AC-001: `audio.ts` 的 `full`/`mini` 两具名变体条目从 `variants` 数组移除；`video.ts` 的 `with-caption` 具名变体条目从 `variants` 数组移除（`video.autoplay` 不在本卡处置范围，归 T-208 永久 DELETE）
-  - [ ] AC-002: `packages/blocks/src/known-blocked-variants.ts`（新文件）导出 `KNOWN_BLOCKED_VARIANTS: Set<string>`，含 `"audio::full"`、`"audio::mini"`、`"video::with-caption"` 三项，模块级文档说明排除理由（DOM 输出契约未厘清）与重新评估触发条件（architect 核实 `amendment-variant-mechanism-20260715-r1#§7 OQ-10` 后独立立项重新评估导入/PATCH 路径）
-  - [ ] AC-003: 移除后 `listAllVariants()` 不再包含这 3 项；`audio`/`video` 两块的 `default` 变体渲染产物与移除前字节相同
-  - [ ] AC-004: 全仓四门禁绿
+  - [x] AC-001: `audio.ts` 的 `full`/`mini` 两具名变体条目从 `variants` 数组移除；`video.ts` 的 `with-caption` 具名变体条目从 `variants` 数组移除（`video.autoplay` 不在本卡处置范围，归 T-208 永久 DELETE）
+  - [x] AC-002: `packages/blocks/src/known-blocked-variants.ts`（新文件）导出 `KNOWN_BLOCKED_VARIANTS: Set<string>`，含 `"audio::full"`、`"audio::mini"`、`"video::with-caption"` 三项，模块级文档说明排除理由（DOM 输出契约未厘清）与重新评估触发条件（architect 核实 `amendment-variant-mechanism-20260715-r1#§7 OQ-10` 后独立立项重新评估导入/PATCH 路径）
+  - [x] AC-003: 移除后 `listAllVariants()` 不再包含这 3 项；`audio`/`video` 两块的 `default` 变体渲染产物与移除前字节相同
+  - [x] AC-004: 全仓四门禁绿
 - **deliverables**:
-  - [ ] `packages/blocks/src/blocks/{audio,video}.ts` — 3 具名变体条目移除
-  - [ ] `packages/blocks/src/known-blocked-variants.ts`（新文件）
+  - [x] `packages/blocks/src/blocks/{audio,video}.ts` — 3 具名变体条目移除
+  - [x] `packages/blocks/src/known-blocked-variants.ts`（新文件）
 - **context_load**:
   - amendment-variant-mechanism-20260715-r1#§7
   - variant-gap-triage-20260715-r1#§2
