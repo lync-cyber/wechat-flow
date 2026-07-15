@@ -8,10 +8,40 @@ export const card = defineBlock(
   "structured",
   [
     { id: "default", label: "普通卡片" },
-    { id: "elevated", label: "阴影卡片" },
-    { id: "outlined", label: "描边卡片" },
+    {
+      id: "elevated",
+      label: "阴影卡片",
+      baseStyle: {
+        root: {
+          border: "none",
+          "border-top": "3px solid var(--color-brand)",
+          "background-color": "var(--color-background)",
+          "box-shadow": "0 2px 10px rgba(0,0,0,0.06)",
+        },
+      },
+    },
+    {
+      id: "outlined",
+      label: "描边卡片",
+      baseStyle: {
+        root: {
+          border: "1px solid var(--color-border-strong)",
+          "border-radius": "0",
+          "background-color": "transparent",
+        },
+      },
+    },
     { id: "horizontal", label: "横排卡片" },
-    { id: "minimal", label: "简约卡片" },
+    {
+      id: "minimal",
+      label: "简约卡片",
+      baseStyle: {
+        root: {
+          border: "none",
+          "border-radius": "0",
+        },
+      },
+    },
   ],
   {
     baseStyle: {

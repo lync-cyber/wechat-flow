@@ -171,9 +171,9 @@ describe("AC-004: 声明属性按 data-{block}-{attr} 统一透传，独立于�
     expect(el?.properties?.["data-dialog-avatar"]).toBe("https://example.test/a.png");
   });
 
-  it("compare 非 ledger 变体（table-style）携带五个声明属性 → hast 根元素带对应 data-compare-* 全部五项", () => {
+  it("compare 非结构化变体（default）携带五个声明属性 → hast 根元素带对应 data-compare-* 全部五项", () => {
     const mdast = parseMarkdown(
-      ':::compare{.table-style left-label="优点" left-value="速度快" right-label="缺点" right-value="成本高" title="方案对比"}\n:::'
+      ':::compare{.default left-label="优点" left-value="速度快" right-label="缺点" right-value="成本高" title="方案对比"}\n:::'
     );
     const hast = transformToHast(mdast, []);
     const el = findElementByDataBlock(hast, "compare");

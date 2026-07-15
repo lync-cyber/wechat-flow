@@ -8,8 +8,25 @@ export const authorCard = defineBlock(
   "meta",
   [
     { id: "default", label: "横排作者" },
-    { id: "centered", label: "居中作者" },
-    { id: "minimal", label: "简约作者" },
+    {
+      id: "centered",
+      label: "居中作者",
+      baseStyle: {
+        root: {
+          "text-align": "center",
+        },
+      },
+    },
+    {
+      id: "minimal",
+      label: "简约作者",
+      baseStyle: {
+        root: {
+          "background-color": "transparent",
+          "border-radius": "0",
+        },
+      },
+    },
   ],
   {
     baseStyle: {
