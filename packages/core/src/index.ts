@@ -59,6 +59,8 @@ export {
   describeBlock,
   onRegistryReset,
   resetBlockRegistry,
+  getUnimplementedVariants,
+  setVariantGuardMode,
 } from "./registry/block.ts";
 export type {
   BlockCategory,
@@ -66,7 +68,9 @@ export type {
   BlockDefinition,
   BlockSource,
   BlockVariant,
+  UnimplementedVariant,
 } from "./registry/block.ts";
+export { INTENTIONAL_PLAIN_VARIANTS } from "./registry/intentional-plain-variants.ts";
 export {
   registerMark,
   listMarks,
