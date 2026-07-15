@@ -2219,15 +2219,15 @@ graph LR
 - **security_sensitive**: false
 - **dependencies**: [T-190, T-191]
 - **acceptance_criteria**:
-  - [ ] AC-001: `horizontal` 渲染呈现横向主轴布局（父容器由默认纵向堆叠改为横向排列等效声明，非 flex）+ 顶部实线主轴视觉声明
-  - [ ] AC-002: `numbered`/`circle-numbered`/`timeline` 三项编号型变体 — `numbered` 每步骤前缀为中文序数字符（一/二/三……，非默认列表符号）；`circle-numbered` 每步骤前缀含 `border-radius:50%` 的圆圈编号容器；`timeline` 含左侧点线连接线装饰节点（decorate 注入）+ 主色小圆点标记
-  - [ ] AC-003: `arrow` 渲染步骤间含文本箭头符号 `→` 作为分隔前缀节点（decorate 文本节点插入，非 SVG/CSS 图形箭头）
-  - [ ] AC-004: `minimal` 渲染不含默认列表符号声明（纯文本行呈现）
-  - [ ] AC-005: `filled`/`compact` 复用 `card` 化 DOM 结构 — `steps.ts` 既有 `decorate` 钩子分支条件从仅 `ctx.variant === "card"` 扩展为同时接受 `filled`/`compact`（三者共享 `buildStepsCardList` 标题/描述 slot 提取结构）；`filled` 渲染 root 背景为 `var(--color-brand)`（非 `card` 默认 `surface-alt`）；`compact` 渲染 root padding/margin 数值小于 `card` 默认值；二者渲染产物均含 title/description slot（card 结构特征）
-  - [ ] AC-006: 全仓四门禁绿；8 变体满足谓词①或②，差分守卫不判定为 finding；既有 `card` 变体（T-151 已实现）渲染产物字节不受本卡影响（decorate 分支扩展不改变 `ctx.variant === "card"` 分支自身行为）
+  - [x] AC-001: `horizontal` 渲染呈现横向主轴布局（父容器由默认纵向堆叠改为横向排列等效声明，非 flex）+ 顶部实线主轴视觉声明
+  - [x] AC-002: `numbered`/`circle-numbered`/`timeline` 三项编号型变体 — `numbered` 每步骤前缀为中文序数字符（一/二/三……，非默认列表符号）；`circle-numbered` 每步骤前缀含 `border-radius:50%` 的圆圈编号容器；`timeline` 含左侧点线连接线装饰节点（decorate 注入）+ 主色小圆点标记
+  - [x] AC-003: `arrow` 渲染步骤间含文本箭头符号 `→` 作为分隔前缀节点（decorate 文本节点插入，非 SVG/CSS 图形箭头）
+  - [x] AC-004: `minimal` 渲染不含默认列表符号声明（纯文本行呈现）
+  - [x] AC-005: `filled`/`compact` 复用 `card` 化 DOM 结构 — `steps.ts` 既有 `decorate` 钩子分支条件从仅 `ctx.variant === "card"` 扩展为同时接受 `filled`/`compact`（三者共享 `buildStepsCardList` 标题/描述 slot 提取结构）；`filled` 渲染 root 背景为 `var(--color-brand)`（非 `card` 默认 `surface-alt`）；`compact` 渲染 root padding/margin 数值小于 `card` 默认值；二者渲染产物均含 title/description slot（card 结构特征）
+  - [x] AC-006: 全仓四门禁绿；8 变体满足谓词①或②，差分守卫不判定为 finding；既有 `card` 变体（T-151 已实现）渲染产物字节不受本卡影响（decorate 分支扩展不改变 `ctx.variant === "card"` 分支自身行为）
 - **deliverables**:
-  - [ ] `packages/blocks/src/blocks/steps.ts` — 8 具名变体 baseStyle/decorate 落地，`decorate` 分支条件扩展
-  - [ ] `tests/blocks/steps-variants.test.ts`（新文件）— 渲染断言 + `card`/`filled`/`compact` 结构共享回归断言
+  - [x] `packages/blocks/src/blocks/steps.ts` — 8 具名变体 baseStyle/decorate 落地，`decorate` 分支条件扩展
+  - [x] `tests/blocks/steps-variants.test.ts`（新文件）— 渲染断言 + `card`/`filled`/`compact` 结构共享回归断言
 - **context_load**:
   - variant-gap-triage-20260715-r1#§1
 - **notes**: LOC_SIGNAL: 230。`decorate` 分支扩展是本卡风险点（既有 `card` 变体行为不可回归），`tdd_refactor: required` 因引入跨变体共享结构逻辑（`filled`/`compact`/`card` 三态复用同一 DOM 构建函数）。
@@ -2247,14 +2247,14 @@ graph LR
 - **security_sensitive**: false
 - **dependencies**: [T-190, T-191]
 - **acceptance_criteria**:
-  - [ ] AC-001: `pull-quote.large` 渲染含装饰引号节点（复用既有 `injectLeadingInlineNode`/`buildPullQuoteDecoration` 模式扩展）+ root `text-align:left`（非 `default` 的 center）+ 大字号声明
-  - [ ] AC-002: `pull-quote.minimal` 渲染 root 含上下细线声明（`border-top`/`border-bottom`）+ 居中 kicker 文本样式，不含 `decorated` 变体的 quote-mark 装饰节点（视觉负荷低于 decorated）
-  - [ ] AC-003: `pull-quote.bordered` 渲染含双行夹注结构（author 或等效 slot 呈现上下两行）+ 上下朱色细线声明
-  - [ ] AC-004: `highlight-block` 3 变体渲染产物 — `underline` root 含底部点状下划线声明（`border-bottom` 含 `dotted`）+ 中性底色；`bold` root 含加粗字重 + letter-spacing 加大声明；`background` root 含米黄色系背景色 + `line-height` 大于 `default`
-  - [ ] AC-005: 全仓四门禁绿；6 变体满足谓词①或②，差分守卫不判定为 finding；`pull-quote.decorated` 渲染产物字节不受本卡影响
+  - [x] AC-001: `pull-quote.large` 渲染含装饰引号节点（复用既有 `injectLeadingInlineNode`/`buildPullQuoteDecoration` 模式扩展）+ root `text-align:left`（非 `default` 的 center）+ 大字号声明
+  - [x] AC-002: `pull-quote.minimal` 渲染 root 含上下细线声明（`border-top`/`border-bottom`）+ 居中 kicker 文本样式，不含 `decorated` 变体的 quote-mark 装饰节点（视觉负荷低于 decorated）
+  - [x] AC-003: `pull-quote.bordered` 渲染含双行夹注结构（author 或等效 slot 呈现上下两行）+ 上下朱色细线声明
+  - [x] AC-004: `highlight-block` 3 变体渲染产物 — `underline` root 含底部点状下划线声明（`border-bottom` 含 `dotted`）+ 中性底色；`bold` root 含加粗字重 + letter-spacing 加大声明；`background` root 含米黄色系背景色 + `line-height` 大于 `default`
+  - [x] AC-005: 全仓四门禁绿；6 变体满足谓词①或②，差分守卫不判定为 finding；`pull-quote.decorated` 渲染产物字节不受本卡影响
 - **deliverables**:
-  - [ ] `packages/blocks/src/blocks/{pull-quote,highlight-block}.ts` — 6 具名变体 baseStyle/decorate 落地
-  - [ ] `tests/blocks/pull-quote-highlight-block-variants.test.ts`（新文件）
+  - [x] `packages/blocks/src/blocks/{pull-quote,highlight-block}.ts` — 6 具名变体 baseStyle/decorate 落地
+  - [x] `tests/blocks/pull-quote-highlight-block-variants.test.ts`（新文件）
 - **context_load**:
   - variant-gap-triage-20260715-r1#§1
   - variant-gap-triage-20260715-r1#§2
@@ -2275,14 +2275,14 @@ graph LR
 - **security_sensitive**: false
 - **dependencies**: [T-190, T-191]
 - **acceptance_criteria**:
-  - [ ] AC-001: `warning.banner` 渲染 root 含顶部粗边框声明（`border-top` ≥6px）+ `border-radius:0`；`warning.inline` 渲染 root 不含 `default` 的卡片化声明（`border-radius`/`background-color`），字号小于 `default`
-  - [ ] AC-002: `disclaimer.bordered` 渲染 root 含四边全边框声明 + 标题 uppercase/letter-spacing 声明；`disclaimer.compact` 渲染 root padding/font-size 数值小于 `bordered`
-  - [ ] AC-003: `citation.footnote-style` 渲染含 hanging indent 声明（`padding-left` + 负 `text-indent` 组合或等效）+ 11px 量级字号；`citation.inline-link` 渲染 root 不含 `border-left` 声明、含 `text-decoration:underline`
-  - [ ] AC-004: `reading-time.inline` 渲染 root 不含 `default` 的 `background-color`/`border-radius` 声明（badge 化视觉移除），保留纯文字呈现
-  - [ ] AC-005: 全仓四门禁绿；7 变体满足谓词①或②，差分守卫不判定为 finding
+  - [x] AC-001: `warning.banner` 渲染 root 含顶部粗边框声明（`border-top` ≥6px）+ `border-radius:0`；`warning.inline` 渲染 root 不含 `default` 的卡片化声明（`border-radius`/`background-color`），字号小于 `default`
+  - [x] AC-002: `disclaimer.bordered` 渲染 root 含四边全边框声明 + 标题 uppercase/letter-spacing 声明；`disclaimer.compact` 渲染 root padding/font-size 数值小于 `bordered`
+  - [x] AC-003: `citation.footnote-style` 渲染含 hanging indent 声明（`padding-left` + 负 `text-indent` 组合或等效）+ 11px 量级字号；`citation.inline-link` 渲染 root 不含 `border-left` 声明、含 `text-decoration:underline`
+  - [x] AC-004: `reading-time.inline` 渲染 root 不含 `default` 的 `background-color`/`border-radius` 声明（badge 化视觉移除），保留纯文字呈现
+  - [x] AC-005: 全仓四门禁绿；7 变体满足谓词①或②，差分守卫不判定为 finding
 - **deliverables**:
-  - [ ] `packages/blocks/src/blocks/{warning,disclaimer,citation,reading-time}.ts` — 7 具名变体 baseStyle 落地
-  - [ ] `tests/blocks/warning-disclaimer-citation-reading-time-variants.test.ts`（新文件）
+  - [x] `packages/blocks/src/blocks/{warning,disclaimer,citation,reading-time}.ts` — 7 具名变体 baseStyle 落地
+  - [x] `tests/blocks/warning-disclaimer-citation-reading-time-variants.test.ts`（新文件）
 - **context_load**:
   - variant-gap-triage-20260715-r1#§1
 - **notes**: LOC_SIGNAL: 110。`reading-time.badge`（DELETE）不在本卡范围，归 T-208；`reading-time.ts` 同文件被 T-208 触碰，建议序列化落盘。
