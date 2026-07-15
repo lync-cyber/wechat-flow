@@ -20,7 +20,18 @@ export const pullQuote = defineBlock(
     .strict(),
   "emphasis",
   [
-    { id: "default", label: "标准摘引" },
+    {
+      id: "default",
+      label: "标准摘引",
+      baseStyle: {
+        root: {
+          "text-align": "center",
+          padding: "24px 16px",
+          margin: "24px 0",
+          "font-size": "1.25em",
+        },
+      },
+    },
     { id: "large", label: "大字摘引" },
     {
       id: "decorated",
@@ -52,12 +63,7 @@ export const pullQuote = defineBlock(
     { id: "bordered", label: "边框摘引" },
   ],
   {
-    root: {
-      "text-align": "center",
-      padding: "24px 16px",
-      margin: "24px 0",
-      "font-size": "1.25em",
-    },
+    root: {},
   },
   ["root", "quote-mark", "author"],
   undefined,

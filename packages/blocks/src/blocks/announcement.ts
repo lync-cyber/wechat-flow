@@ -7,7 +7,15 @@ export const announcement = defineBlock(
   z.object({}).strict(),
   "emphasis",
   [
-    { id: "default", label: "标准公告" },
+    {
+      id: "default",
+      label: "标准公告",
+      baseStyle: {
+        root: {
+          background: "#f3f0eb",
+        },
+      },
+    },
     {
       id: "danger-bar",
       label: "危险横幅公告",
@@ -36,7 +44,6 @@ export const announcement = defineBlock(
     root: {
       "border-left": "3px solid #b94a3e",
       padding: "12px 16px",
-      background: "#f3f0eb",
     },
   }
 );

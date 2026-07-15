@@ -122,9 +122,19 @@ function getBlockSlotStyle(
   designTokens?: ThemeTokens
 ): Record<string, string> {
   const def = describeBlock(blockId);
+  const blockBase = def?.baseStyle?.[slot] ?? {};
   const variant = def?.variants.find((v) => v.id === variantId);
-  const raw = variant?.baseStyle?.[slot] ?? {};
-  return resolveSlotDeclarations(raw, designTokens);
+  const variantDelta = variant?.baseStyle?.[slot];
+  if (variantDelta) {
+    return resolveSlotDeclarations({ ...blockBase, ...variantDelta }, designTokens);
+  }
+  if (variantId === "default") {
+    return resolveSlotDeclarations(
+      { ...blockBase, ...(def?.defaultStyle?.[slot] ?? {}) },
+      designTokens
+    );
+  }
+  return resolveSlotDeclarations(blockBase, designTokens);
 }
 
 function stripClassFromProperties(props: Properties): Properties {

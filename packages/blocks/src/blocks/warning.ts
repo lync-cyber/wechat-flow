@@ -7,17 +7,24 @@ export const warning = defineBlock(
   z.object({}).strict(),
   "emphasis",
   [
-    { id: "default", label: "标准警告" },
+    {
+      id: "default",
+      label: "标准警告",
+      baseStyle: {
+        root: {
+          "border-left": "4px solid #e53e3e",
+          "border-radius": "4px",
+          "background-color": "#fff5f5",
+        },
+      },
+    },
     { id: "banner", label: "横幅警告" },
     { id: "inline", label: "行内警告" },
   ],
   {
     root: {
-      "border-left": "4px solid #e53e3e",
       padding: "12px 16px",
-      "border-radius": "4px",
       margin: "16px 0",
-      "background-color": "#fff5f5",
     },
   }
 );
