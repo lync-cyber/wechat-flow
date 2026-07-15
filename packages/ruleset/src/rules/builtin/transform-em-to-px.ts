@@ -2,8 +2,10 @@ import type { Element, Node } from "hast";
 import type { RuleDefinition } from "../registry.ts";
 import { parseDeclarations, serializeDeclarations } from "./css-helpers.ts";
 
-// Match numeric em values that are NOT preceded by 'r' (to exclude rem)
-const EM_RE = /(?<![a-z])(\d+\.?\d*)em\b/g;
+// Match numeric em values that are NOT preceded by 'r' (to exclude rem).
+// No /g flag: matcher uses .test(), and a stateful lastIndex would alternate
+// true/false across sibling nodes in one render pass.
+const EM_RE = /(?<![a-z])(\d+\.?\d*)em\b/;
 
 function styleHasEm(node: Node): boolean {
   if (node.type !== "element") return false;
