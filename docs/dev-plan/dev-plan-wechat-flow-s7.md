@@ -31,6 +31,7 @@ deps:
 - Sprint 7 修复批任务卡（T-157 粘贴回归 blocking_conditions 消除）→ T-160..T-174
 - Sprint 7 修复批二任务卡（微信粘贴标签兼容与保真链归位）→ T-175..T-180
 - Sprint 7 架构专项批任务卡（微信平台保真模型收窄，复用 output ruleset 为 patch 层）→ T-181..T-189
+- Sprint 7 变体缺口方案实施批（merge 语义机制 + 96 项清单裁定落地 + 收口）→ T-190..T-212
 [/NAV]
 
 ## 1. 迭代目标
@@ -1920,3 +1921,743 @@ graph LR
   - ui-spec-wechat-flow-block-variants#§10.7
   - ui-spec-wechat-flow-block-variants#§10.8
 - **notes**: LOC_SIGNAL: 240（含并入 T-179 的六块 token 化 + author-card 迁移 + 全仓审计）。`amendment-platform-fidelity-r1#§9 R1`：font-family 退出面不止 5 主题，含 blocks dropcap 装饰 + inline-code mark，本卡范围已按此更正覆盖全部三类载体。清理范围经 architect 红队复核（2026-07-09）扩至全 `FORBIDDEN_CSS_PROPS ∪ FORBIDDEN_DISPLAY_VALUES ∪ FORBIDDEN_POSITION_PROPS`——`packages/blocks/src/blocks/author-card.ts:16` 静态 `display:"flex"` 为已核实的真实命中（T-187 构造守卫上线后会拒绝该声明、致内置块注册中断），AC-003/AC-004 承接。依赖方向已定（architect 确认 2026-07-09，清理先于守卫）：本卡 `dependencies: [T-184]`，T-187 依赖本卡（`[T-184, T-189]`）；amendment §6 DAG 已同步修正为 `T-189 --> T-187`。§10.6 ledger 右列浅底按 spec 措辞落 token（原 T-179 notes 保留依据，T-174 R-001 同判例）。
+
+---
+
+## 4. 变体渲染缺口方案实施批（T-190..T-212）
+
+依据 `AMENDMENT-variant-mechanism-20260715-r1`（机制轨，用户终审 sign-off 2026-07-15）+ `VARIANT-GAP-TRIAGE-20260715-r1`（清单轨，用户终审 sign-off 2026-07-15）拆卡。三批结构：
+
+- **批 A · 机制批（T-190..T-192）**：merge 语义改造 + 6 fat-base 块拆分 → registerBlock 注册期硬拒（collect-only 模式）→ 渲染期差分守卫（WARN 模式）。T-190/T-191 互不耦合（不同文件、不同校验层，无数据流依赖）可并行；T-192 依赖二者。
+- **批 B · 清单批（T-193..T-208）**：96 项裁定逐项落地——13 张 IMPORT/PATCH 聚合卡（按 block 主题聚类，非 94 张独立卡）+ highlight-block.gradient 独立 feasibility 卡 + audio/video blocked 归桶卡 + DELETE 汇总卡。全部依赖批 A 的 merge 语义（`T-190`）与 collect-only 追踪（`T-191`）落地，彼此间除显式标注的文件重叠提示外无依赖，可并行派发。
+- **批 C · 收口批（T-209..T-212）**：collect-list 归零对账 + registerBlock 翻 throw + 差分守卫翻 RED + 视觉基线全矩阵重 seed + `assertVariantFloor` 阈值重推导 + 用户走查验证。依赖批 B 全部完成。
+
+**collect-list 归零对账口径**（批 C T-209 的判定基准，先在此统一声明，避免各卡重复定义）：`registerBlock` collect-only 模式下 `getUnimplementedVariants()` 收集到的候选集，扣除以下两类后必须为空集：① 命中 `intentional-plain-variants.ts` plain-allowlist 的项（T-191 建立机制，本批清单裁定中无项目落入此类，allowlist 现状应为空集或仅含未来新增块的显式豁免）；② 命中 `packages/blocks/src/known-blocked-variants.ts`（T-207 建立）的项——当前唯一内容为 audio.full / audio.mini / video.with-caption 三项（DOM 输出契约未厘清，待 architect 核实 `amendment-variant-mechanism-20260715-r1#§7 OQ-10` 后独立立项重新评估，不在本批收口范围）。`highlight-block.gradient` 不在此对账范围内——T-206 的可行性核实结论（IMPORT 或 DELETE）本身就消除该项在 collect-list 中的存在（要么获得实现满足谓词 1，要么被移除注册）。
+
+```mermaid
+graph LR
+    T-190["★ T-190"]
+    T-212["★ T-212"]
+    T-209["★ T-209"]
+    T-206["★ T-206"]
+    T-211["★ T-211"]
+    T-190 --> T-192
+    T-191 --> T-192
+    T-190 --> T-193
+    T-191 --> T-193
+    T-190 --> T-194
+    T-191 --> T-194
+    T-190 --> T-195
+    T-191 --> T-195
+    T-190 --> T-196
+    T-191 --> T-196
+    T-190 --> T-197
+    T-191 --> T-197
+    T-190 --> T-198
+    T-191 --> T-198
+    T-190 --> T-199
+    T-191 --> T-199
+    T-190 --> T-200
+    T-191 --> T-200
+    T-190 --> T-201
+    T-191 --> T-201
+    T-190 --> T-202
+    T-191 --> T-202
+    T-190 --> T-203
+    T-191 --> T-203
+    T-190 --> T-204
+    T-191 --> T-204
+    T-190 --> T-205
+    T-191 --> T-205
+    T-190 --> T-206
+    T-193 --> T-209
+    T-194 --> T-209
+    T-195 --> T-209
+    T-196 --> T-209
+    T-197 --> T-209
+    T-198 --> T-209
+    T-199 --> T-209
+    T-200 --> T-209
+    T-201 --> T-209
+    T-202 --> T-209
+    T-203 --> T-209
+    T-204 --> T-209
+    T-205 --> T-209
+    T-206 --> T-209
+    T-207 --> T-209
+    T-208 --> T-209
+    T-190 --> T-209
+    T-191 --> T-209
+    T-192 --> T-210
+    T-193 --> T-210
+    T-194 --> T-210
+    T-195 --> T-210
+    T-196 --> T-210
+    T-197 --> T-210
+    T-198 --> T-210
+    T-199 --> T-210
+    T-200 --> T-210
+    T-201 --> T-210
+    T-202 --> T-210
+    T-203 --> T-210
+    T-204 --> T-210
+    T-205 --> T-210
+    T-206 --> T-210
+    T-207 --> T-210
+    T-208 --> T-210
+    T-209 --> T-211
+    T-210 --> T-211
+    T-209 --> T-212
+    T-210 --> T-212
+    T-211 --> T-212
+    style T-190,T-206,T-209,T-211,T-212 fill:#e0f3f8,stroke:#4575b4,stroke-width:2px
+```
+
+图与关键路径由 `task-dep-analysis` 计算坐实（`cataforge skill run task-dep-analysis`，`cycle_detected: false`）：拓扑序 `T-190,T-191,T-207,T-208,T-206,T-192,T-193..T-205,T-209,T-210,T-211,T-212`；关键路径 `T-190 → T-206 → T-209 → T-211 → T-212`（权重 10，`complexity=large` 的 T-190 是权重主要来源）；Sprint 分组建议 `[T-190,T-191,T-207,T-208] → [T-192,T-193..T-206] → [T-209,T-210] → [T-211] → [T-212]`。`T-207`（audio/video 临时移除注册）与 `T-208`（DELETE 汇总）为纯移除操作，不依赖 merge 语义，可与 T-190/T-191 同批最先落地。批 B 内 13 张 IMPORT/PATCH 卡（T-193..T-205）与 T-192 同层可并行派发。
+
+### 4.1 批 A · 机制批
+
+### T-190: 变体样式 merge 语义改造 + 6 fat-base 块拆分（最小基座 + default delta）
+
+- **目标**: `getBlockBaseStyle`（`packages/core/src/registry/variant.ts:140-152`）与 `getBlockSlotStyle`（`packages/core/src/pipeline/inline-style.ts:118-128`）由 replace 语义改 merge 语义（`{...块基线[slot], ...变体delta[slot]}`），`default` 降为普通变体（不再特判直接返回块基线，而是与具名变体同规则解析 `variantDelta("default")`）；同批拆分 6 个 fat-base 块（`callout`/`warning`/`announcement`/`compare`/`quote`/`pull-quote`）的块级 `baseStyle` 为「最小共享基座 + 新增 `default` 变体条目 delta」，default 装饰移入 default 变体条目；merge 与 fat-base 拆分必须同批落地（分开则任一方向单独落地都会破坏中间态：先 merge 不拆块会把 fat 装饰污染进具名变体，先拆块不切 merge 会在 replace 语义下丢失 default 输出）。
+- **模块**: M-002, M-005
+- **task_kind**: fix
+- **priority**: P0
+- **complexity**: large
+- **sprint**: 7
+- **tdd_mode**: standard
+- **tdd_acceptance**: all
+- **tdd_refactor**: required
+- **security_sensitive**: false
+- **dependencies**: []
+- **acceptance_criteria**:
+  - [ ] AC-001: merge root 解析基础规则 — 给定一个测试块声明块级 `baseStyle.root = {margin:"16px 0"}` 且具名变体 `baseStyle.root = {color:"#ff0000"}`（两键不重叠），When `getBlockBaseStyle(blockId, variantId)` 调用，Then 返回 `{margin:"16px 0", color:"#ff0000"}`（继承 + 覆盖并存，非过去的纯替换）；给定块基座与变体 delta 声明同一属性键（如均声明 `padding`），Then 变体 delta 值胜出（覆盖块基座同名键）
+  - [ ] AC-002: `default` 降为普通变体 — 给定块显式声明 `variants` 数组含 `{id:"default", baseStyle:{root:{"background-color":"#f0f7ff"}}}` 且块级 `baseStyle.root = {padding:"12px 16px"}`，When `getBlockBaseStyle(blockId, "default")` 调用，Then 返回 `{padding:"12px 16px", "background-color":"#f0f7ff"}`（块基座 ⊕ default 变体条目 delta，而非过去「default 特判直接返回块基座、忽略 default 变体条目」的行为）
+  - [ ] AC-003: slot merge 同步（`getBlockSlotStyle`）— 同 AC-001 规则应用于非 root slot：给定块级 `baseStyle.title = {"font-weight":"600"}` 与变体 `baseStyle.title = {color:"#333"}`，Then `getBlockSlotStyle` 返回两者合并；当前内置块级 `baseStyle` 均只声明 `root`（无 slot 级块基座），故此规则对现有产物是 no-op，仅统一模型防未来漂移，需一条断言坐实此 no-op 事实（如 `compare` 的 `title`/`table`/`left`/`right` slot 渲染字节不变）
+  - [ ] AC-004: 6 fat-base 块 default 输出字节保真（硬约束）— 对 `callout`/`warning`/`announcement`/`compare`/`quote`/`pull-quote` 逐一断言：重构前 `getBlockBaseStyle(blockId,"default")` 序列化字节 === 重构后同调用序列化字节（`serializeDeclarations` 排序后比较）；`pnpm test:cross-runtime` 全绿且 `tests/cross-runtime/fixtures.ts` 的 `EXPECTED_HASHES` 不变、不重新生成（`callout` default fixture `block-directive` 覆盖此约束，变红即视为重构 bug，修重构不改 hash）
+  - [ ] AC-005: 6 fat-base 块已实现具名变体 merge 后字节保真 — `callout.{tip,warning,info,danger}`、`announcement.{danger-bar,compact}`、`compare.ledger`、`quote.{large-quote-mark,dropcap}`、`pull-quote.decorated` 逐一断言：merge 后 `getBlockBaseStyle` 产出与重构前字节相同（因这些变体已声明各自完整 root delta，merge 不引入额外继承键）；唯一允许的例外产物变化点见 AC-006
+  - [ ] AC-006: `steps.card` 继承块节奏（唯一已实现变体产物变化点）— `steps` 块基座是合法最小节奏基座（非 fat，`{margin:"16px 0", padding:"0"}`），`card` 变体 delta 未声明 `margin`；When merge 后 `getBlockBaseStyle("steps","card")` 调用，Then 返回值含 `margin:"16px 0"`（此前 replace 语义下 `card` 变体因声明了自身 `baseStyle.root` 直接替换块基座，不含此键）；`e2e/visual/` 下 `steps-card` × 5 主题快照重 seed，记录 diff 依据（新增 `margin` 声明）
+- **deliverables**:
+  - [ ] `packages/core/src/registry/variant.ts` — `getBlockBaseStyle` merge 改造
+  - [ ] `packages/core/src/pipeline/inline-style.ts` — `getBlockSlotStyle` merge 改造
+  - [ ] `packages/blocks/src/blocks/{callout,warning,announcement,compare,quote,pull-quote}.ts` — 拆最小基座 + 新增 `default` 变体条目携带原块基座装饰
+  - [ ] `packages/core/src/registry/variant.test.ts` — `getBlockBaseStyle four-step resolution` describe 块重写为 merge 语义测试（AC-001/002/003 对应用例 + 原有 unknown-variant/未注册块安全返回 `{}` 用例保留验证 merge 下仍成立）
+  - [ ] 新增 fat-base 保真测试（建议 `packages/blocks/src/blocks/fat-base-merge-fidelity.test.ts` 或并入既有 render 测试）— AC-004/005 断言
+  - [ ] `e2e/visual/` steps-card × 5 主题快照重 seed
+- **context_load**:
+  - amendment-variant-mechanism-20260715-r1#§1
+  - amendment-variant-mechanism-20260715-r1#§4
+  - amendment-variant-mechanism-20260715-r1#§5
+- **notes**: LOC_SIGNAL: 260（merge 机制 ~30 + 6 块拆分 ~90 + 测试重写/新增 ~140）。超 `TASK_SPLIT_LOC`（250）但不可再拆——merge 语义切换与 fat-base 拆分互为前提，任一先行都产生中间破坏态（先 merge 后拆会把 `callout` 块基座的 `border-left`/`background-color` 污染进 `tip`/`warning`/`info`/`danger` 变体；先拆后 merge 会在旧 replace 语义下丢失 `default` 输出），必须同批交付，按 tdd-engine SKILL.md §Mid-Progress Drop Contract 分批落盘（建议顺序：先 `variant.ts`/`inline-style.ts` 机制改造并跑通合成测试块场景，再逐块拆分并即时跑该块 fixture 断言，最后统一跑 cross-runtime + 视觉重 seed）。6 块拆分实现提示：每块的最小共享基座 = 该块全部已实现具名变体共同声明的键（通常仅 `padding`/`margin`），块基座当前 fat 部分（`border-left`/`background-color`/`display:table` 等）移入新增的 `{id:"default", baseStyle:{root:{...}}}` 变体条目；`quote`/`pull-quote` 需注意其 `large-quote-mark`/`dropcap`/`decorated` 变体的 root delta 本就不含 `border-left`（故意省略，依赖 replace 语义下的完整替换来"去掉"default 的左边框），拆分后这些变体的 delta 保持不变即可（因为新最小基座不再含 `border-left`，无需变体显式 reset）。
+
+---
+
+### T-191: registerBlock 注册期硬拒 E_VARIANT_NO_IMPL + plain-allowlist 机制（collect-only / throw 双模式）
+
+- **目标**: `registerBlock`（`packages/core/src/registry/block.ts:37-70`，现有 FORBIDDEN 守卫之后）新增变体实现谓词校验：对每个具名变体（`id !== "default"`），满足以下任一即判定"已实现"：① `baseStyle` 任一 slot 含 ≥1 条非空 style 声明；② 块声明了 `decorate` 钩子；③ 变体命中 `intentional-plain-variants.ts` 导出的 plain-allowlist（`Set<"blockId::variantId">`）。均不满足的变体收集为候选，非空即按当前守卫模式处理：默认 **collect-only**（不 throw，正常完成注册，候选写入模块级可查询状态）；显式切至 **throw** 模式（供本卡自测 + 供 T-209 未来整体切换消费）则抛 `E_VARIANT_NO_IMPL`，错误对象挂 `unimplementedVariants: Array<{blockId, variantId, reason}>`，`reason` 含可执行指引（补 delta / 加 decorate 分支 / 登记 plain-allowlist）。
+- **模块**: M-002, M-005
+- **task_kind**: fix
+- **priority**: P0
+- **complexity**: large
+- **sprint**: 7
+- **tdd_mode**: standard
+- **tdd_acceptance**: all
+- **tdd_refactor**: required
+- **security_sensitive**: false
+- **dependencies**: []
+- **acceptance_criteria**:
+  - [ ] AC-001: 谓词① delta 放行 — 给定具名变体 `baseStyle:{root:{color:"#111"}}`（≥1 条非空声明），When `registerBlock` 调用，Then 该变体不出现在 `getUnimplementedVariants()` 候选集中
+  - [ ] AC-002: 谓词② decorate 放行 — 给定块声明 `decorate` 钩子（不论其内部是否真处理该具名变体，本谓词是静态放行，运行时真实覆盖由 T-192 差分守卫兜底），且该具名变体本身无 `baseStyle`，When `registerBlock` 调用，Then 该变体不出现在候选集中
+  - [ ] AC-003: 谓词③ plain-allowlist 放行 — 给定 `intentional-plain-variants.ts` 显式登记 `"probe-block::plain"`，且该具名变体无 `baseStyle` 无 decorate，When `registerBlock` 调用，Then 该变体不出现在候选集中
+  - [ ] AC-004: collect-only 模式（默认）不阻断 — 给定具名变体三项谓词均不满足，When 默认模式下 `registerBlock` 调用，Then 不抛错、块正常完成注册（`describeBlock` 可查到该块）、该变体出现在 `getUnimplementedVariants()` 返回数组中，含 `{blockId, variantId, reason}` 三字段
+  - [ ] AC-005: throw 模式抛错 — 给定同 AC-004 场景，When 以显式 strict 参数/模块级切换调用 `registerBlock`，Then 抛 `Error`，`err.code === "E_VARIANT_NO_IMPL"`，`err.unimplementedVariants` 含该 `{blockId, variantId, reason}` 项，`reason` 字符串非空且含以下任一关键词：`baseStyle`/`decorate`/`allowlist`
+  - [ ] AC-006: 内置注册表零误伤 — collect-only 默认模式下，`packages/blocks/src/index.ts` 全部内置块正常加载完成（`listBlocks().length` 与批 A 落地前一致，无 suite 中断），坐实当前 96 项渐进式未实现缺口不会在本卡上线时阻断构造
+- **deliverables**:
+  - [ ] `packages/core/src/registry/block.ts` — 变体实现谓词校验 + collect-only/throw 双模式 + `getUnimplementedVariants()` 导出
+  - [ ] `packages/core/src/registry/intentional-plain-variants.ts`（新文件）— plain-allowlist `Set<string>` 导出（初始空集，供后续块按需登记）
+  - [ ] `packages/core/src/registry/block.test.ts` — 谓词 ①②③ + collect/throw 双模式 + 内置注册表零误伤测试
+  - [ ] `packages/core/src/index.ts` — 视需要导出 `getUnimplementedVariants`（供 T-209 收口对账消费）
+- **context_load**:
+  - amendment-variant-mechanism-20260715-r1#§4
+  - amendment-variant-mechanism-20260715-r1#§2
+- **notes**: LOC_SIGNAL: 210。与 T-190 无文件重叠、无数据流依赖（谓词校验只检视 `variant.baseStyle`/`decorate` 是否存在，不涉 merge 解析逻辑），`dependencies: []` 可与 T-190 并行派发。throw 模式设计为**预置而非延后新建**——批 C（T-209）的收口动作是"翻转默认模式 + 删除 collect-only 分支"，不是"新写 throw 逻辑"，避免收口批临时补写未经测试的关键路径代码；模式切换的具体 API 形态（函数参数 vs 模块级 setter）由实现阶段决定，但须同时满足 AC-004（默认不 throw）与 AC-005（可显式验证 throw 路径）两态测试覆盖。
+
+---
+
+### T-192: 渲染期差分守卫（WARN 模式）
+
+- **目标**: 补最小渲染期差分守卫，兜 T-191 注册期静态守卫的两类残余盲区（delta 为空/被覆盖成与 default 净效果相同、decorate 对该变体实际 no-op）——遍历全部已注册块×具名变体，用规范化 markdown 分别渲染该变体与同块 `default`，字节比较（归一化剔除 `data-variant` 属性差异，因该属性按设计始终不同）；`≡ default` 且非 plain-allowlist 命中即判定 finding。本卡阶段为 **WARN 模式**：finding 通过 `console.warn` 记录、差分守卫主函数返回 finding 数组，测试断言函数行为本身（返回正确的 finding 集合）但不因 finding 非空而失败——RED 化由 T-210 承接。
+- **模块**: M-002, M-005
+- **task_kind**: fix
+- **priority**: P1
+- **complexity**: large
+- **sprint**: 7
+- **tdd_mode**: standard
+- **tdd_acceptance**: all
+- **tdd_refactor**: required
+- **security_sensitive**: false
+- **dependencies**: [T-190, T-191]
+- **acceptance_criteria**:
+  - [ ] AC-001: no-op 变体命中 — 给定测试探针块注册一个 `baseStyle.root = {}`（空 delta）的具名变体，When 差分守卫主函数运行，Then 返回的 finding 列表含 `{blockId:"probe-block", variantId:该探针variant}`
+  - [ ] AC-002: 真实差异变体不命中 — 给定 `callout.tip`（root style 含 `box-shadow`/`background` 等不同于 default 的声明），When 差分守卫运行，Then finding 列表不含 `{blockId:"callout", variantId:"tip"}`
+  - [ ] AC-003: plain-allowlist 豁免 — 给定变体命中 `intentional-plain-variants.ts` 的 allowlist 集合，即便其渲染字节 ≡ default，When 差分守卫运行，Then finding 列表不含该项
+  - [ ] AC-004: WARN 模式非阻断 — 给定当前真实注册表（含尚未落地的 A/B 类缺口变体），When 差分守卫测试用例运行，Then 用例本身 `expect` 断言通过（不因 finding 非空而失败），且对每条 finding 调用 `console.warn` 输出 `{blockId, variantId}` 可读信息（用 spy 断言 `console.warn` 被调用次数 === finding 数量）
+  - [ ] AC-005: 全量覆盖复用现有 fixture 生成器 — 差分守卫复用 `tests/blocks/wechat-paste-safe-output.test.ts` 现有 `buildDirectiveMarkdown`/`synthesizeDirectiveContent`（抽取为共享模块 `tests/blocks/directive-markdown-fixtures.ts`，两处 import，避免重复实现同一 fixture 生成逻辑）；覆盖范围排除 `packages/blocks/src/known-blocked-variants.ts`（T-207 产出）登记的 blocked 项，不对其运行差分比较（避免对 DOM 契约未定的块产生无意义 finding 噪声）
+- **deliverables**:
+  - [ ] `packages/core/src/registry/variant-diff-guard.ts`（新文件）— 差分核心逻辑（渲染 + 归一化字节比较 + allowlist/blocked 排除）
+  - [ ] `tests/blocks/directive-markdown-fixtures.ts`（新文件，从 `tests/blocks/wechat-paste-safe-output.test.ts` 抽取 `buildDirectiveMarkdown`/`synthesizeDirectiveContent` 共享）
+  - [ ] `tests/blocks/wechat-paste-safe-output.test.ts` — 改为 import 共享 fixture 模块（非行为变更，纯去重）
+  - [ ] `tests/registry/variant-diff-guard.test.ts`（新文件）— WARN 模式验证
+- **context_load**:
+  - amendment-variant-mechanism-20260715-r1#§6
+  - amendment-variant-mechanism-20260715-r1#§4
+- **notes**: LOC_SIGNAL: 190。`T-207`（audio/video blocked 归桶）产出的 `known-blocked-variants.ts` 是本卡 AC-005 的排除清单来源；若派发时 T-207 尚未落地，可先以空排除集实现并在 T-207 落地后由该卡自身追加排除项（T-207 deliverables 含此追加）。归一化比较需剔除 `data-variant` 属性差异（该属性按设计标识变体身份，渲染字节比较应聚焦样式/结构而非此标记本身），实现时可在比较前对两份渲染结果的 hast 树做该属性剔除后再序列化。
+
+### 4.2 批 B · 清单批
+
+96 项裁定（`variant-gap-triage-20260715-r1`）落地为 13 张 IMPORT/PATCH 聚合卡（按 block 主题聚类，每卡覆盖若干语义相近的 block，避免 94 张独立卡）+ 3 张特殊处置卡（feasibility / blocked 归桶 / DELETE 汇总）。全部卡均依赖 `T-190`（merge 语义，PATCH 类目须只写相对最小基座的 delta 而非 full-root）与 `T-191`（collect-only 追踪机制上线，使落地进度可观测）。除显式标注的同文件改动面提示外，各卡彼此无数据流依赖，可并行派发。
+
+**通用实现约束（适用本节全部 IMPORT/PATCH 卡，不逐卡重复）**：
+- 全部具名变体的 `baseStyle` delta 须满足 T-191 谓词①（≥1 条非空 style 声明）或②（decorate 钩子处理该变体），落地后 T-192 差分守卫不应将其判定为 finding。
+- 映射来源为 `C:\Users\huanc\Work\GitRepo\wechat-typeset\src\core\variants\` 对应资产文件（各卡按变体列出具体文件名），迁移时只取 root/slot 级 `baseStyle` 与必要的 decorate 结构逻辑，不整体复制该仓的注册代码（本仓 `defineBlock`/`registerBlock` 契约与来源仓不同）。
+- CSS 声明须过 `packages/core/src/registry/style-guard.ts` 的 `FORBIDDEN_CSS_PROPS`/`FORBIDDEN_DISPLAY_VALUES`/`FORBIDDEN_POSITION_PROPS` 禁区（`registerBlock` 已有构造期守卫拦截，违规声明会在注册期直接 throw，属正常拦截而非本卡缺陷）。
+- 涉及多列/并排结构一律用 `display:table`/`display:table-cell`（微信平台无 flex/grid），复用 `compare.ledger`/`gallery.duo` 已验证的双列技术，不新造机制。
+
+### T-193: table + compare 变体导入（结构化数据呈现）
+
+- **目标**: 落地 `table` 4 项（striped/bordered/compact/highlight-header）+ `compare` 3 项（highlight-right/table-style/compact）具名变体，消除渲染缺口。映射：`table.striped`←`table-card/zebra-rows.ts`（斑马表：奇偶行底色+顶底 hairline，微信平台无 `:nth-child`，需按行索引在 decorate 中显式赋色）；`table.bordered`←`table-card/rule-grid.ts`（全 1px 边框）；`table.compact`（PATCH：收紧 cell padding + 字号 -1px）；`table.highlight-header`←`table-card/three-line-table.ts`（顶底 2px + header 后 1px 三线式）；`compare.highlight-right`←`compare/paired-shape.ts`（圆环描边 vs 实心方块，按 left/right slot 施加非对称图形处理）；`compare.table-style`←`compare/measurement-table.ts`（纵向双行 block，标签固定宽+数据跟排）；`compare.compact`←`compare/stacked-row.ts`（上下堆叠两行全宽）。
+- **模块**: M-002, M-005
+- **task_kind**: fix
+- **priority**: P1
+- **complexity**: medium
+- **sprint**: 7
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **security_sensitive**: false
+- **dependencies**: [T-190, T-191]
+- **acceptance_criteria**:
+  - [ ] AC-001: `table` 4 变体渲染产物 — `striped` 奇偶行 cell 背景色交替（decorate 按行索引显式赋色，非 `:nth-child`）且顶/底行含 hairline border；`bordered` 全部 cell 含 1px border；`highlight-header` header 行含区别于 body 行的边框强调（如 `border-bottom` 加粗），body 行边框保持简约；`compact` cell padding 与 `font-size` 数值均小于 `default`
+  - [ ] AC-002: `compare` 3 变体渲染产物 — `highlight-right` 的 `left`/`right` slot 呈现非对称图形处理（如 left 侧 `border` 描边、right 侧 `background` 实色填充，二者视觉权重不同）；`table-style` 呈现纵向双行结构（非左右并排）；`compact` 呈现上下堆叠两行全宽结构（非默认左右两列）
+  - [ ] AC-003: 全部 7 变体满足谓词①（`table.striped` 的行级赋色属 decorate 逻辑，同时满足谓词②），T-192 差分守卫运行后此 7 项不在 finding 列表中
+  - [ ] AC-004: 全仓四门禁绿；`pnpm test:cross-runtime` 全绿（`table`/`compare` 不在 5 个 cross-runtime fixture 覆盖范围内，预期字节不受影响，需验证坐实此结论）
+- **deliverables**:
+  - [ ] `packages/blocks/src/blocks/{table,compare}.ts` — 4+3 具名变体 baseStyle/decorate 落地
+  - [ ] `tests/blocks/table-compare-variants.test.ts`（新文件）— 渲染断言
+- **context_load**:
+  - variant-gap-triage-20260715-r1#§1
+- **notes**: LOC_SIGNAL: 150。`table` 块本身当前无块级 `baseStyle`（C 类"default 裸奔"问题，超出本次 A/B 裁定范围），本卡不处置，留归 backlog（`variant-gap-triage-20260715-r1#§5` 交叉发现 1）。
+
+---
+
+### T-194: quote 变体导入 + PATCH
+
+- **目标**: 落地 `quote` 6 项具名变体（`quote.large` 因与已导入 `large-quote-mark` 语义重复，处置为 DELETE，归 T-208，不在本卡范围）。映射：`bordered`←`quote/double-frame.ts`（双层朱字边框+引文 italic+朱色 byline）；`centered`←`quote/classic.ts`（大引号金句：浅底+装饰引号，居中大号）；`filled`←`quote/editorial-block.ts`（左 6px 实色条+浅底，byline 装饰可选先落浅底+左色条）；`minimal`（PATCH：去除 `default` 左边框，仅留 padding/margin）；`italic`（PATCH：`font-style:italic`，不触碰 font-family 禁区）；`card`←`quote/specimen-quote.ts`（标本引文：SPEC.NO 测量括弧+学名样 byline，卡片化）。
+- **模块**: M-002, M-005
+- **task_kind**: fix
+- **priority**: P1
+- **complexity**: large
+- **sprint**: 7
+- **tdd_mode**: standard
+- **tdd_acceptance**: all
+- **tdd_refactor**: auto
+- **security_sensitive**: false
+- **dependencies**: [T-190, T-191]
+- **acceptance_criteria**:
+  - [ ] AC-001: `bordered`/`centered`/`card` 三项装饰型变体 — `bordered` 渲染 root 含双层边框视觉（如外层 + 内层第二组 border 声明）+ byline 装饰行注入（复用既有 `injectLeadingInlineNode`/`slotElement`）；`centered` 渲染 root `text-align:center` + 装饰引号字符节点注入；`card` 渲染呈现卡片化视觉（root 含 border/shadow/background 卡片声明）+ 测量括弧或 byline 装饰节点注入
+  - [ ] AC-002: `filled` 渲染 root 含浅底背景色 + 加粗左侧色条（`border-left` 宽度大于 `default` 的 3px）
+  - [ ] AC-003: `minimal` 渲染 root 不含 `border-left` 声明（`default` 为 `border-left:3px solid #888`），保留 padding/margin
+  - [ ] AC-004: `italic` 渲染 root 含 `font-style: italic`，不含任何新增 `font-family` 声明
+  - [ ] AC-005: 全部 6 变体满足谓词①或②，T-192 差分守卫不判定为 finding
+  - [ ] AC-006: 全仓四门禁绿；`quote.ts` 既有 `decorate` 函数（现处理 `large-quote-mark`/`dropcap` 两分支）扩展新增分支后，原两分支渲染产物字节与本卡改动前相同（回归断言）
+- **deliverables**:
+  - [ ] `packages/blocks/src/blocks/quote.ts` — 6 具名变体 baseStyle/decorate 落地
+  - [ ] `tests/blocks/quote-variants.test.ts`（新文件）— 渲染断言 + `decorate` 回归断言
+- **context_load**:
+  - variant-gap-triage-20260715-r1#§1
+- **notes**: LOC_SIGNAL: 170。`quote.large`（DELETE）不在本卡范围，归 T-208；`quote.ts` 同文件同时被 T-208 触碰（数组删除项 vs 本卡数组新增/修改项，语义不冲突，建议序列化落盘）。
+
+---
+
+### T-195: card + author-card 变体（通用卡片包装器）
+
+- **目标**: 落地 `card` 3 项（`elevated`/`outlined`/`minimal`；`horizontal` DELETE 归 T-208）+ `author-card` 2 项（`centered`/`minimal`）。`card`/`author-card` 均无内容插槽约定，映射为跨 kind 借用纯 root chrome：`card.elevated`←`admonition/card-shadow.ts`（悬浮卡：白底+顶部色条+阴影，仅借用 root chrome 不借用 admonition kind 着色）；`card.outlined`←`admonition/sidenote-latex.ts`（细边框，仅借用 root 边框）；`card.minimal`（PATCH：去除 border/background，仅留 padding）；`author-card.centered`（PATCH：`text-align:center`）；`author-card.minimal`（PATCH：去除 `background-color`/`border-radius`，保留纯 padding）。
+- **模块**: M-002, M-005
+- **task_kind**: fix
+- **priority**: P1
+- **complexity**: medium
+- **sprint**: 7
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **security_sensitive**: false
+- **dependencies**: [T-190, T-191]
+- **acceptance_criteria**:
+  - [ ] AC-001: `card.elevated` 渲染 root 含阴影声明（`box-shadow`）+ 顶部色条（`border-top` 或等效）+ 浅色背景
+  - [ ] AC-002: `card.outlined` 渲染 root 含细边框声明（1px 量级 `border`），不含 `elevated` 的阴影声明
+  - [ ] AC-003: `card.minimal` 渲染 root 不含 border/background 声明，保留 padding
+  - [ ] AC-004: `author-card.centered` 渲染 root 含 `text-align:center`；`author-card.minimal` 渲染 root 不含 `background-color`/`border-radius` 声明，保留 padding
+  - [ ] AC-005: 全仓四门禁绿；5 变体满足谓词①，差分守卫不判定为 finding
+- **deliverables**:
+  - [ ] `packages/blocks/src/blocks/{card,author-card}.ts` — 5 具名变体 baseStyle 落地
+  - [ ] `tests/blocks/card-author-card-variants.test.ts`（新文件）
+- **context_load**:
+  - variant-gap-triage-20260715-r1#§1
+- **notes**: LOC_SIGNAL: 70。`card.horizontal`（DELETE，[OQ-7] 需图文并排媒体布局，超出装饰资产范畴）不在本卡范围，归 T-208；`card.ts` 同文件被 T-208 触碰，建议序列化落盘。
+
+---
+
+### T-196: steps 变体导入（8 项，最大宗单块）
+
+- **目标**: 落地 `steps` 8 项具名变体。映射：`horizontal`←`steps/ruler-row.ts`（顶部实线主轴，h3 刻度标签，需重排为横向布局，微信平台无 flex，改用 `display:table`/`table-cell` 或行内块技术横排）；`numbered`←`steps/seal-cjk.ts`（中文序数替代默认列表符号）；`circle-numbered`←`steps/number-circle.ts`（编号圆圈，`border-radius:50%` 容器）；`timeline`←`steps/timeline-dot.ts`（左侧点线+主色小圆点，decorate 生成连接线）；`arrow`（PATCH：文本箭头符号 `→` 作步骤间分隔前缀，decorate 插入文本节点，非 SVG/CSS 图形）；`minimal`（PATCH：去除默认列表符号，纯文本行）；`filled`（PATCH：作为已导入 `card` 变体的参数变体，背景改 `var(--color-brand)` 替代 `surface-alt`）；`compact`（PATCH：同为 `card` 参数变体，收紧 padding/margin）。
+- **模块**: M-002, M-005
+- **task_kind**: fix
+- **priority**: P1
+- **complexity**: large
+- **sprint**: 7
+- **tdd_mode**: standard
+- **tdd_acceptance**: all
+- **tdd_refactor**: required
+- **security_sensitive**: false
+- **dependencies**: [T-190, T-191]
+- **acceptance_criteria**:
+  - [ ] AC-001: `horizontal` 渲染呈现横向主轴布局（父容器由默认纵向堆叠改为横向排列等效声明，非 flex）+ 顶部实线主轴视觉声明
+  - [ ] AC-002: `numbered`/`circle-numbered`/`timeline` 三项编号型变体 — `numbered` 每步骤前缀为中文序数字符（一/二/三……，非默认列表符号）；`circle-numbered` 每步骤前缀含 `border-radius:50%` 的圆圈编号容器；`timeline` 含左侧点线连接线装饰节点（decorate 注入）+ 主色小圆点标记
+  - [ ] AC-003: `arrow` 渲染步骤间含文本箭头符号 `→` 作为分隔前缀节点（decorate 文本节点插入，非 SVG/CSS 图形箭头）
+  - [ ] AC-004: `minimal` 渲染不含默认列表符号声明（纯文本行呈现）
+  - [ ] AC-005: `filled`/`compact` 复用 `card` 化 DOM 结构 — `steps.ts` 既有 `decorate` 钩子分支条件从仅 `ctx.variant === "card"` 扩展为同时接受 `filled`/`compact`（三者共享 `buildStepsCardList` 标题/描述 slot 提取结构）；`filled` 渲染 root 背景为 `var(--color-brand)`（非 `card` 默认 `surface-alt`）；`compact` 渲染 root padding/margin 数值小于 `card` 默认值；二者渲染产物均含 title/description slot（card 结构特征）
+  - [ ] AC-006: 全仓四门禁绿；8 变体满足谓词①或②，差分守卫不判定为 finding；既有 `card` 变体（T-151 已实现）渲染产物字节不受本卡影响（decorate 分支扩展不改变 `ctx.variant === "card"` 分支自身行为）
+- **deliverables**:
+  - [ ] `packages/blocks/src/blocks/steps.ts` — 8 具名变体 baseStyle/decorate 落地，`decorate` 分支条件扩展
+  - [ ] `tests/blocks/steps-variants.test.ts`（新文件）— 渲染断言 + `card`/`filled`/`compact` 结构共享回归断言
+- **context_load**:
+  - variant-gap-triage-20260715-r1#§1
+- **notes**: LOC_SIGNAL: 230。`decorate` 分支扩展是本卡风险点（既有 `card` 变体行为不可回归），`tdd_refactor: required` 因引入跨变体共享结构逻辑（`filled`/`compact`/`card` 三态复用同一 DOM 构建函数）。
+
+---
+
+### T-197: pull-quote（A 类 3 项）+ highlight-block（3 项）变体导入
+
+- **目标**: 落地 `pull-quote` 3 项（`large`/`minimal`/`bordered`；`decorated` 已实现属性门控假阳性 EXEMPT，无需处置）+ `highlight-block` 3 项（`underline`/`bold`/`background`；`gradient` 因平台兼容性存疑独立立项，归 T-206）。映射：`pull-quote.large`←`pull-quote/giant-mark.ts`（装饰巨号：巨号引号装饰+大字左对齐）；`pull-quote.minimal`←`pull-quote/centered-rule.ts`（居中夹线：上下细线+居中 kicker，视觉负荷最轻）；`pull-quote.bordered`←`pull-quote/with-gloss.ts`（夹注式拉引：双行夹注+上下朱色细线）；`highlight-block.underline`←`highlight/dotted-underline.ts`（整段底部点状线+中性底色）；`highlight-block.bold`←`highlight/tracked-emphasis.ts`（letter-spacing 加大+加粗）；`highlight-block.background`←`highlight/wash-ground.ts`（整段米黄色块底色+略大行高）。
+- **模块**: M-002, M-005
+- **task_kind**: fix
+- **priority**: P1
+- **complexity**: large
+- **sprint**: 7
+- **tdd_mode**: standard
+- **tdd_acceptance**: all
+- **security_sensitive**: false
+- **dependencies**: [T-190, T-191]
+- **acceptance_criteria**:
+  - [ ] AC-001: `pull-quote.large` 渲染含装饰引号节点（复用既有 `injectLeadingInlineNode`/`buildPullQuoteDecoration` 模式扩展）+ root `text-align:left`（非 `default` 的 center）+ 大字号声明
+  - [ ] AC-002: `pull-quote.minimal` 渲染 root 含上下细线声明（`border-top`/`border-bottom`）+ 居中 kicker 文本样式，不含 `decorated` 变体的 quote-mark 装饰节点（视觉负荷低于 decorated）
+  - [ ] AC-003: `pull-quote.bordered` 渲染含双行夹注结构（author 或等效 slot 呈现上下两行）+ 上下朱色细线声明
+  - [ ] AC-004: `highlight-block` 3 变体渲染产物 — `underline` root 含底部点状下划线声明（`border-bottom` 含 `dotted`）+ 中性底色；`bold` root 含加粗字重 + letter-spacing 加大声明；`background` root 含米黄色系背景色 + `line-height` 大于 `default`
+  - [ ] AC-005: 全仓四门禁绿；6 变体满足谓词①或②，差分守卫不判定为 finding；`pull-quote.decorated` 渲染产物字节不受本卡影响
+- **deliverables**:
+  - [ ] `packages/blocks/src/blocks/{pull-quote,highlight-block}.ts` — 6 具名变体 baseStyle/decorate 落地
+  - [ ] `tests/blocks/pull-quote-highlight-block-variants.test.ts`（新文件）
+- **context_load**:
+  - variant-gap-triage-20260715-r1#§1
+  - variant-gap-triage-20260715-r1#§2
+- **notes**: LOC_SIGNAL: 180。`highlight-block.gradient` 不在本卡范围，归独立 T-206。
+
+---
+
+### T-198: warning + disclaimer + citation + reading-time 变体（提示/免责/引用/阅读时长）
+
+- **目标**: 落地 `warning` 2 项（`banner`/`inline`）+ `disclaimer` 2 项（`bordered`/`compact`）+ `citation` 2 项（`footnote-style`/`inline-link`）+ `reading-time` 1 项（`inline`；`badge` 因与 `default` 视觉承诺完全重合 DELETE 归 T-208）。映射：`warning.banner`←`admonition/slab-corner.ts`（顶部 6px 硬条+右上 accent 徽章方块+zero-radius）；`warning.inline`（PATCH：去除卡片化，改行内小号文字+图标前缀）；`disclaimer.bordered`←`announcement/mono-disclaimer.ts`（全边框无填充+uppercase 宽字距标题）；`disclaimer.compact`（PATCH：收紧 padding/字号，作为 `mono-disclaimer` 导入后的参数变体）；`citation.footnote-style`←`footnotes/dense-academic.ts`（2px 章节杆+2.4em 深 hanging+11px）；`citation.inline-link`（PATCH：去除左边框，改跟随正文+下划线链接感）；`reading-time.inline`（PATCH：去除 badge 化背景/圆角/padding，改跟随正文纯文字）。
+- **模块**: M-002, M-005
+- **task_kind**: fix
+- **priority**: P1
+- **complexity**: medium
+- **sprint**: 7
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **security_sensitive**: false
+- **dependencies**: [T-190, T-191]
+- **acceptance_criteria**:
+  - [ ] AC-001: `warning.banner` 渲染 root 含顶部粗边框声明（`border-top` ≥6px）+ `border-radius:0`；`warning.inline` 渲染 root 不含 `default` 的卡片化声明（`border-radius`/`background-color`），字号小于 `default`
+  - [ ] AC-002: `disclaimer.bordered` 渲染 root 含四边全边框声明 + 标题 uppercase/letter-spacing 声明；`disclaimer.compact` 渲染 root padding/font-size 数值小于 `bordered`
+  - [ ] AC-003: `citation.footnote-style` 渲染含 hanging indent 声明（`padding-left` + 负 `text-indent` 组合或等效）+ 11px 量级字号；`citation.inline-link` 渲染 root 不含 `border-left` 声明、含 `text-decoration:underline`
+  - [ ] AC-004: `reading-time.inline` 渲染 root 不含 `default` 的 `background-color`/`border-radius` 声明（badge 化视觉移除），保留纯文字呈现
+  - [ ] AC-005: 全仓四门禁绿；7 变体满足谓词①或②，差分守卫不判定为 finding
+- **deliverables**:
+  - [ ] `packages/blocks/src/blocks/{warning,disclaimer,citation,reading-time}.ts` — 7 具名变体 baseStyle 落地
+  - [ ] `tests/blocks/warning-disclaimer-citation-reading-time-variants.test.ts`（新文件）
+- **context_load**:
+  - variant-gap-triage-20260715-r1#§1
+- **notes**: LOC_SIGNAL: 110。`reading-time.badge`（DELETE）不在本卡范围，归 T-208；`reading-time.ts` 同文件被 T-208 触碰，建议序列化落盘。
+
+---
+
+### T-199: kpi-card + qa + tip-grid + definition-list 变体（数据网格/问答卡片）
+
+- **目标**: 落地 `kpi-card` 2 项（`highlight`/`compact`）+ `qa` 2 项（`bubble`/`bold-q`）+ `tip-grid` 2 项（`two-column`/`card-style`）+ `definition-list` 2 项（`two-column`/`card-style`）。映射：`kpi-card.highlight`←`compare/data-card.ts`（顶 3px 色条+大号数字）；`kpi-card.compact`（PATCH：收紧 padding）；`qa.bubble`←`qa-block/seal-stamp.ts`（问答朱印：需 decorate 区分问/答分别渲染不同徽章，一实心一描边）；`qa.bold-q`←`qa-block/numbered-faq.ts`（Q.NN 序号+加粗设问+底线分隔）；`tip-grid.two-column`（PATCH：2 列 `table-cell` 布局，复用 `compare.ledger` 已验证技术）；`tip-grid.card-style`←`note/box-callout.ts`（按网格项循环应用单元格级 chrome，1px 全边框+`textMuted` 标题）；`definition-list.two-column`（PATCH：同 tip-grid.two-column）；`definition-list.card-style`←`note/box-callout.ts`（按条目循环应用同构 cell chrome）。
+- **模块**: M-002, M-005
+- **task_kind**: fix
+- **priority**: P1
+- **complexity**: large
+- **sprint**: 7
+- **tdd_mode**: standard
+- **tdd_acceptance**: all
+- **security_sensitive**: false
+- **dependencies**: [T-190, T-191]
+- **acceptance_criteria**:
+  - [ ] AC-001: `kpi-card.highlight` 渲染 root 含顶部 3px 色条声明 + 数字元素大字号声明；`kpi-card.compact` 渲染 root padding 数值小于 `default`
+  - [ ] AC-002: `qa.bubble` 渲染问/答两部分呈现不同徽章处理（decorate 区分：问句徽章 vs 答句徽章样式不同，如一实心一描边）；`qa.bold-q` 渲染问句部分含加粗字重 + 底线分隔声明
+  - [ ] AC-003: `tip-grid.two-column` 与 `definition-list.two-column` 渲染均呈现 2 列 `display:table`/`table-cell` 布局
+  - [ ] AC-004: `tip-grid.card-style` 与 `definition-list.card-style` 渲染每个网格项/条目独立含全边框声明（1px `border`）+ 标题弱化色（`color:var(--color-text-muted)` 或等效），即按项循环应用的单元格级 chrome（非整个 root 一次性声明）
+  - [ ] AC-005: 全仓四门禁绿；8 变体满足谓词①或②，差分守卫不判定为 finding
+- **deliverables**:
+  - [ ] `packages/blocks/src/blocks/{kpi-card,qa,tip-grid,definition-list}.ts` — 8 具名变体 baseStyle/decorate 落地
+  - [ ] `tests/blocks/kpi-card-qa-tip-grid-definition-list-variants.test.ts`（新文件）
+- **context_load**:
+  - variant-gap-triage-20260715-r1#§1
+- **notes**: LOC_SIGNAL: 200。`tip-grid`/`definition-list` 的 `card-style` 复用同一 `note/box-callout.ts` 单元格级 chrome 手法，实现时可提取共享 helper（避免两块重复实现同一"按项循环加 cell chrome"逻辑），符合长期可维护性偏好。
+
+---
+
+### T-200: footnote + heading + paragraph + list 变体（基础排版元素）
+
+- **目标**: 落地 `footnote` 2 项（`numbered`/`inline`）+ `heading` 2 项（`underline`/`centered`）+ `paragraph` 2 项（`indented`/`spaced`）+ `list` 3 项（`bullet`/`numbered`/`checklist`）。映射：`footnote.numbered`←`footnotes/lined.ts`（逐条一行+hanging indent 编号悬挂）；`footnote.inline`←`footnotes/inline-flow.ts`（同段流式排列）；`heading.underline`←`section-title/bordered.ts`（2px 主色底线+角饰）；`heading.centered`（PATCH：`text-align:center`）；`paragraph.indented`（PATCH：`text-indent:2em`）；`paragraph.spaced`（PATCH：`line-height` 加大）；`list.bullet`（PATCH：自定义圆点 marker 颜色/形态）；`list.numbered`（PATCH：确保有序列表编号样式生效）；`list.checklist`（PATCH：项前缀 `☐`/`☑` unicode 字符，decorate 插入文本节点）。
+- **模块**: M-002, M-005
+- **task_kind**: fix
+- **priority**: P1
+- **complexity**: large
+- **sprint**: 7
+- **tdd_mode**: standard
+- **tdd_acceptance**: all
+- **security_sensitive**: false
+- **dependencies**: [T-190, T-191]
+- **acceptance_criteria**:
+  - [ ] AC-001: `footnote.numbered` 渲染含 hanging indent 编号悬挂声明；`footnote.inline` 渲染呈现流式排列（非逐条独立行的等效声明）
+  - [ ] AC-002: `heading.underline` 渲染 root 含 2px 主色底线声明（`border-bottom`）；`heading.centered` 渲染 root `text-align:center`
+  - [ ] AC-003: `paragraph.indented` 渲染 root 含 `text-indent:2em`；`paragraph.spaced` 渲染 root `line-height` 数值大于 `default`
+  - [ ] AC-004: `list.bullet` 渲染自定义圆点 marker 颜色/形态声明生效（非浏览器默认样式）；`list.numbered` 渲染有序列表编号样式声明生效；`list.checklist` 渲染每项前缀含 `☐`/`☑` unicode 字符节点（decorate 文本节点插入，非新增列表符号 CSS）
+  - [ ] AC-005: 全仓四门禁绿；9 变体满足谓词①或②，差分守卫不判定为 finding
+- **deliverables**:
+  - [ ] `packages/blocks/src/blocks/{footnote,heading,paragraph,list}.ts` — 9 具名变体 baseStyle/decorate 落地
+  - [ ] `tests/blocks/footnote-heading-paragraph-list-variants.test.ts`（新文件）
+- **context_load**:
+  - variant-gap-triage-20260715-r1#§1
+  - variant-gap-triage-20260715-r1#§2
+- **notes**: LOC_SIGNAL: 140。
+
+---
+
+### T-201: divider 3 变体 PATCH（spec-backed）
+
+- **目标**: 落地 `divider` 3 项 `thick`/`dotted`/`dashed`——已有 ui-spec §10.2 明文权威背书（"均为 CSS `border-style` 原生实现，不涉及本次视觉升级"），纯实现缺口（`divider.ts` 从未把该规格落成 `baseStyle`），不占用 PATCH 类目方法论争议范围（triage `[OQ-1]` 结论无论如何均直接实现）。
+- **模块**: M-002, M-005
+- **task_kind**: fix
+- **priority**: P1
+- **complexity**: small
+- **sprint**: 7
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **security_sensitive**: false
+- **dependencies**: [T-190, T-191]
+- **acceptance_criteria**:
+  - [ ] AC-001: `divider.thick` 渲染 root `border-width` 数值大于 `default`（增大边框粗细）
+  - [ ] AC-002: `divider.dotted` 渲染 root `border-style: dotted`
+  - [ ] AC-003: `divider.dashed` 渲染 root `border-style: dashed`
+  - [ ] AC-004: 全仓四门禁绿；3 变体满足谓词①，差分守卫不判定为 finding
+- **deliverables**:
+  - [ ] `packages/blocks/src/blocks/divider.ts` — 3 具名变体 baseStyle 落地
+  - [ ] `tests/blocks/divider-variants.test.ts`（新文件或并入既有 divider 测试）
+- **context_load**:
+  - variant-gap-triage-20260715-r1#§2
+- **notes**: LOC_SIGNAL: 40。`divider` 已有 SVG 装饰变体（wave/dots/flower，T-149 已实现），本卡新增的 3 项为纯 CSS 边框参数，不涉及 SVG/sanitize schema。
+
+---
+
+### T-202: code-block 变体导入 + 语法高亮浅色 token 集
+
+- **目标**: 落地 `code-block` 2 项。`minimal`←`codeBlock/bare.ts`（无外框，纯 `pre`/`code`）；`light`——"亮/暗"是语法高亮**配色主题**维度，与 5 个 codeBlock chrome 资产（bare/header-bar/inline-card/line-numbers/terminal-frame）承载的"外框结构"维度正交，不是从 wechat-typeset 挑一个新 chrome，而应在 `bare.ts` chrome 基础上替换为浅色调色板（背景/文字/语法高亮 token 全部切换），且应与既有主题色板机制对齐而非孤立硬编码。
+- **模块**: M-002, M-005
+- **task_kind**: fix
+- **priority**: P1
+- **complexity**: medium
+- **sprint**: 7
+- **tdd_mode**: standard
+- **tdd_acceptance**: all
+- **security_sensitive**: false
+- **dependencies**: [T-190, T-191]
+- **acceptance_criteria**:
+  - [ ] AC-001: `code-block.minimal` 渲染 root 不含外框声明（无 border/background 卡片化），纯 `pre`/`code` 呈现
+  - [ ] AC-002: `code-block.light` 渲染引入浅色语法高亮 token 集（背景/文字/语法高亮色全部切换为浅色调），且与既有主题 token 机制对齐——token 引用方式与 5 主题现有语法高亮 token 体系一致（非孤立硬编码色值），5 主题渲染产物各自解析出该主题对应的浅色调色板值（非跨主题字节相同）
+  - [ ] AC-003: 全仓四门禁绿；`pnpm test:cross-runtime` 全绿（`code-block` 不在 5 fixture 覆盖范围内，预期无影响，需验证坐实）；2 变体满足谓词①，差分守卫不判定为 finding
+- **deliverables**:
+  - [ ] `packages/blocks/src/blocks/code-block.ts` — 2 具名变体落地
+  - [ ] `packages/themes/*/src/index.ts`（如需补充浅色语法高亮 token，视实现方案而定）
+  - [ ] `tests/blocks/code-block-variants.test.ts`（新文件）
+- **context_load**:
+  - variant-gap-triage-20260715-r1#§2
+- **notes**: LOC_SIGNAL: 90。独立成卡（非并入 T-200/T-201）因 `code-block.light` 潜在跨越主题 token 体系（`packages/themes/*`），与其余单纯 blocks 包内改动的卡在改动面性质上不同。
+
+---
+
+### T-203: image + image-caption + dialog + timeline 变体（媒体与对话呈现）
+
+- **目标**: 落地 `image` 2 项（`rounded`/`full-width`）+ `image-caption` 1 项（`side`；`overlay` 因依赖 `position:absolute` 且无先例 DELETE，归 T-208）+ `dialog` 1 项（`interview`）+ `timeline` 2 项（`horizontal`/`compact`）。映射：`image.rounded`（PATCH：`border-radius`）；`image.full-width`（PATCH：`width:100%`）；`image-caption.side`（借用 `gallery/duo.ts` 的 `table-cell` 双列技术，图片 cell + 文字说明 cell 并排，非叠加）；`dialog.interview`←`dialogue/interview-column.ts`（杂志访谈栏：左列大写姓名+右列长答+hairline 沟槽）；`timeline.horizontal`（复用 `steps/ruler-row.ts` 同构横向主轴手法，与 T-196 `steps.horizontal` 视觉一致但独立实现）；`timeline.compact`（PATCH：收紧默认纵向时间线间距/padding）。
+- **模块**: M-002, M-005
+- **task_kind**: fix
+- **priority**: P1
+- **complexity**: medium
+- **sprint**: 7
+- **tdd_mode**: standard
+- **tdd_acceptance**: all
+- **security_sensitive**: false
+- **dependencies**: [T-190, T-191]
+- **acceptance_criteria**:
+  - [ ] AC-001: `image.rounded` 渲染 root 含 `border-radius` 声明；`image.full-width` 渲染 root `width:100%`
+  - [ ] AC-002: `image-caption.side` 渲染呈现图片 cell + 文字说明 cell 并排的 `table-cell` 双列结构（复用 `gallery.duo` 已验证技术，不含 `position:absolute` 声明）
+  - [ ] AC-003: `dialog.interview` 渲染呈现左列姓名（含大写/加粗声明）+ 右列长答内容的双栏结构，含 hairline 沟槽声明（如 `border-left` 细线分隔两栏）
+  - [ ] AC-004: `timeline.horizontal` 渲染呈现横向主轴布局（与 `steps.horizontal` 视觉一致的实线主轴处理，各自独立实现不共享代码）；`timeline.compact` 渲染 root 间距/padding 数值小于 `default` 纵向时间线
+  - [ ] AC-005: 全仓四门禁绿；6 变体满足谓词①或②，差分守卫不判定为 finding
+- **deliverables**:
+  - [ ] `packages/blocks/src/blocks/{image,image-caption,dialog,timeline}.ts` — 6 具名变体 baseStyle/decorate 落地
+  - [ ] `tests/blocks/image-dialog-timeline-variants.test.ts`（新文件）
+- **context_load**:
+  - variant-gap-triage-20260715-r1#§2
+- **notes**: LOC_SIGNAL: 150。`image-caption.overlay`（DELETE）不在本卡范围，归 T-208；`image-caption.ts` 同文件被 T-208 触碰，建议序列化落盘。`timeline.horizontal` 建议在实现后与 T-196 `steps.horizontal` 做一次视觉一致性交叉核对（`variant-gap-triage-20260715-r1#§1 [OQ-3]` 已记录两块概念交叠，本批不合并，仅要求视觉手法一致）。
+
+---
+
+### T-204: qrcode + miniprogram-card + footer-cta + recommendation 变体（营销工具卡片）
+
+- **目标**: 落地 `qrcode` 1 项（`card`；`with-logo` 因 QR 生成层能力层错位 DELETE，归 T-208）+ `miniprogram-card` 2 项（`large`/`compact`）+ `footer-cta` 2 项（`centered`/`full-width`）+ `recommendation` 2 项（`card`/`compact`）。映射：`qrcode.card`←`qrcode/follow-card.ts`（左 QR+右 kicker/标题/说明三行）；`miniprogram-card.large`（借用 `qrcode/follow-card.ts` 同构"图标+信息"卡片技术）；`miniprogram-card.compact`（PATCH：收紧 padding，作为 large 落地后的参数变体）；`footer-cta.centered`←`footer-cta/button-led.ts`（居中标题+主色胶囊按钮）；`footer-cta.full-width`←`footer-cta/triptych-actions.ts`（赞同/收藏/转发三栏）；`recommendation.card`←`recommend/card-list.ts`（推荐列表：粗体标题+bullet 链接列表）；`recommendation.compact`（PATCH：收紧间距，作为 card 落地后的参数变体）。
+- **模块**: M-002, M-005
+- **task_kind**: fix
+- **priority**: P1
+- **complexity**: large
+- **sprint**: 7
+- **tdd_mode**: standard
+- **tdd_acceptance**: all
+- **security_sensitive**: false
+- **dependencies**: [T-190, T-191]
+- **acceptance_criteria**:
+  - [ ] AC-001: `qrcode.card` 渲染呈现左 QR + 右三行信息（kicker/标题/说明）的并排结构
+  - [ ] AC-002: `miniprogram-card.large` 渲染呈现图标 + 信息（标题/描述）并排结构（借用 `qrcode.card` 同构技术）；`miniprogram-card.compact` 渲染 padding 数值小于 `large`
+  - [ ] AC-003: `footer-cta.centered` 渲染呈现居中标题 + 主色胶囊按钮元素（`border-radius` 高值 + `background:var(--color-brand)` 或等效）；`footer-cta.full-width` 渲染呈现三栏动作元素（赞同/收藏/转发同构结构，满宽布局）
+  - [ ] AC-004: `recommendation.card` 渲染呈现粗体标题 + bullet 链接列表结构；`recommendation.compact` 渲染间距数值小于 `card`
+  - [ ] AC-005: 全仓四门禁绿；7 变体满足谓词①或②，差分守卫不判定为 finding
+- **deliverables**:
+  - [ ] `packages/blocks/src/blocks/{qrcode,miniprogram-card,footer-cta,recommendation}.ts` — 7 具名变体 baseStyle/decorate 落地
+  - [ ] `tests/blocks/qrcode-miniprogram-card-footer-cta-recommendation-variants.test.ts`（新文件）
+- **context_load**:
+  - variant-gap-triage-20260715-r1#§2
+- **notes**: LOC_SIGNAL: 180。`qrcode.with-logo`（DELETE）不在本卡范围，归 T-208；`qrcode.ts` 同文件被 T-208 触碰，建议序列化落盘。`footer-cta` 块本身当前无块级 `baseStyle`（C 类"default 裸奔"问题），本卡新增两具名变体的独立 chrome 不依赖块基座补全，超出本批 A/B 范围的 C 类问题留归 backlog。
+
+---
+
+### T-205: related-cards + social-cta + subscribe-cta + advert-card 变体（社交/订阅引导）
+
+- **目标**: 落地 `related-cards` 2 项（`compact`/`grid`）+ `social-cta` 2 项（`icon-left`/`full-width`）+ `subscribe-cta` 1 项（`banner`；`centered` 与 `default` 视觉承诺完全重合 DELETE，归 T-208）+ `advert-card` 1 项（`minimal`；`horizontal` 同 card.horizontal 层错位 DELETE，归 T-208）。映射：`related-cards.compact`（PATCH：收紧 padding/margin）；`related-cards.grid`（借用 `recommend/card-list.ts` 逐项 chrome + `table-cell` 双列网格布局，复用 tip-grid 手法组合）；`social-cta.icon-left`←`announcement/ai-notice.ts`（pill 形态+芯片图标+灰字告知）；`social-cta.full-width`（PATCH：`default` 已有 `width:100%`，需与 `default` 形成真实差异——去除 `border-radius`/`border`，做到边到边贴边观感）；`subscribe-cta.banner`（借用 `footer-cta/button-led.ts` 居中标题+主色胶囊按钮同构技术）；`advert-card.minimal`（PATCH：去除 border/background，保留 padding）。
+- **模块**: M-002, M-005
+- **task_kind**: fix
+- **priority**: P1
+- **complexity**: medium
+- **sprint**: 7
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **security_sensitive**: false
+- **dependencies**: [T-190, T-191]
+- **acceptance_criteria**:
+  - [ ] AC-001: `related-cards.compact` 渲染 padding/margin 数值小于 `default`；`related-cards.grid` 渲染呈现逐项独立 chrome（`border`）+ `table-cell` 双列网格布局
+  - [ ] AC-002: `social-cta.icon-left` 渲染呈现 pill 形态（高 `border-radius`）+ 图标元素 + 灰字文本；图标以文本/Unicode 字形或简单 CSS 图形表达（`[ASSUMPTION]`：本仓无专用图标资产系统，不引入外部图标资源）；`social-cta.full-width` 渲染 root 不含 `border-radius`/`border` 声明（去除圆角与边框做到贴边观感，与 `default` 的纯 `width:100%` 形成真实差异）
+  - [ ] AC-003: `subscribe-cta.banner` 渲染呈现居中标题 + 主色胶囊按钮元素
+  - [ ] AC-004: `advert-card.minimal` 渲染 root 不含 border/background 声明，保留 padding
+  - [ ] AC-005: 全仓四门禁绿；6 变体满足谓词①或②，差分守卫不判定为 finding
+- **deliverables**:
+  - [ ] `packages/blocks/src/blocks/{related-cards,social-cta,subscribe-cta,advert-card}.ts` — 6 具名变体 baseStyle/decorate 落地
+  - [ ] `tests/blocks/related-cards-social-cta-subscribe-cta-advert-card-variants.test.ts`（新文件）
+- **context_load**:
+  - variant-gap-triage-20260715-r1#§1
+- **notes**: LOC_SIGNAL: 130。`subscribe-cta.centered`/`advert-card.horizontal`（DELETE）不在本卡范围，归 T-208；`subscribe-cta.ts`/`advert-card.ts` 同文件被 T-208 触碰，建议序列化落盘。
+
+---
+
+### T-206: highlight-block.gradient 真机可行性核实 + 条件裁决
+
+- **目标**: `highlight-block.gradient`（`background: linear-gradient(...)`）在拆卡前须核实微信真机粘贴过滤对 `linear-gradient` inline style 的存活性——171 个 wechat-typeset 资产全库无一使用 gradient（同为微信平台设计的系统性回避是强信号），`amendment-variant-mechanism-20260715-r1#§7 OQ-8` 已裁定标 feasibility 立项、不阻塞主线。真机不存活 → 转 DELETE；存活 → 因无可导入资产且从零设计与"不为自造名从零设计"裁定原则冲突，默认仍判定 DELETE。
+- **模块**: M-002, M-005
+- **task_kind**: fix
+- **priority**: P2
+- **complexity**: small
+- **sprint**: 7
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **security_sensitive**: false
+- **dependencies**: [T-190]
+- **acceptance_criteria**:
+  - [ ] AC-001（前置，非本卡代码交付门槛，owner=user）: 无自动化真机 oracle——须用户手工将含 `background: linear-gradient(...)` inline style 的探针 HTML（highlight-block 渲染路径产出的等效结构）粘贴进微信客户端确认该声明是否存活（未被粘贴过滤剥离）；样本记录写入 `docs/EVENT-LOG.jsonl`（`event=user_decision`）；建议与 T-172 r3 走查合并一次性采集，避免多次切换微信客户端
+  - [ ] AC-002: 若 AC-001 判定不存活 → `highlight-block.ts` 的 `gradient` 变体条目从 `variants` 数组移除注册
+  - [ ] AC-003: 若 AC-001 判定存活 → 因无可导入的 wechat-typeset 先例资产、从零设计与既定裁定原则冲突，默认仍移除注册（除非用户在 AC-001 决策记录中额外明确要求保留并提供设计方向，此为小概率分支，不强制自动化覆盖）
+  - [ ] AC-004: 全仓四门禁绿；`highlight-block` 其余 3 项已落地变体（`underline`/`bold`/`background`，T-197 交付）渲染产物不受本卡影响
+- **deliverables**:
+  - [ ] 真机确认记录（`docs/EVENT-LOG.jsonl`）
+  - [ ] `packages/blocks/src/blocks/highlight-block.ts` — 条件性移除 `gradient` 注册
+- **context_load**:
+  - amendment-variant-mechanism-20260715-r1#§7
+- **notes**: LOC_SIGNAL: 20。独立卡、不阻塞批 B 其余卡（"独立不阻塞主线"，orchestrator 简报原文）；`highlight-block.ts` 同文件被 T-197 触碰（新增 3 变体 vs 本卡条件性移除 1 变体，语义不冲突，建议序列化落盘）。AC-001 真机确认无自动化 oracle，纯手工肉眼确认。
+
+---
+
+### T-207: audio/video 3 项具名变体临时移除注册 + blocked 归档备案
+
+- **目标**: `audio.full`/`audio.mini`/`video.with-caption` 三项因 DOM 输出契约未厘清（`audio.ts`/`video.ts` 的 `directiveAttrs = z.object({}).strict()` 空属性、无 baseStyle、无 decorate，当前只是空容器裹正文；微信公众号音视频通常经其自有媒体素材机制嵌入，非原始 `<audio>`/`<video>` 标签粘贴后原样保留）临时从注册表移除——`amendment-variant-mechanism-20260715-r1#§7 OQ-10` 裁定这 6 项归 blocked、不计入 collect-list 必归零，须在批 C 归零对账中显式排除；本卡处置其中 3 项（`video.autoplay` 理由独立，已确认 DELETE，归 T-208；`audio.default`/`video.default` 属 `default` 变体，本就豁免 T-191 谓词校验，无需处置）。本卡为**可逆的 contract-pending containment**，非永久设计裁定——区别于 T-208 的永久 DELETE。
+- **模块**: M-002, M-005
+- **task_kind**: fix
+- **priority**: P2
+- **complexity**: small
+- **sprint**: 7
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **security_sensitive**: false
+- **dependencies**: []
+- **acceptance_criteria**:
+  - [ ] AC-001: `audio.ts` 的 `full`/`mini` 两具名变体条目从 `variants` 数组移除；`video.ts` 的 `with-caption` 具名变体条目从 `variants` 数组移除（`video.autoplay` 不在本卡处置范围，归 T-208 永久 DELETE）
+  - [ ] AC-002: `packages/blocks/src/known-blocked-variants.ts`（新文件）导出 `KNOWN_BLOCKED_VARIANTS: Set<string>`，含 `"audio::full"`、`"audio::mini"`、`"video::with-caption"` 三项，模块级文档说明排除理由（DOM 输出契约未厘清）与重新评估触发条件（architect 核实 `amendment-variant-mechanism-20260715-r1#§7 OQ-10` 后独立立项重新评估导入/PATCH 路径）
+  - [ ] AC-003: 移除后 `listAllVariants()` 不再包含这 3 项；`audio`/`video` 两块的 `default` 变体渲染产物与移除前字节相同
+  - [ ] AC-004: 全仓四门禁绿
+- **deliverables**:
+  - [ ] `packages/blocks/src/blocks/{audio,video}.ts` — 3 具名变体条目移除
+  - [ ] `packages/blocks/src/known-blocked-variants.ts`（新文件）
+- **context_load**:
+  - amendment-variant-mechanism-20260715-r1#§7
+  - variant-gap-triage-20260715-r1#§2
+- **notes**: LOC_SIGNAL: 40。`known-blocked-variants.ts` 被 T-192（差分守卫排除清单）与 T-209（collect-list 归零对账排除清单）消费——若二者早于本卡派发，可先以空排除集实现、待本卡落地后各自追加消费（T-192/T-209 notes 已注明此依赖弱化处理）。移除的 3 项待 architect 核实 DOM 输出契约后归后续独立 backlog（非本批范围，orchestrator 收口时纳入项目指令文件待办）。`video.ts` 同文件被 T-208（`video.autoplay` DELETE）触碰，建议序列化落盘。
+
+---
+
+### T-208: 批 B DELETE 汇总（10 项）
+
+- **目标**: 落地 10 项永久 DELETE 裁定（`highlight-block.gradient` 不在本卡范围，归独立 T-206；见批 A/B/C 概述表述）：`quote.large`（与已导入 `large-quote-mark` 语义重复）、`card.horizontal`（需图文并排媒体布局，超出装饰资产范畴，`[OQ-7]`）、`publication-skeleton.magazine`/`.minimal`（全文排版参数非块级装饰变体，`[OQ-4]`）、`reading-time.badge`（与 `default` 视觉承诺完全重合）、`advert-card.horizontal`（同 card.horizontal 层错位，`[OQ-7]`）、`subscribe-cta.centered`（与 `default` 视觉承诺完全重合）、`image-caption.overlay`（依赖 `position:absolute`，ui-spec §9.1 慎用通则 + 无先例，`[OQ-9]`）、`qrcode.with-logo`（QR 生成层能力非 block variant CSS chrome 层，层错位，`[OQ-5]`）、`video.autoplay`（播放行为非视觉 chrome，与 gallery 轮播排除先例同构，`[OQ-5]`/`[OQ-10]`）。
+- **模块**: M-002, M-005
+- **task_kind**: fix
+- **priority**: P1
+- **complexity**: medium
+- **sprint**: 7
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **security_sensitive**: false
+- **dependencies**: []
+- **acceptance_criteria**:
+  - [ ] AC-001: `quote.large`/`card.horizontal`/`publication-skeleton.magazine`/`publication-skeleton.minimal`/`reading-time.badge`/`advert-card.horizontal`/`subscribe-cta.centered` 共 7 项从各自块的 `variants` 数组移除注册
+  - [ ] AC-002: `image-caption.overlay`/`qrcode.with-logo`/`video.autoplay` 共 3 项从各自块的 `variants` 数组移除注册
+  - [ ] AC-003: 移除后 `listAllVariants()` 不再包含上述 10 项；各自块的其余变体（含 `default`）渲染产物不受影响（字节相同）
+  - [ ] AC-004: 移除项若存在对应的 `e2e/visual/` 快照文件，一并清理（避免孤儿快照污染视觉基线目录，为 T-211 全矩阵重 seed 提供干净起点）
+  - [ ] AC-005: 全仓四门禁绿
+- **deliverables**:
+  - [ ] `packages/blocks/src/blocks/{quote,card,publication-skeleton,reading-time,advert-card,subscribe-cta,image-caption,qrcode,video}.ts` — 10 处变体条目移除
+  - [ ] `e2e/visual/` 孤儿快照清理
+- **context_load**:
+  - variant-gap-triage-20260715-r1#§1
+  - variant-gap-triage-20260715-r1#§2
+- **notes**: LOC_SIGNAL: 60。本卡不依赖 T-190/T-191（纯移除操作，无需 merge 语义或注册守卫机制），可最先派发。与 T-194（quote）、T-195（card）、T-198（reading-time/advert-card 相关簇）、T-203（image-caption）、T-204（qrcode）、T-207（video）存在同文件改动面重叠——改动本身互不冲突（本卡删除特定数组项，其余卡新增/修改其他数组项），但建议序列化落盘避免 git 层面文本冲突。
+
+### 4.3 批 C · 收口批
+
+依赖批 B 全部（T-193..T-208）完成。三项收口动作（registerBlock 翻 throw、差分守卫翻 RED、视觉基线重 seed）刻意拆为独立卡而非合一——三者验证目标不同（注册期静态谓词 / 渲染期字节差分 / 视觉快照基线），失败模式互不掩盖，拆开有利于问题定位；T-209 与 T-210 互不依赖，可并行验证。
+
+### T-209: collect-list 归零对账 + registerBlock 翻 throw + 移除 collect-only 脚手架
+
+- **目标**: 批 B 全部落地后，`registerBlock`（T-191 建立）的 `getUnimplementedVariants()` 收集集合扣除 `intentional-plain-variants.ts` allowlist 与 `known-blocked-variants.ts`（T-207，含 `audio::full`/`audio::mini`/`video::with-caption` 三项）后必须为空集；对账通过后将 `registerBlock` 默认模式由 collect-only 翻转为 throw（`E_VARIANT_NO_IMPL`），**同批**从 `registerBlock` 移除 collect-only 分支代码——最终交付只留 throw 态，零 mode 开关、零 deprecated/双轨残留（贯彻"避免向后兼容"顶层原则，`amendment-variant-mechanism-20260715-r1#§4.3` 阶段三）。
+- **模块**: M-002, M-005
+- **task_kind**: fix
+- **priority**: P0
+- **complexity**: medium
+- **sprint**: 7
+- **tdd_mode**: standard
+- **tdd_acceptance**: all
+- **tdd_refactor**: skip
+- **security_sensitive**: false
+- **dependencies**: [T-190, T-191, T-193, T-194, T-195, T-196, T-197, T-198, T-199, T-200, T-201, T-202, T-203, T-204, T-205, T-206, T-207, T-208]
+- **acceptance_criteria**:
+  - [ ] AC-001: 归零对账 — `getUnimplementedVariants()` 全量收集集合扣除 `intentional-plain-variants.ts` allowlist 命中项与 `known-blocked-variants.ts` 三项后为空集（`Array.length === 0`）；若非空，本卡按 `blocked` 状态终止并在 notes 记录残余项清单，回退对应批 B 任务补实现（不得放宽本 AC 或静默扩大 blocked 清单掩盖遗漏）
+  - [ ] AC-002: `registerBlock` 默认行为翻转为 throw——不传任何显式参数调用 `registerBlock` 时，给定未实现变体场景（合成测试块），Then 直接抛 `E_VARIANT_NO_IMPL`（此前默认为 collect-only）；collect-only 相关代码分支（模式判断、`getUnimplementedVariants` 若仅服务 collect-only 场景则一并评估是否保留为诊断用途或移除）从 `block.ts` 中移除
+  - [ ] AC-003: 内置资产零误伤 — 全部内置资产（`listThemes()` 全部主题 × `listBlocks()` 全部块 × 全部注册 variant × 全部注册 mark）在 throw 模式生效状态下正常完成注册（应用启动/`packages/blocks/src/index.ts` 导入不抛错），suite 全量加载无中断
+  - [ ] AC-004: 全仓四门禁绿；`block.test.ts` 中原 collect-only 相关测试用例按新默认行为（throw-by-default）调整或移除，不留描述已废弃行为的测试
+- **deliverables**:
+  - [ ] `packages/core/src/registry/block.ts` — collect-only 脚手架移除 + 默认 throw
+  - [ ] `packages/core/src/registry/block.test.ts` — 测试用例随新默认行为调整
+- **context_load**:
+  - amendment-variant-mechanism-20260715-r1#§4
+- **notes**: LOC_SIGNAL: 90。本卡是"归零对账"的权威判定点——AC-001 若发现残余未实现项，禁止就地放宽豁免范围掩盖，须回退到具体批 B 任务补实现后重跑本卡。
+
+---
+
+### T-210: 差分守卫 WARN→RED + plain-allowlist 豁免集终版
+
+- **目标**: T-192 建立的渲染期差分守卫由 WARN 模式（`console.warn` + 不阻断）翻转为 RED 模式（finding 非空即测试失败）；批 B 全部落地后，遍历全部已注册块×具名变体（排除 `known-blocked-variants.ts` 与 `intentional-plain-variants.ts` allowlist）跑差分比较，finding 集合必须为空，坐实"注册但渲染 no-op"这一 B 类残余盲区在本批范围内清零。
+- **模块**: M-002, M-005
+- **task_kind**: fix
+- **priority**: P0
+- **complexity**: medium
+- **sprint**: 7
+- **tdd_mode**: standard
+- **tdd_acceptance**: all
+- **tdd_refactor**: skip
+- **security_sensitive**: false
+- **dependencies**: [T-192, T-193, T-194, T-195, T-196, T-197, T-198, T-199, T-200, T-201, T-202, T-203, T-204, T-205, T-206, T-207, T-208]
+- **acceptance_criteria**:
+  - [ ] AC-001: 差分守卫主函数在真实注册表全量运行下 finding 数组为空（排除 `known-blocked-variants.ts` 与 plain-allowlist 命中项）；若非空，本卡按 `blocked` 状态终止并在 notes 记录残余 finding 清单（`{blockId, variantId}`），回退对应批 B 任务补实现或经 architect 追加登记 plain-allowlist（须附充分理由，不得批量登记掩盖遗漏）
+  - [ ] AC-002: RED 断言机制 — 差分守卫测试用例改为：finding 非空时用例直接失败（`expect(findings).toEqual([])` 或等效），移除 T-192 阶段的 `console.warn` 非阻断分支与相关 spy 断言（WARN 模式脚手架代码清零，不留 mode 开关）
+  - [ ] AC-003: plain-allowlist 豁免集终版核实 — 本批（T-193..T-208）落地的全部 IMPORT/PATCH 变体逐一确认不属于"delta 为空/decorate no-op"的真实 no-op；若差分守卫在 AC-001 中发现残余 no-op，须定位到具体批 B 任务的实现缺陷（非"变体本意无装饰"，因triage裁定中无一项落入 plain-allowlist 范畴），本卡不得为掩盖该缺陷而将其登记进 plain-allowlist
+  - [ ] AC-004: 全仓四门禁绿
+- **deliverables**:
+  - [ ] `packages/core/src/registry/variant-diff-guard.ts` — WARN→RED 翻转
+  - [ ] `tests/registry/variant-diff-guard.test.ts` — RED 断言 + WARN 脚手架移除
+- **context_load**:
+  - amendment-variant-mechanism-20260715-r1#§6
+- **notes**: LOC_SIGNAL: 60。与 T-209 互不依赖（不同校验层，静态注册谓词 vs 渲染期字节差分），可并行验证；两者共同覆盖 `amendment-variant-mechanism-20260715-r1#§6` 描述的候选 B 两类残余盲区（delta 空 / decorate no-op）。
+
+---
+
+### T-211: 视觉基线全矩阵重 seed + assertVariantFloor 阈值重推导
+
+- **目标**: T-209/T-210 收口完成、注册表进入最终稳定状态后，对 `e2e/visual/` 全矩阵（`block × variant × 5 themes`，`story-matrix.ts:35-56` `buildFullMatrix`）一次性重新生成视觉基线快照——覆盖本批新落地的全部 IMPORT/PATCH 变体（含 T-190 唯一的已实现变体产物变化点 `steps.card` × 5）+ 清理 T-208/T-207/T-206 移除项对应的孤儿快照；`assertVariantFloor`（`story-matrix.ts:27-33`，现硬编码 120）阈值按落地后 `listAllVariants().length` 的实测稳定值重新推导。
+- **模块**: M-002, M-005
+- **task_kind**: chore
+- **priority**: P1
+- **complexity**: medium
+- **sprint**: 7
+- **tdd_mode**: light
+- **tdd_acceptance**: all
+- **security_sensitive**: false
+- **dependencies**: [T-209, T-210]
+- **acceptance_criteria**:
+  - [ ] AC-001: `VISUAL_FULL=1` 模式下跑通 `buildFullMatrix()` 全量矩阵渲染，新增/变更的视觉快照文件写入 `e2e/visual/`；`git diff` 审阅仅含预期新增/变更（本批新落地变体 + `steps.card` × 5 + 已删除变体对应快照的清理），无意外全局漂移
+  - [ ] AC-002: `assertVariantFloor` 阈值从硬编码 `120` 更新为落地后 `listAllVariants().length` 的实测稳定值（测算方式记入 notes，不写公式化占位符，直接写死实测整数）
+  - [ ] AC-003: cross-runtime 5 fixture（T-190 AC-004 已锁字节不变）与本批新落地变体各自独立的视觉快照全部完成 regen；`pnpm test:cross-runtime` 全绿、`EXPECTED_HASHES` 保持不变（不因本卡重 seed 而重新生成）
+  - [ ] AC-004: 全仓四门禁绿
+- **deliverables**:
+  - [ ] `e2e/visual/` 全量快照 regen（`VISUAL_FULL=1`）
+  - [ ] `e2e/visual/story-matrix.ts` — `assertVariantFloor` 阈值更新
+- **context_load**:
+  - amendment-variant-mechanism-20260715-r1#§5
+- **notes**: LOC_SIGNAL: 30（不含快照文件本身，快照为生成产物非手写 LOC）。阈值预期落在 130-145 区间（原 155 − T-208 永久删除 10 − T-207 临时移除 3 − highlight-block.gradient 视 T-206 结论 ±1），实测值以本卡运行时 `listAllVariants().length` 为准，不预先写死区间外的猜测值。
+
+---
+
+### T-212: [VALIDATION] 变体渲染缺口修复批验证
+
+- **目标**: 用户走查确认本批（T-190..T-211）交付的最终产物——批 B 落地的 80 项 IMPORT/PATCH 变体在编辑器实际预览与渲染管线中呈现与 `variant-gap-triage-20260715-r1` 裁定映射一致的视觉效果；重点抽样跨文件/decorate 结构性变体（`steps.{horizontal,numbered,circle-numbered,timeline}`、`quote.{bordered,centered,card}`、`pull-quote.{large,bordered}`、`qa.bubble`、`tip-grid/definition-list.card-style`、`dialog.interview`）；确认 T-208 汇总的 10 项 DELETE + T-206 条件性 1 项在编辑器 InsertDrawer/变体选择器中确实不再出现；确认 T-207 临时移除的 3 项 audio/video 具名变体不影响该两块 `default` 用法；确认 `assertVariantFloor` 新阈值下四门禁与视觉基线门禁均绿。
+- **模块**: M-002, M-005
+- **task_kind**: validation
+- **priority**: P0
+- **complexity**: medium
+- **sprint**: 7
+- **security_sensitive**: false
+- **dependencies**: [T-209, T-210, T-211]
+- **acceptance_criteria**:
+  - [ ] AC-001: 编辑器 InsertDrawer/变体选择器抽样核对 — 本批新增具名变体在 UI 中可选中，选中后编辑器内预览呈现与裁定映射的视觉意图一致（非纯文本无样式）
+  - [ ] AC-002: 结构性变体（decorate 改动类，见目标段落列举清单）逐一走查确认 DOM 结构符合预期（如 `steps.horizontal` 呈现横排、`dialog.interview` 呈现左右双栏）
+  - [ ] AC-003: 已删除的 11 项变体（T-208 十项 + T-206 条件性一项）确认不再出现在任何用户可选界面
+  - [ ] AC-004: `audio`/`video` 两块 `default` 用法确认不受 T-207 移除影响（正常渲染空容器占位，不抛错、不影响其余管线）
+  - [ ] AC-005: 走查报告产出并记录 `event=user_decision`
+- **deliverables**:
+  - [ ] `docs/reviews/walkthrough/WALKTHROUGH-variant-gap-remediation-{YYYYMMDD}-r1.md`
+- **context_load**:
+  - variant-gap-triage-20260715-r1#§3
+- **notes**: 无自动化 oracle 覆盖"变体裁定映射是否符合用户视觉意图"这一层——T-192/T-210 差分守卫只判定"渲染是否 ≠ default"，不判定"渲染是否符合 triage 裁定的具体设计意图"，故仍需人工走查收口。
