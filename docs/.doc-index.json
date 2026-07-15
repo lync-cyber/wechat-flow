@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-14T08:39:21.799350+00:00",
+  "generated_at": "2026-07-15T07:58:37.040544+00:00",
   "documents": {
     "amendment-platform-fidelity-r1": {
       "file_path": "docs/arch/AMENDMENT-platform-fidelity-r1.md",
@@ -164,6 +164,186 @@
       "dep_hashes": {
         "arch-wechat-flow-modules": "640ecbc8",
         "dev-plan-wechat-flow-s7": "0b40428b"
+      }
+    },
+    "amendment-variant-mechanism-20260715-r1": {
+      "file_path": "docs/arch/AMENDMENT-variant-mechanism-20260715-r1.md",
+      "doc_type": "arch",
+      "status": "approved",
+      "total_lines": 151,
+      "est_tokens": 4392,
+      "content_hash": "ea362431",
+      "sections": {
+        "0": {
+          "heading": "## 0. 裁决基准",
+          "line_start": 17,
+          "line_end": 20,
+          "est_tokens": 88,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        },
+        "1": {
+          "heading": "## 1. 机制根因（已核实）",
+          "line_start": 21,
+          "line_end": 29,
+          "est_tokens": 351,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        },
+        "2": {
+          "heading": "## 2. 与既有裁定的对齐锚点",
+          "line_start": 30,
+          "line_end": 34,
+          "est_tokens": 145,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        },
+        "3": {
+          "heading": "## 3. 三候选对比矩阵（决策记录）",
+          "line_start": 35,
+          "line_end": 47,
+          "est_tokens": 237,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        },
+        "4": {
+          "heading": "## 4. 候选 B + merge 落地设计（主体）",
+          "line_start": 48,
+          "line_end": 89,
+          "est_tokens": 1387,
+          "deps": [],
+          "level": 2,
+          "items": {
+            "4.1": {
+              "heading": "### 4.1 注册期硬拒接口",
+              "line_start": 50,
+              "line_end": 60,
+              "est_tokens": 277,
+              "deps": []
+            },
+            "4.2": {
+              "heading": "### 4.2 merge 语义（核心裁定）",
+              "line_start": 61,
+              "line_end": 75,
+              "est_tokens": 563,
+              "deps": []
+            },
+            "4.3": {
+              "heading": "### 4.3 big-bang 迁移路径（collect-only 为一次性脚手架，零残留）",
+              "line_start": 76,
+              "line_end": 83,
+              "est_tokens": 271,
+              "deps": []
+            },
+            "4.4": {
+              "heading": "### 4.4 测试锁重写",
+              "line_start": 84,
+              "line_end": 89,
+              "est_tokens": 265,
+              "deps": []
+            }
+          }
+        },
+        "5": {
+          "heading": "## 5. 影响评估（候选 B + merge）",
+          "line_start": 90,
+          "line_end": 111,
+          "est_tokens": 580,
+          "deps": [],
+          "level": 2,
+          "items": {
+            "5.1": {
+              "heading": "### 5.1 现有已实现变体产物冲击（merge 唯一改一处）",
+              "line_start": 92,
+              "line_end": 99,
+              "est_tokens": 255,
+              "deps": []
+            },
+            "5.2": {
+              "heading": "### 5.2 视觉基线（Playwright `e2e/visual/`）",
+              "line_start": 100,
+              "line_end": 104,
+              "est_tokens": 110,
+              "deps": []
+            },
+            "5.3": {
+              "heading": "### 5.3 cross-runtime golden SHA（硬约束：字节不变）",
+              "line_start": 105,
+              "line_end": 111,
+              "est_tokens": 205,
+              "deps": []
+            }
+          }
+        },
+        "6": {
+          "heading": "## 6. B 类残余盲区兜底（merge 语义下重新确认，仍为必要补全，非冗余）",
+          "line_start": 112,
+          "line_end": 124,
+          "est_tokens": 318,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        },
+        "7": {
+          "heading": "## 7. 次级 OQ 补裁（用户已授权 architect 裁定）",
+          "line_start": 125,
+          "line_end": 137,
+          "est_tokens": 534,
+          "deps": [],
+          "level": 2,
+          "items": {
+            "OQ-2": {
+              "heading": "### OQ-2 / OQ-3 · taxonomy 交叠",
+              "line_start": 127,
+              "line_end": 130,
+              "est_tokens": 153,
+              "deps": []
+            },
+            "OQ-8": {
+              "heading": "### OQ-8 / OQ-9 · 零先例微信兼容 feasibility",
+              "line_start": 131,
+              "line_end": 134,
+              "est_tokens": 244,
+              "deps": []
+            },
+            "OQ-10": {
+              "heading": "### OQ-10 · `audio` / `video` DOM 输出契约",
+              "line_start": 135,
+              "line_end": 137,
+              "est_tokens": 123,
+              "deps": []
+            }
+          }
+        },
+        "8": {
+          "heading": "## 8. 决策记录",
+          "line_start": 138,
+          "line_end": 146,
+          "est_tokens": 244,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        },
+        "9": {
+          "heading": "## 9. 留待用户终审的 open questions（≤2）",
+          "line_start": 147,
+          "line_end": 151,
+          "est_tokens": 190,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        }
+      },
+      "deps": [
+        "walkthrough-variant-render-gap-20260714-r2",
+        "arch"
+      ],
+      "dep_hashes": {
+        "walkthrough-variant-render-gap-20260714-r2": "ed27ef0b"
       }
     },
     "arch-wechat-flow-api": {
@@ -1149,6 +1329,76 @@
         "arch-wechat-flow-data": "350d4e7a",
         "prd-wechat-flow": "0e15bcb3",
         "test-report-wechat-flow": "46047a0b"
+      }
+    },
+    "variant-gap-triage-20260715-r1": {
+      "file_path": "docs/design/VARIANT-GAP-TRIAGE-20260715-r1.md",
+      "doc_type": "design-review",
+      "status": "approved",
+      "total_lines": 404,
+      "est_tokens": 8376,
+      "content_hash": "623f1fe1",
+      "sections": {
+        "0": {
+          "heading": "## 0. 处置类目说明（含需用户裁定的方法论问题）",
+          "line_start": 16,
+          "line_end": 31,
+          "est_tokens": 321,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        },
+        "1": {
+          "heading": "## 1. 逐项裁定表 — A 类（59 项，丢失块级基线）",
+          "line_start": 32,
+          "line_end": 205,
+          "est_tokens": 3688,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        },
+        "2": {
+          "heading": "## 2. 逐项裁定表 — B 类（37 项，含属性门控假阳性）",
+          "line_start": 206,
+          "line_end": 338,
+          "est_tokens": 2429,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        },
+        "3": {
+          "heading": "## 3. 裁定摘要统计",
+          "line_start": 339,
+          "line_end": 352,
+          "est_tokens": 283,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        },
+        "4": {
+          "heading": "## 4. Open Questions（需用户 sign-off）",
+          "line_start": 353,
+          "line_end": 397,
+          "est_tokens": 1046,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        },
+        "5": {
+          "heading": "## 5. 交叉发现（非本次裁定范围，供 architect / orchestrator 参考立项）",
+          "line_start": 398,
+          "line_end": 404,
+          "est_tokens": 258,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        }
+      },
+      "deps": [
+        "walkthrough-variant-render-gap-20260714-r2"
+      ],
+      "dep_hashes": {
+        "walkthrough-variant-render-gap-20260714-r2": "ed27ef0b"
       }
     },
     "dev-plan-wechat-flow-s0": {
@@ -6385,6 +6635,27 @@
     }
   },
   "xref": {
+    "OQ-2": [
+      {
+        "doc_id": "amendment-variant-mechanism-20260715-r1",
+        "section": "7",
+        "file_path": "docs/arch/AMENDMENT-variant-mechanism-20260715-r1.md"
+      }
+    ],
+    "OQ-8": [
+      {
+        "doc_id": "amendment-variant-mechanism-20260715-r1",
+        "section": "7",
+        "file_path": "docs/arch/AMENDMENT-variant-mechanism-20260715-r1.md"
+      }
+    ],
+    "OQ-10": [
+      {
+        "doc_id": "amendment-variant-mechanism-20260715-r1",
+        "section": "7",
+        "file_path": "docs/arch/AMENDMENT-variant-mechanism-20260715-r1.md"
+      }
+    ],
     "API-001": [
       {
         "doc_id": "arch-wechat-flow-api",
