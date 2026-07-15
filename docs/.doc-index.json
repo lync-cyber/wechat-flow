@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-15T07:58:37.040544+00:00",
+  "generated_at": "2026-07-15T08:31:48.718426+00:00",
   "documents": {
     "amendment-platform-fidelity-r1": {
       "file_path": "docs/arch/AMENDMENT-platform-fidelity-r1.md",
@@ -163,7 +163,7 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow-modules": "640ecbc8",
-        "dev-plan-wechat-flow-s7": "0b40428b"
+        "dev-plan-wechat-flow-s7": "d773e555"
       }
     },
     "amendment-variant-mechanism-20260715-r1": {
@@ -2522,14 +2522,14 @@
       "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md",
       "doc_type": "dev-plan",
       "status": "approved",
-      "total_lines": 1922,
-      "est_tokens": 38160,
-      "content_hash": "0b40428b",
+      "total_lines": 2663,
+      "est_tokens": 55318,
+      "content_hash": "d773e555",
       "sections": {
         "1": {
           "heading": "## 1. 迭代目标",
-          "line_start": 36,
-          "line_end": 47,
+          "line_start": 37,
+          "line_end": 48,
           "est_tokens": 530,
           "deps": [],
           "level": 2,
@@ -2537,8 +2537,8 @@
         },
         "2": {
           "heading": "## 2. 依赖图",
-          "line_start": 48,
-          "line_end": 129,
+          "line_start": 49,
+          "line_end": 130,
           "est_tokens": 611,
           "deps": [],
           "level": 2,
@@ -2546,409 +2546,601 @@
         },
         "3": {
           "heading": "## 3. 任务卡详细",
-          "line_start": 130,
-          "line_end": 1922,
-          "est_tokens": 36724,
+          "line_start": 131,
+          "line_end": 1926,
+          "est_tokens": 36726,
           "deps": [],
           "level": 2,
           "items": {
             "T-132": {
               "heading": "### T-132: BlockCategory 枚举 + BlockDefinition.category required + BlockVariant.baseStyle 契约",
-              "line_start": 132,
-              "line_end": 158,
+              "line_start": 133,
+              "line_end": 159,
               "est_tokens": 503,
               "deps": []
             },
             "T-133": {
               "heading": "### T-133: defineBlock 工厂签名升级 + 40 内置 Block 补 category",
-              "line_start": 159,
-              "line_end": 187,
+              "line_start": 160,
+              "line_end": 188,
               "est_tokens": 605,
               "deps": []
             },
             "T-134": {
               "heading": "### T-134: getBlockBaseStyle 四步解析补全",
-              "line_start": 188,
-              "line_end": 214,
+              "line_start": 189,
+              "line_end": 215,
               "est_tokens": 565,
               "deps": []
             },
             "T-135": {
               "heading": "### T-135: 破坏性变更影响面修复（contracts / mcp-server / plugin-api / 既有测试）",
-              "line_start": 215,
-              "line_end": 250,
+              "line_start": 216,
+              "line_end": 251,
               "est_tokens": 926,
               "deps": []
             },
             "T-136": {
               "heading": "### T-136: 新增 token `--color-code-block-bg`（×5 主题）",
-              "line_start": 251,
-              "line_end": 278,
+              "line_start": 252,
+              "line_end": 279,
               "est_tokens": 472,
               "deps": []
             },
             "T-137": {
               "heading": "### T-137: UC-015 InsertDrawer 分类 Tab 数据驱动 + 搜索框 + UC-021 同步",
-              "line_start": 279,
-              "line_end": 316,
+              "line_start": 280,
+              "line_end": 317,
               "est_tokens": 906,
               "deps": []
             },
             "T-138": {
               "heading": "### T-138: [DESIGN] PS-011 InsertDrawer 6 分类 Tab Penpot 帧追平",
-              "line_start": 317,
-              "line_end": 340,
+              "line_start": 318,
+              "line_end": 341,
               "est_tokens": 455,
               "deps": []
             },
             "T-139": {
               "heading": "### T-139: [DESIGN] Layer 1 基础元素排版 Penpot 视觉样张（5 主题对照）",
-              "line_start": 341,
-              "line_end": 364,
+              "line_start": 342,
+              "line_end": 365,
               "est_tokens": 501,
               "deps": []
             },
             "T-140": {
               "heading": "### T-140: [DESIGN] Layer 2 Block 变体 Penpot 视觉样张（9 组件）",
-              "line_start": 365,
-              "line_end": 390,
+              "line_start": 366,
+              "line_end": 391,
               "est_tokens": 508,
               "deps": []
             },
             "T-141": {
               "heading": "### T-141: 表格（table/th/td）5 主题排版实现",
-              "line_start": 391,
-              "line_end": 424,
+              "line_start": 392,
+              "line_end": 425,
               "est_tokens": 704,
               "deps": []
             },
             "T-142": {
               "heading": "### T-142: 引用块（blockquote）差异化 5 主题实现",
-              "line_start": 425,
-              "line_end": 457,
+              "line_start": 426,
+              "line_end": 458,
               "est_tokens": 635,
               "deps": []
             },
             "T-143": {
               "heading": "### T-143: `strong` 字重梯度 5 主题实现",
-              "line_start": 458,
-              "line_end": 489,
+              "line_start": 459,
+              "line_end": 490,
               "est_tokens": 437,
               "deps": []
             },
             "T-144": {
               "heading": "### T-144: 代码块（pre）主题感知底色实现",
-              "line_start": 490,
-              "line_end": 520,
+              "line_start": 491,
+              "line_end": 521,
               "est_tokens": 577,
               "deps": []
             },
             "T-146": {
               "heading": "### T-146: Heading Accent（h2 左竖条）实现",
-              "line_start": 521,
-              "line_end": 551,
+              "line_start": 522,
+              "line_end": 552,
               "est_tokens": 499,
               "deps": []
             },
             "T-147": {
               "heading": "### T-147: 首字下沉（dropcap）可选 paragraph variant",
-              "line_start": 552,
-              "line_end": 581,
+              "line_start": 553,
+              "line_end": 582,
               "est_tokens": 538,
               "deps": []
             },
             "T-148": {
               "heading": "### T-148: callout 四态形态差异化（tip/warning/info/danger）",
-              "line_start": 582,
-              "line_end": 612,
+              "line_start": 583,
+              "line_end": 613,
               "est_tokens": 659,
               "deps": []
             },
             "T-149": {
               "heading": "### T-149: divider SVG 装饰变体（wave/dots/flower）+ sanitize schema 安全审查",
-              "line_start": 613,
-              "line_end": 646,
+              "line_start": 614,
+              "line_end": 647,
               "est_tokens": 989,
               "deps": []
             },
             "T-150": {
               "heading": "### T-150: pull-quote decorated 变体（装饰引号 + 署名行）",
-              "line_start": 647,
-              "line_end": 673,
+              "line_start": 648,
+              "line_end": 674,
               "est_tokens": 496,
               "deps": []
             },
             "T-151": {
               "heading": "### T-151: steps card 变体（step-card 卡片形态）",
-              "line_start": 674,
-              "line_end": 700,
+              "line_start": 675,
+              "line_end": 701,
               "est_tokens": 437,
               "deps": []
             },
             "T-152": {
               "heading": "### T-152: quote large-quote-mark + dropcap 变体（原 magazine/literary 重命名）",
-              "line_start": 701,
-              "line_end": 728,
+              "line_start": 702,
+              "line_end": 729,
               "est_tokens": 551,
               "deps": []
             },
             "T-153": {
               "heading": "### T-153: compare ledger 变体（双色账本，原 color-coded 重命名）",
-              "line_start": 729,
-              "line_end": 757,
+              "line_start": 730,
+              "line_end": 758,
               "est_tokens": 530,
               "deps": []
             },
             "T-154": {
               "heading": "### T-154: dialog chat-bubbles 变体（原 bubble 重命名）",
-              "line_start": 758,
-              "line_end": 787,
+              "line_start": 759,
+              "line_end": 788,
               "est_tokens": 571,
               "deps": []
             },
             "T-155": {
               "heading": "### T-155: announcement danger-bar/compact/default 变体",
-              "line_start": 788,
-              "line_end": 816,
+              "line_start": 789,
+              "line_end": 817,
               "est_tokens": 550,
               "deps": []
             },
             "T-156": {
               "heading": "### T-156: gallery duo/triptych 变体 + 既有 grid/masonry/carousel 降级 fallback",
-              "line_start": 817,
-              "line_end": 849,
+              "line_start": 818,
+              "line_end": 850,
               "est_tokens": 775,
               "deps": []
             },
             "T-157": {
               "heading": "### T-157: [VALIDATION] 微信平台粘贴兼容回归",
-              "line_start": 850,
-              "line_end": 878,
+              "line_start": 851,
+              "line_end": 879,
               "est_tokens": 622,
               "deps": []
             },
             "T-158": {
               "heading": "### T-158: doc-ops：ui-spec 主卷 P-001..P-003 图导出漂移修复",
-              "line_start": 879,
-              "line_end": 902,
+              "line_start": 880,
+              "line_end": 903,
               "est_tokens": 341,
               "deps": []
             },
             "T-159": {
               "heading": "### T-159: [VALIDATION] Sprint 7（视觉升级批）验证",
-              "line_start": 903,
-              "line_end": 968,
+              "line_start": 904,
+              "line_end": 969,
               "est_tokens": 835,
               "deps": []
             },
             "T-160": {
               "heading": "### T-160: [ARCH] M-002/M-005/M-007 契约 amendment — 指令属性契约与渲染管线机制",
-              "line_start": 969,
-              "line_end": 994,
+              "line_start": 970,
+              "line_end": 995,
               "est_tokens": 564,
               "deps": []
             },
             "T-161": {
               "heading": "### T-161: [DESIGN] 内容渲染域 ui-spec amendment — 装饰变体视觉裁定",
-              "line_start": 995,
-              "line_end": 1024,
+              "line_start": 996,
+              "line_end": 1025,
               "est_tokens": 591,
               "deps": []
             },
             "T-162": {
               "heading": "### T-162: [DESIGN] 编辑器 chrome 域 ui-spec amendment — UC-006 左栏收纳 + UC-013/UC-023 计数归属",
-              "line_start": 1025,
-              "line_end": 1052,
+              "line_start": 1026,
+              "line_end": 1053,
               "est_tokens": 524,
               "deps": []
             },
             "T-163": {
               "heading": "### T-163: BlockDefinition.directiveAttrs 契约落地 + 40 内置 Block 迁移",
-              "line_start": 1053,
-              "line_end": 1081,
+              "line_start": 1054,
+              "line_end": 1082,
               "est_tokens": 471,
               "deps": []
             },
             "T-164": {
               "heading": "### T-164: transform 指令校验重写 + 声明属性通用透传",
-              "line_start": 1082,
-              "line_end": 1108,
+              "line_start": 1083,
+              "line_end": 1109,
               "est_tokens": 405,
               "deps": []
             },
             "T-165": {
               "heading": "### T-165: InsertDrawer 参数表单接 directiveAttrs",
-              "line_start": 1109,
-              "line_end": 1135,
+              "line_start": 1110,
+              "line_end": 1136,
               "est_tokens": 331,
               "deps": []
             },
             "T-166": {
               "heading": "### T-166: 块装饰逻辑收编 BlockDefinition.decorate",
-              "line_start": 1136,
-              "line_end": 1163,
+              "line_start": 1137,
+              "line_end": 1164,
               "est_tokens": 456,
               "deps": []
             },
             "T-167": {
               "heading": "### T-167: inline-style 容器 typography 下推 cascade",
-              "line_start": 1164,
-              "line_end": 1191,
+              "line_start": 1165,
+              "line_end": 1192,
               "est_tokens": 413,
               "deps": []
             },
             "T-168": {
               "heading": "### T-168: 装饰变体视觉修正（对齐样张）",
-              "line_start": 1192,
-              "line_end": 1223,
+              "line_start": 1193,
+              "line_end": 1224,
               "est_tokens": 565,
               "deps": []
             },
             "T-169": {
               "heading": "### T-169: 复制链路修复 — 单 ClipboardItem 双 MIME + plainText 提取",
-              "line_start": 1224,
-              "line_end": 1252,
+              "line_start": 1225,
+              "line_end": 1253,
               "est_tokens": 489,
               "deps": []
             },
             "T-170": {
               "heading": "### T-170: 诊断计数归属收敛 + 夜间风险明细出口",
-              "line_start": 1253,
-              "line_end": 1281,
+              "line_start": 1254,
+              "line_end": 1282,
               "est_tokens": 368,
               "deps": []
             },
             "T-171": {
               "heading": "### T-171: 左栏收纳 rail 实现 + 视图命令接线",
-              "line_start": 1282,
-              "line_end": 1309,
+              "line_start": 1283,
+              "line_end": 1310,
               "est_tokens": 351,
               "deps": []
             },
             "T-172": {
               "heading": "### T-172: [VALIDATION] 微信平台粘贴回归 r2（T-157 复验）",
-              "line_start": 1310,
-              "line_end": 1335,
+              "line_start": 1311,
+              "line_end": 1336,
               "est_tokens": 421,
               "deps": []
             },
             "T-173": {
               "heading": "### T-173: describe_block MCP 输出对齐 API-006（source 判别 + directiveBody）",
-              "line_start": 1336,
-              "line_end": 1364,
+              "line_start": 1337,
+              "line_end": 1365,
               "est_tokens": 532,
               "deps": []
             },
             "T-174": {
               "heading": "### T-174: 装饰 slot 样式主题 token 合成",
-              "line_start": 1365,
-              "line_end": 1425,
+              "line_start": 1366,
+              "line_end": 1426,
               "est_tokens": 1112,
               "deps": []
             },
             "T-175": {
               "heading": "### T-175: 渲染原语微信安全标签化 + 产物标签契约守卫",
-              "line_start": 1426,
-              "line_end": 1460,
+              "line_start": 1427,
+              "line_end": 1461,
               "est_tokens": 826,
               "deps": []
             },
             "T-176": {
               "heading": "### T-176: 槽位 typography 下推（T-167 机制对称扩展至 slot 路径）",
-              "line_start": 1461,
-              "line_end": 1490,
+              "line_start": 1462,
+              "line_end": 1491,
               "est_tokens": 599,
               "deps": []
             },
             "T-177": {
               "heading": "### T-177: 变体登记补全（announcement/callout/gallery/list 的 default）",
-              "line_start": 1491,
-              "line_end": 1517,
+              "line_start": 1492,
+              "line_end": 1518,
               "est_tokens": 398,
               "deps": []
             },
             "T-178": {
               "heading": "### T-178: strip-width-height-inline 规则移除（生产实证收窄）",
-              "line_start": 1518,
-              "line_end": 1544,
+              "line_start": 1519,
+              "line_end": 1545,
               "est_tokens": 614,
               "deps": []
             },
             "T-179": {
               "heading": "### T-179: 六块变体 baseStyle 主题 token 化 [并入 T-189]",
-              "line_start": 1545,
-              "line_end": 1565,
+              "line_start": 1546,
+              "line_end": 1566,
               "est_tokens": 283,
               "deps": []
             },
             "T-180": {
               "heading": "### T-180: steps card 序号前缀 + ui-spec §10 修订轨",
-              "line_start": 1566,
-              "line_end": 1622,
+              "line_start": 1567,
+              "line_end": 1623,
               "est_tokens": 990,
               "deps": []
             },
             "T-181": {
               "heading": "### T-181: ARCH amendment — ruleset 双语义域 / 管线顺序 / 目标平台 profile",
-              "line_start": 1623,
-              "line_end": 1654,
+              "line_start": 1624,
+              "line_end": 1655,
               "est_tokens": 628,
               "deps": []
             },
             "T-182": {
               "heading": "### T-182: ruleset stage 机制落地（零行为变更）",
-              "line_start": 1655,
-              "line_end": 1685,
+              "line_start": 1656,
+              "line_end": 1686,
               "est_tokens": 475,
               "deps": []
             },
             "T-183": {
               "heading": "### T-183: 规则归域开闸与基线审计（含用户决策点）",
-              "line_start": 1686,
-              "line_end": 1716,
+              "line_start": 1687,
+              "line_end": 1717,
               "est_tokens": 455,
               "deps": []
             },
             "T-184": {
               "heading": "### T-184: 平台常量单一源（治理三份现存常量表 + S1 同步断言）",
-              "line_start": 1717,
-              "line_end": 1748,
+              "line_start": 1718,
+              "line_end": 1749,
               "est_tokens": 1133,
               "deps": []
             },
             "T-185": {
               "heading": "### T-185: 消费方改指向 output ruleset + PlatformAdapter 薄层",
-              "line_start": 1749,
-              "line_end": 1780,
+              "line_start": 1750,
+              "line_end": 1781,
               "est_tokens": 1243,
               "deps": []
             },
             "T-186": {
               "heading": "### T-186: 删模拟器 + 全消费方/MCP/文档同步 + 版本化",
-              "line_start": 1781,
-              "line_end": 1818,
+              "line_start": 1782,
+              "line_end": 1819,
               "est_tokens": 1715,
               "deps": []
             },
             "T-187": {
               "heading": "### T-187: 构造守卫（含 Mark）+ 全主题全组合扫描门禁",
-              "line_start": 1819,
-              "line_end": 1850,
+              "line_start": 1820,
+              "line_end": 1851,
               "est_tokens": 1159,
               "deps": []
             },
             "T-188": {
               "heading": "### T-188: dropcap/dialog px 宽修复（真机确认前置）",
-              "line_start": 1851,
-              "line_end": 1882,
+              "line_start": 1852,
+              "line_end": 1883,
               "est_tokens": 815,
               "deps": []
             },
             "T-189": {
               "heading": "### T-189: 全 FORBIDDEN 内置声明退出（font-family + display:flex 等，构造守卫前置，并入原 T-179）",
-              "line_start": 1883,
-              "line_end": 1922,
-              "est_tokens": 1571,
+              "line_start": 1884,
+              "line_end": 1926,
+              "est_tokens": 1573,
+              "deps": []
+            }
+          }
+        },
+        "4": {
+          "heading": "## 4. 变体渲染缺口方案实施批（T-190..T-212）",
+          "line_start": 1927,
+          "line_end": 2663,
+          "est_tokens": 17134,
+          "deps": [],
+          "level": 2,
+          "items": {
+            "4.1": {
+              "heading": "### 4.1 批 A · 机制批",
+              "line_start": 2018,
+              "line_end": 2019,
+              "est_tokens": 6,
+              "deps": []
+            },
+            "T-190": {
+              "heading": "### T-190: 变体样式 merge 语义改造 + 6 fat-base 块拆分（最小基座 + default delta）",
+              "line_start": 2020,
+              "line_end": 2054,
+              "est_tokens": 1541,
+              "deps": []
+            },
+            "T-191": {
+              "heading": "### T-191: registerBlock 注册期硬拒 E_VARIANT_NO_IMPL + plain-allowlist 机制（collect-only / throw 双模式）",
+              "line_start": 2055,
+              "line_end": 2086,
+              "est_tokens": 983,
+              "deps": []
+            },
+            "T-192": {
+              "heading": "### T-192: 渲染期差分守卫（WARN 模式）",
+              "line_start": 2087,
+              "line_end": 2115,
+              "est_tokens": 861,
+              "deps": []
+            },
+            "4.2": {
+              "heading": "### 4.2 批 B · 清单批",
+              "line_start": 2116,
+              "line_end": 2125,
+              "est_tokens": 325,
+              "deps": []
+            },
+            "T-193": {
+              "heading": "### T-193: table + compare 变体导入（结构化数据呈现）",
+              "line_start": 2126,
+              "line_end": 2151,
+              "est_tokens": 682,
+              "deps": []
+            },
+            "T-194": {
+              "heading": "### T-194: quote 变体导入 + PATCH",
+              "line_start": 2152,
+              "line_end": 2180,
+              "est_tokens": 625,
+              "deps": []
+            },
+            "T-195": {
+              "heading": "### T-195: card + author-card 变体（通用卡片包装器）",
+              "line_start": 2181,
+              "line_end": 2207,
+              "est_tokens": 540,
+              "deps": []
+            },
+            "T-196": {
+              "heading": "### T-196: steps 变体导入（8 项，最大宗单块）",
+              "line_start": 2208,
+              "line_end": 2236,
+              "est_tokens": 727,
+              "deps": []
+            },
+            "T-197": {
+              "heading": "### T-197: pull-quote（A 类 3 项）+ highlight-block（3 项）变体导入",
+              "line_start": 2237,
+              "line_end": 2264,
+              "est_tokens": 660,
+              "deps": []
+            },
+            "T-198": {
+              "heading": "### T-198: warning + disclaimer + citation + reading-time 变体（提示/免责/引用/阅读时长）",
+              "line_start": 2265,
+              "line_end": 2291,
+              "est_tokens": 700,
+              "deps": []
+            },
+            "T-199": {
+              "heading": "### T-199: kpi-card + qa + tip-grid + definition-list 变体（数据网格/问答卡片）",
+              "line_start": 2292,
+              "line_end": 2318,
+              "est_tokens": 683,
+              "deps": []
+            },
+            "T-200": {
+              "heading": "### T-200: footnote + heading + paragraph + list 变体（基础排版元素）",
+              "line_start": 2319,
+              "line_end": 2346,
+              "est_tokens": 613,
+              "deps": []
+            },
+            "T-201": {
+              "heading": "### T-201: divider 3 变体 PATCH（spec-backed）",
+              "line_start": 2347,
+              "line_end": 2372,
+              "est_tokens": 366,
+              "deps": []
+            },
+            "T-202": {
+              "heading": "### T-202: code-block 变体导入 + 语法高亮浅色 token 集",
+              "line_start": 2373,
+              "line_end": 2398,
+              "est_tokens": 469,
+              "deps": []
+            },
+            "T-203": {
+              "heading": "### T-203: image + image-caption + dialog + timeline 变体（媒体与对话呈现）",
+              "line_start": 2399,
+              "line_end": 2425,
+              "est_tokens": 655,
+              "deps": []
+            },
+            "T-204": {
+              "heading": "### T-204: qrcode + miniprogram-card + footer-cta + recommendation 变体（营销工具卡片）",
+              "line_start": 2426,
+              "line_end": 2452,
+              "est_tokens": 675,
+              "deps": []
+            },
+            "T-205": {
+              "heading": "### T-205: related-cards + social-cta + subscribe-cta + advert-card 变体（社交/订阅引导）",
+              "line_start": 2453,
+              "line_end": 2479,
+              "est_tokens": 703,
+              "deps": []
+            },
+            "T-206": {
+              "heading": "### T-206: highlight-block.gradient 真机可行性核实 + 条件裁决",
+              "line_start": 2480,
+              "line_end": 2505,
+              "est_tokens": 533,
+              "deps": []
+            },
+            "T-207": {
+              "heading": "### T-207: audio/video 3 项具名变体临时移除注册 + blocked 归档备案",
+              "line_start": 2506,
+              "line_end": 2532,
+              "est_tokens": 654,
+              "deps": []
+            },
+            "T-208": {
+              "heading": "### T-208: 批 B DELETE 汇总（10 项）",
+              "line_start": 2533,
+              "line_end": 2558,
+              "est_tokens": 652,
+              "deps": []
+            },
+            "4.3": {
+              "heading": "### 4.3 批 C · 收口批",
+              "line_start": 2559,
+              "line_end": 2562,
+              "est_tokens": 63,
+              "deps": []
+            },
+            "T-209": {
+              "heading": "### T-209: collect-list 归零对账 + registerBlock 翻 throw + 移除 collect-only 脚手架",
+              "line_start": 2563,
+              "line_end": 2589,
+              "est_tokens": 676,
+              "deps": []
+            },
+            "T-210": {
+              "heading": "### T-210: 差分守卫 WARN→RED + plain-allowlist 豁免集终版",
+              "line_start": 2590,
+              "line_end": 2616,
+              "est_tokens": 581,
+              "deps": []
+            },
+            "T-211": {
+              "heading": "### T-211: 视觉基线全矩阵重 seed + assertVariantFloor 阈值重推导",
+              "line_start": 2617,
+              "line_end": 2642,
+              "est_tokens": 510,
+              "deps": []
+            },
+            "T-212": {
+              "heading": "### T-212: [VALIDATION] 变体渲染缺口修复批验证",
+              "line_start": 2643,
+              "line_end": 2663,
+              "est_tokens": 488,
               "deps": []
             }
           }
@@ -4861,7 +5053,7 @@
         "dev-plan-wechat-flow-s7"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow-s7": "0b40428b"
+        "dev-plan-wechat-flow-s7": "d773e555"
       }
     },
     "review-dev-plan-wechat-flow-r8": {
@@ -4876,7 +5068,7 @@
         "dev-plan-wechat-flow-s7"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow-s7": "0b40428b"
+        "dev-plan-wechat-flow-s7": "d773e555"
       }
     },
     "review-dev-plan-wechat-flow-s7-r1": {
@@ -4892,7 +5084,7 @@
         "amendment-platform-fidelity-r1"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow-s7": "0b40428b",
+        "dev-plan-wechat-flow-s7": "d773e555",
         "amendment-platform-fidelity-r1": "0434b119"
       }
     },
@@ -8408,6 +8600,167 @@
       {
         "doc_id": "dev-plan-wechat-flow-s7",
         "section": "3",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-190": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-191": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-192": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-193": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-194": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-195": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-196": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-197": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-198": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-199": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-200": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-201": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-202": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-203": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-204": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-205": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-206": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-207": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-208": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-209": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-210": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-211": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
+        "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
+      }
+    ],
+    "T-212": [
+      {
+        "doc_id": "dev-plan-wechat-flow-s7",
+        "section": "4",
         "file_path": "docs/dev-plan/dev-plan-wechat-flow-s7.md"
       }
     ],
