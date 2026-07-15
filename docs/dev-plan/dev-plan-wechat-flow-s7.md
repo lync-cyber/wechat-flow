@@ -2066,17 +2066,17 @@ graph LR
 - **security_sensitive**: false
 - **dependencies**: []
 - **acceptance_criteria**:
-  - [ ] AC-001: 谓词① delta 放行 — 给定具名变体 `baseStyle:{root:{color:"#111"}}`（≥1 条非空声明），When `registerBlock` 调用，Then 该变体不出现在 `getUnimplementedVariants()` 候选集中
-  - [ ] AC-002: 谓词② decorate 放行 — 给定块声明 `decorate` 钩子（不论其内部是否真处理该具名变体，本谓词是静态放行，运行时真实覆盖由 T-192 差分守卫兜底），且该具名变体本身无 `baseStyle`，When `registerBlock` 调用，Then 该变体不出现在候选集中
-  - [ ] AC-003: 谓词③ plain-allowlist 放行 — 给定 `intentional-plain-variants.ts` 显式登记 `"probe-block::plain"`，且该具名变体无 `baseStyle` 无 decorate，When `registerBlock` 调用，Then 该变体不出现在候选集中
-  - [ ] AC-004: collect-only 模式（默认）不阻断 — 给定具名变体三项谓词均不满足，When 默认模式下 `registerBlock` 调用，Then 不抛错、块正常完成注册（`describeBlock` 可查到该块）、该变体出现在 `getUnimplementedVariants()` 返回数组中，含 `{blockId, variantId, reason}` 三字段
-  - [ ] AC-005: throw 模式抛错 — 给定同 AC-004 场景，When 以显式 strict 参数/模块级切换调用 `registerBlock`，Then 抛 `Error`，`err.code === "E_VARIANT_NO_IMPL"`，`err.unimplementedVariants` 含该 `{blockId, variantId, reason}` 项，`reason` 字符串非空且含以下任一关键词：`baseStyle`/`decorate`/`allowlist`
-  - [ ] AC-006: 内置注册表零误伤 — collect-only 默认模式下，`packages/blocks/src/index.ts` 全部内置块正常加载完成（`listBlocks().length` 与批 A 落地前一致，无 suite 中断），坐实当前 96 项渐进式未实现缺口不会在本卡上线时阻断构造
+  - [x] AC-001: 谓词① delta 放行 — 给定具名变体 `baseStyle:{root:{color:"#111"}}`（≥1 条非空声明），When `registerBlock` 调用，Then 该变体不出现在 `getUnimplementedVariants()` 候选集中
+  - [x] AC-002: 谓词② decorate 放行 — 给定块声明 `decorate` 钩子（不论其内部是否真处理该具名变体，本谓词是静态放行，运行时真实覆盖由 T-192 差分守卫兜底），且该具名变体本身无 `baseStyle`，When `registerBlock` 调用，Then 该变体不出现在候选集中
+  - [x] AC-003: 谓词③ plain-allowlist 放行 — 给定 `intentional-plain-variants.ts` 显式登记 `"probe-block::plain"`，且该具名变体无 `baseStyle` 无 decorate，When `registerBlock` 调用，Then 该变体不出现在候选集中
+  - [x] AC-004: collect-only 模式（默认）不阻断 — 给定具名变体三项谓词均不满足，When 默认模式下 `registerBlock` 调用，Then 不抛错、块正常完成注册（`describeBlock` 可查到该块）、该变体出现在 `getUnimplementedVariants()` 返回数组中，含 `{blockId, variantId, reason}` 三字段
+  - [x] AC-005: throw 模式抛错 — 给定同 AC-004 场景，When 以显式 strict 参数/模块级切换调用 `registerBlock`，Then 抛 `Error`，`err.code === "E_VARIANT_NO_IMPL"`，`err.unimplementedVariants` 含该 `{blockId, variantId, reason}` 项，`reason` 字符串非空且含以下任一关键词：`baseStyle`/`decorate`/`allowlist`
+  - [x] AC-006: 内置注册表零误伤 — collect-only 默认模式下，`packages/blocks/src/index.ts` 全部内置块正常加载完成（`listBlocks().length` 与批 A 落地前一致，无 suite 中断），坐实当前 96 项渐进式未实现缺口不会在本卡上线时阻断构造
 - **deliverables**:
-  - [ ] `packages/core/src/registry/block.ts` — 变体实现谓词校验 + collect-only/throw 双模式 + `getUnimplementedVariants()` 导出
-  - [ ] `packages/core/src/registry/intentional-plain-variants.ts`（新文件）— plain-allowlist `Set<string>` 导出（初始空集，供后续块按需登记）
-  - [ ] `packages/core/src/registry/block.test.ts` — 谓词 ①②③ + collect/throw 双模式 + 内置注册表零误伤测试
-  - [ ] `packages/core/src/index.ts` — 视需要导出 `getUnimplementedVariants`（供 T-209 收口对账消费）
+  - [x] `packages/core/src/registry/block.ts` — 变体实现谓词校验 + collect-only/throw 双模式 + `getUnimplementedVariants()` 导出
+  - [x] `packages/core/src/registry/intentional-plain-variants.ts`（新文件）— plain-allowlist `Set<string>` 导出（初始空集，供后续块按需登记）
+  - [x] `packages/core/src/registry/block.test.ts` — 谓词 ①②③ + collect/throw 双模式 + 内置注册表零误伤测试（实际落点按测试布局约定：colocate `variant-guard.test.ts` + 根 `tests/core/guard/variant-guard-builtin-registry.test.ts`）
+  - [x] `packages/core/src/index.ts` — 视需要导出 `getUnimplementedVariants`（供 T-209 收口对账消费）
 - **context_load**:
   - amendment-variant-mechanism-20260715-r1#§4
   - amendment-variant-mechanism-20260715-r1#§2
