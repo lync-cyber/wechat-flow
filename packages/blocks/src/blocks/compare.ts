@@ -92,25 +92,28 @@ export const compare = defineBlock(
     { id: "compact", label: "紧凑对比" },
   ],
   {
-    root: {
-      margin: "16px 0",
+    baseStyle: {
+      root: {
+        margin: "16px 0",
+      },
     },
-  },
-  ["root", "title", "table", "left", "right"],
-  "默认变体正文写自由摘要文字；ledger 变体通过 left-label/left-value/right-label/right-value（可选 title）属性提供结构化左右列数据，此时正文内容不参与渲染。",
-  (element, ctx) => {
-    if (ctx.variant !== "ledger") return;
-    const props = element.properties ?? {};
-    const children = buildCompareLedgerChildren(props);
-    const {
-      "data-compare-left-label": _l1,
-      "data-compare-left-value": _l2,
-      "data-compare-right-label": _l3,
-      "data-compare-right-value": _l4,
-      "data-compare-title": _l5,
-      ...restProps
-    } = props;
-    element.properties = restProps;
-    element.children = children;
+    slots: ["root", "title", "table", "left", "right"],
+    directiveBody:
+      "默认变体正文写自由摘要文字；ledger 变体通过 left-label/left-value/right-label/right-value（可选 title）属性提供结构化左右列数据，此时正文内容不参与渲染。",
+    decorate: (element, ctx) => {
+      if (ctx.variant !== "ledger") return;
+      const props = element.properties ?? {};
+      const children = buildCompareLedgerChildren(props);
+      const {
+        "data-compare-left-label": _l1,
+        "data-compare-left-value": _l2,
+        "data-compare-right-label": _l3,
+        "data-compare-right-value": _l4,
+        "data-compare-title": _l5,
+        ...restProps
+      } = props;
+      element.properties = restProps;
+      element.children = children;
+    },
   }
 );

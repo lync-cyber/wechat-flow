@@ -36,13 +36,13 @@ export const paragraph = defineBlock(
       },
     },
   ],
-  undefined,
-  ["root", "dropcap", "dropcap-table"],
-  undefined,
-  (element, ctx) => {
-    if (ctx.variant !== "dropcap") return;
-    const { "data-paragraph-decoration": _stash, ...restProps } = element.properties ?? {};
-    element.properties = restProps;
-    injectDropcapMutation(element);
+  {
+    slots: ["root", "dropcap", "dropcap-table"],
+    decorate: (element, ctx) => {
+      if (ctx.variant !== "dropcap") return;
+      const { "data-paragraph-decoration": _stash, ...restProps } = element.properties ?? {};
+      element.properties = restProps;
+      injectDropcapMutation(element);
+    },
   }
 );

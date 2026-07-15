@@ -11,7 +11,8 @@ export const timeline = defineBlock(
     { id: "horizontal", label: "横向时间线" },
     { id: "compact", label: "紧凑时间线" },
   ],
-  undefined,
-  undefined,
-  "正文写为 Markdown 无序列表，每项以「**日期**：事件描述」形式书写一个时间节点，按时间先后顺序排列。"
+  {
+    directiveBody:
+      "正文写为 Markdown 无序列表，每项以「**日期**：事件描述」形式书写一个时间节点，按时间先后顺序排列。",
+  }
 );

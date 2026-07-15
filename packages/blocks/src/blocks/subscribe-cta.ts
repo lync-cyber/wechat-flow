@@ -12,13 +12,15 @@ export const subscribeCta = defineBlock(
     { id: "banner", label: "横幅订阅引导" },
   ],
   {
-    root: {
-      "text-align": "center",
-      padding: "24px 16px",
-      margin: "24px 0",
-      "border-radius": "8px",
-      "background-color": "#f5f0ff",
-      border: "1px solid #d6b4fc",
+    baseStyle: {
+      root: {
+        "text-align": "center",
+        padding: "24px 16px",
+        margin: "24px 0",
+        "border-radius": "8px",
+        "background-color": "#f5f0ff",
+        border: "1px solid #d6b4fc",
+      },
     },
   }
 );

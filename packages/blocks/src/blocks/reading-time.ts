@@ -12,14 +12,16 @@ export const readingTime = defineBlock(
     { id: "inline", label: "行内阅读时长" },
   ],
   {
-    root: {
-      display: "inline-block",
-      padding: "4px 10px",
-      "border-radius": "12px",
-      "font-size": "0.8em",
-      color: "#666",
-      "background-color": "#f0f0f0",
-      margin: "8px 0",
+    baseStyle: {
+      root: {
+        display: "inline-block",
+        padding: "4px 10px",
+        "border-radius": "12px",
+        "font-size": "0.8em",
+        color: "#666",
+        "background-color": "#f0f0f0",
+        margin: "8px 0",
+      },
     },
   }
 );

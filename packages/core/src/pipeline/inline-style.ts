@@ -1,7 +1,7 @@
 import type { ThemeTokens } from "@wechat-flow/contracts";
 import type { Element, Root as HastRoot, Properties } from "hast";
 import { describeBlock } from "../registry/block.ts";
-import { getBlockBaseStyle } from "../registry/variant.ts";
+import { getBlockBaseStyle, resolveBlockVariantSlotDelta } from "../registry/variant.ts";
 import { sortedEntries } from "../utils/deterministic.ts";
 import { filterCssAttrs } from "./css-attr-filter.ts";
 
@@ -123,18 +123,8 @@ function getBlockSlotStyle(
 ): Record<string, string> {
   const def = describeBlock(blockId);
   const blockBase = def?.baseStyle?.[slot] ?? {};
-  const variant = def?.variants.find((v) => v.id === variantId);
-  const variantDelta = variant?.baseStyle?.[slot];
-  if (variantDelta) {
-    return resolveSlotDeclarations({ ...blockBase, ...variantDelta }, designTokens);
-  }
-  if (variantId === "default") {
-    return resolveSlotDeclarations(
-      { ...blockBase, ...(def?.defaultStyle?.[slot] ?? {}) },
-      designTokens
-    );
-  }
-  return resolveSlotDeclarations(blockBase, designTokens);
+  const delta = resolveBlockVariantSlotDelta(def, variantId, slot) ?? {};
+  return resolveSlotDeclarations({ ...blockBase, ...delta }, designTokens);
 }
 
 function stripClassFromProperties(props: Properties): Properties {

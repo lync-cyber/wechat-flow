@@ -12,11 +12,13 @@ export const qa = defineBlock(
     { id: "bold-q", label: "粗体问题" },
   ],
   {
-    root: {
-      margin: "16px 0",
-      padding: "0",
+    baseStyle: {
+      root: {
+        margin: "16px 0",
+        padding: "0",
+      },
     },
-  },
-  undefined,
-  "正文按一问一答顺序书写，每组问答以「**问：**」开头的段落紧跟「**答：**」开头的段落表达。"
+    directiveBody:
+      "正文按一问一答顺序书写，每组问答以「**问：**」开头的段落紧跟「**答：**」开头的段落表达。",
+  }
 );

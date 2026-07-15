@@ -27,6 +27,7 @@ export interface BlockDefinition {
   directiveBody?: string;
   variants: BlockVariant[];
   baseStyle?: Record<string, Record<string, string>>;
+  // Bare-directive rendering baseline for blocks whose variants[] omits a "default" entry.
   defaultStyle?: Record<string, Record<string, string>>;
   slots: string[];
   decorate?: (element: Element, ctx: BlockDecorateContext) => void;

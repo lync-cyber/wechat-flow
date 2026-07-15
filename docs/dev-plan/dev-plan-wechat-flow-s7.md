@@ -2031,19 +2031,19 @@ graph LR
 - **security_sensitive**: false
 - **dependencies**: []
 - **acceptance_criteria**:
-  - [ ] AC-001: merge root 解析基础规则 — 给定一个测试块声明块级 `baseStyle.root = {margin:"16px 0"}` 且具名变体 `baseStyle.root = {color:"#ff0000"}`（两键不重叠），When `getBlockBaseStyle(blockId, variantId)` 调用，Then 返回 `{margin:"16px 0", color:"#ff0000"}`（继承 + 覆盖并存，非过去的纯替换）；给定块基座与变体 delta 声明同一属性键（如均声明 `padding`），Then 变体 delta 值胜出（覆盖块基座同名键）
-  - [ ] AC-002: `default` 降为普通变体 — 给定块显式声明 `variants` 数组含 `{id:"default", baseStyle:{root:{"background-color":"#f0f7ff"}}}` 且块级 `baseStyle.root = {padding:"12px 16px"}`，When `getBlockBaseStyle(blockId, "default")` 调用，Then 返回 `{padding:"12px 16px", "background-color":"#f0f7ff"}`（块基座 ⊕ default 变体条目 delta，而非过去「default 特判直接返回块基座、忽略 default 变体条目」的行为）
-  - [ ] AC-003: slot merge 同步（`getBlockSlotStyle`）— 同 AC-001 规则应用于非 root slot：给定块级 `baseStyle.title = {"font-weight":"600"}` 与变体 `baseStyle.title = {color:"#333"}`，Then `getBlockSlotStyle` 返回两者合并；当前内置块级 `baseStyle` 均只声明 `root`（无 slot 级块基座），故此规则对现有产物是 no-op，仅统一模型防未来漂移，需一条断言坐实此 no-op 事实（如 `compare` 的 `title`/`table`/`left`/`right` slot 渲染字节不变）
-  - [ ] AC-004: 6 fat-base 块 default 输出字节保真（硬约束）— 对 `callout`/`warning`/`announcement`/`compare`/`quote`/`pull-quote` 逐一断言：重构前 `getBlockBaseStyle(blockId,"default")` 序列化字节 === 重构后同调用序列化字节（`serializeDeclarations` 排序后比较）；`pnpm test:cross-runtime` 全绿且 `tests/cross-runtime/fixtures.ts` 的 `EXPECTED_HASHES` 不变、不重新生成（`callout` default fixture `block-directive` 覆盖此约束，变红即视为重构 bug，修重构不改 hash）
-  - [ ] AC-005: 6 fat-base 块已实现具名变体 merge 后字节保真 — `callout.{tip,warning,info,danger}`、`announcement.{danger-bar,compact}`、`compare.ledger`、`quote.{large-quote-mark,dropcap}`、`pull-quote.decorated` 逐一断言：merge 后 `getBlockBaseStyle` 产出与重构前字节相同（因这些变体已声明各自完整 root delta，merge 不引入额外继承键）；唯一允许的例外产物变化点见 AC-006
-  - [ ] AC-006: `steps.card` 继承块节奏（唯一已实现变体产物变化点）— `steps` 块基座是合法最小节奏基座（非 fat，`{margin:"16px 0", padding:"0"}`），`card` 变体 delta 未声明 `margin`；When merge 后 `getBlockBaseStyle("steps","card")` 调用，Then 返回值含 `margin:"16px 0"`（此前 replace 语义下 `card` 变体因声明了自身 `baseStyle.root` 直接替换块基座，不含此键）；`e2e/visual/` 下 `steps-card` × 5 主题快照重 seed，记录 diff 依据（新增 `margin` 声明）
+  - [x] AC-001: merge root 解析基础规则 — 给定一个测试块声明块级 `baseStyle.root = {margin:"16px 0"}` 且具名变体 `baseStyle.root = {color:"#ff0000"}`（两键不重叠），When `getBlockBaseStyle(blockId, variantId)` 调用，Then 返回 `{margin:"16px 0", color:"#ff0000"}`（继承 + 覆盖并存，非过去的纯替换）；给定块基座与变体 delta 声明同一属性键（如均声明 `padding`），Then 变体 delta 值胜出（覆盖块基座同名键）
+  - [x] AC-002: `default` 降为普通变体 — 给定块显式声明 `variants` 数组含 `{id:"default", baseStyle:{root:{"background-color":"#f0f7ff"}}}` 且块级 `baseStyle.root = {padding:"12px 16px"}`，When `getBlockBaseStyle(blockId, "default")` 调用，Then 返回 `{padding:"12px 16px", "background-color":"#f0f7ff"}`（块基座 ⊕ default 变体条目 delta，而非过去「default 特判直接返回块基座、忽略 default 变体条目」的行为）
+  - [x] AC-003: slot merge 同步（`getBlockSlotStyle`）— 同 AC-001 规则应用于非 root slot：给定块级 `baseStyle.title = {"font-weight":"600"}` 与变体 `baseStyle.title = {color:"#333"}`，Then `getBlockSlotStyle` 返回两者合并；当前内置块级 `baseStyle` 均只声明 `root`（无 slot 级块基座），故此规则对现有产物是 no-op，仅统一模型防未来漂移，需一条断言坐实此 no-op 事实（如 `compare` 的 `title`/`table`/`left`/`right` slot 渲染字节不变）
+  - [x] AC-004: 6 fat-base 块 default 输出字节保真（硬约束）— 对 `callout`/`warning`/`announcement`/`compare`/`quote`/`pull-quote` 逐一断言：重构前 `getBlockBaseStyle(blockId,"default")` 序列化字节 === 重构后同调用序列化字节（`serializeDeclarations` 排序后比较）；`pnpm test:cross-runtime` 全绿且 `tests/cross-runtime/fixtures.ts` 的 `EXPECTED_HASHES` 不变、不重新生成（`callout` default fixture `block-directive` 覆盖此约束，变红即视为重构 bug，修重构不改 hash）
+  - [x] AC-005: 6 fat-base 块已实现具名变体 merge 后字节保真 — `callout.{tip,warning,info,danger}`、`announcement.{danger-bar,compact}`、`compare.ledger`、`quote.{large-quote-mark,dropcap}`、`pull-quote.decorated` 逐一断言：merge 后 `getBlockBaseStyle` 产出与重构前字节相同（因这些变体已声明各自完整 root delta，merge 不引入额外继承键）；唯一允许的例外产物变化点见 AC-006
+  - [x] AC-006: `steps.card` 继承块节奏（唯一已实现变体产物变化点）— `steps` 块基座是合法最小节奏基座（非 fat，`{margin:"16px 0", padding:"0"}`），`card` 变体 delta 未声明 `margin`；When merge 后 `getBlockBaseStyle("steps","card")` 调用，Then 返回值含 `margin:"16px 0"`（此前 replace 语义下 `card` 变体因声明了自身 `baseStyle.root` 直接替换块基座，不含此键）；`e2e/visual/` 下 `steps-card` × 5 主题快照重 seed，记录 diff 依据（新增 `margin` 声明）——快照重 seed 子项由 T-211 AC-001 承接（批 C 全矩阵一次重 seed），本卡完成行为断言部分
 - **deliverables**:
-  - [ ] `packages/core/src/registry/variant.ts` — `getBlockBaseStyle` merge 改造
-  - [ ] `packages/core/src/pipeline/inline-style.ts` — `getBlockSlotStyle` merge 改造
-  - [ ] `packages/blocks/src/blocks/{callout,warning,announcement,compare,quote,pull-quote}.ts` — 拆最小基座 + 新增 `default` 变体条目携带原块基座装饰
-  - [ ] `packages/core/src/registry/variant.test.ts` — `getBlockBaseStyle four-step resolution` describe 块重写为 merge 语义测试（AC-001/002/003 对应用例 + 原有 unknown-variant/未注册块安全返回 `{}` 用例保留验证 merge 下仍成立）
-  - [ ] 新增 fat-base 保真测试（建议 `packages/blocks/src/blocks/fat-base-merge-fidelity.test.ts` 或并入既有 render 测试）— AC-004/005 断言
-  - [ ] `e2e/visual/` steps-card × 5 主题快照重 seed
+  - [x] `packages/core/src/registry/variant.ts` — `getBlockBaseStyle` merge 改造
+  - [x] `packages/core/src/pipeline/inline-style.ts` — `getBlockSlotStyle` merge 改造
+  - [x] `packages/blocks/src/blocks/{callout,warning,announcement,compare,quote,pull-quote}.ts` — 拆最小基座 + 新增 `default` 变体条目携带原块基座装饰（callout 例外：ui-spec §10.1 面板收敛为 4 变体禁增 default 条目，default delta 经 orchestrator 审定由 `BlockDefinition.defaultStyle` 字段承载）
+  - [x] `packages/core/src/registry/variant.test.ts` — `getBlockBaseStyle four-step resolution` describe 块重写为 merge 语义测试（AC-001/002/003 对应用例 + 原有 unknown-variant/未注册块安全返回 `{}` 用例保留验证 merge 下仍成立）
+  - [x] 新增 fat-base 保真测试（建议 `packages/blocks/src/blocks/fat-base-merge-fidelity.test.ts` 或并入既有 render 测试）— AC-004/005 断言
+  - [ ] `e2e/visual/` steps-card × 5 主题快照重 seed —— 由 T-211 AC-001 承接（批 C 全矩阵一次重 seed）
 - **context_load**:
   - amendment-variant-mechanism-20260715-r1#§1
   - amendment-variant-mechanism-20260715-r1#§4

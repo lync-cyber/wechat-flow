@@ -61,19 +61,18 @@ export const callout = defineBlock(
     },
   ],
   {
-    root: {
-      padding: "12px 16px",
-      margin: "16px 0",
+    baseStyle: {
+      root: {
+        padding: "12px 16px",
+        margin: "16px 0",
+      },
     },
-  },
-  undefined,
-  undefined,
-  undefined,
-  {
-    root: {
-      "border-left": "4px solid #4a90e2",
-      "border-radius": "4px",
-      "background-color": "#f0f7ff",
+    defaultStyle: {
+      root: {
+        "border-left": "4px solid #4a90e2",
+        "border-radius": "4px",
+        "background-color": "#f0f7ff",
+      },
     },
   }
 );

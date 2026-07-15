@@ -12,12 +12,14 @@ export const tipGrid = defineBlock(
     { id: "card-style", label: "卡片式提示网格" },
   ],
   {
-    root: {
-      display: "table",
-      width: "100%",
-      margin: "16px 0",
-      "border-collapse": "separate",
-      "border-spacing": "8px",
+    baseStyle: {
+      root: {
+        display: "table",
+        width: "100%",
+        margin: "16px 0",
+        "border-collapse": "separate",
+        "border-spacing": "8px",
+      },
     },
   }
 );

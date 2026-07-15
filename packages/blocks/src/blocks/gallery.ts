@@ -128,18 +128,19 @@ export const gallery = defineBlock(
     { id: "masonry", label: "瀑布流图集" },
     { id: "carousel", label: "轮播图集" },
   ],
-  undefined,
-  ["root", "row", "cell", "image", "caption"],
-  undefined,
-  (element, ctx) => {
-    const authoredVariant = ctx.variant;
-    const effectiveVariant = GALLERY_COLUMNS_BY_VARIANT[authoredVariant] === 3 ? "triptych" : "duo";
-    const ul = element.children.find(
-      (child): child is Element => child.type === "element" && child.tagName === "ul"
-    );
-    if (!ul) return;
-    const rows = buildGalleryRows(ul, authoredVariant);
-    element.properties = { ...element.properties, "data-variant": effectiveVariant };
-    element.children = rows;
+  {
+    slots: ["root", "row", "cell", "image", "caption"],
+    decorate: (element, ctx) => {
+      const authoredVariant = ctx.variant;
+      const effectiveVariant =
+        GALLERY_COLUMNS_BY_VARIANT[authoredVariant] === 3 ? "triptych" : "duo";
+      const ul = element.children.find(
+        (child): child is Element => child.type === "element" && child.tagName === "ul"
+      );
+      if (!ul) return;
+      const rows = buildGalleryRows(ul, authoredVariant);
+      element.properties = { ...element.properties, "data-variant": effectiveVariant };
+      element.children = rows;
+    },
   }
 );

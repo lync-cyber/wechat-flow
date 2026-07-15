@@ -12,12 +12,14 @@ export const citation = defineBlock(
     { id: "inline-link", label: "行内链接引用" },
   ],
   {
-    root: {
-      "border-left": "3px solid #ccc",
-      padding: "8px 12px",
-      margin: "12px 0",
-      "font-size": "0.9em",
-      color: "#666",
+    baseStyle: {
+      root: {
+        "border-left": "3px solid #ccc",
+        padding: "8px 12px",
+        margin: "12px 0",
+        "font-size": "0.9em",
+        color: "#666",
+      },
     },
   }
 );

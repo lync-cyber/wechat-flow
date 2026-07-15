@@ -1,4 +1,5 @@
 import { filterCssAttrs } from "../pipeline/css-attr-filter.ts";
+import type { BlockDefinition } from "./block.ts";
 import { describeBlock, listBlocks } from "./block.ts";
 import { isWhitelistedProperty } from "./css-property-whitelist.ts";
 import type { RejectedDeclaration } from "./style-guard.ts";
@@ -137,16 +138,31 @@ export function describeVariant(id: string): VariantDefinition | undefined {
   return undefined;
 }
 
+// undefined means neither the builtin variant nor defaultStyle declares this slot;
+// callers decide their own fallback (e.g. registered-theme-variant lookup).
+export function resolveBlockVariantSlotDelta(
+  blockDef: BlockDefinition | undefined,
+  variantId: string,
+  slot: string
+): Record<string, string> | undefined {
+  const builtinVariant = blockDef?.variants.find((v) => v.id === variantId);
+  const variantSlotDelta = builtinVariant?.baseStyle?.[slot];
+  if (variantSlotDelta) {
+    return variantSlotDelta;
+  }
+  if (variantId === "default") {
+    return blockDef?.defaultStyle?.[slot] ?? {};
+  }
+  return undefined;
+}
+
 export function getBlockBaseStyle(blockId: string, variantId: string): Record<string, string> {
   const blockDef = describeBlock(blockId);
   const blockBase = blockDef?.baseStyle?.root ?? {};
 
-  const builtinVariant = blockDef?.variants.find((v) => v.id === variantId);
-  if (builtinVariant?.baseStyle) {
-    return { ...blockBase, ...(builtinVariant.baseStyle.root ?? {}) };
-  }
-  if (variantId === "default") {
-    return { ...blockBase, ...(blockDef?.defaultStyle?.root ?? {}) };
+  const delta = resolveBlockVariantSlotDelta(blockDef, variantId, "root");
+  if (delta !== undefined) {
+    return { ...blockBase, ...delta };
   }
 
   const key = `${blockId}::${variantId}`;

@@ -99,26 +99,29 @@ export const steps = defineBlock(
     { id: "compact", label: "紧凑步骤" },
   ],
   {
-    root: {
-      margin: "16px 0",
-      padding: "0",
+    baseStyle: {
+      root: {
+        margin: "16px 0",
+        padding: "0",
+      },
     },
-  },
-  ["root", "title", "description"],
-  "正文写为 Markdown 无序列表，每项以「**标题**：描述」形式书写一个步骤；card 变体额外将每项渲染为独立卡片。",
-  (element, ctx) => {
-    if (ctx.variant !== "card") return;
-    const ul = element.children.find(
-      (child): child is Element => child.type === "element" && child.tagName === "ul"
-    );
-    if (!ul) return;
-    const cards = buildStepsCardList(ul);
-    const {
-      "data-block": _block,
-      "data-variant": _variant,
-      ...restProps
-    } = element.properties ?? {};
-    element.properties = restProps;
-    element.children = cards;
+    slots: ["root", "title", "description"],
+    directiveBody:
+      "正文写为 Markdown 无序列表，每项以「**标题**：描述」形式书写一个步骤；card 变体额外将每项渲染为独立卡片。",
+    decorate: (element, ctx) => {
+      if (ctx.variant !== "card") return;
+      const ul = element.children.find(
+        (child): child is Element => child.type === "element" && child.tagName === "ul"
+      );
+      if (!ul) return;
+      const cards = buildStepsCardList(ul);
+      const {
+        "data-block": _block,
+        "data-variant": _variant,
+        ...restProps
+      } = element.properties ?? {};
+      element.properties = restProps;
+      element.children = cards;
+    },
   }
 );
