@@ -12,14 +12,16 @@ export const socialCta = defineBlock(
     { id: "full-width", label: "全宽社交引导" },
   ],
   {
-    root: {
-      display: "table",
-      width: "100%",
-      padding: "14px 16px",
-      margin: "16px 0",
-      "border-radius": "8px",
-      "background-color": "#f0faf0",
-      border: "1px solid #b2ddb2",
+    baseStyle: {
+      root: {
+        display: "table",
+        width: "100%",
+        padding: "14px 16px",
+        margin: "16px 0",
+        "border-radius": "8px",
+        "background-color": "#f0faf0",
+        border: "1px solid #b2ddb2",
+      },
     },
   }
 );

@@ -12,12 +12,14 @@ export const relatedCards = defineBlock(
     { id: "grid", label: "网格相关文章" },
   ],
   {
-    root: {
-      margin: "24px 0",
-      padding: "16px",
-      "border-radius": "8px",
-      "background-color": "#f9f9f9",
-      "border-top": "2px solid #e0e0e0",
+    baseStyle: {
+      root: {
+        margin: "24px 0",
+        padding: "16px",
+        "border-radius": "8px",
+        "background-color": "#f9f9f9",
+        "border-top": "2px solid #e0e0e0",
+      },
     },
   }
 );

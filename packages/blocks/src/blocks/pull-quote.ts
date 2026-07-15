@@ -63,18 +63,19 @@ export const pullQuote = defineBlock(
     { id: "bordered", label: "边框摘引" },
   ],
   {
-    root: {},
-  },
-  ["root", "quote-mark", "author"],
-  undefined,
-  (element, ctx) => {
-    if (ctx.variant !== "decorated") return;
-    const authorText = ctx.attrs.author;
-    if (typeof authorText !== "string") return;
-    const [quoteMark, author] = buildPullQuoteDecoration(authorText);
-    const { "data-pull-quote-author": _stash, ...restProps } = element.properties ?? {};
-    element.properties = restProps;
-    injectLeadingInlineNode(element, quoteMark);
-    element.children = [...element.children, author];
+    baseStyle: {
+      root: {},
+    },
+    slots: ["root", "quote-mark", "author"],
+    decorate: (element, ctx) => {
+      if (ctx.variant !== "decorated") return;
+      const authorText = ctx.attrs.author;
+      if (typeof authorText !== "string") return;
+      const [quoteMark, author] = buildPullQuoteDecoration(authorText);
+      const { "data-pull-quote-author": _stash, ...restProps } = element.properties ?? {};
+      element.properties = restProps;
+      injectLeadingInlineNode(element, quoteMark);
+      element.children = [...element.children, author];
+    },
   }
 );

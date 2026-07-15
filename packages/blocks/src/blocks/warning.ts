@@ -22,9 +22,11 @@ export const warning = defineBlock(
     { id: "inline", label: "行内警告" },
   ],
   {
-    root: {
-      padding: "12px 16px",
-      margin: "16px 0",
+    baseStyle: {
+      root: {
+        padding: "12px 16px",
+        margin: "16px 0",
+      },
     },
   }
 );

@@ -12,13 +12,15 @@ export const disclaimer = defineBlock(
     { id: "bordered", label: "边框免责声明" },
   ],
   {
-    root: {
-      padding: "12px 16px",
-      margin: "16px 0",
-      "border-radius": "4px",
-      "background-color": "#f7f7f7",
-      "font-size": "0.875em",
-      color: "#888",
+    baseStyle: {
+      root: {
+        padding: "12px 16px",
+        margin: "16px 0",
+        "border-radius": "4px",
+        "background-color": "#f7f7f7",
+        "font-size": "0.875em",
+        color: "#888",
+      },
     },
   }
 );

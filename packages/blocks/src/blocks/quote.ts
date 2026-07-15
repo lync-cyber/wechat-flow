@@ -72,28 +72,29 @@ export const quote = defineBlock(
     },
   ],
   {
-    root: {
-      padding: "8px 16px",
-      margin: "16px 0",
-      color: "#555",
+    baseStyle: {
+      root: {
+        padding: "8px 16px",
+        margin: "16px 0",
+        color: "#555",
+      },
     },
-  },
-  ["root", "quote-mark", "dropcap", "dropcap-table"],
-  undefined,
-  (element, ctx) => {
-    if (ctx.variant === "large-quote-mark") {
-      const { "data-quote-decoration": _stash, ...restProps } = element.properties ?? {};
-      element.properties = restProps;
-      injectLeadingInlineNode(
-        element,
-        slotElement("quote-mark", [{ type: "text", value: '"' }], { inline: true })
-      );
-      return;
-    }
-    if (ctx.variant === "dropcap") {
-      const { "data-quote-decoration": _stash, ...restProps } = element.properties ?? {};
-      element.properties = restProps;
-      injectDropcapMutation(element);
-    }
+    slots: ["root", "quote-mark", "dropcap", "dropcap-table"],
+    decorate: (element, ctx) => {
+      if (ctx.variant === "large-quote-mark") {
+        const { "data-quote-decoration": _stash, ...restProps } = element.properties ?? {};
+        element.properties = restProps;
+        injectLeadingInlineNode(
+          element,
+          slotElement("quote-mark", [{ type: "text", value: '"' }], { inline: true })
+        );
+        return;
+      }
+      if (ctx.variant === "dropcap") {
+        const { "data-quote-decoration": _stash, ...restProps } = element.properties ?? {};
+        element.properties = restProps;
+        injectDropcapMutation(element);
+      }
+    },
   }
 );

@@ -12,12 +12,14 @@ export const authorCard = defineBlock(
     { id: "minimal", label: "简约作者" },
   ],
   {
-    root: {
-      display: "table",
-      padding: "16px",
-      margin: "16px 0",
-      "border-radius": "8px",
-      "background-color": "#f9f9f9",
+    baseStyle: {
+      root: {
+        display: "table",
+        padding: "16px",
+        margin: "16px 0",
+        "border-radius": "8px",
+        "background-color": "#f9f9f9",
+      },
     },
   }
 );

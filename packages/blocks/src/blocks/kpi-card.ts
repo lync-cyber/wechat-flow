@@ -12,13 +12,15 @@ export const kpiCard = defineBlock(
     { id: "compact", label: "紧凑指标卡" },
   ],
   {
-    root: {
-      "text-align": "center",
-      padding: "20px 16px",
-      margin: "12px 0",
-      "border-radius": "8px",
-      border: "1px solid #e8e8e8",
-      "background-color": "#ffffff",
+    baseStyle: {
+      root: {
+        "text-align": "center",
+        padding: "20px 16px",
+        margin: "12px 0",
+        "border-radius": "8px",
+        border: "1px solid #e8e8e8",
+        "background-color": "#ffffff",
+      },
     },
   }
 );

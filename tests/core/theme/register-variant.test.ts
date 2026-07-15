@@ -267,7 +267,7 @@ describe("AC-005: defineBlock baseStyle 缺 root 槽位时注册抛结构化错�
       z.object({ text: z.string() }),
       "structured",
       [{ id: "default", label: "默认" }],
-      { title: { "font-size": "16px" } } // no 'root' key
+      { baseStyle: { title: { "font-size": "16px" } } } // no 'root' key
     );
     let thrown: unknown;
     try {
@@ -288,7 +288,7 @@ describe("AC-005: defineBlock baseStyle 缺 root 槽位时注册抛结构化错�
       z.object({ text: z.string() }),
       "structured",
       [{ id: "default", label: "默认" }],
-      { title: { "font-size": "16px" } }
+      { baseStyle: { title: { "font-size": "16px" } } }
     );
     let thrown: unknown;
     try {
@@ -320,7 +320,7 @@ describe("AC-005: defineBlock baseStyle 缺 root 槽位时注册抛结构化错�
       z.object({ text: z.string() }),
       "structured",
       [{ id: "default", label: "默认" }],
-      { title: { "font-size": "16px" } }
+      { baseStyle: { title: { "font-size": "16px" } } }
     );
     try {
       registerBlock(block);

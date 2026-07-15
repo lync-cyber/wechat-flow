@@ -12,11 +12,13 @@ export const publicationSkeleton = defineBlock(
     { id: "minimal", label: "简洁骨架" },
   ],
   {
-    root: {
-      margin: "0 auto",
-      padding: "24px 16px",
-      "max-width": "680px",
-      "line-height": "1.8",
+    baseStyle: {
+      root: {
+        margin: "0 auto",
+        padding: "24px 16px",
+        "max-width": "680px",
+        "line-height": "1.8",
+      },
     },
   }
 );

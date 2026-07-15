@@ -12,12 +12,14 @@ export const advertCard = defineBlock(
     { id: "minimal", label: "简约广告卡片" },
   ],
   {
-    root: {
-      border: "1px solid #e8d5a3",
-      "border-radius": "8px",
-      padding: "16px",
-      margin: "16px 0",
-      "background-color": "#fffdf0",
+    baseStyle: {
+      root: {
+        border: "1px solid #e8d5a3",
+        "border-radius": "8px",
+        padding: "16px",
+        margin: "16px 0",
+        "background-color": "#fffdf0",
+      },
     },
   }
 );

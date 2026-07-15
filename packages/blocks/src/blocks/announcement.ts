@@ -41,9 +41,11 @@ export const announcement = defineBlock(
     },
   ],
   {
-    root: {
-      "border-left": "3px solid #b94a3e",
-      padding: "12px 16px",
+    baseStyle: {
+      root: {
+        "border-left": "3px solid #b94a3e",
+        padding: "12px 16px",
+      },
     },
   }
 );
