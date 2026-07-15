@@ -177,6 +177,61 @@ describe("registerVariant 值级 FORBIDDEN 声明校验", () => {
   });
 });
 
+describe("T-190 AC-001: getBlockBaseStyle merge semantics（块基线 root ⊕ 变体 delta）", () => {
+  it("互不重叠键时块基座 root 与具名变体 root delta 合并共存", () => {
+    registerBlock({
+      id: "probe-merge-root",
+      name: "Probe Merge Root",
+      category: "text",
+      directiveAttrs: z.object({}),
+      variants: [{ id: "tinted", baseStyle: { root: { color: "#ff0000" } } }],
+      baseStyle: { root: { margin: "16px 0" } },
+      slots: ["root"],
+    });
+
+    expect(getBlockBaseStyle("probe-merge-root", "tinted")).toEqual({
+      margin: "16px 0",
+      color: "#ff0000",
+    });
+  });
+
+  it("同键碰撞时变体 delta 值覆盖块基座值", () => {
+    registerBlock({
+      id: "probe-merge-override",
+      name: "Probe Merge Override",
+      category: "text",
+      directiveAttrs: z.object({}),
+      variants: [{ id: "tinted", baseStyle: { root: { padding: "20px" } } }],
+      baseStyle: { root: { padding: "8px", margin: "4px" } },
+      slots: ["root"],
+    });
+
+    expect(getBlockBaseStyle("probe-merge-override", "tinted")).toEqual({
+      padding: "20px",
+      margin: "4px",
+    });
+  });
+});
+
+describe("T-190 AC-002: default 降为普通变体（base ⊕ defaultDelta，非特判直返块基座）", () => {
+  it("default 变体条目自身 baseStyle.root 与块基座合并，而非忽略 default 变体条目直返块基座", () => {
+    registerBlock({
+      id: "probe-default-merge",
+      name: "Probe Default Merge",
+      category: "text",
+      directiveAttrs: z.object({}),
+      variants: [{ id: "default", baseStyle: { root: { "background-color": "#f0f7ff" } } }],
+      baseStyle: { root: { padding: "12px 16px" } },
+      slots: ["root"],
+    });
+
+    expect(getBlockBaseStyle("probe-default-merge", "default")).toEqual({
+      padding: "12px 16px",
+      "background-color": "#f0f7ff",
+    });
+  });
+});
+
 describe("R-006: registerVariant FORBIDDEN 校验大小写不敏感", () => {
   function registerProbeBlock(id: string): void {
     registerBlock({

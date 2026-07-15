@@ -139,16 +139,19 @@ export function describeVariant(id: string): VariantDefinition | undefined {
 
 export function getBlockBaseStyle(blockId: string, variantId: string): Record<string, string> {
   const blockDef = describeBlock(blockId);
-  if (variantId === "default") {
-    return blockDef?.baseStyle?.root ?? {};
-  }
+  const blockBase = blockDef?.baseStyle?.root ?? {};
+
   const builtinVariant = blockDef?.variants.find((v) => v.id === variantId);
   if (builtinVariant?.baseStyle) {
-    return builtinVariant.baseStyle.root ?? {};
+    return { ...blockBase, ...(builtinVariant.baseStyle.root ?? {}) };
   }
+  if (variantId === "default") {
+    return { ...blockBase, ...(blockDef?.defaultStyle?.root ?? {}) };
+  }
+
   const key = `${blockId}::${variantId}`;
   const entry = store.get(key);
-  return entry?.style?.root ?? {};
+  return { ...blockBase, ...(entry?.style?.root ?? {}) };
 }
 
 export function listAllVariants(): Array<{ blockId: string; id: string; label?: string }> {

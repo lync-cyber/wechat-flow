@@ -8,7 +8,15 @@ export const quote = defineBlock(
   z.object({}).strict(),
   "text",
   [
-    { id: "default", label: "标准引用" },
+    {
+      id: "default",
+      label: "标准引用",
+      baseStyle: {
+        root: {
+          "border-left": "3px solid #888",
+        },
+      },
+    },
     { id: "bordered", label: "边框引用" },
     { id: "centered", label: "居中引用" },
     { id: "filled", label: "填充引用" },
@@ -65,7 +73,6 @@ export const quote = defineBlock(
   ],
   {
     root: {
-      "border-left": "3px solid #888",
       padding: "8px 16px",
       margin: "16px 0",
       color: "#555",

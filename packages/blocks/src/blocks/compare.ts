@@ -45,7 +45,17 @@ export const compare = defineBlock(
     .strict(),
   "structured",
   [
-    { id: "default", label: "标准对比" },
+    {
+      id: "default",
+      label: "标准对比",
+      baseStyle: {
+        root: {
+          display: "table",
+          width: "100%",
+          "border-collapse": "collapse",
+        },
+      },
+    },
     { id: "highlight-right", label: "突出右侧" },
     { id: "table-style", label: "表格对比" },
     {
@@ -83,9 +93,6 @@ export const compare = defineBlock(
   ],
   {
     root: {
-      display: "table",
-      width: "100%",
-      "border-collapse": "collapse",
       margin: "16px 0",
     },
   },

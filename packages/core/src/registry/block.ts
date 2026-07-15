@@ -27,6 +27,7 @@ export interface BlockDefinition {
   directiveBody?: string;
   variants: BlockVariant[];
   baseStyle?: Record<string, Record<string, string>>;
+  defaultStyle?: Record<string, Record<string, string>>;
   slots: string[];
   decorate?: (element: Element, ctx: BlockDecorateContext) => void;
 }
@@ -53,6 +54,9 @@ export function registerBlock(definition: BlockDefinition): void {
   const rejectedDeclarations: ReturnType<typeof validateForbiddenDeclarations> = [];
   if (definition.baseStyle) {
     rejectedDeclarations.push(...validateForbiddenDeclarations(definition.baseStyle));
+  }
+  if (definition.defaultStyle) {
+    rejectedDeclarations.push(...validateForbiddenDeclarations(definition.defaultStyle));
   }
   for (const variant of definition.variants) {
     if (variant.baseStyle) {

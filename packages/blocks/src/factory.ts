@@ -16,7 +16,8 @@ export function defineBlock(
   baseStyle?: Record<string, Record<string, string>>,
   slots?: string[],
   directiveBody?: string,
-  decorate?: (element: Element, ctx: BlockDecorateContext) => void
+  decorate?: (element: Element, ctx: BlockDecorateContext) => void,
+  defaultStyle?: Record<string, Record<string, string>>
 ): BlockDefinition {
   const resolvedSlots = slots ?? Array.from(new Set(["root", ...Object.keys(baseStyle ?? {})]));
   return {
@@ -26,6 +27,7 @@ export function defineBlock(
     category,
     variants,
     baseStyle,
+    defaultStyle,
     slots: resolvedSlots,
     source: "builtin",
     directiveBody,

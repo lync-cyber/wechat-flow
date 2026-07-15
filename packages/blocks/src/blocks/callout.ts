@@ -62,10 +62,17 @@ export const callout = defineBlock(
   ],
   {
     root: {
-      "border-left": "4px solid #4a90e2",
       padding: "12px 16px",
-      "border-radius": "4px",
       margin: "16px 0",
+    },
+  },
+  undefined,
+  undefined,
+  undefined,
+  {
+    root: {
+      "border-left": "4px solid #4a90e2",
+      "border-radius": "4px",
       "background-color": "#f0f7ff",
     },
   }
