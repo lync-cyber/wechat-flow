@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-15T08:31:48.718426+00:00",
+  "generated_at": "2026-07-15T13:50:09.122796+00:00",
   "documents": {
     "amendment-platform-fidelity-r1": {
       "file_path": "docs/arch/AMENDMENT-platform-fidelity-r1.md",
@@ -163,7 +163,7 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow-modules": "640ecbc8",
-        "dev-plan-wechat-flow-s7": "d773e555"
+        "dev-plan-wechat-flow-s7": "d8dce1f3"
       }
     },
     "amendment-variant-mechanism-20260715-r1": {
@@ -2523,8 +2523,8 @@
       "doc_type": "dev-plan",
       "status": "approved",
       "total_lines": 2663,
-      "est_tokens": 55318,
-      "content_hash": "d773e555",
+      "est_tokens": 55390,
+      "content_hash": "d8dce1f3",
       "sections": {
         "1": {
           "heading": "## 1. 迭代目标",
@@ -2957,7 +2957,7 @@
           "heading": "## 4. 变体渲染缺口方案实施批（T-190..T-212）",
           "line_start": 1927,
           "line_end": 2663,
-          "est_tokens": 17134,
+          "est_tokens": 17206,
           "deps": [],
           "level": 2,
           "items": {
@@ -2972,7 +2972,7 @@
               "heading": "### T-190: 变体样式 merge 语义改造 + 6 fat-base 块拆分（最小基座 + default delta）",
               "line_start": 2020,
               "line_end": 2054,
-              "est_tokens": 1541,
+              "est_tokens": 1612,
               "deps": []
             },
             "T-191": {
@@ -5053,7 +5053,7 @@
         "dev-plan-wechat-flow-s7"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow-s7": "d773e555"
+        "dev-plan-wechat-flow-s7": "d8dce1f3"
       }
     },
     "review-dev-plan-wechat-flow-r8": {
@@ -5068,7 +5068,7 @@
         "dev-plan-wechat-flow-s7"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow-s7": "d773e555"
+        "dev-plan-wechat-flow-s7": "d8dce1f3"
       }
     },
     "review-dev-plan-wechat-flow-s7-r1": {
@@ -5084,7 +5084,7 @@
         "amendment-platform-fidelity-r1"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow-s7": "d773e555",
+        "dev-plan-wechat-flow-s7": "d8dce1f3",
         "amendment-platform-fidelity-r1": "0434b119"
       }
     },
