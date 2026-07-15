@@ -2302,14 +2302,14 @@ graph LR
 - **security_sensitive**: false
 - **dependencies**: [T-190, T-191]
 - **acceptance_criteria**:
-  - [ ] AC-001: `kpi-card.highlight` 渲染 root 含顶部 3px 色条声明 + 数字元素大字号声明；`kpi-card.compact` 渲染 root padding 数值小于 `default`
-  - [ ] AC-002: `qa.bubble` 渲染问/答两部分呈现不同徽章处理（decorate 区分：问句徽章 vs 答句徽章样式不同，如一实心一描边）；`qa.bold-q` 渲染问句部分含加粗字重 + 底线分隔声明
-  - [ ] AC-003: `tip-grid.two-column` 与 `definition-list.two-column` 渲染均呈现 2 列 `display:table`/`table-cell` 布局
-  - [ ] AC-004: `tip-grid.card-style` 与 `definition-list.card-style` 渲染每个网格项/条目独立含全边框声明（1px `border`）+ 标题弱化色（`color:var(--color-text-muted)` 或等效），即按项循环应用的单元格级 chrome（非整个 root 一次性声明）
-  - [ ] AC-005: 全仓四门禁绿；8 变体满足谓词①或②，差分守卫不判定为 finding
+  - [x] AC-001: `kpi-card.highlight` 渲染 root 含顶部 3px 色条声明 + 数字元素大字号声明；`kpi-card.compact` 渲染 root padding 数值小于 `default`
+  - [x] AC-002: `qa.bubble` 渲染问/答两部分呈现不同徽章处理（decorate 区分：问句徽章 vs 答句徽章样式不同，如一实心一描边）；`qa.bold-q` 渲染问句部分含加粗字重 + 底线分隔声明
+  - [x] AC-003: `tip-grid.two-column` 与 `definition-list.two-column` 渲染均呈现 2 列 `display:table`/`table-cell` 布局
+  - [x] AC-004: `tip-grid.card-style` 与 `definition-list.card-style` 渲染每个网格项/条目独立含全边框声明（1px `border`）+ 标题弱化色（`color:var(--color-text-muted)` 或等效），即按项循环应用的单元格级 chrome（非整个 root 一次性声明）
+  - [x] AC-005: 全仓四门禁绿；8 变体满足谓词①或②，差分守卫不判定为 finding
 - **deliverables**:
-  - [ ] `packages/blocks/src/blocks/{kpi-card,qa,tip-grid,definition-list}.ts` — 8 具名变体 baseStyle/decorate 落地
-  - [ ] `tests/blocks/kpi-card-qa-tip-grid-definition-list-variants.test.ts`（新文件）
+  - [x] `packages/blocks/src/blocks/{kpi-card,qa,tip-grid,definition-list}.ts` — 8 具名变体 baseStyle/decorate 落地
+  - [x] `tests/blocks/kpi-card-qa-tip-grid-definition-list-variants.test.ts`（新文件）
 - **context_load**:
   - variant-gap-triage-20260715-r1#§1
 - **notes**: LOC_SIGNAL: 200。`tip-grid`/`definition-list` 的 `card-style` 复用同一 `note/box-callout.ts` 单元格级 chrome 手法，实现时可提取共享 helper（避免两块重复实现同一"按项循环加 cell chrome"逻辑），符合长期可维护性偏好。
@@ -2329,14 +2329,14 @@ graph LR
 - **security_sensitive**: false
 - **dependencies**: [T-190, T-191]
 - **acceptance_criteria**:
-  - [ ] AC-001: `footnote.numbered` 渲染含 hanging indent 编号悬挂声明；`footnote.inline` 渲染呈现流式排列（非逐条独立行的等效声明）
-  - [ ] AC-002: `heading.underline` 渲染 root 含 2px 主色底线声明（`border-bottom`）；`heading.centered` 渲染 root `text-align:center`
-  - [ ] AC-003: `paragraph.indented` 渲染 root 含 `text-indent:2em`；`paragraph.spaced` 渲染 root `line-height` 数值大于 `default`
-  - [ ] AC-004: `list.bullet` 渲染自定义圆点 marker 颜色/形态声明生效（非浏览器默认样式）；`list.numbered` 渲染有序列表编号样式声明生效；`list.checklist` 渲染每项前缀含 `☐`/`☑` unicode 字符节点（decorate 文本节点插入，非新增列表符号 CSS）
-  - [ ] AC-005: 全仓四门禁绿；9 变体满足谓词①或②，差分守卫不判定为 finding
+  - [x] AC-001: `footnote.numbered` 渲染含 hanging indent 编号悬挂声明；`footnote.inline` 渲染呈现流式排列（非逐条独立行的等效声明）
+  - [x] AC-002: `heading.underline` 渲染 root 含 2px 主色底线声明（`border-bottom`）；`heading.centered` 渲染 root `text-align:center`
+  - [x] AC-003: `paragraph.indented` 渲染 root 含 `text-indent:2em`；`paragraph.spaced` 渲染 root `line-height` 数值大于 `default`
+  - [x] AC-004: `list.bullet` 渲染自定义圆点 marker 颜色/形态声明生效（非浏览器默认样式）；`list.numbered` 渲染有序列表编号样式声明生效；`list.checklist` 渲染每项前缀含 `☐`/`☑` unicode 字符节点（decorate 文本节点插入，非新增列表符号 CSS）
+  - [x] AC-005: 全仓四门禁绿；9 变体满足谓词①或②，差分守卫不判定为 finding
 - **deliverables**:
-  - [ ] `packages/blocks/src/blocks/{footnote,heading,paragraph,list}.ts` — 9 具名变体 baseStyle/decorate 落地
-  - [ ] `tests/blocks/footnote-heading-paragraph-list-variants.test.ts`（新文件）
+  - [x] `packages/blocks/src/blocks/{footnote,heading,paragraph,list}.ts` — 9 具名变体 baseStyle/decorate 落地
+  - [x] `tests/blocks/footnote-heading-paragraph-list-variants.test.ts`（新文件）
 - **context_load**:
   - variant-gap-triage-20260715-r1#§1
   - variant-gap-triage-20260715-r1#§2
@@ -2357,13 +2357,13 @@ graph LR
 - **security_sensitive**: false
 - **dependencies**: [T-190, T-191]
 - **acceptance_criteria**:
-  - [ ] AC-001: `divider.thick` 渲染 root `border-width` 数值大于 `default`（增大边框粗细）
-  - [ ] AC-002: `divider.dotted` 渲染 root `border-style: dotted`
-  - [ ] AC-003: `divider.dashed` 渲染 root `border-style: dashed`
-  - [ ] AC-004: 全仓四门禁绿；3 变体满足谓词①，差分守卫不判定为 finding
+  - [x] AC-001: `divider.thick` 渲染 root `border-width` 数值大于 `default`（增大边框粗细）
+  - [x] AC-002: `divider.dotted` 渲染 root `border-style: dotted`
+  - [x] AC-003: `divider.dashed` 渲染 root `border-style: dashed`
+  - [x] AC-004: 全仓四门禁绿；3 变体满足谓词①，差分守卫不判定为 finding
 - **deliverables**:
-  - [ ] `packages/blocks/src/blocks/divider.ts` — 3 具名变体 baseStyle 落地
-  - [ ] `tests/blocks/divider-variants.test.ts`（新文件或并入既有 divider 测试）
+  - [x] `packages/blocks/src/blocks/divider.ts` — 3 具名变体 baseStyle 落地
+  - [x] `tests/blocks/divider-variants.test.ts`（新文件或并入既有 divider 测试）
 - **context_load**:
   - variant-gap-triage-20260715-r1#§2
 - **notes**: LOC_SIGNAL: 40。`divider` 已有 SVG 装饰变体（wave/dots/flower，T-149 已实现），本卡新增的 3 项为纯 CSS 边框参数，不涉及 SVG/sanitize schema。
@@ -2383,13 +2383,13 @@ graph LR
 - **security_sensitive**: false
 - **dependencies**: [T-190, T-191]
 - **acceptance_criteria**:
-  - [ ] AC-001: `code-block.minimal` 渲染 root 不含外框声明（无 border/background 卡片化），纯 `pre`/`code` 呈现
-  - [ ] AC-002: `code-block.light` 渲染引入浅色语法高亮 token 集（背景/文字/语法高亮色全部切换为浅色调），且与既有主题 token 机制对齐——token 引用方式与 5 主题现有语法高亮 token 体系一致（非孤立硬编码色值），5 主题渲染产物各自解析出该主题对应的浅色调色板值（非跨主题字节相同）
-  - [ ] AC-003: 全仓四门禁绿；`pnpm test:cross-runtime` 全绿（`code-block` 不在 5 fixture 覆盖范围内，预期无影响，需验证坐实）；2 变体满足谓词①，差分守卫不判定为 finding
+  - [x] AC-001: `code-block.minimal` 渲染 root 不含外框声明（无 border/background 卡片化），纯 `pre`/`code` 呈现
+  - [x] AC-002: `code-block.light` 渲染引入浅色语法高亮 token 集（背景/文字/语法高亮色全部切换为浅色调），且与既有主题 token 机制对齐——token 引用方式与 5 主题现有语法高亮 token 体系一致（非孤立硬编码色值），5 主题渲染产物各自解析出该主题对应的浅色调色板值（非跨主题字节相同）
+  - [x] AC-003: 全仓四门禁绿；`pnpm test:cross-runtime` 全绿（`code-block` 不在 5 fixture 覆盖范围内，预期无影响，需验证坐实）；2 变体满足谓词①，差分守卫不判定为 finding
 - **deliverables**:
-  - [ ] `packages/blocks/src/blocks/code-block.ts` — 2 具名变体落地
-  - [ ] `packages/themes/*/src/index.ts`（如需补充浅色语法高亮 token，视实现方案而定）
-  - [ ] `tests/blocks/code-block-variants.test.ts`（新文件）
+  - [x] `packages/blocks/src/blocks/code-block.ts` — 2 具名变体落地
+  - [x] `packages/themes/*/src/index.ts`（如需补充浅色语法高亮 token，视实现方案而定）
+  - [x] `tests/blocks/code-block-variants.test.ts`（新文件）
 - **context_load**:
   - variant-gap-triage-20260715-r1#§2
 - **notes**: LOC_SIGNAL: 90。独立成卡（非并入 T-200/T-201）因 `code-block.light` 潜在跨越主题 token 体系（`packages/themes/*`），与其余单纯 blocks 包内改动的卡在改动面性质上不同。

@@ -20,6 +20,8 @@ export const tokens: ThemeTokens = {
   "--color-code-bg": "#f0ede8",
   "--color-code-block-bg": "#f0ede8",
   "--color-code-text": "#292524",
+  "--color-code-light-bg": "#fbfaf7",
+  "--color-code-light-text": "#292524",
   "--color-quote-border": "#2d5a4e",
   "--color-quote-bg": "#f3f0eb",
   "--color-link": "#2d5a4e",
