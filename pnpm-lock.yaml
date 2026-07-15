@@ -516,6 +516,8 @@ importers:
         specifier: ^4.0.4
         version: 4.0.4
 
+  skill: {}
+
 packages:
 
   '@ampproject/remapping@2.3.0':
