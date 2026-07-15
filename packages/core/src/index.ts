@@ -71,6 +71,11 @@ export type {
   UnimplementedVariant,
 } from "./registry/block.ts";
 export { INTENTIONAL_PLAIN_VARIANTS } from "./registry/intentional-plain-variants.ts";
+export { runVariantDiffGuard } from "./registry/variant-diff-guard.ts";
+export type {
+  VariantDiffFinding,
+  VariantDiffGuardOptions,
+} from "./registry/variant-diff-guard.ts";
 export {
   registerMark,
   listMarks,
