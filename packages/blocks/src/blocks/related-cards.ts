@@ -1,19 +1,7 @@
 import type { Element } from "hast";
 import { z } from "zod";
-import { slotElement } from "../decorate-utils.ts";
+import { findList, listItemsOf, slotElement } from "../decorate-utils.ts";
 import { defineBlock } from "../factory.ts";
-
-function findList(element: Element): Element | undefined {
-  return element.children.find(
-    (child): child is Element => child.type === "element" && child.tagName === "ul"
-  );
-}
-
-function listItemsOf(ul: Element): Element[] {
-  return ul.children.filter(
-    (child): child is Element => child.type === "element" && child.tagName === "li"
-  );
-}
 
 function buildGridRows(ul: Element): Element[] {
   const items = listItemsOf(ul);

@@ -1,29 +1,7 @@
 import type { Element } from "hast";
 import { z } from "zod";
-import { slotElement } from "../decorate-utils.ts";
+import { findList, listItemsOf, slotElement, textContentOf } from "../decorate-utils.ts";
 import { defineBlock } from "../factory.ts";
-
-function textContentOf(children: Element["children"]): string {
-  return children
-    .map((child) => {
-      if (child.type === "text") return child.value;
-      if (child.type === "element") return textContentOf(child.children);
-      return "";
-    })
-    .join("");
-}
-
-function findStepsList(element: Element): Element | undefined {
-  return element.children.find(
-    (child): child is Element => child.type === "element" && child.tagName === "ul"
-  );
-}
-
-function listItemsOf(ul: Element): Element[] {
-  return ul.children.filter(
-    (child): child is Element => child.type === "element" && child.tagName === "li"
-  );
-}
 
 function buildStepCard(listItem: Element, isLast: boolean, variantId: string): Element {
   const paragraph = listItem.children.find(
@@ -285,7 +263,7 @@ export const steps = defineBlock(
       "正文写为 Markdown 无序列表，每项以「**标题**：描述」形式书写一个步骤；card/filled/compact 变体额外将每项渲染为独立卡片。",
     decorate: (element, ctx) => {
       if (ctx.variant === "card" || ctx.variant === "filled" || ctx.variant === "compact") {
-        const ul = findStepsList(element);
+        const ul = findList(element);
         if (!ul) return;
         const cards = buildStepsCardList(ul, ctx.variant);
         const {
@@ -298,7 +276,7 @@ export const steps = defineBlock(
         return;
       }
 
-      const ul = findStepsList(element);
+      const ul = findList(element);
       if (!ul) return;
 
       if (ctx.variant === "horizontal") {

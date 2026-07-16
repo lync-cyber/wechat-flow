@@ -1,18 +1,12 @@
 import type { Element } from "hast";
 import { z } from "zod";
-import { slotElement } from "../decorate-utils.ts";
+import { listItemsOf, slotElement } from "../decorate-utils.ts";
 import { defineBlock } from "../factory.ts";
 
 function findList(element: Element): Element | undefined {
   return element.children.find(
     (child): child is Element =>
       child.type === "element" && (child.tagName === "ul" || child.tagName === "ol")
-  );
-}
-
-function listItemsOf(list: Element): Element[] {
-  return list.children.filter(
-    (child): child is Element => child.type === "element" && child.tagName === "li"
   );
 }
 

@@ -1,19 +1,7 @@
 import type { Element } from "hast";
 import { z } from "zod";
-import { slotElement } from "../decorate-utils.ts";
+import { findList, listItemsOf, slotElement } from "../decorate-utils.ts";
 import { defineBlock } from "../factory.ts";
-
-function findTimelineList(element: Element): Element | undefined {
-  return element.children.find(
-    (child): child is Element => child.type === "element" && child.tagName === "ul"
-  );
-}
-
-function listItemsOf(ul: Element): Element[] {
-  return ul.children.filter(
-    (child): child is Element => child.type === "element" && child.tagName === "li"
-  );
-}
 
 function buildTimelineRow(ul: Element): Element {
   const cells = listItemsOf(ul).map((li) => slotElement("time-cell", [...li.children]));
@@ -73,7 +61,7 @@ export const timeline = defineBlock(
       "正文写为 Markdown 无序列表，每项以「**日期**：事件描述」形式书写一个时间节点，按时间先后顺序排列。",
     decorate: (element, ctx) => {
       if (ctx.variant !== "horizontal") return;
-      const ul = findTimelineList(element);
+      const ul = findList(element);
       if (!ul) return;
       element.children = [buildTimelineRow(ul)];
     },
