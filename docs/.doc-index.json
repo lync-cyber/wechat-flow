@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-16T08:27:00.484820+00:00",
+  "generated_at": "2026-07-16T08:38:01.488214+00:00",
   "documents": {
     "amendment-platform-fidelity-r1": {
       "file_path": "docs/arch/AMENDMENT-platform-fidelity-r1.md",
@@ -163,7 +163,7 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow-modules": "5bde2521",
-        "dev-plan-wechat-flow-s7": "ab08886b"
+        "dev-plan-wechat-flow-s7": "221ddade"
       }
     },
     "amendment-variant-mechanism-20260715-r1": {
@@ -2524,7 +2524,7 @@
       "status": "approved",
       "total_lines": 2663,
       "est_tokens": 55438,
-      "content_hash": "ab08886b",
+      "content_hash": "221ddade",
       "sections": {
         "1": {
           "heading": "## 1. 迭代目标",
@@ -5270,7 +5270,7 @@
         "dev-plan-wechat-flow-s7"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow-s7": "ab08886b"
+        "dev-plan-wechat-flow-s7": "221ddade"
       }
     },
     "review-dev-plan-wechat-flow-r8": {
@@ -5285,7 +5285,7 @@
         "dev-plan-wechat-flow-s7"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow-s7": "ab08886b"
+        "dev-plan-wechat-flow-s7": "221ddade"
       }
     },
     "review-dev-plan-wechat-flow-s7-r1": {
@@ -5301,7 +5301,7 @@
         "amendment-platform-fidelity-r1"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow-s7": "ab08886b",
+        "dev-plan-wechat-flow-s7": "221ddade",
         "amendment-platform-fidelity-r1": "0434b119"
       }
     },
@@ -6164,10 +6164,10 @@
     "walkthrough-variant-gap-remediation-20260716-r1": {
       "file_path": "docs/reviews/walkthrough/WALKTHROUGH-variant-gap-remediation-20260716-r1.md",
       "doc_type": "walkthrough",
-      "status": "draft",
+      "status": "approved",
       "total_lines": 84,
-      "est_tokens": 1121,
-      "content_hash": "b85f8afb",
+      "est_tokens": 1130,
+      "content_hash": "61ffde47",
       "sections": {},
       "deps": [
         "T-212",

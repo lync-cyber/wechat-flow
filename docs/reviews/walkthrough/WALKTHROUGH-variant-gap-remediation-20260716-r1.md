@@ -2,7 +2,7 @@
 id: "walkthrough-variant-gap-remediation-20260716-r1"
 doc_type: walkthrough
 author: orchestrator
-status: draft
+status: approved
 deps: ["T-212", "variant-gap-triage-20260715-r1", "design-review-gallery-r2"]
 consumers: ["orchestrator", "ui-designer", "architect"]
 ---
@@ -65,9 +65,9 @@ gallery 三形态 DOM 结构实测（静态渲染页直读）：
 - T-207 撤下的 `audio::full` / `audio::mini` / `video::with-caption` 在 variants 数组中缺席（`known-blocked-variants.ts` 登记，待 architect 厘清 DOM 输出契约后重评估，非删除）。
 - `default` 正常渲染空容器占位，不抛错、不影响其余管线。
 
-### AC-005 — 走查报告 + event=user_decision · 报告已产出
+### AC-005 — 走查报告 + event=user_decision · PASS
 
-本报告即 AC-005 交付。`event=user_decision`（design-signoff 语义）待用户对本报告 sign-off 后记录。
+本报告即 AC-005 交付。用户对本报告 sign-off（2026-07-16），`event=user_decision`（design-signoff 语义，`ref=T-212`）已记录于 `docs/EVENT-LOG.jsonl`。
 
 ## 门禁状态
 
@@ -77,8 +77,8 @@ gallery 三形态 DOM 结构实测（静态渲染页直读）：
 
 ## 残留人工判断层
 
-无阻断项。唯一非自动化层为各变体渲染与 triage 设计意图的**视觉美学符合性**——该层设计已在批 B/C 逐项 DESIGN-REVIEW 获 sign-off，本走查已确认对应样式在成品注册表 / 编辑器 / 渲染管线中真实生效。请用户对本报告做最终 sign-off 以记录 `user_decision` 事件并闭合 T-212。
+无阻断项。唯一非自动化层为各变体渲染与 triage 设计意图的**视觉美学符合性**——该层设计已在批 B/C 逐项 DESIGN-REVIEW 获 sign-off，本走查已确认对应样式在成品注册表 / 编辑器 / 渲染管线中真实生效。用户已对本报告 sign-off，T-212 闭合。
 
 ## verdict
 
-**approved**（客观层全 PASS；待用户 sign-off 记 `user_decision` 闭合本卡）
+**approved**（客观层全 PASS；用户已 sign-off，`user_decision` 已记录，批 C 全闭合）

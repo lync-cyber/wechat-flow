@@ -33,11 +33,11 @@
 - 构建/任务编排: Turborepo 2.3（`turbo build`）；apps/editor 用 Vite 6
 
 ## 项目状态 (orchestrator专属写入区，其他Agent禁止修改)
-- 当前阶段: development（Sprint 7 收尾：变体缺口方案批 A/B/C 全合 main；T-212 走查客观层全 PASS，待用户对走查报告 sign-off 记 user_decision 闭合批 C）
-- 上次完成: **T-212 变体缺口治理批终验走查（2026-07-16，报告 `WALKTHROUGH-variant-gap-remediation-20260716-r1.md`）**——批 C 收口 PR #133 已合 main（86e9de6）。走查基线 main@86e9de6，实测 38 块/131 变体。方法：编辑器 `InsertDrawer.vue` 是 `listBlocks()`+`selectedBlock.variants` 纯投影（无过滤/白名单/别名兜底）→「变体不在注册表」⇔「不出现于任何用户可选界面」；两条互证路径=注册表投影全量断言（一次性探针 45 测试全绿，用后即删，不留重复永久测试）+ 编辑器实机 DOM 取证 + 静态渲染页 DOM/截图。AC 结论：AC-001（新增具名变体可选、渲染携 data-variant 异于 default，gallery 3 pill/highlight-block 4 pill 实机确认）· AC-002（9 结构性变体 DOM 异于 default；gallery default 无 table 单列 / duo 首行 2 cell / triptych 首行 3 cell，符 DESIGN-REVIEW-gallery-r2）· AC-003（11 删除项注册表全缺席=T-208 十项+gradient+gallery grid/masonry/carousel；实机图集 3 款/高亮块 4 款 hasGradient=false/视频 1 款/音频 1 款）· AC-004（audio/video 块仍注册 default 幸存，T-207 blocked 三项缺席）均 PASS；AC-005 报告已产出，`user_decision` 事件待用户 sign-off。视觉美学符合层由批 B/C 逐项 DESIGN-REVIEW 既有 sign-off 承担，本走查确认样式在成品真实生效。
+- 当前阶段: development（Sprint 7 收尾：**变体缺口治理批 T-190..T-212 全闭合**；剩用户门卡 T-188/T-172 r3 真机粘贴 → sprint-review → release go/no-go）
+- 上次完成: **T-212 变体缺口治理批终验走查 + 用户 sign-off（2026-07-16，批 C 全闭合）**——报告 `WALKTHROUGH-variant-gap-remediation-20260716-r1.md`（status=approved），走查 PR #134 待合。批 C 收口 PR #133 已合 main（86e9de6）。用户对走查报告 sign-off（`event=user_decision` ref=T-212 已记 EVENT-LOG）。走查基线 main@86e9de6，实测 38 块/131 变体。方法：编辑器 `InsertDrawer.vue` 是 `listBlocks()`+`selectedBlock.variants` 纯投影（无过滤/白名单/别名兜底）→「变体不在注册表」⇔「不出现于任何用户可选界面」，使删除类走查机械可判定；两条互证=注册表投影全量断言（一次性探针 45 断言全绿，用后即删）+ 编辑器实机 DOM + 静态渲染取证。AC-001..005 全 PASS：新增具名变体可选（gallery 3 pill/highlight-block 4 pill 实机）· 9 结构性变体 DOM 异于 default（gallery default 无 table 单列 / duo 首行 2 cell / triptych 首行 3 cell 符 DESIGN-REVIEW-gallery-r2）· 11 删除项注册表全缺席（T-208 十项+gradient+gallery grid/masonry/carousel）· audio/video default 幸存不受 T-207 影响。视觉美学层由批 B/C 逐项 DESIGN-REVIEW 既有 sign-off 承担。
   - 历史批次见 git/PR 历史与 EVENT-LOG，不在此累积。
 - 下一步行动:
-  - ① **用户对 T-212 走查报告 sign-off**（owner=user，批 C 最后一步）：`WALKTHROUGH-variant-gap-remediation-20260716-r1.md` verdict=approved（客观层全 PASS）。用户确认→orchestrator 写 `event=user_decision`（design-signoff 语义，非法枚举 design_signoff 勿用）、勾 T-212 AC-005 → 批 C（变体缺口治理 T-190..T-212）全闭合。
+  - ① **走查 PR #134 合并**（docs-only：走查报告 + T-212 AC 全勾 + §项目状态；用户手合，gh classifier 拦自合并）。
   - ② 用户门卡（回捡）: T-188 / T-172 r3 真机粘贴采集（阶段一编辑器走查已完成，剩真机粘贴——操作手册见 WALKTHROUGH-t172-paste-regression-20260709-r3.md；通过→T-157 blocking_conditions 清空→T-159 AC-004；写 event=user_decision 载 design_signoff 语义）· T-180（ui-spec finalize 受 #472 限制，attended）
   - ③ sprint-review（含既有 open 注记，见 当前Sprint；新增待记：readability-line-height-min 不尊重 data-lh-exempt 豁免致装饰槽位假警告 ×4）· ④ release go/no-go（见 待办）
   - **禁区（长期有效）**: 禁 git stash；`context finalize` 勿强推（#472）。
