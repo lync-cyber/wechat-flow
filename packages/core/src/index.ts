@@ -60,7 +60,6 @@ export {
   onRegistryReset,
   resetBlockRegistry,
   getUnimplementedVariants,
-  setVariantGuardMode,
 } from "./registry/block.ts";
 export type {
   BlockCategory,

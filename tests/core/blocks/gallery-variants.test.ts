@@ -74,23 +74,10 @@ const CAPTIONED_DUO_MD = galleryMarkdown("duo", [
   { src: "https://example.com/b.png", alt: "图二" },
 ]);
 
-const TWO_IMAGE_GRID_MD = galleryMarkdown("grid", [
-  { src: "https://example.com/a.png", alt: "图一" },
-  { src: "https://example.com/b.png", alt: "图二" },
-]);
-
-const FOUR_IMAGE_MASONRY_MD = galleryMarkdown("masonry", [
-  { src: "https://example.com/a.png", alt: "图一" },
+const THREE_IMAGE_DEFAULT_MD = galleryMarkdown("default", [
+  { src: "https://example.com/a.png", alt: "图一", caption: "第一张说明" },
   { src: "https://example.com/b.png", alt: "图二" },
   { src: "https://example.com/c.png", alt: "图三" },
-  { src: "https://example.com/d.png", alt: "图四" },
-]);
-
-const FOUR_IMAGE_CAROUSEL_MD = galleryMarkdown("carousel", [
-  { src: "https://example.com/a.png", alt: "图一" },
-  { src: "https://example.com/b.png", alt: "图二" },
-  { src: "https://example.com/c.png", alt: "图三" },
-  { src: "https://example.com/d.png", alt: "图四" },
 ]);
 
 // AC-001: duo 变体 — 每两张一组 table-row，各图 table-cell / width 50% / padding 4px
@@ -210,61 +197,28 @@ describe("AC-004: 图片 caption 渲染独立居中说明", () => {
   });
 });
 
-// AC-005: grid（既有 ID）2 张图片降级为 duo 的 table 布局
-describe("AC-005: grid 变体降级 fallback 至 duo table 布局", () => {
-  it("grid 变体渲染结构与 duo 一致：1 个 table-row 内 2 个 table-cell", async () => {
-    const result = await renderMarkdown(TWO_IMAGE_GRID_MD, { themeId: "default" });
-    const rows = extractRowStyles(result.html);
-    const cells = extractCellStyles(result.html);
-    expect(rows.length).toBe(1);
-    expect(cells.length).toBe(2);
+// AC-005: default 标准图集单列全宽堆叠，区别于 duo/triptych 多列 table 布局
+describe("AC-005: default 变体单列全宽堆叠（非 table 多列）", () => {
+  it("default 变体渲染不含任何 table 布局声明（display: table / table-row / table-cell）", async () => {
+    const result = await renderMarkdown(THREE_IMAGE_DEFAULT_MD, { themeId: "default" });
+    expect(result.html).not.toContain("display: table");
   });
 
-  it("grid 变体每个图片单元计算 width = 50%（非真实 CSS grid）", async () => {
-    const result = await renderMarkdown(TWO_IMAGE_GRID_MD, { themeId: "default" });
-    const cells = extractCellStyles(result.html);
-    for (const cell of cells) {
-      expect(cell).toContain("width: 50%");
-      expect(cell).toContain("display: table-cell");
-    }
+  it("default 变体 3 张图片各渲染为全宽 img（width: 100%）", async () => {
+    const result = await renderMarkdown(THREE_IMAGE_DEFAULT_MD, { themeId: "default" });
+    const fullWidthImgs = [...result.html.matchAll(/<img[^>]*width: 100%[^>]*>/g)];
+    expect(fullWidthImgs.length).toBe(3);
   });
 
-  it("grid 变体渲染 HTML 不含 CSS grid 相关声明", async () => {
-    const result = await renderMarkdown(TWO_IMAGE_GRID_MD, { themeId: "default" });
-    expect(result.html).not.toContain("display: grid");
-    expect(result.html).not.toContain("grid-template");
-  });
-});
-
-// AC-006: masonry / carousel 4 张图片回退至 triptych table 布局，无瀑布流/轮播交互
-describe("AC-006: masonry/carousel 变体回退至 triptych table 布局", () => {
-  it("masonry 变体 4 张图片渲染出 2 个 table-row（3+1 分组）", async () => {
-    const result = await renderMarkdown(FOUR_IMAGE_MASONRY_MD, { themeId: "default" });
-    const rows = extractRowStyles(result.html);
-    const cells = extractCellStyles(result.html);
-    expect(rows.length).toBe(2);
-    expect(cells.length).toBe(4);
+  it("default 变体根容器计算 margin = 16px 0", async () => {
+    const result = await renderMarkdown(THREE_IMAGE_DEFAULT_MD, { themeId: "default" });
+    expect(result.html).toMatch(/data-variant="default"[^>]*margin: 16px 0/);
   });
 
-  it("masonry 变体图片单元计算 width = 33.33%（triptych 语义）", async () => {
-    const result = await renderMarkdown(FOUR_IMAGE_MASONRY_MD, { themeId: "default" });
-    const cells = extractCellStyles(result.html);
-    for (const cell of cells) {
-      expect(cell).toContain("width: 33.33%");
-    }
-  });
-
-  it("carousel 变体 4 张图片渲染出 2 个 table-row（3+1 分组）", async () => {
-    const result = await renderMarkdown(FOUR_IMAGE_CAROUSEL_MD, { themeId: "default" });
-    const rows = extractRowStyles(result.html);
-    const cells = extractCellStyles(result.html);
-    expect(rows.length).toBe(2);
-    expect(cells.length).toBe(4);
-  });
-
-  it("carousel 变体渲染 HTML 不含轮播 JS 交互标记（script 标签或 data-carousel-*）", async () => {
-    const result = await renderMarkdown(FOUR_IMAGE_CAROUSEL_MD, { themeId: "default" });
-    expect(result.html).not.toContain("<script");
-    expect(result.html).not.toContain("data-carousel");
+  it("default 变体含 caption 的图片渲染独立居中说明", async () => {
+    const result = await renderMarkdown(THREE_IMAGE_DEFAULT_MD, { themeId: "default" });
+    const captions = extractCaptionStyles(result.html);
+    expect(captions.length).toBe(1);
+    expect(captions[0]).toContain("text-align: center");
   });
 });

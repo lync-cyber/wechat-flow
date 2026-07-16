@@ -87,7 +87,7 @@ describe("AC-002: 四块 default 渲染语义正确", () => {
     expect(result.html).toContain('data-variant="default"');
   });
 
-  it("gallery 裸指令渲染结构 = duo 双列 table 布局（display:table 的 row/cell 结构）", async () => {
+  it("gallery 裸指令渲染结构 = default 标准图集单列全宽堆叠（无 table 多列布局）", async () => {
     const md = [
       ":::gallery",
       '- ![图一](https://example.com/a.png "说明一")',
@@ -96,19 +96,11 @@ describe("AC-002: 四块 default 渲染语义正确", () => {
     ].join("\n");
     const result = await renderMarkdown(md, { themeId: "default" });
     expect(variantInvalidDiagnostics(result.diagnostics)).toHaveLength(0);
+    expect(result.html).toContain('data-variant="default"');
+    expect(result.html).not.toContain("display: table");
 
-    const rowMatches = [
-      ...result.html.matchAll(/<section style="([^"]*display: table-row[^"]*)">/g),
-    ];
-    expect(rowMatches).toHaveLength(1);
-
-    const cellMatches = [
-      ...result.html.matchAll(/<section style="([^"]*display: table-cell[^"]*)">/g),
-    ];
-    expect(cellMatches).toHaveLength(2);
-    for (const [, style] of cellMatches) {
-      expect(style).toContain("width: 50%");
-    }
+    const fullWidthImgs = [...result.html.matchAll(/<img[^>]*width: 100%[^>]*>/g)];
+    expect(fullWidthImgs).toHaveLength(2);
   });
 });
 

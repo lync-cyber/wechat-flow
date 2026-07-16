@@ -25,9 +25,9 @@ function toKebab(s: string): string {
 }
 
 export function assertVariantFloor(count: number): void {
-  if (count < 120) {
+  if (count < 131) {
     throw new Error(
-      `Variant registry must have at least 120 variants registered, but found ${count}. Ensure blocks and marks packages are imported before building visual story matrix.`
+      `Variant registry must have at least 131 variants registered, but found ${count}. Ensure blocks and marks packages are imported before building visual story matrix.`
     );
   }
 }

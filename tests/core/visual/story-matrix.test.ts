@@ -20,7 +20,7 @@ import techTheme from "../../../packages/themes/tech/src/index.ts";
 
 const THEME_IDS = ["default", "business", "literary", "magazine", "tech"] as const;
 const EXPECTED_THEME_COUNT = 5;
-const VARIANT_FLOOR = 120;
+const VARIANT_FLOOR = 131;
 const CORE_SCENE_FLOOR = 8;
 
 beforeAll(() => {
@@ -32,19 +32,20 @@ beforeAll(() => {
 });
 
 // ---------------------------------------------------------------------------
-// AC-008: fail-fast guard — registry must hold ≥ 120 variants before enumeration
+// AC-008: fail-fast guard — registry must hold ≥ 131 variants before enumeration
 // ---------------------------------------------------------------------------
 describe("AC-008: listAllVariants() floor guard", () => {
-  it("current registry has at least 120 variants registered", () => {
+  it("current registry has at least 131 variants registered", () => {
     const variants = listAllVariants();
     expect(variants.length).toBeGreaterThanOrEqual(VARIANT_FLOOR);
   });
 
-  it("assertVariantFloor() throws an error naming the 120 floor below it, and passes at/above 120", () => {
-    // Match /120/ not /variant/i: a bare "is not a function" TypeError contains
-    // "Variant" but never "120", so this stays red until GREEN implements the guard.
-    expect(() => assertVariantFloor(50)).toThrow(/120/);
-    expect(() => assertVariantFloor(120)).not.toThrow();
+  it("assertVariantFloor() throws an error naming the 131 floor below it, and passes at/above 131", () => {
+    // Match /131/ not /variant/i: a bare "is not a function" TypeError contains
+    // "Variant" but never "131", so this stays red until GREEN implements the guard.
+    expect(() => assertVariantFloor(50)).toThrow(/131/);
+    expect(() => assertVariantFloor(130)).toThrow(/131/);
+    expect(() => assertVariantFloor(131)).not.toThrow();
     expect(() => assertVariantFloor(153)).not.toThrow();
   });
 });

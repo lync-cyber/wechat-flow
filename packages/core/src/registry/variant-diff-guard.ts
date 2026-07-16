@@ -67,9 +67,6 @@ export async function runVariantDiffGuard(
       if (normalizedVariant !== normalizedDefault) continue;
 
       findings.push({ blockId: block.id, variantId: variant.id });
-      console.warn(
-        `[variant-diff-guard] block "${block.id}" variant "${variant.id}" renders identically to default (themeId="${themeId}")`
-      );
     }
   }
 

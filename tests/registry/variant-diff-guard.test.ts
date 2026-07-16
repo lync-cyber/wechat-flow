@@ -1,4 +1,4 @@
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import { z } from "zod";
 import {
   INTENTIONAL_PLAIN_VARIANTS,
@@ -15,23 +15,19 @@ beforeAll(() => {
   registerTheme(defaultTheme);
 });
 
-describe("AC-002/AC-004: 真实注册表渲染期差分扫描（WARN 非阻断）", () => {
+describe("AC-001/AC-002: 真实注册表渲染期差分扫描 RED —— finding 为空集", () => {
   let findings: Awaited<ReturnType<typeof runVariantDiffGuard>>;
-  let warnMessages: string[];
 
   beforeAll(async () => {
-    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
     findings = await runVariantDiffGuard({
       buildMarkdown: buildDirectiveMarkdown,
       themeId: "default",
+      exclude: KNOWN_BLOCKED_VARIANTS,
     });
-    warnMessages = warnSpy.mock.calls.map((call) => String(call[0]));
-    warnSpy.mockRestore();
   });
 
-  it("AC-004: 不因 finding 非空而失败——对真实注册表运行返回真实非空 finding 数组（含未落地缺口变体）", () => {
-    expect(Array.isArray(findings)).toBe(true);
-    expect(findings.length).toBeGreaterThan(0);
+  it("AC-001: 真实注册表全量差分 finding 为空集（排除 known-blocked 与 plain-allowlist 命中项后无 no-op 变体）", () => {
+    expect(findings).toEqual([]);
   });
 
   it("AC-004: contract-pending 归桶的 audio/video 变体已移除注册，不出现在 finding 中，且登记于 KNOWN_BLOCKED_VARIANTS", () => {
@@ -54,15 +50,6 @@ describe("AC-002/AC-004: 真实注册表渲染期差分扫描（WARN 非阻断�
     }
   });
 
-  it("AC-004: 每条 finding 恰好触发一次 console.warn，且至少一条消息含可读的 blockId/variantId 信息", () => {
-    expect(warnMessages.length).toBe(findings.length);
-    expect(findings.length).toBeGreaterThan(0);
-    const sample = findings[0];
-    expect(
-      warnMessages.some((m) => m.includes(sample.blockId) && m.includes(sample.variantId))
-    ).toBe(true);
-  });
-
   it("AC-002: callout.tip（root 含 box-shadow/background 等不同于 default 的声明）不出现在 finding 中", () => {
     const findingKeys = new Set(findings.map((f) => `${f.blockId}::${f.variantId}`));
     expect(findingKeys.has("callout::tip")).toBe(false);
@@ -82,6 +69,7 @@ describe("AC-001/AC-003/排除集: 探针块差分判定", () => {
       directiveAttrs: z.object({}).strict(),
       variants: [{ id: "noop", label: "空 delta 变体", baseStyle: { root: {} } }],
       slots: ["root"],
+      decorate: () => {},
     });
 
     const findings = await runVariantDiffGuard({
@@ -100,6 +88,7 @@ describe("AC-001/AC-003/排除集: 探针块差分判定", () => {
       directiveAttrs: z.object({}).strict(),
       variants: [{ id: "noop-allowlisted", label: "allowlist 豁免变体", baseStyle: { root: {} } }],
       slots: ["root"],
+      decorate: () => {},
     });
 
     const before = await runVariantDiffGuard({
@@ -130,6 +119,7 @@ describe("AC-001/AC-003/排除集: 探针块差分判定", () => {
       directiveAttrs: z.object({}).strict(),
       variants: [{ id: "excluded-noop", label: "排除集豁免变体", baseStyle: { root: {} } }],
       slots: ["root"],
+      decorate: () => {},
     });
 
     const withoutExclude = await runVariantDiffGuard({
