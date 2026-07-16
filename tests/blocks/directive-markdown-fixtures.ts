@@ -20,6 +20,12 @@ export const DIRECTIVE_CONTENT_BY_BLOCK: Record<string, (variantId: string) => D
       "- **第三步**：验收交付结果",
     ].join("\n"),
   }),
+  list: () => ({
+    body: ["- 列表项目一", "- 列表项目二", "- 列表项目三"].join("\n"),
+  }),
+  "code-block": () => ({
+    body: ["```js", "const total = items.length;", "console.log(total);", "```"].join("\n"),
+  }),
   compare: (variantId) =>
     variantId === "ledger"
       ? {
