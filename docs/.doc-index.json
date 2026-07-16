@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-16T07:22:10.879717+00:00",
+  "generated_at": "2026-07-16T08:27:00.484820+00:00",
   "documents": {
     "amendment-platform-fidelity-r1": {
       "file_path": "docs/arch/AMENDMENT-platform-fidelity-r1.md",
@@ -163,7 +163,7 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow-modules": "5bde2521",
-        "dev-plan-wechat-flow-s7": "ef3c36f4"
+        "dev-plan-wechat-flow-s7": "ab08886b"
       }
     },
     "amendment-variant-mechanism-20260715-r1": {
@@ -2523,8 +2523,8 @@
       "doc_type": "dev-plan",
       "status": "approved",
       "total_lines": 2663,
-      "est_tokens": 55426,
-      "content_hash": "ef3c36f4",
+      "est_tokens": 55438,
+      "content_hash": "ab08886b",
       "sections": {
         "1": {
           "heading": "## 1. 迭代目标",
@@ -2957,7 +2957,7 @@
           "heading": "## 4. 变体渲染缺口方案实施批（T-190..T-212）",
           "line_start": 1927,
           "line_end": 2663,
-          "est_tokens": 17242,
+          "est_tokens": 17254,
           "deps": [],
           "level": 2,
           "items": {
@@ -3140,7 +3140,7 @@
               "heading": "### T-212: [VALIDATION] 变体渲染缺口修复批验证",
               "line_start": 2643,
               "line_end": 2663,
-              "est_tokens": 488,
+              "est_tokens": 500,
               "deps": []
             }
           }
@@ -5270,7 +5270,7 @@
         "dev-plan-wechat-flow-s7"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow-s7": "ef3c36f4"
+        "dev-plan-wechat-flow-s7": "ab08886b"
       }
     },
     "review-dev-plan-wechat-flow-r8": {
@@ -5285,7 +5285,7 @@
         "dev-plan-wechat-flow-s7"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow-s7": "ef3c36f4"
+        "dev-plan-wechat-flow-s7": "ab08886b"
       }
     },
     "review-dev-plan-wechat-flow-s7-r1": {
@@ -5301,7 +5301,7 @@
         "amendment-platform-fidelity-r1"
       ],
       "dep_hashes": {
-        "dev-plan-wechat-flow-s7": "ef3c36f4",
+        "dev-plan-wechat-flow-s7": "ab08886b",
         "amendment-platform-fidelity-r1": "0434b119"
       }
     },
@@ -6160,6 +6160,24 @@
         "T-172",
         "T-157"
       ]
+    },
+    "walkthrough-variant-gap-remediation-20260716-r1": {
+      "file_path": "docs/reviews/walkthrough/WALKTHROUGH-variant-gap-remediation-20260716-r1.md",
+      "doc_type": "walkthrough",
+      "status": "draft",
+      "total_lines": 84,
+      "est_tokens": 1121,
+      "content_hash": "b85f8afb",
+      "sections": {},
+      "deps": [
+        "T-212",
+        "variant-gap-triage-20260715-r1",
+        "design-review-gallery-r2"
+      ],
+      "dep_hashes": {
+        "variant-gap-triage-20260715-r1": "623f1fe1",
+        "design-review-gallery-r2": "9da4af85"
+      }
     },
     "walkthrough-variant-render-gap-20260714-r1": {
       "file_path": "docs/reviews/walkthrough/WALKTHROUGH-variant-render-gap-20260714-r1.md",
