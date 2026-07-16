@@ -41,12 +41,8 @@ export interface UnimplementedVariant {
   reason: string;
 }
 
-type VariantGuardMode = "collect" | "throw";
-
 const store = new Map<string, BlockDefinition>();
 const resetHooks: Array<() => void> = [];
-const unimplementedCandidates = new Map<string, UnimplementedVariant>();
-let variantGuardMode: VariantGuardMode = "collect";
 
 function isVariantImplemented(definition: BlockDefinition, variant: BlockVariant): boolean {
   const hasBaseStyleDeclarations = variant.baseStyle
@@ -76,18 +72,8 @@ function findUnimplementedVariants(definition: BlockDefinition): UnimplementedVa
   return found;
 }
 
-function clearUnimplementedForBlock(blockId: string): void {
-  for (const [key, entry] of unimplementedCandidates) {
-    if (entry.blockId === blockId) unimplementedCandidates.delete(key);
-  }
-}
-
 export function getUnimplementedVariants(): UnimplementedVariant[] {
-  return Array.from(unimplementedCandidates.values()).map((entry) => ({ ...entry }));
-}
-
-export function setVariantGuardMode(mode: VariantGuardMode): void {
-  variantGuardMode = mode;
+  return listBlocks().flatMap(findUnimplementedVariants);
 }
 
 export function registerBlock(definition: BlockDefinition): void {
@@ -126,7 +112,7 @@ export function registerBlock(definition: BlockDefinition): void {
   }
 
   const unimplementedVariants = findUnimplementedVariants(definition);
-  if (variantGuardMode === "throw" && unimplementedVariants.length > 0) {
+  if (unimplementedVariants.length > 0) {
     throw Object.assign(
       new Error(
         `E_VARIANT_NO_IMPL: block "${definition.id}" has unimplemented variant(s): ${unimplementedVariants
@@ -135,11 +121,6 @@ export function registerBlock(definition: BlockDefinition): void {
       ),
       { code: "E_VARIANT_NO_IMPL", unimplementedVariants }
     );
-  }
-
-  clearUnimplementedForBlock(definition.id);
-  for (const candidate of unimplementedVariants) {
-    unimplementedCandidates.set(`${candidate.blockId}::${candidate.variantId}`, candidate);
   }
 
   store.set(definition.id, definition);
@@ -159,8 +140,6 @@ export function onRegistryReset(hook: () => void): void {
 
 export function resetBlockRegistry(): void {
   store.clear();
-  unimplementedCandidates.clear();
-  variantGuardMode = "collect";
   for (const hook of resetHooks) {
     hook();
   }

@@ -16,11 +16,9 @@ const GALLERY_IMAGE_SLOT_STYLE = {
 };
 
 const GALLERY_COLUMNS_BY_VARIANT: Record<string, number> = {
+  default: 1,
   duo: 2,
   triptych: 3,
-  grid: 2,
-  masonry: 3,
-  carousel: 3,
 };
 
 function buildGalleryCell(img: Element): Element {
@@ -64,7 +62,7 @@ function extractGalleryImages(ul: Element): Element[] {
 }
 
 function buildGalleryRows(ul: Element, variant: string): Element[] {
-  const columns = GALLERY_COLUMNS_BY_VARIANT[variant] ?? 2;
+  const columns = GALLERY_COLUMNS_BY_VARIANT[variant] ?? 1;
   const images = extractGalleryImages(ul);
   const rows: Element[] = [];
   for (let i = 0; i < images.length; i += columns) {
@@ -85,7 +83,15 @@ export const gallery = defineBlock(
   z.object({}).strict(),
   "media",
   [
-    { id: "default", label: "标准图集" },
+    {
+      id: "default",
+      label: "标准图集",
+      baseStyle: {
+        root: { margin: "16px 0" },
+        row: { "margin-bottom": "12px" },
+        ...GALLERY_IMAGE_SLOT_STYLE,
+      },
+    },
     {
       id: "duo",
       label: "双列图集",
@@ -124,23 +130,15 @@ export const gallery = defineBlock(
         ...GALLERY_IMAGE_SLOT_STYLE,
       },
     },
-    { id: "grid", label: "网格图集" },
-    { id: "masonry", label: "瀑布流图集" },
-    { id: "carousel", label: "轮播图集" },
   ],
   {
     slots: ["root", "row", "cell", "image", "caption"],
     decorate: (element, ctx) => {
-      const authoredVariant = ctx.variant;
-      const effectiveVariant =
-        GALLERY_COLUMNS_BY_VARIANT[authoredVariant] === 3 ? "triptych" : "duo";
       const ul = element.children.find(
         (child): child is Element => child.type === "element" && child.tagName === "ul"
       );
       if (!ul) return;
-      const rows = buildGalleryRows(ul, authoredVariant);
-      element.properties = { ...element.properties, "data-variant": effectiveVariant };
-      element.children = rows;
+      element.children = buildGalleryRows(ul, ctx.variant);
     },
   }
 );

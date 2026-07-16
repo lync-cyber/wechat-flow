@@ -118,11 +118,12 @@ required_sections:
 
 **明确排除**：贴纸感 `transform: rotate(...)` 旋转贴纸变体不纳入——CSS `transform` 在微信编辑器粘贴过滤中兼容性存疑（旋转变换在部分客户端渲染环境下与内联样式合成存在已知冲突风险），不作为可交付变体。
 
-### 10.9 gallery（图集）— duo / triptych 变体
+### 10.9 gallery（图集）— default / duo / triptych 变体
 
-**现状变体清单收敛**：现有 3 个变体（`grid` / `masonry` / `carousel`）均面向 CSS Grid / Flex 实现假设，与 §9.1 通则「Grid 不可依赖」冲突——新增 2 个 table-based 变体 `duo`（双列）/ `triptych`（三宫格）作为微信兼容的主力实现，原 3 个变体登记为**降级 fallback 语义**（`grid`/`masonry`/`carousel` 的运行时渲染需回退至 table 布局，不依赖真实 CSS grid/flex 特性）：
+图集提供三种各具独立形态的布局变体，均为 table / block 静态实现（遵循 §9.1 通则「Grid 不可依赖」）：
 
-- **`duo`**：双列布局，`display: table`，`width: 100%`；每两张图片一组 `display: table-row`，各图 `display: table-cell`，`width: 50%`，`padding: 4px`；图片 `width: 100%`，`border-radius: {主题 --decoration-border-radius-sm}`；每张图片下方若有 `caption` 字段，独立 `<div>` 居中小字（`font-size: --font-size-sm`，`color: --color-text-muted`）
-- **`triptych`**：三宫格布局，`display: table`，`width: 100%`，单个 `display: table-row` 内 3 个 `display: table-cell`（`width: 33.33%`），`padding: 3px`；超过 3 张图片时按每 3 张一组换行（新增 `table-row`）；图片与 caption 规格同 `duo`
+- **`default`**（标准图集）：单列全宽堆叠，每张图片独占一行，`width: 100%`，`border-radius: {主题 --decoration-border-radius-sm}`；行间距 `margin-bottom: 12px`，根容器 `margin: 16px 0`；每张图片下方若有 `caption` 字段，独立居中小字（`font-size: --font-size-sm`，`color: --color-text-muted`）。裸指令 `:::gallery` 即渲染为本形态。
+- **`duo`**：双列布局，`display: table`，`width: 100%`；每两张图片一组 `display: table-row`，各图 `display: table-cell`，`width: 50%`，`padding: 4px`；图片与 caption 规格同 `default`。
+- **`triptych`**：三宫格布局，`display: table`，`width: 100%`，单个 `display: table-row` 内 3 个 `display: table-cell`（`width: 33.33%`），`padding: 3px`；超过 3 张图片时按每 3 张一组换行（新增 `table-row`）；图片与 caption 规格同 `default`。
 
-`grid` / `masonry` / `carousel` 三个既有变体 ID 保留（向后兼容 directive 语法不破坏），但其视觉实现按 `duo`（≤2 列语义）或 `triptych`（≥3 列语义）的 table 布局渲染，不实现真实瀑布流/轮播交互——瀑布流（`masonry`）与轮播（`carousel`）依赖 JS 交互与非文档流布局，均与「产物是静态 inline-styled HTML」的产品定位冲突（PRD 产物契约为经粘贴过滤后视觉一致的静态 HTML，非交互式组件）。
+**明确排除**：瀑布流（masonry）与轮播（carousel）依赖 JS 交互与非文档流布局，与「产物是静态 inline-styled HTML」的产品定位冲突（PRD 产物契约为经粘贴过滤后视觉一致的静态 HTML，非交互式组件），不作为可交付变体。

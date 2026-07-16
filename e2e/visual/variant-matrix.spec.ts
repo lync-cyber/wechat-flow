@@ -18,7 +18,7 @@ test.beforeAll(() => {
   registerTheme(techTheme);
 });
 
-// AC-008: fail-fast guard — must have ≥ 120 variants before matrix enumeration
+// AC-008: fail-fast guard — must have ≥ 131 variants before matrix enumeration
 assertVariantFloor(listAllVariants().length);
 
 // VISUAL_FULL=1 enumerates the full variant matrix (nightly + baseline seeding);

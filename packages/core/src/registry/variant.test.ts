@@ -68,6 +68,7 @@ describe("getBlockBaseStyle four-step resolution", () => {
       directiveAttrs: z.object({}),
       variants: [{ id: "outline" }],
       slots: ["root"],
+      decorate: () => {},
     });
     registerVariant({
       blockId: "block-no-builtin-basestyle",
@@ -89,6 +90,7 @@ describe("getBlockBaseStyle four-step resolution", () => {
       directiveAttrs: z.object({}),
       variants: [{ id: "plain" }],
       slots: ["root"],
+      decorate: () => {},
     });
 
     expect(getBlockBaseStyle("block-no-basestyle-no-store", "plain")).toEqual({});
@@ -102,6 +104,7 @@ describe("getBlockBaseStyle four-step resolution", () => {
       directiveAttrs: z.object({}),
       variants: [{ id: "known" }],
       slots: ["root"],
+      decorate: () => {},
     });
 
     expect(getBlockBaseStyle("block-unknown-variant", "nonexistent")).toEqual({});

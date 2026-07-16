@@ -13,26 +13,19 @@ import { EXTERNALLY_IMPLEMENTED_VARIANTS } from "../../../packages/core/src/regi
 // the count is a fixture locked against the current builtin catalog (ALL_BLOCKS.length).
 const EXPECTED_BUILTIN_BLOCK_COUNT = 38;
 
-describe("AC-006: 内置注册表在 collect-only 默认模式下零误伤", () => {
+describe("AC-006: 内置注册表在 throw-by-default 默认模式下零误伤", () => {
   it("全部内置块经模块导入完成注册，registry 中可查询到实际数量", () => {
     expect(listBlocks().length).toBe(EXPECTED_BUILTIN_BLOCK_COUNT);
     expect(describeBlock("callout")?.id).toBe("callout");
     expect(describeBlock("steps")?.id).toBe("steps");
   });
 
-  it("collect-only 默认模式下不因未实现变体阻断内置块注册（无 suite 中断）", () => {
-    // 若默认模式为 throw 或谓词校验在导入期抛错，上面的模块级 import 本身就会让
-    // 整个测试文件加载失败；执行到此处即证明注册未被阻断。
+  it("throw-by-default 默认模式下全部内置块通过谓词校验，导入无中断且无残余未实现变体", () => {
+    // throw-by-default 下，任一内置块存在未实现变体都会让 packages/blocks/src/index.ts
+    // 的模块级 import 抛 E_VARIANT_NO_IMPL、整个测试文件加载失败；执行到此处即证明
+    // 全部内置资产通过谓词校验。getUnimplementedVariants() 对健康目录恒为空集。
     expect(listBlocks().length).toBe(EXPECTED_BUILTIN_BLOCK_COUNT);
-
-    const candidates = getUnimplementedVariants();
-    expect(Array.isArray(candidates)).toBe(true);
-    for (const c of candidates) {
-      expect(typeof c.blockId).toBe("string");
-      expect(typeof c.variantId).toBe("string");
-      expect(typeof c.reason).toBe("string");
-      expect(c.reason.length).toBeGreaterThan(0);
-    }
+    expect(getUnimplementedVariants()).toEqual([]);
   });
 
   it("audio/video contract-pending 变体经归桶移除注册后不在候选集，且登记于 KNOWN_BLOCKED_VARIANTS", () => {

@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-16T04:42:08.057283+00:00",
+  "generated_at": "2026-07-16T07:22:10.879717+00:00",
   "documents": {
     "amendment-platform-fidelity-r1": {
       "file_path": "docs/arch/AMENDMENT-platform-fidelity-r1.md",
@@ -3164,7 +3164,7 @@
         "ui-spec-wechat-flow": "87a43d0a",
         "ui-spec-wechat-flow-block-taxonomy": "00b657fc",
         "ui-spec-wechat-flow-content-elements": "5e35b28d",
-        "ui-spec-wechat-flow-block-variants": "f6438a55",
+        "ui-spec-wechat-flow-block-variants": "d70ec448",
         "ui-spec-wechat-flow-p001-p005": "a811b4de",
         "amendment-platform-fidelity-r1": "0434b119"
       }
@@ -4569,6 +4569,23 @@
         "T-156"
       ]
     },
+    "design-review-gallery-r2": {
+      "file_path": "docs/reviews/design/DESIGN-REVIEW-gallery-r2.md",
+      "doc_type": "design-review",
+      "status": "approved",
+      "total_lines": 57,
+      "est_tokens": 826,
+      "content_hash": "9da4af85",
+      "sections": {},
+      "deps": [
+        "ui-spec-wechat-flow-block-variants",
+        "variant-gap-triage-20260715-r1"
+      ],
+      "dep_hashes": {
+        "ui-spec-wechat-flow-block-variants": "d70ec448",
+        "variant-gap-triage-20260715-r1": "623f1fe1"
+      }
+    },
     "design-review-marketing-blocks-wechat-fit-r1": {
       "file_path": "docs/reviews/design/DESIGN-REVIEW-marketing-blocks-wechat-fit-r1.md",
       "doc_type": "design-review",
@@ -5389,7 +5406,7 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow-modules": "5bde2521",
-        "ui-spec-wechat-flow-block-variants": "f6438a55",
+        "ui-spec-wechat-flow-block-variants": "d70ec448",
         "ui-spec-wechat-flow-content-elements": "5e35b28d",
         "ui-spec-wechat-flow-uc001-uc014": "aec57abb"
       }
@@ -5410,7 +5427,7 @@
       ],
       "dep_hashes": {
         "arch-wechat-flow-modules": "5bde2521",
-        "ui-spec-wechat-flow-block-variants": "f6438a55",
+        "ui-spec-wechat-flow-block-variants": "d70ec448",
         "ui-spec-wechat-flow-content-elements": "5e35b28d",
         "ui-spec-wechat-flow-uc001-uc014": "aec57abb"
       }
@@ -5507,7 +5524,7 @@
         "ui-spec-wechat-flow-uc001-uc014": "aec57abb",
         "ui-spec-wechat-flow-block-taxonomy": "00b657fc",
         "ui-spec-wechat-flow-content-elements": "5e35b28d",
-        "ui-spec-wechat-flow-block-variants": "f6438a55"
+        "ui-spec-wechat-flow-block-variants": "d70ec448"
       }
     },
     "review-ui-spec-wechat-flow-r5": {
@@ -5526,7 +5543,7 @@
       "dep_hashes": {
         "ui-spec-wechat-flow": "87a43d0a",
         "ui-spec-wechat-flow-block-taxonomy": "00b657fc",
-        "ui-spec-wechat-flow-block-variants": "f6438a55"
+        "ui-spec-wechat-flow-block-variants": "d70ec448"
       }
     },
     "retro-wechat-flow-20260702": {
@@ -6353,15 +6370,15 @@
       "file_path": "docs/ui-spec/ui-spec-wechat-flow-block-variants.md",
       "doc_type": "ui-spec",
       "status": "approved",
-      "total_lines": 128,
-      "est_tokens": 3236,
-      "content_hash": "f6438a55",
+      "total_lines": 129,
+      "est_tokens": 3175,
+      "content_hash": "d70ec448",
       "sections": {
         "10": {
           "heading": "## 10. Block 变体视觉规格",
           "line_start": 24,
-          "line_end": 128,
-          "est_tokens": 3008,
+          "line_end": 129,
+          "est_tokens": 2947,
           "deps": [],
           "level": 2,
           "items": {
@@ -6422,10 +6439,10 @@
               "deps": []
             },
             "10.9": {
-              "heading": "### 10.9 gallery（图集）— duo / triptych 变体",
+              "heading": "### 10.9 gallery（图集）— default / duo / triptych 变体",
               "line_start": 121,
-              "line_end": 128,
-              "est_tokens": 350,
+              "line_end": 129,
+              "est_tokens": 289,
               "deps": []
             }
           }
@@ -7022,7 +7039,7 @@
         "arch-wechat-flow-modules": "5bde2521",
         "ui-spec-wechat-flow-block-taxonomy": "00b657fc",
         "ui-spec-wechat-flow-content-elements": "5e35b28d",
-        "ui-spec-wechat-flow-block-variants": "f6438a55"
+        "ui-spec-wechat-flow-block-variants": "d70ec448"
       }
     }
   },

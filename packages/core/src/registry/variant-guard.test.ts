@@ -6,7 +6,6 @@ import {
   getUnimplementedVariants,
   registerBlock,
   resetBlockRegistry,
-  setVariantGuardMode,
 } from "./block.ts";
 import { INTENTIONAL_PLAIN_VARIANTS } from "./intentional-plain-variants.ts";
 
@@ -43,17 +42,15 @@ describe("AC-001: 谓词① delta 放行", () => {
     ).toBe(false);
   });
 
-  it("变体 baseStyle 为空对象（零声明）时不满足谓词①，仍出现在候选集中", () => {
-    registerBlock(
-      buildProbeBlock({
-        id: "probe-block-empty-basestyle",
-        variants: [{ id: "empty", label: "空声明", baseStyle: { root: {} } }],
-      })
-    );
-    const candidates = getUnimplementedVariants();
-    expect(
-      candidates.some((c) => c.blockId === "probe-block-empty-basestyle" && c.variantId === "empty")
-    ).toBe(true);
+  it("变体 baseStyle 为空对象（零声明）时不满足谓词①，注册抛 E_VARIANT_NO_IMPL", () => {
+    expect(() =>
+      registerBlock(
+        buildProbeBlock({
+          id: "probe-block-empty-basestyle",
+          variants: [{ id: "empty", label: "空声明", baseStyle: { root: {} } }],
+        })
+      )
+    ).toThrow(/E_VARIANT_NO_IMPL/);
   });
 });
 
@@ -93,39 +90,8 @@ describe("AC-003: 谓词③ plain-allowlist 放行", () => {
   });
 });
 
-describe("AC-004: collect-only 默认模式不阻断", () => {
-  it("三谓词均不满足时不抛错、块正常注册，且变体进入候选集并含三字段", () => {
-    expect(() =>
-      registerBlock(
-        buildProbeBlock({
-          id: "probe-block-unimplemented",
-          variants: [{ id: "ghost", label: "幽灵" }],
-        })
-      )
-    ).not.toThrow();
-
-    expect(describeBlock("probe-block-unimplemented")?.id).toBe("probe-block-unimplemented");
-
-    const candidates = getUnimplementedVariants();
-    const entry = candidates.find(
-      (c) => c.blockId === "probe-block-unimplemented" && c.variantId === "ghost"
-    );
-    expect(entry).toBeDefined();
-    if (!entry) throw new Error("unreachable: entry asserted defined above");
-    expect(Object.keys(entry).sort()).toEqual(["blockId", "reason", "variantId"]);
-    expect(typeof entry.reason).toBe("string");
-    expect(entry.reason.length).toBeGreaterThan(0);
-  });
-});
-
-describe("AC-005: throw 模式硬拒", () => {
-  afterEach(() => {
-    setVariantGuardMode("collect");
-  });
-
-  it("显式切换 throw 模式后，未实现变体的块注册抛出 E_VARIANT_NO_IMPL 且携带 unimplementedVariants", () => {
-    setVariantGuardMode("throw");
-
+describe("AC-004: 默认即 throw —— 三谓词均不满足的未实现变体块硬拒且不入库", () => {
+  it("默认模式下注册含未实现变体的块抛 E_VARIANT_NO_IMPL、携带 unimplementedVariants、且块不入库", () => {
     let caught: unknown;
     try {
       registerBlock(
@@ -154,56 +120,23 @@ describe("AC-005: throw 模式硬拒", () => {
     expect(entry.reason.length).toBeGreaterThan(0);
     expect(/baseStyle|decorate|allowlist/i.test(entry.reason)).toBe(true);
 
-    // 抛出模式下未实现变体的块不应完成注册（与 FORBIDDEN 声明守卫的 store.set 顺序一致）
+    // 未实现变体的块不入库（store.set 在谓词校验之后，与 FORBIDDEN 声明守卫顺序一致）
     expect(describeBlock("probe-block-throw")).toBeUndefined();
   });
 });
 
-describe("registerBlock variant implementation guard — registry reset & re-registration semantics", () => {
-  it("resetBlockRegistry 后 guard 模式恢复默认 collect，不残留 throw 模式", () => {
-    setVariantGuardMode("throw");
-    resetBlockRegistry();
-
+describe("registerBlock 变体守卫 —— default 变体豁免", () => {
+  it("default 变体不参与谓词判定，即使无 baseStyle/decorate 也不阻断注册", () => {
     expect(() =>
       registerBlock(
         buildProbeBlock({
-          id: "probe-block-mode-reset",
-          variants: [{ id: "ghost", label: "幽灵" }],
+          id: "probe-block-default-exempt",
+          variants: [{ id: "default", label: "默认" }],
         })
       )
     ).not.toThrow();
-  });
-
-  it("同一 blockId 以已实现变体重注册后，候选集不再残留旧的未实现条目", () => {
-    registerBlock(
-      buildProbeBlock({
-        id: "probe-block-reregister",
-        variants: [{ id: "ghost", label: "幽灵" }],
-      })
-    );
-    expect(getUnimplementedVariants().some((c) => c.blockId === "probe-block-reregister")).toBe(
-      true
-    );
-
-    registerBlock(
-      buildProbeBlock({
-        id: "probe-block-reregister",
-        variants: [{ id: "ghost", label: "幽灵", baseStyle: { root: { color: "#222" } } }],
-      })
-    );
-    expect(getUnimplementedVariants().some((c) => c.blockId === "probe-block-reregister")).toBe(
+    expect(getUnimplementedVariants().some((c) => c.blockId === "probe-block-default-exempt")).toBe(
       false
     );
-  });
-
-  it("default 变体不参与谓词判定，即使无 baseStyle/decorate 也不出现在候选集中", () => {
-    registerBlock(
-      buildProbeBlock({
-        id: "probe-block-default-exempt",
-        variants: [{ id: "default", label: "默认" }],
-      })
-    );
-    const candidates = getUnimplementedVariants();
-    expect(candidates.some((c) => c.blockId === "probe-block-default-exempt")).toBe(false);
   });
 });
