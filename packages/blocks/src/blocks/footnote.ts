@@ -8,8 +8,29 @@ export const footnote = defineBlock(
   "meta",
   [
     { id: "default", label: "标准脚注" },
-    { id: "numbered", label: "编号脚注" },
-    { id: "inline", label: "行内脚注" },
+    {
+      id: "numbered",
+      label: "编号脚注",
+      baseStyle: {
+        root: {
+          padding: "6px 0 6px 1.6em",
+          "text-indent": "-1.6em",
+          "line-height": "1.5",
+        },
+      },
+    },
+    {
+      id: "inline",
+      label: "行内脚注",
+      baseStyle: {
+        root: {
+          padding: "6px 4px 8px 0",
+          "line-height": "1.6",
+          "max-height": "320px",
+          "overflow-y": "auto",
+        },
+      },
+    },
   ],
   {
     baseStyle: {

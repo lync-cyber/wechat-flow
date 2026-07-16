@@ -8,8 +8,16 @@ export const advertCard = defineBlock(
   "marketing",
   [
     { id: "default", label: "标准广告卡片" },
-    { id: "horizontal", label: "横排广告卡片" },
-    { id: "minimal", label: "简约广告卡片" },
+    {
+      id: "minimal",
+      label: "简约广告卡片",
+      baseStyle: {
+        root: {
+          border: "none",
+          "background-color": "transparent",
+        },
+      },
+    },
   ],
   {
     baseStyle: {

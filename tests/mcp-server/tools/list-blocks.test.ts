@@ -14,7 +14,7 @@ beforeAll(() => {
 describe("AC-001: list_blocks entries include category consistent with describe_block", () => {
   it("every block in listBlocksTool result has a category within the 6-value enum", () => {
     const blocks = listBlocksTool({}) as Array<{ id: string; name: string; category?: string }>;
-    expect(blocks.length).toBeGreaterThanOrEqual(40);
+    expect(blocks.length).toBeGreaterThanOrEqual(38);
     for (const block of blocks) {
       expect(VALID_CATEGORIES).toContain(block.category);
     }

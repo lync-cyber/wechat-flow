@@ -91,10 +91,10 @@ required_sections:
   - [ ] AC-003: 主题面板含「社区扩展占位」卡片，引导写作者期待第三方主题（占位可点跳到 `/themes` stub 路由，真实接通由架构阶段规划）。
   - [ ] AC-004: Token 层注册 ≥ 60 个 token，覆盖五大类别：color / spacing / font / decoration / alignment。
   - [ ] AC-005: Mark 层（行内组件）内置数 ≥ 11，覆盖：粗体、斜体、链接、行内代码、徽章、强调着重号、高亮、下划线、波浪线、插入标记、上下标、引用链接、行内公式。
-  - [ ] AC-006: Block 层（块级组件）内置数 ≥ 40，按产品优先级分两档：
-    - **P0 必含 25 种**：标题、段落、列表、表格、代码块、引用、卡片、提示框、分隔线、图片、图说、画廊、步骤、对比、金句、强调段、公告、对话、时序、二维码、视频、音频、小程序卡片、文末互动、推荐。
-    - **P1 必含 15 种**：作者卡、刊物骨架、KPI 数据卡、问答、脚注、tip-grid、warning、disclaimer、reading-time、citation、definition-list、advert-card、related-cards、social-cta、subscribe-cta。
-    - **P0 25 种 Block 全部注册**（按 §F-003 P0 清单逐 blockId 校验存在）**且** `listBlocks().length ≥ 40`；P0 25 种与 P1 15 种全部注册。
+  - [ ] AC-006: Block 层（块级组件）内置数 ≥ 38，按产品优先级分两档：
+    - **P0 必含 23 种**：标题、段落、列表、表格、代码块、引用、卡片、提示框、分隔线、图片、图说、画廊、步骤、对比、金句、强调段、公告、对话、时序、二维码、视频、音频、推荐。
+    - **P1 必含 15 种**：作者卡、刊物骨架、KPI 数据卡、问答、脚注、tip-grid、warning、disclaimer、reading-time、citation、definition-list、advert-card、related-cards、social-cta、subscribe-cta（文末引导：关注/互动引导文字的静态卡）。
+    - **P0 23 种 Block 全部注册**（按 §F-003 P0 清单逐 blockId 校验存在）**且** `listBlocks().length ≥ 38`；P0 23 种与 P1 15 种全部注册。
   - [ ] AC-007: Variant 皮肤系统：每个 Block/Mark 可注册多个 variant 皮肤（同一 directive 输入，不同视觉皮肤），写作者在 directive 属性中切换（如 `:::quote{variant=magazine-dropcap}`）；主题作者与插件作者均可向已有 Block 注册新 variant，无需修改 Block 源码。内置 variant 数 ≥ 120，集中在 callout / quote / steps / pull-quote / table-grid / divider / card / highlight / compare 等核心 Block 上。
   - [ ] AC-008: 主题装饰资产：主题可声明 `assets` 字典注入内联 SVG 装饰（分隔花纹、标题前缀、章节序号、KPI 箭头、印章符等），支持 `{{tokenId}}` 占位符在渲染时由 token 值填充，装饰随主题切换跟随更新。
   - [ ] AC-009: 上下文敏感渲染：同一 H2 标签在卡片内/外呈现不同样式；主题可声明 heading 装饰策略（序号编码、章节标记、前缀装饰），覆盖默认六级标题视觉。

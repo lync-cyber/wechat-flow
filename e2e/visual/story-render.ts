@@ -75,17 +75,13 @@ function sampleContent(blockId: string): string {
     case "social-cta":
       return "Follow us on social media.";
     case "subscribe-cta":
-      return "Subscribe to our newsletter.";
+      return "点击上方蓝字关注，第一时间获取更新。";
     case "author-card":
       return "Author bio content.";
-    case "footer-cta":
-      return "Footer call to action content.";
     case "dialog":
       return "A: Hello!\nB: Hi there!";
     case "kpi-card":
       return "KPI metric value content.";
-    case "miniprogram-card":
-      return "MiniProgram card content.";
     case "publication-skeleton":
       return "Publication skeleton content.";
     case "qrcode":

@@ -6,11 +6,7 @@ export const publicationSkeleton = defineBlock(
   "排版骨架",
   z.object({}).strict(),
   "meta",
-  [
-    { id: "default", label: "标准骨架" },
-    { id: "magazine", label: "杂志骨架" },
-    { id: "minimal", label: "简洁骨架" },
-  ],
+  [{ id: "default", label: "标准骨架" }],
   {
     baseStyle: {
       root: {

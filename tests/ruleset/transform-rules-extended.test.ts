@@ -165,6 +165,18 @@ describe("T-056 AC-005: transform-em-to-px converts Nem values to (N*16)px", () 
 
     expect(matched).toBe(false);
   });
+
+  it("matcher returns stable results across repeated calls on em-bearing siblings", async () => {
+    const mod = await import("../../packages/ruleset/src/rules/builtin/transform-em-to-px.ts");
+    const rule: RuleDefinition = mod.default;
+
+    const a = makeElement("p", { style: "font-size:1em" });
+    const b = makeElement("p", { style: "margin:2em" });
+    for (let i = 0; i < 4; i++) {
+      expect(rule.matcher(a)).toBe(true);
+      expect(rule.matcher(b)).toBe(true);
+    }
+  });
 });
 
 // ── transform-vw-to-percent ──────────────────────────────────────────────────

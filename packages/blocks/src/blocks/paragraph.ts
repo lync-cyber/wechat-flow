@@ -9,8 +9,20 @@ export const paragraph = defineBlock(
   "text",
   [
     { id: "default", label: "普通段落" },
-    { id: "indented", label: "首行缩进" },
-    { id: "spaced", label: "宽松行距" },
+    {
+      id: "indented",
+      label: "首行缩进",
+      baseStyle: {
+        root: { "text-indent": "2em" },
+      },
+    },
+    {
+      id: "spaced",
+      label: "宽松行距",
+      baseStyle: {
+        root: { "line-height": "2" },
+      },
+    },
     {
       id: "dropcap",
       label: "段首大号字符",

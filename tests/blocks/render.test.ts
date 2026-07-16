@@ -30,8 +30,6 @@ const P0_BLOCK_IDS = [
   "qrcode",
   "video",
   "audio",
-  "miniprogram-card",
-  "footer-cta",
   "recommendation",
 ] as const;
 
@@ -47,10 +45,10 @@ function mustDescribeBlock(id: string): NonNullable<ReturnType<typeof describeBl
   return def;
 }
 
-describe("AC-001: listBlocks 返回全部 25 个 P0 Block", () => {
-  it("listBlocks 返回数组长度 ≥ 25", () => {
+describe("AC-001: listBlocks 返回全部 23 个 P0 Block", () => {
+  it("listBlocks 返回数组长度 ≥ 23", () => {
     const blocks = listBlocks();
-    expect(blocks.length).toBeGreaterThanOrEqual(25);
+    expect(blocks.length).toBeGreaterThanOrEqual(23);
   });
 
   it.each(P0_BLOCK_IDS)("P0 Block '%s' 已注册", (id) => {
@@ -82,7 +80,7 @@ describe("AC-002: describeBlock('callout') 含 directiveAttrs 和 ≥3 variants"
   });
 });
 
-describe("AC-003: 全部 25 个 P0 Block 的 directiveAttrs 可 parse({}) + toJSONSchema 不抛异常", () => {
+describe("AC-003: 全部 23 个 P0 Block 的 directiveAttrs 可 parse({}) + toJSONSchema 不抛异常", () => {
   it.each(P0_BLOCK_IDS)(
     "Block '%s' 的 directiveAttrs.parse({}) 不抛异常（指令属性均可选）",
     (id) => {

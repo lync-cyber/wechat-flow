@@ -75,13 +75,62 @@ export const dialog = defineBlock(
         },
       },
     },
-    { id: "interview", label: "访谈对话" },
+    {
+      id: "interview",
+      label: "访谈对话",
+      baseStyle: {
+        root: {
+          display: "table",
+          width: "100%",
+          "table-layout": "fixed",
+          "margin-bottom": "16px",
+        },
+        name: {
+          display: "table-cell",
+          width: "90px",
+          "vertical-align": "top",
+          "text-align": "right",
+          "padding-right": "16px",
+          "text-transform": "uppercase",
+          "font-weight": "700",
+          "letter-spacing": "0.15em",
+          color: "var(--color-text-muted)",
+        },
+        answer: {
+          display: "table-cell",
+          "vertical-align": "top",
+          "font-size": "var(--font-size-lg)",
+          "line-height": "1.8",
+          "border-left": "1px solid var(--color-border)",
+          "padding-left": "16px",
+        },
+      },
+    },
   ],
   {
-    slots: ["root", "cell-left", "cell-right", "bubble-left", "bubble-right"],
+    slots: ["root", "cell-left", "cell-right", "bubble-left", "bubble-right", "name", "answer"],
     directiveBody:
       "每一轮对话独立写一个 dialog 指令块，正文为该轮说话内容；speaker 属性标识说话人，相邻轮次 speaker 不同时决定气泡左右交替；avatar 属性可选，指定该轮头像图片 URL。",
     decorate: (element, ctx) => {
+      if (ctx.variant === "interview") {
+        const speakerLabel = (ctx.attrs.speaker ?? "").toUpperCase();
+        const nameEl = slotElement(
+          "name",
+          speakerLabel.length > 0 ? [{ type: "text", value: speakerLabel }] : []
+        );
+        const answerEl = slotElement("answer", element.children);
+
+        const {
+          "data-dialog-speaker": _speaker,
+          "data-dialog-avatar": _avatar,
+          ...restProps
+        } = element.properties ?? {};
+
+        element.properties = restProps;
+        element.children = [nameEl, answerEl];
+        return;
+      }
+
       if (ctx.variant !== "chat-bubbles") return;
 
       if (!ctx.docState.dialog) {

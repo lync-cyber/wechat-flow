@@ -40,9 +40,9 @@ describe("AC-001: 四个目标块裸指令渲染零 directive-variant-invalid", 
   });
 });
 
-describe("AC-001: 全 40 块裸指令扫描，除 callout 外无 directive-variant-invalid 假警告", () => {
-  it("listBlocks() 长度 ≥ 40", () => {
-    expect(listBlocks().length).toBeGreaterThanOrEqual(40);
+describe("AC-001: 全 38 块裸指令扫描，除 callout 外无 directive-variant-invalid 假警告", () => {
+  it("listBlocks() 长度 ≥ 38", () => {
+    expect(listBlocks().length).toBeGreaterThanOrEqual(38);
   });
 
   it("全部非排除块的裸指令均无 directive-variant-invalid", async () => {

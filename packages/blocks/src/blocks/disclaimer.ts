@@ -8,8 +8,35 @@ export const disclaimer = defineBlock(
   "emphasis",
   [
     { id: "default", label: "标准免责声明" },
-    { id: "compact", label: "紧凑免责声明" },
-    { id: "bordered", label: "边框免责声明" },
+    {
+      id: "compact",
+      label: "紧凑免责声明",
+      baseStyle: {
+        root: {
+          "background-color": "transparent",
+          border: "1px solid var(--color-border-strong)",
+          "border-radius": "0",
+          padding: "8px 12px",
+          "font-size": "0.6875em",
+          "text-transform": "uppercase",
+          "letter-spacing": "0.08em",
+        },
+      },
+    },
+    {
+      id: "bordered",
+      label: "边框免责声明",
+      baseStyle: {
+        root: {
+          "background-color": "transparent",
+          border: "1px solid var(--color-border-strong)",
+          "border-radius": "0",
+          "font-size": "0.8125em",
+          "text-transform": "uppercase",
+          "letter-spacing": "0.12em",
+        },
+      },
+    },
   ],
   {
     baseStyle: {

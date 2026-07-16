@@ -5,12 +5,11 @@ import {
   listBlocks,
 } from "../../../packages/core/src/registry/block.ts";
 import "../../../packages/blocks/src/index.ts";
+import { KNOWN_BLOCKED_VARIANTS } from "../../../packages/blocks/src/known-blocked-variants.ts";
 
-// packages/blocks/src/index.ts registers ALL_BLOCKS (40 entries) as a side effect of
-// this import; the exact count is a fixture value locked against the current builtin
-// catalog (verified via `pnpm vitest run` against packages/blocks/src/index.ts#ALL_BLOCKS
-// prior to writing this test).
-const EXPECTED_BUILTIN_BLOCK_COUNT = 40;
+// packages/blocks/src/index.ts registers ALL_BLOCKS as a side effect of this import;
+// the count is a fixture locked against the current builtin catalog (ALL_BLOCKS.length).
+const EXPECTED_BUILTIN_BLOCK_COUNT = 38;
 
 describe("AC-006: 内置注册表在 collect-only 默认模式下零误伤", () => {
   it("全部内置块经模块导入完成注册，registry 中可查询到实际数量", () => {
@@ -34,14 +33,14 @@ describe("AC-006: 内置注册表在 collect-only 默认模式下零误伤", () 
     }
   });
 
-  it("audio/video 未实现变体（无 baseStyle 无 decorate，T-191 阶段未登记 allowlist）真实出现在候选集中", () => {
+  it("audio/video contract-pending 变体经归桶移除注册后不在候选集，且登记于 KNOWN_BLOCKED_VARIANTS", () => {
     const candidateKeys = new Set(
       getUnimplementedVariants().map((c) => `${c.blockId}::${c.variantId}`)
     );
-    expect(candidateKeys.has("audio::mini")).toBe(true);
-    expect(candidateKeys.has("audio::full")).toBe(true);
-    expect(candidateKeys.has("video::autoplay")).toBe(true);
-    expect(candidateKeys.has("video::with-caption")).toBe(true);
+    for (const key of ["audio::mini", "audio::full", "video::with-caption"]) {
+      expect(candidateKeys.has(key)).toBe(false);
+      expect(KNOWN_BLOCKED_VARIANTS.has(key)).toBe(true);
+    }
   });
 
   it("callout 全部具名变体自带 baseStyle，不出现在候选集中（谓词①真实放行内置数据）", () => {

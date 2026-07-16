@@ -33,10 +33,10 @@ function mustDescribeBlock(id: string): NonNullable<ReturnType<typeof describeBl
   return def;
 }
 
-describe("AC-001: listBlocks 长度 ≥ 40，10 个新 ID 全部注册", () => {
-  it("listBlocks 返回数组长度 ≥ 40", () => {
+describe("AC-001: listBlocks 长度 ≥ 38，10 个新 ID 全部注册", () => {
+  it("listBlocks 返回数组长度 ≥ 38", () => {
     const blocks = listBlocks();
-    expect(blocks.length).toBeGreaterThanOrEqual(40);
+    expect(blocks.length).toBeGreaterThanOrEqual(38);
   });
 
   it.each(P1_INCREMENTAL_IDS)("P1 增量 Block '%s' 已注册", (id) => {
@@ -101,7 +101,7 @@ describe("AC-004: listAllVariants 总量 ≥ 120，核心 Block variant 配额",
   });
 
   it.each([
-    ["quote", 10],
+    ["quote", 9],
     ["steps", 10],
   ] as const)("Block '%s' variants 数量 ≥ %d", (id, minCount) => {
     const def = mustDescribeBlock(id);
@@ -117,7 +117,7 @@ describe("AC-004: listAllVariants 总量 ≥ 120，核心 Block variant 配额",
     ["pull-quote", 5],
     ["table", 5],
     ["divider", 5],
-    ["card", 5],
+    ["card", 4],
     ["highlight-block", 5],
     ["compare", 5],
   ] as const)("Block '%s' variants 数量 ≥ %d", (id, minCount) => {

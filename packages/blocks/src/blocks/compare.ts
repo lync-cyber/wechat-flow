@@ -3,7 +3,14 @@ import { z } from "zod";
 import { slotElement } from "../decorate-utils.ts";
 import { defineBlock } from "../factory.ts";
 
-function buildCompareLedgerChildren(props: Element["properties"]): Element[] {
+const STRUCTURED_COMPARE_VARIANTS = new Set([
+  "ledger",
+  "highlight-right",
+  "table-style",
+  "compact",
+]);
+
+function buildCompareStructuredChildren(props: Element["properties"]): Element[] {
   const leftLabel = props["data-compare-left-label"];
   const leftValue = props["data-compare-left-value"];
   const rightLabel = props["data-compare-right-label"];
@@ -56,8 +63,62 @@ export const compare = defineBlock(
         },
       },
     },
-    { id: "highlight-right", label: "突出右侧" },
-    { id: "table-style", label: "表格对比" },
+    {
+      id: "highlight-right",
+      label: "突出右侧",
+      baseStyle: {
+        table: {
+          display: "table",
+          width: "100%",
+          "table-layout": "fixed",
+          "border-collapse": "separate",
+          "border-spacing": "12px 0",
+        },
+        left: {
+          display: "table-cell",
+          width: "50%",
+          "vertical-align": "top",
+          "box-sizing": "border-box",
+          padding: "14px",
+          border: "2px solid var(--color-brand)",
+          "border-radius": "4px",
+        },
+        right: {
+          display: "table-cell",
+          width: "50%",
+          "vertical-align": "top",
+          "box-sizing": "border-box",
+          padding: "14px",
+          background: "var(--color-brand)",
+          color: "var(--color-text-inverse)",
+          "border-radius": "4px",
+        },
+      },
+    },
+    {
+      id: "table-style",
+      label: "表格对比",
+      baseStyle: {
+        table: {
+          display: "block",
+          "border-top": "1px solid var(--color-border)",
+        },
+        left: {
+          display: "block",
+          width: "100%",
+          "box-sizing": "border-box",
+          padding: "8px 0",
+          "border-bottom": "1px solid var(--color-border)",
+        },
+        right: {
+          display: "block",
+          width: "100%",
+          "box-sizing": "border-box",
+          padding: "8px 0",
+          "border-bottom": "1px solid var(--color-border)",
+        },
+      },
+    },
     {
       id: "ledger",
       label: "账本对比",
@@ -89,7 +150,34 @@ export const compare = defineBlock(
         },
       },
     },
-    { id: "compact", label: "紧凑对比" },
+    {
+      id: "compact",
+      label: "紧凑对比",
+      baseStyle: {
+        table: {
+          display: "block",
+        },
+        left: {
+          display: "block",
+          width: "100%",
+          "box-sizing": "border-box",
+          padding: "12px 14px",
+          "margin-bottom": "8px",
+          background: "var(--color-surface-alt)",
+          "border-left": "3px solid var(--color-brand)",
+          "border-radius": "0 4px 4px 0",
+        },
+        right: {
+          display: "block",
+          width: "100%",
+          "box-sizing": "border-box",
+          padding: "12px 14px",
+          background: "var(--color-code-bg)",
+          "border-left": "3px solid var(--color-accent)",
+          "border-radius": "0 4px 4px 0",
+        },
+      },
+    },
   ],
   {
     baseStyle: {
@@ -99,11 +187,11 @@ export const compare = defineBlock(
     },
     slots: ["root", "title", "table", "left", "right"],
     directiveBody:
-      "默认变体正文写自由摘要文字；ledger 变体通过 left-label/left-value/right-label/right-value（可选 title）属性提供结构化左右列数据，此时正文内容不参与渲染。",
+      "默认变体正文写自由摘要文字；ledger/highlight-right/table-style/compact 变体通过 left-label/left-value/right-label/right-value（可选 title）属性提供结构化左右数据，此时正文内容不参与渲染。",
     decorate: (element, ctx) => {
-      if (ctx.variant !== "ledger") return;
+      if (!STRUCTURED_COMPARE_VARIANTS.has(ctx.variant)) return;
       const props = element.properties ?? {};
-      const children = buildCompareLedgerChildren(props);
+      const children = buildCompareStructuredChildren(props);
       const {
         "data-compare-left-label": _l1,
         "data-compare-left-value": _l2,

@@ -7,6 +7,7 @@ import {
 } from "../../packages/core/src/index.ts";
 import { runVariantDiffGuard } from "../../packages/core/src/registry/variant-diff-guard.ts";
 import "../../packages/blocks/src/index.ts";
+import { KNOWN_BLOCKED_VARIANTS } from "../../packages/blocks/src/known-blocked-variants.ts";
 import defaultTheme from "../../packages/themes/default/src/index.ts";
 import { buildDirectiveMarkdown } from "../blocks/directive-markdown-fixtures.ts";
 
@@ -33,17 +34,33 @@ describe("AC-002/AC-004: 真实注册表渲染期差分扫描（WARN 非阻断�
     expect(findings.length).toBeGreaterThan(0);
   });
 
-  it("AC-004: audio/video 无 baseStyle 无 decorate 的具名变体真实出现在 finding 中", () => {
+  it("AC-004: contract-pending 归桶的 audio/video 变体已移除注册，不出现在 finding 中，且登记于 KNOWN_BLOCKED_VARIANTS", () => {
     const findingKeys = new Set(findings.map((f) => `${f.blockId}::${f.variantId}`));
-    expect(findingKeys.has("audio::mini")).toBe(true);
-    expect(findingKeys.has("audio::full")).toBe(true);
-    expect(findingKeys.has("video::autoplay")).toBe(true);
-    expect(findingKeys.has("video::with-caption")).toBe(true);
+    for (const key of ["audio::mini", "audio::full", "video::with-caption"]) {
+      expect(findingKeys.has(key)).toBe(false);
+      expect(KNOWN_BLOCKED_VARIANTS.has(key)).toBe(true);
+    }
+  });
+
+  it("AC-005: exclude 传入 KNOWN_BLOCKED_VARIANTS 时其成员不产生 finding（known-blocked 排除接线）", async () => {
+    const excluded = await runVariantDiffGuard({
+      buildMarkdown: buildDirectiveMarkdown,
+      themeId: "default",
+      exclude: KNOWN_BLOCKED_VARIANTS,
+    });
+    const keys = new Set(excluded.map((f) => `${f.blockId}::${f.variantId}`));
+    for (const key of KNOWN_BLOCKED_VARIANTS) {
+      expect(keys.has(key)).toBe(false);
+    }
   });
 
   it("AC-004: 每条 finding 恰好触发一次 console.warn，且至少一条消息含可读的 blockId/variantId 信息", () => {
     expect(warnMessages.length).toBe(findings.length);
-    expect(warnMessages.some((m) => m.includes("audio") && m.includes("mini"))).toBe(true);
+    expect(findings.length).toBeGreaterThan(0);
+    const sample = findings[0];
+    expect(
+      warnMessages.some((m) => m.includes(sample.blockId) && m.includes(sample.variantId))
+    ).toBe(true);
   });
 
   it("AC-002: callout.tip（root 含 box-shadow/background 等不同于 default 的声明）不出现在 finding 中", () => {
