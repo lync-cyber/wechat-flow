@@ -21,6 +21,28 @@ export function slotElement(
   };
 }
 
+export function findList(element: Element): Element | undefined {
+  return element.children.find(
+    (child): child is Element => child.type === "element" && child.tagName === "ul"
+  );
+}
+
+export function listItemsOf(list: Element): Element[] {
+  return list.children.filter(
+    (child): child is Element => child.type === "element" && child.tagName === "li"
+  );
+}
+
+export function textContentOf(children: Element["children"]): string {
+  return children
+    .map((child) => {
+      if (child.type === "text") return child.value;
+      if (child.type === "element") return textContentOf(child.children);
+      return "";
+    })
+    .join("");
+}
+
 export function extractFirstChar(children: Element["children"]): {
   firstChar: string;
   rest: Element["children"];

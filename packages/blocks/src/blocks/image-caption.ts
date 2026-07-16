@@ -1,6 +1,6 @@
 import type { Element } from "hast";
 import { z } from "zod";
-import { slotElement } from "../decorate-utils.ts";
+import { slotElement, textContentOf } from "../decorate-utils.ts";
 import { defineBlock } from "../factory.ts";
 
 function findFirstImage(children: Element["children"]): Element | undefined {
@@ -16,16 +16,6 @@ function findFirstImage(children: Element["children"]): Element | undefined {
 function containsImage(node: Element): boolean {
   if (node.tagName === "img") return true;
   return node.children.some((child) => child.type === "element" && containsImage(child));
-}
-
-function textContentOf(children: Element["children"]): string {
-  return children
-    .map((child) => {
-      if (child.type === "text") return child.value;
-      if (child.type === "element") return textContentOf(child.children);
-      return "";
-    })
-    .join("");
 }
 
 function buildSideLayout(element: Element): void {

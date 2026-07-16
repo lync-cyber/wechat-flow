@@ -1,29 +1,7 @@
 import type { Element } from "hast";
 import { z } from "zod";
-import { slotElement } from "../decorate-utils.ts";
+import { findList, listItemsOf, slotElement, textContentOf } from "../decorate-utils.ts";
 import { defineBlock } from "../factory.ts";
-
-function findList(element: Element): Element | undefined {
-  return element.children.find(
-    (child): child is Element => child.type === "element" && child.tagName === "ul"
-  );
-}
-
-function listItemsOf(ul: Element): Element[] {
-  return ul.children.filter(
-    (child): child is Element => child.type === "element" && child.tagName === "li"
-  );
-}
-
-function textContentOf(children: Element["children"]): string {
-  return children
-    .map((child) => {
-      if (child.type === "text") return child.value;
-      if (child.type === "element") return textContentOf(child.children);
-      return "";
-    })
-    .join("");
-}
 
 function splitItem(li: Element): { title: string; rest: Element["children"] } {
   const paragraph = li.children.find(

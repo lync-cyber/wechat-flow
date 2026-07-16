@@ -1,22 +1,14 @@
 import type { Element } from "hast";
 import { z } from "zod";
-import { slotElement } from "../decorate-utils.ts";
+import { findList, listItemsOf, slotElement } from "../decorate-utils.ts";
 import { defineBlock } from "../factory.ts";
-
-function listItemsOf(ul: Element): Element[] {
-  return ul.children.filter(
-    (child): child is Element => child.type === "element" && child.tagName === "li"
-  );
-}
 
 function buildItemLine(li: Element): Element {
   return slotElement("item", [{ type: "text", value: "• " }, ...li.children]);
 }
 
 function decorateCard(element: Element): void {
-  const listEl = element.children.find(
-    (child): child is Element => child.type === "element" && child.tagName === "ul"
-  );
+  const listEl = findList(element);
   const newChildren: Element[] = [];
   for (const child of element.children) {
     if (child.type !== "element") continue;
