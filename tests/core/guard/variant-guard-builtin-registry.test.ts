@@ -7,11 +7,9 @@ import {
 import "../../../packages/blocks/src/index.ts";
 import { KNOWN_BLOCKED_VARIANTS } from "../../../packages/blocks/src/known-blocked-variants.ts";
 
-// packages/blocks/src/index.ts registers ALL_BLOCKS (40 entries) as a side effect of
-// this import; the exact count is a fixture value locked against the current builtin
-// catalog (verified via `pnpm vitest run` against packages/blocks/src/index.ts#ALL_BLOCKS
-// prior to writing this test).
-const EXPECTED_BUILTIN_BLOCK_COUNT = 40;
+// packages/blocks/src/index.ts registers ALL_BLOCKS as a side effect of this import;
+// the count is a fixture locked against the current builtin catalog (ALL_BLOCKS.length).
+const EXPECTED_BUILTIN_BLOCK_COUNT = 38;
 
 describe("AC-006: 内置注册表在 collect-only 默认模式下零误伤", () => {
   it("全部内置块经模块导入完成注册，registry 中可查询到实际数量", () => {

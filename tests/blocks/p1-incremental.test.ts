@@ -33,10 +33,10 @@ function mustDescribeBlock(id: string): NonNullable<ReturnType<typeof describeBl
   return def;
 }
 
-describe("AC-001: listBlocks 长度 ≥ 40，10 个新 ID 全部注册", () => {
-  it("listBlocks 返回数组长度 ≥ 40", () => {
+describe("AC-001: listBlocks 长度 ≥ 38，10 个新 ID 全部注册", () => {
+  it("listBlocks 返回数组长度 ≥ 38", () => {
     const blocks = listBlocks();
-    expect(blocks.length).toBeGreaterThanOrEqual(40);
+    expect(blocks.length).toBeGreaterThanOrEqual(38);
   });
 
   it.each(P1_INCREMENTAL_IDS)("P1 增量 Block '%s' 已注册", (id) => {

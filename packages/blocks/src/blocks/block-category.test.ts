@@ -13,7 +13,6 @@ import { definitionList } from "./definition-list.ts";
 import { dialog } from "./dialog.ts";
 import { disclaimer } from "./disclaimer.ts";
 import { divider } from "./divider.ts";
-import { footerCta } from "./footer-cta.ts";
 import { footnote } from "./footnote.ts";
 import { gallery } from "./gallery.ts";
 import { heading } from "./heading.ts";
@@ -22,7 +21,6 @@ import { imageCaption } from "./image-caption.ts";
 import { image } from "./image.ts";
 import { kpiCard } from "./kpi-card.ts";
 import { list } from "./list.ts";
-import { miniprogramCard } from "./miniprogram-card.ts";
 import { paragraph } from "./paragraph.ts";
 import { publicationSkeleton } from "./publication-skeleton.ts";
 import { pullQuote } from "./pull-quote.ts";
@@ -70,11 +68,9 @@ const EXPECTED_CATEGORY: Record<string, BlockCategory> = {
   dialog: "structured",
   qa: "structured",
   "kpi-card": "structured",
-  "footer-cta": "marketing",
   "social-cta": "marketing",
   "subscribe-cta": "marketing",
   "advert-card": "marketing",
-  "miniprogram-card": "marketing",
   recommendation: "marketing",
   "related-cards": "marketing",
   "author-card": "meta",
@@ -113,11 +109,9 @@ const ALL_BLOCKS: BlockDefinition[] = [
   dialog,
   qa,
   kpiCard,
-  footerCta,
   socialCta,
   subscribeCta,
   advertCard,
-  miniprogramCard,
   recommendation,
   relatedCards,
   authorCard,
@@ -128,8 +122,8 @@ const ALL_BLOCKS: BlockDefinition[] = [
 ];
 
 describe("block category taxonomy (ui-spec-wechat-flow-block-taxonomy#§8.2)", () => {
-  it("registers exactly 40 blocks matching the frozen taxonomy table", () => {
-    expect(ALL_BLOCKS.length).toBe(40);
+  it("registers exactly 38 blocks matching the frozen taxonomy table", () => {
+    expect(ALL_BLOCKS.length).toBe(38);
     expect(ALL_BLOCKS.length).toBe(Object.keys(EXPECTED_CATEGORY).length);
   });
 
@@ -142,7 +136,7 @@ describe("block category taxonomy (ui-spec-wechat-flow-block-taxonomy#§8.2)", (
     }
   );
 
-  it("counts blocks per category matching the frozen distribution (text 8 / media 6 / emphasis 7 / structured 7 / marketing 7 / meta 5)", () => {
+  it("counts blocks per category matching the frozen distribution (text 8 / media 6 / emphasis 7 / structured 7 / marketing 5 / meta 5)", () => {
     const counts: Record<BlockCategory, number> = {
       text: 0,
       media: 0,
@@ -159,7 +153,7 @@ describe("block category taxonomy (ui-spec-wechat-flow-block-taxonomy#§8.2)", (
       media: 6,
       emphasis: 7,
       structured: 7,
-      marketing: 7,
+      marketing: 5,
       meta: 5,
     });
   });

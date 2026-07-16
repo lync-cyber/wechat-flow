@@ -12,7 +12,6 @@ import { definitionList } from "./blocks/definition-list.ts";
 import { dialog } from "./blocks/dialog.ts";
 import { disclaimer } from "./blocks/disclaimer.ts";
 import { divider } from "./blocks/divider.ts";
-import { footerCta } from "./blocks/footer-cta.ts";
 import { footnote } from "./blocks/footnote.ts";
 import { gallery } from "./blocks/gallery.ts";
 import { heading } from "./blocks/heading.ts";
@@ -21,7 +20,6 @@ import { imageCaption } from "./blocks/image-caption.ts";
 import { image } from "./blocks/image.ts";
 import { kpiCard } from "./blocks/kpi-card.ts";
 import { list } from "./blocks/list.ts";
-import { miniprogramCard } from "./blocks/miniprogram-card.ts";
 import { paragraph } from "./blocks/paragraph.ts";
 import { publicationSkeleton } from "./blocks/publication-skeleton.ts";
 import { pullQuote } from "./blocks/pull-quote.ts";
@@ -63,8 +61,6 @@ const ALL_BLOCKS = [
   qrcode,
   video,
   audio,
-  miniprogramCard,
-  footerCta,
   recommendation,
   authorCard,
   publicationSkeleton,

@@ -175,9 +175,9 @@ describe("E2E: list_themes via InMemoryTransport + callTool", () => {
 // ---- T-173 AC-001: describe_block 输出 source 判别字段 ----
 
 describe("T-173 AC-001: describe_block 输出 source 判别字段", () => {
-  it("经内置注册路径（packages/blocks factory defineBlock）的 40 块均输出 source='builtin'", () => {
+  it("经内置注册路径（packages/blocks factory defineBlock）的 38 块均输出 source='builtin'", () => {
     const builtinIds = listBlocks().map((b) => b.id);
-    expect(builtinIds.length).toBeGreaterThanOrEqual(40);
+    expect(builtinIds.length).toBeGreaterThanOrEqual(38);
     for (const id of builtinIds) {
       const result = describeBlockTool({ blockId: id }) as Record<string, unknown>;
       expect(result.source).toBe("builtin");

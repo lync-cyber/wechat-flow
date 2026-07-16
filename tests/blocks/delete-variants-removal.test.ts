@@ -154,13 +154,13 @@ describe("T-208 AC-003: 各块保留变体渲染产物字节保真（golden 锁�
     );
   });
 
-  it("subscribe-cta.banner 渲染字节不受影响", async () => {
+  it("subscribe-cta.banner 静态引导卡渲染 golden（居中放大、无按钮）", async () => {
     const result = await renderMarkdown(
       ":::subscribe-cta{.banner}\n这是用于微信粘贴安全校验的示例正文内容。\n:::",
       { themeId: "default" }
     );
     expect(result.html).toBe(
-      '<section data-block="subscribe-cta" data-variant="banner" style="background-color: #f3f0eb; border: none; border-radius: 8px; margin: 24px 0; padding: 28px 16px; text-align: center"><p style="color: #1c1917; font-size: 18px; font-weight: 700; line-height: 1.85; margin-bottom: 12px; text-align: center">这是用于微信粘贴安全校验的示例正文内容。</p><section style="background: #2d5a4e; border-radius: 24px; color: #fafaf9; display: inline-block; font-size: 15px; font-weight: 700; line-height: 1.85; padding: 8px 24px; text-align: center">订阅更新</section></section>'
+      '<section data-block="subscribe-cta" data-variant="banner" style="background-color: #f3f0eb; border: none; border-radius: 8px; font-size: 18px; margin: 24px 0; padding: 28px 16px; text-align: center"><p style="color: #1c1917; font-size: 18px; font-weight: 400; line-height: 1.85; margin: 0 0 12px; text-align: center">这是用于微信粘贴安全校验的示例正文内容。</p></section>'
     );
   });
 

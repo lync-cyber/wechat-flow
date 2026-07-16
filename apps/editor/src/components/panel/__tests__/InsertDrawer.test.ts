@@ -86,11 +86,9 @@ const BLOCK_NAMES: Record<string, string> = {
   dialog: "对话",
   qa: "问答",
   "kpi-card": "KPI 数据卡",
-  "footer-cta": "页脚 CTA",
   "social-cta": "社交引导 CTA",
-  "subscribe-cta": "订阅 CTA",
+  "subscribe-cta": "文末引导",
   "advert-card": "广告卡",
-  "miniprogram-card": "小程序卡",
   recommendation: "推荐",
   "related-cards": "相关卡片",
   "author-card": "作者卡",
@@ -134,15 +132,7 @@ function registerFullTaxonomy(): void {
     },
     {
       category: "marketing",
-      ids: [
-        "footer-cta",
-        "social-cta",
-        "subscribe-cta",
-        "advert-card",
-        "miniprogram-card",
-        "recommendation",
-        "related-cards",
-      ],
+      ids: ["social-cta", "subscribe-cta", "advert-card", "recommendation", "related-cards"],
     },
     {
       category: "meta",
@@ -468,7 +458,7 @@ describe("T-137 AC-004: 搜索框在当前 Tab 结果集内模糊过滤，不切
   });
 });
 
-describe("T-137 AC-005: 无「全部」Tab，6 分类完整覆盖 40 个 Block", () => {
+describe("T-137 AC-005: 无「全部」Tab，6 分类完整覆盖 38 个 Block", () => {
   beforeEach(() => {
     registerFullTaxonomy();
   });

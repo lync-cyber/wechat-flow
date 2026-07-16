@@ -179,26 +179,21 @@ describe("AC-002: social-cta.full-width root 不呈现圆角与边框效果（re
   });
 });
 
-describe("AC-003: subscribe-cta.banner 呈现居中标题 + 主色胶囊按钮元素", () => {
-  it("标题段落继承居中对齐并加粗（直接标记既有段落为 title slot）", async () => {
-    const { elements } = await renderBlock("subscribe-cta", "banner");
-    const title = findElementsContainingText(elements, DEFAULT_DIRECTIVE_BODY).find(
-      (el) => el.tagName === "p"
-    );
-    expect(title).toBeDefined();
-    const style = styleOf(title);
+describe("AC-003: subscribe-cta.banner 静态引导卡（root 居中加粗、无伪按钮）", () => {
+  it("root 携带居中对齐 + 放大字号强调（banner 强调落在 root，字号由正文继承）", async () => {
+    const { root } = await renderBlock("subscribe-cta", "banner");
+    const style = styleOf(root);
     expect(style["text-align"]).toBe("center");
-    expect(Number.parseFloat(style["font-weight"] ?? "0")).toBeGreaterThanOrEqual(700);
+    expect(Number.parseFloat(style["font-size"] ?? "0")).toBeGreaterThanOrEqual(18);
   });
 
-  it("含主色胶囊按钮元素（高 border-radius + 品牌色背景 + 反色文字）", async () => {
+  it("不含伪按钮元素（微信粘贴后按钮失效，静态引导卡不渲染任何按钮）", async () => {
     const { elements } = await renderBlock("subscribe-cta", "banner");
-    const button = findElementWithText(elements, "订阅更新");
-    expect(button).toBeDefined();
-    const style = styleOf(button);
-    expect(Number.parseFloat(style["border-radius"] ?? "0")).toBeGreaterThanOrEqual(20);
-    expect(style.background).toBe("#2d5a4e");
-    expect(style.color).toBe("#fafaf9");
+    expect(findElementWithText(elements, "订阅更新")).toBeUndefined();
+    const bodyParagraph = findElementsContainingText(elements, DEFAULT_DIRECTIVE_BODY).find(
+      (el) => el.tagName === "p"
+    );
+    expect(bodyParagraph).toBeDefined();
   });
 });
 

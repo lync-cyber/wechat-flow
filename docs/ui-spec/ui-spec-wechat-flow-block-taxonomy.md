@@ -21,7 +21,7 @@ required_sections:
 
 ## 8. Block 分类冻结映射
 
-本卷是 A-014（见主卷 §6 假设清单）的权威数据源：40 个内置 Block 到 `BlockCategory`（ARCH M-005「Block / Variant 注册契约」定义的 6 值枚举）的冻结映射表，驱动 UC-015 InsertDrawer 与 UC-021 DirectiveAutocompletePopover 的分类 Tab 数据化。前端不硬编码分类清单——分类枚举与每个 Block 归属均来自 `BlockDefinition.category`；本表仅供人工核对与 `packages/blocks` 各 Block 定义文件的 `category` 字段赋值参照，不是运行时读取的数据源。
+本卷是 A-014（见主卷 §6 假设清单）的权威数据源：38 个内置 Block 到 `BlockCategory`（ARCH M-005「Block / Variant 注册契约」定义的 6 值枚举）的冻结映射表，驱动 UC-015 InsertDrawer 与 UC-021 DirectiveAutocompletePopover 的分类 Tab 数据化。前端不硬编码分类清单——分类枚举与每个 Block 归属均来自 `BlockDefinition.category`；本表仅供人工核对与 `packages/blocks` 各 Block 定义文件的 `category` 字段赋值参照，不是运行时读取的数据源。
 
 ### 8.1 分类 Tab 标签映射
 
@@ -36,9 +36,9 @@ required_sections:
 | `marketing` | 运营引流 | CTA、订阅、推荐、小程序卡等公众号运营组件 |
 | `meta` | 元信息 | 作者卡、页脚、免责声明、脚注、引用出处等文末/边栏元数据 |
 
-UC-015 / UC-021 均不保留「全部」Tab——6 个分类 Tab 已完整覆盖全部 40 个 Block，用户心智模型是"按用途分类查找"而非"看全量列表再筛选"；搜索框（UC-021 已有顶部搜索框、UC-015 组件列表上方新增搜索输入）承担跨分类检索需求，两者互补不冗余。默认选中 `text`（第一个 Tab，即枚举声明顺序首位），因为基础排版元素是写作场景中最高频插入需求。
+UC-015 / UC-021 均不保留「全部」Tab——6 个分类 Tab 已完整覆盖全部 38 个 Block，用户心智模型是"按用途分类查找"而非"看全量列表再筛选"；搜索框（UC-021 已有顶部搜索框、UC-015 组件列表上方新增搜索输入）承担跨分类检索需求，两者互补不冗余。默认选中 `text`（第一个 Tab，即枚举声明顺序首位），因为基础排版元素是写作场景中最高频插入需求。
 
-### 8.2 40 Block 冻结分类表
+### 8.2 38 Block 冻结分类表
 
 | Block ID | 名称 | `category` | 归类依据 |
 |----------|------|-----------|---------|
@@ -70,11 +70,9 @@ UC-015 / UC-021 均不保留「全部」Tab——6 个分类 Tab 已完整覆盖
 | `dialog` | 对话 | `structured` | 信息骨架 |
 | `qa` | 问答 | `structured` | 信息骨架 |
 | `kpi-card` | KPI 数据卡 | `structured` | 信息骨架 |
-| `footer-cta` | 页脚 CTA | `marketing` | 公众号运营组件 |
 | `social-cta` | 社交引导 CTA | `marketing` | 公众号运营组件 |
-| `subscribe-cta` | 订阅 CTA | `marketing` | 公众号运营组件 |
+| `subscribe-cta` | 文末引导 | `marketing` | 文末静态引导卡（关注/互动引导文字） |
 | `advert-card` | 广告卡 | `marketing` | 公众号运营组件 |
-| `miniprogram-card` | 小程序卡 | `marketing` | 公众号运营组件 |
 | `recommendation` | 推荐 | `marketing` | 公众号运营组件 |
 | `related-cards` | 相关卡片 | `marketing` | 公众号运营组件 |
 | `author-card` | 作者卡 | `meta` | 文末/边栏元数据 |
@@ -83,7 +81,7 @@ UC-015 / UC-021 均不保留「全部」Tab——6 个分类 Tab 已完整覆盖
 | `footnote` | 脚注 | `meta` | 文末/边栏元数据 |
 | `citation` | 引用出处 | `meta` | 文末/边栏元数据 |
 
-统计核对：`text` 8 / `media` 6 / `emphasis` 7 / `structured` 7 / `marketing` 7 / `meta` 5，合计 40，与 `packages/blocks/src/blocks/*.ts` 现存 40 个 Block 文件一一对应，无遗漏无多余。
+统计核对：`text` 8 / `media` 6 / `emphasis` 7 / `structured` 7 / `marketing` 5 / `meta` 5，合计 38，与 `packages/blocks/src/blocks/*.ts` 现存 38 个 Block 文件一一对应，无遗漏无多余。
 
 ### 8.3 与 ARCH M-005 的对齐说明
 

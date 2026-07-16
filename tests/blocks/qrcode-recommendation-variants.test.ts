@@ -23,12 +23,6 @@ beforeEach(() => {
 
 const QRCODE_CARD_MD = ":::qrcode{.card}\n慢读简报\n\n每周四，一封邮件，一组数据\n:::\n";
 
-const MINIPROGRAM_MD = (variant: string): string =>
-  `:::miniprogram-card{.${variant}}\n天气助手\n\n一键查看未来七日天气\n:::\n`;
-
-const FOOTER_CTA_CENTERED_MD = ":::footer-cta{.centered}\n觉得有用？\n:::\n";
-const FOOTER_CTA_FULL_WIDTH_MD = ":::footer-cta{.full-width}\n本期内容对你有帮助吗？\n:::\n";
-
 const RECOMMENDATION_MD = (variant: string): string =>
   `:::recommendation{.${variant}}\n推荐阅读\n\n- [前作](#)\n- [续篇](#)\n:::\n`;
 
@@ -84,12 +78,6 @@ function firstPxNumber(style: Record<string, string>, prop: string): number {
   return Number.parseFloat(match?.[1] ?? "NaN");
 }
 
-function paddingFirstNumber(style: Record<string, string>): number {
-  const match = style.padding?.match(/^(\d+(?:\.\d+)?)px/);
-  expect(match, `padding not found as px value in style: ${JSON.stringify(style)}`).not.toBeNull();
-  return Number.parseFloat(match?.[1] ?? "NaN");
-}
-
 describe("AC-001: qrcode.card 呈现左 QR + 右三行信息（kicker/标题/说明）并排结构", () => {
   it("root 呈 display:table 卡片布局", async () => {
     const elements = await renderElements(QRCODE_CARD_MD);
@@ -133,89 +121,6 @@ describe("AC-001: qrcode.card 呈现左 QR + 右三行信息（kicker/标题/说
   });
 });
 
-describe("AC-002: miniprogram-card.large 呈现图标 + 信息并排结构；compact padding < large", () => {
-  it("large：root display:table，左图标 cell 48px，右信息区含标题/描述", async () => {
-    const elements = await renderElements(MINIPROGRAM_MD("large"));
-    const root = findRoot(elements, "miniprogram-card", "large");
-    expect(root).toBeDefined();
-    expect(parseStyleDict(root?.properties?.style).display).toBe("table");
-
-    const iconCell = root?.children.find(
-      (child): child is Element =>
-        child.type === "element" && parseStyleDict(child.properties?.style).width === "48px"
-    );
-    expect(iconCell).toBeDefined();
-    expect(parseStyleDict(iconCell?.properties?.style).display).toBe("table-cell");
-
-    const title = findElementWithText(elements, "天气助手");
-    const desc = findElementWithText(elements, "一键查看未来七日天气");
-    expect(title).toBeDefined();
-    expect(desc).toBeDefined();
-    expect(parseStyleDict(title?.properties?.style)["font-weight"]).toBe("700");
-  });
-
-  it("compact：同构图标+信息并排结构", async () => {
-    const elements = await renderElements(MINIPROGRAM_MD("compact"));
-    const root = findRoot(elements, "miniprogram-card", "compact");
-    expect(root).toBeDefined();
-    expect(parseStyleDict(root?.properties?.style).display).toBe("table");
-    const iconCell = root?.children.find(
-      (child): child is Element =>
-        child.type === "element" && parseStyleDict(child.properties?.style).width === "32px"
-    );
-    expect(iconCell).toBeDefined();
-  });
-
-  it("compact root padding 数值小于 large", async () => {
-    const largeElements = await renderElements(MINIPROGRAM_MD("large"));
-    const compactElements = await renderElements(MINIPROGRAM_MD("compact"));
-    const largeRoot = findRoot(largeElements, "miniprogram-card", "large");
-    const compactRoot = findRoot(compactElements, "miniprogram-card", "compact");
-    const largePadding = paddingFirstNumber(parseStyleDict(largeRoot?.properties?.style));
-    const compactPadding = paddingFirstNumber(parseStyleDict(compactRoot?.properties?.style));
-    expect(compactPadding).toBeLessThan(largePadding);
-  });
-});
-
-describe("AC-003: footer-cta.centered 居中标题 + 主色胶囊按钮；full-width 三栏动作满宽布局", () => {
-  it("centered：root text-align:center，按钮元素 border-radius 高值 + background 品牌色", async () => {
-    const elements = await renderElements(FOOTER_CTA_CENTERED_MD);
-    const root = findRoot(elements, "footer-cta", "centered");
-    expect(root).toBeDefined();
-    expect(parseStyleDict(root?.properties?.style)["text-align"]).toBe("center");
-
-    const button = findElementWithText(elements, "关注我");
-    expect(button).toBeDefined();
-    const buttonStyle = parseStyleDict(button?.properties?.style);
-    expect(firstPxNumber(buttonStyle, "border-radius")).toBeGreaterThanOrEqual(20);
-    expect(buttonStyle["background-color"]).toBe("#2d5a4e");
-  });
-
-  it("full-width：赞同/收藏/转发三栏同构、满宽 table 布局", async () => {
-    const elements = await renderElements(FOOTER_CTA_FULL_WIDTH_MD);
-    const like = findElementWithText(elements, "♡ 赞同");
-    const star = findElementWithText(elements, "★ 收藏");
-    const share = findElementWithText(elements, "↗ 转发");
-    expect(like).toBeDefined();
-    expect(star).toBeDefined();
-    expect(share).toBeDefined();
-
-    for (const cell of [like, star, share]) {
-      expect(parseStyleDict(cell?.properties?.style).display).toBe("table-cell");
-    }
-
-    const starStyle = parseStyleDict(star?.properties?.style);
-    expect(starStyle["background-color"]).toBe("#2d5a4e");
-
-    const row = elements.find((el) =>
-      el.children.some((child) => child === like || child === star || child === share)
-    );
-    const rowStyle = parseStyleDict(row?.properties?.style);
-    expect(rowStyle.display).toBe("table");
-    expect(rowStyle.width).toBe("100%");
-  });
-});
-
 describe("AC-004: recommendation.card 粗体标题 + bullet 链接列表；compact 间距 < card", () => {
   it("card：标题加粗，列表项携带品牌色", async () => {
     const elements = await renderElements(RECOMMENDATION_MD("card"));
@@ -250,18 +155,10 @@ describe("AC-004: recommendation.card 粗体标题 + bullet 链接列表；compa
   });
 });
 
-describe("AC-005: 7 项营销工具卡片变体满足 T-191 谓词与 T-192 差分守卫", () => {
-  const TARGET_KEYS = [
-    "qrcode::card",
-    "miniprogram-card::large",
-    "miniprogram-card::compact",
-    "footer-cta::centered",
-    "footer-cta::full-width",
-    "recommendation::card",
-    "recommendation::compact",
-  ];
+describe("AC-005: qrcode/recommendation 营销卡片变体满足 T-191 谓词与 T-192 差分守卫", () => {
+  const TARGET_KEYS = ["qrcode::card", "recommendation::card", "recommendation::compact"];
 
-  it("getUnimplementedVariants() 不含目标 7 变体", () => {
+  it("getUnimplementedVariants() 不含目标变体", () => {
     const unimplementedKeys = new Set(
       getUnimplementedVariants().map((v) => `${v.blockId}::${v.variantId}`)
     );
@@ -270,7 +167,7 @@ describe("AC-005: 7 项营销工具卡片变体满足 T-191 谓词与 T-192 差�
     }
   });
 
-  it("runVariantDiffGuard 对目标 7 变体不产生 finding", async () => {
+  it("runVariantDiffGuard 对目标变体不产生 finding", async () => {
     const findings = await runVariantDiffGuard({
       buildMarkdown: buildDirectiveMarkdown,
       themeId: "default",
