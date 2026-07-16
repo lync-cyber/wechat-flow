@@ -1,5 +1,6 @@
 import type { Element } from "hast";
 import type { ZodType } from "zod";
+import { EXTERNALLY_IMPLEMENTED_VARIANTS } from "./externally-implemented-variants.ts";
 import { INTENTIONAL_PLAIN_VARIANTS } from "./intentional-plain-variants.ts";
 import { buildRejectionError, validateForbiddenDeclarations } from "./style-guard.ts";
 
@@ -53,6 +54,7 @@ function isVariantImplemented(definition: BlockDefinition, variant: BlockVariant
     : false;
   if (hasBaseStyleDeclarations) return true;
   if (definition.decorate) return true;
+  if (EXTERNALLY_IMPLEMENTED_VARIANTS.has(`${definition.id}::${variant.id}`)) return true;
   return INTENTIONAL_PLAIN_VARIANTS.has(`${definition.id}::${variant.id}`);
 }
 

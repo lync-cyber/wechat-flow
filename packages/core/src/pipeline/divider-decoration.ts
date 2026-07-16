@@ -1,7 +1,7 @@
 import type { ThemeDefinition } from "@wechat-flow/contracts";
 import type { Element, Root as HastRoot } from "hast";
 
-const DIVIDER_SVG_VARIANTS = new Set(["wave", "dots", "flower"]);
+export const DIVIDER_SVG_VARIANTS = new Set(["wave", "dots", "flower"]);
 
 function svgStyle(verticalMargin: string): string {
   return `display: block; margin: ${verticalMargin} auto`;

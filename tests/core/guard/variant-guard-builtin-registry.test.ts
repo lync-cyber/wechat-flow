@@ -6,6 +6,8 @@ import {
 } from "../../../packages/core/src/registry/block.ts";
 import "../../../packages/blocks/src/index.ts";
 import { KNOWN_BLOCKED_VARIANTS } from "../../../packages/blocks/src/known-blocked-variants.ts";
+import { DIVIDER_SVG_VARIANTS } from "../../../packages/core/src/pipeline/divider-decoration.ts";
+import { EXTERNALLY_IMPLEMENTED_VARIANTS } from "../../../packages/core/src/registry/externally-implemented-variants.ts";
 
 // packages/blocks/src/index.ts registers ALL_BLOCKS as a side effect of this import;
 // the count is a fixture locked against the current builtin catalog (ALL_BLOCKS.length).
@@ -59,5 +61,26 @@ describe("AC-006: 内置注册表在 collect-only 默认模式下零误伤", () 
     );
     expect(candidateKeys.has("steps::horizontal")).toBe(false);
     expect(candidateKeys.has("steps::numbered")).toBe(false);
+  });
+});
+
+describe("缺陷 A 修复：谓词④ external-pipeline 变体识别", () => {
+  it("EXTERNALLY_IMPLEMENTED_VARIANTS 严格投影 DIVIDER_SVG_VARIANTS，非 SSOT 变体不豁免", () => {
+    for (const v of DIVIDER_SVG_VARIANTS) {
+      expect(EXTERNALLY_IMPLEMENTED_VARIANTS.has(`divider::${v}`)).toBe(true);
+    }
+    // thick/dotted/dashed 由 baseStyle（谓词①）实现，不属流水线 SSOT，不得被谓词④豁免
+    for (const v of ["thick", "dotted", "dashed"]) {
+      expect(EXTERNALLY_IMPLEMENTED_VARIANTS.has(`divider::${v}`)).toBe(false);
+    }
+  });
+
+  it("divider.{wave,dots,flower}（divider.ts 空条目、实现落渲染流水线）不在未实现候选集", () => {
+    const candidateKeys = new Set(
+      getUnimplementedVariants().map((c) => `${c.blockId}::${c.variantId}`)
+    );
+    for (const v of ["wave", "dots", "flower"]) {
+      expect(candidateKeys.has(`divider::${v}`)).toBe(false);
+    }
   });
 });
