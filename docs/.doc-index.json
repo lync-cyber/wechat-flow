@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "generated_at": "2026-07-16T03:56:40.204098+00:00",
+  "generated_at": "2026-07-16T04:42:08.057283+00:00",
   "documents": {
     "amendment-platform-fidelity-r1": {
       "file_path": "docs/arch/AMENDMENT-platform-fidelity-r1.md",
@@ -4676,6 +4676,189 @@
       "sections": {},
       "deps": [
         "T-141"
+      ]
+    },
+    "design-review-variant-impl-predicate-r1": {
+      "file_path": "docs/reviews/design/DESIGN-REVIEW-variant-impl-predicate-r1.md",
+      "doc_type": "design-review",
+      "status": "approved",
+      "total_lines": 238,
+      "est_tokens": 5036,
+      "content_hash": "4e529a07",
+      "sections": {
+        "0": {
+          "heading": "## 0. 结论摘要（TL;DR）",
+          "line_start": 12,
+          "line_end": 22,
+          "est_tokens": 264,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        },
+        "1": {
+          "heading": "## 1. 现状核实（代码为准）",
+          "line_start": 23,
+          "line_end": 42,
+          "est_tokens": 471,
+          "deps": [],
+          "level": 2,
+          "items": {
+            "1.1": {
+              "heading": "### 1.1 四种变体实现机制（核实后完整集）",
+              "line_start": 25,
+              "line_end": 35,
+              "est_tokens": 306,
+              "deps": []
+            },
+            "1.2": {
+              "heading": "### 1.2 两层守卫职责（现状）",
+              "line_start": 36,
+              "line_end": 42,
+              "est_tokens": 159,
+              "deps": []
+            }
+          }
+        },
+        "2": {
+          "heading": "## 2. 缺陷 A 裁定：external-implemented 变体识别",
+          "line_start": 43,
+          "line_end": 107,
+          "est_tokens": 1416,
+          "deps": [],
+          "level": 2,
+          "items": {
+            "2.1": {
+              "heading": "### 2.1 问题定性",
+              "line_start": 45,
+              "line_end": 50,
+              "est_tokens": 285,
+              "deps": []
+            },
+            "2.2": {
+              "heading": "### 2.2 方案对比矩阵",
+              "line_start": 51,
+              "line_end": 61,
+              "est_tokens": 274,
+              "deps": []
+            },
+            "2.3": {
+              "heading": "### 2.3 推荐改法（签名级示意，勿写进源码）",
+              "line_start": 62,
+              "line_end": 88,
+              "est_tokens": 478,
+              "deps": []
+            },
+            "2.4": {
+              "heading": "### 2.4 防漂移断言（必带测试）",
+              "line_start": 89,
+              "line_end": 99,
+              "est_tokens": 130,
+              "deps": []
+            },
+            "2.5": {
+              "heading": "### 2.5 验证性副产品：谓词④不过度豁免",
+              "line_start": 100,
+              "line_end": 107,
+              "est_tokens": 233,
+              "deps": []
+            }
+          }
+        },
+        "3": {
+          "heading": "## 3. 缺陷 B 裁定：decorate 块级粒度",
+          "line_start": 108,
+          "line_end": 174,
+          "est_tokens": 1567,
+          "deps": [],
+          "level": 2,
+          "items": {
+            "3.1": {
+              "heading": "### 3.1 审计方法与全量结论",
+              "line_start": 110,
+              "line_end": 131,
+              "est_tokens": 582,
+              "deps": []
+            },
+            "3.2": {
+              "heading": "### 3.2 谓词②是「按设计粗粒度」，非缺陷",
+              "line_start": 132,
+              "line_end": 141,
+              "est_tokens": 157,
+              "deps": []
+            },
+            "3.3": {
+              "heading": "### 3.3 方案对比矩阵",
+              "line_start": 142,
+              "line_end": 149,
+              "est_tokens": 189,
+              "deps": []
+            },
+            "3.4": {
+              "heading": "### 3.4 推荐裁定（P1）",
+              "line_start": 150,
+              "line_end": 158,
+              "est_tokens": 286,
+              "deps": []
+            },
+            "3.5": {
+              "heading": "### 3.5 degenerate 类处置（不新增守卫）",
+              "line_start": 159,
+              "line_end": 168,
+              "est_tokens": 208,
+              "deps": []
+            },
+            "3.6": {
+              "heading": "### 3.6 备选 P2 的触发条件",
+              "line_start": 169,
+              "line_end": 174,
+              "est_tokens": 132,
+              "deps": []
+            }
+          }
+        },
+        "4": {
+          "heading": "## 4. 两层守卫职责边界（T-209/T-210 翻转后）",
+          "line_start": 175,
+          "line_end": 191,
+          "est_tokens": 367,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        },
+        "5": {
+          "heading": "## 5. 与 dev-plan 现有口径的差异（需 amend）",
+          "line_start": 192,
+          "line_end": 205,
+          "est_tokens": 222,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        },
+        "6": {
+          "heading": "## 6. 翻转就绪 checklist（交 orchestrator）",
+          "line_start": 206,
+          "line_end": 233,
+          "est_tokens": 543,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        },
+        "7": {
+          "heading": "## 7. root_cause 与遗留注记",
+          "line_start": 234,
+          "line_end": 238,
+          "est_tokens": 104,
+          "deps": [],
+          "level": 2,
+          "items": {}
+        }
+      },
+      "deps": [
+        "T-191",
+        "T-192",
+        "T-209",
+        "T-210",
+        "T-211"
       ]
     },
     "review-amendment-platform-fidelity-r1-r1": {
