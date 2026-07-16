@@ -2574,10 +2574,10 @@ graph LR
 - **security_sensitive**: false
 - **dependencies**: [T-190, T-191, T-193, T-194, T-195, T-196, T-197, T-198, T-199, T-200, T-201, T-202, T-203, T-204, T-205, T-206, T-207, T-208]
 - **acceptance_criteria**:
-  - [ ] AC-001: 归零对账 — `getUnimplementedVariants()` 全量收集集合扣除 `intentional-plain-variants.ts` allowlist 命中项与 `known-blocked-variants.ts` 三项后为空集（`Array.length === 0`）；若非空，本卡按 `blocked` 状态终止并在 notes 记录残余项清单，回退对应批 B 任务补实现（不得放宽本 AC 或静默扩大 blocked 清单掩盖遗漏）
-  - [ ] AC-002: `registerBlock` 默认行为翻转为 throw——不传任何显式参数调用 `registerBlock` 时，给定未实现变体场景（合成测试块），Then 直接抛 `E_VARIANT_NO_IMPL`（此前默认为 collect-only）；collect-only 相关代码分支（模式判断、`getUnimplementedVariants` 若仅服务 collect-only 场景则一并评估是否保留为诊断用途或移除）从 `block.ts` 中移除
-  - [ ] AC-003: 内置资产零误伤 — 全部内置资产（`listThemes()` 全部主题 × `listBlocks()` 全部块 × 全部注册 variant × 全部注册 mark）在 throw 模式生效状态下正常完成注册（应用启动/`packages/blocks/src/index.ts` 导入不抛错），suite 全量加载无中断
-  - [ ] AC-004: 全仓四门禁绿；`block.test.ts` 中原 collect-only 相关测试用例按新默认行为（throw-by-default）调整或移除，不留描述已废弃行为的测试
+  - [x] AC-001: 归零对账 — `getUnimplementedVariants()` 全量收集集合扣除 `intentional-plain-variants.ts` allowlist 命中项与 `known-blocked-variants.ts` 三项后为空集（`Array.length === 0`）；若非空，本卡按 `blocked` 状态终止并在 notes 记录残余项清单，回退对应批 B 任务补实现（不得放宽本 AC 或静默扩大 blocked 清单掩盖遗漏）
+  - [x] AC-002: `registerBlock` 默认行为翻转为 throw——不传任何显式参数调用 `registerBlock` 时，给定未实现变体场景（合成测试块），Then 直接抛 `E_VARIANT_NO_IMPL`（此前默认为 collect-only）；collect-only 相关代码分支（模式判断、`getUnimplementedVariants` 若仅服务 collect-only 场景则一并评估是否保留为诊断用途或移除）从 `block.ts` 中移除
+  - [x] AC-003: 内置资产零误伤 — 全部内置资产（`listThemes()` 全部主题 × `listBlocks()` 全部块 × 全部注册 variant × 全部注册 mark）在 throw 模式生效状态下正常完成注册（应用启动/`packages/blocks/src/index.ts` 导入不抛错），suite 全量加载无中断
+  - [x] AC-004: 全仓四门禁绿；`block.test.ts` 中原 collect-only 相关测试用例按新默认行为（throw-by-default）调整或移除，不留描述已废弃行为的测试
 - **deliverables**:
   - [ ] `packages/core/src/registry/block.ts` — collect-only 脚手架移除 + 默认 throw
   - [ ] `packages/core/src/registry/block.test.ts` — 测试用例随新默认行为调整
@@ -2601,10 +2601,10 @@ graph LR
 - **security_sensitive**: false
 - **dependencies**: [T-192, T-193, T-194, T-195, T-196, T-197, T-198, T-199, T-200, T-201, T-202, T-203, T-204, T-205, T-206, T-207, T-208]
 - **acceptance_criteria**:
-  - [ ] AC-001: 差分守卫主函数在真实注册表全量运行下 finding 数组为空（排除 `known-blocked-variants.ts` 与 plain-allowlist 命中项）；若非空，本卡按 `blocked` 状态终止并在 notes 记录残余 finding 清单（`{blockId, variantId}`），回退对应批 B 任务补实现或经 architect 追加登记 plain-allowlist（须附充分理由，不得批量登记掩盖遗漏）
-  - [ ] AC-002: RED 断言机制 — 差分守卫测试用例改为：finding 非空时用例直接失败（`expect(findings).toEqual([])` 或等效），移除 T-192 阶段的 `console.warn` 非阻断分支与相关 spy 断言（WARN 模式脚手架代码清零，不留 mode 开关）
-  - [ ] AC-003: plain-allowlist 豁免集终版核实 — 本批（T-193..T-208）落地的全部 IMPORT/PATCH 变体逐一确认不属于"delta 为空/decorate no-op"的真实 no-op；若差分守卫在 AC-001 中发现残余 no-op，须定位到具体批 B 任务的实现缺陷（非"变体本意无装饰"，因triage裁定中无一项落入 plain-allowlist 范畴），本卡不得为掩盖该缺陷而将其登记进 plain-allowlist
-  - [ ] AC-004: 全仓四门禁绿
+  - [x] AC-001: 差分守卫主函数在真实注册表全量运行下 finding 数组为空（排除 `known-blocked-variants.ts` 与 plain-allowlist 命中项）；若非空，本卡按 `blocked` 状态终止并在 notes 记录残余 finding 清单（`{blockId, variantId}`），回退对应批 B 任务补实现或经 architect 追加登记 plain-allowlist（须附充分理由，不得批量登记掩盖遗漏）
+  - [x] AC-002: RED 断言机制 — 差分守卫测试用例改为：finding 非空时用例直接失败（`expect(findings).toEqual([])` 或等效），移除 T-192 阶段的 `console.warn` 非阻断分支与相关 spy 断言（WARN 模式脚手架代码清零，不留 mode 开关）
+  - [x] AC-003: plain-allowlist 豁免集终版核实 — 本批（T-193..T-208）落地的全部 IMPORT/PATCH 变体逐一确认不属于"delta 为空/decorate no-op"的真实 no-op；若差分守卫在 AC-001 中发现残余 no-op，须定位到具体批 B 任务的实现缺陷（非"变体本意无装饰"，因triage裁定中无一项落入 plain-allowlist 范畴），本卡不得为掩盖该缺陷而将其登记进 plain-allowlist
+  - [x] AC-004: 全仓四门禁绿
 - **deliverables**:
   - [ ] `packages/core/src/registry/variant-diff-guard.ts` — WARN→RED 翻转
   - [ ] `tests/registry/variant-diff-guard.test.ts` — RED 断言 + WARN 脚手架移除
@@ -2627,10 +2627,10 @@ graph LR
 - **security_sensitive**: false
 - **dependencies**: [T-209, T-210]
 - **acceptance_criteria**:
-  - [ ] AC-001: `VISUAL_FULL=1` 模式下跑通 `buildFullMatrix()` 全量矩阵渲染，新增/变更的视觉快照文件写入 `e2e/visual/`；`git diff` 审阅仅含预期新增/变更（本批新落地变体 + `steps.card` × 5 + 已删除变体对应快照的清理），无意外全局漂移
-  - [ ] AC-002: `assertVariantFloor` 阈值从硬编码 `120` 更新为落地后 `listAllVariants().length` 的实测稳定值（测算方式记入 notes，不写公式化占位符，直接写死实测整数）
-  - [ ] AC-003: cross-runtime 5 fixture（T-190 AC-004 已锁字节不变）与本批新落地变体各自独立的视觉快照全部完成 regen；`pnpm test:cross-runtime` 全绿、`EXPECTED_HASHES` 保持不变（不因本卡重 seed 而重新生成）
-  - [ ] AC-004: 全仓四门禁绿
+  - [x] AC-001: `VISUAL_FULL=1` 模式下跑通 `buildFullMatrix()` 全量矩阵渲染，新增/变更的视觉快照文件写入 `e2e/visual/`；`git diff` 审阅仅含预期新增/变更（本批新落地变体 + `steps.card` × 5 + 已删除变体对应快照的清理），无意外全局漂移
+  - [x] AC-002: `assertVariantFloor` 阈值从硬编码 `120` 更新为落地后 `listAllVariants().length` 的实测稳定值（测算方式记入 notes，不写公式化占位符，直接写死实测整数）
+  - [x] AC-003: cross-runtime 5 fixture（T-190 AC-004 已锁字节不变）与本批新落地变体各自独立的视觉快照全部完成 regen；`pnpm test:cross-runtime` 全绿、`EXPECTED_HASHES` 保持不变（不因本卡重 seed 而重新生成）
+  - [x] AC-004: 全仓四门禁绿
 - **deliverables**:
   - [ ] `e2e/visual/` 全量快照 regen（`VISUAL_FULL=1`）
   - [ ] `e2e/visual/story-matrix.ts` — `assertVariantFloor` 阈值更新
