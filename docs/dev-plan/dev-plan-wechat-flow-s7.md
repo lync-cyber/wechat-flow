@@ -2651,13 +2651,13 @@ graph LR
 - **security_sensitive**: false
 - **dependencies**: [T-209, T-210, T-211]
 - **acceptance_criteria**:
-  - [ ] AC-001: 编辑器 InsertDrawer/变体选择器抽样核对 — 本批新增具名变体在 UI 中可选中，选中后编辑器内预览呈现与裁定映射的视觉意图一致（非纯文本无样式）
-  - [ ] AC-002: 结构性变体（decorate 改动类，见目标段落列举清单）逐一走查确认 DOM 结构符合预期（如 `steps.horizontal` 呈现横排、`dialog.interview` 呈现左右双栏）
-  - [ ] AC-003: 已删除的 11 项变体（T-208 十项 + T-206 条件性一项）确认不再出现在任何用户可选界面
-  - [ ] AC-004: `audio`/`video` 两块 `default` 用法确认不受 T-207 移除影响（正常渲染空容器占位，不抛错、不影响其余管线）
-  - [ ] AC-005: 走查报告产出并记录 `event=user_decision`
+  - [x] AC-001: 编辑器 InsertDrawer/变体选择器抽样核对 — 本批新增具名变体在 UI 中可选中，选中后编辑器内预览呈现与裁定映射的视觉意图一致（非纯文本无样式）
+  - [x] AC-002: 结构性变体（decorate 改动类，见目标段落列举清单）逐一走查确认 DOM 结构符合预期（如 `steps.horizontal` 呈现横排、`dialog.interview` 呈现左右双栏）
+  - [x] AC-003: 已删除的 11 项变体（T-208 十项 + T-206 条件性一项）确认不再出现在任何用户可选界面
+  - [x] AC-004: `audio`/`video` 两块 `default` 用法确认不受 T-207 移除影响（正常渲染空容器占位，不抛错、不影响其余管线）
+  - [x] AC-005: 走查报告产出并记录 `event=user_decision`（用户 sign-off 2026-07-16，事件已记 EVENT-LOG）
 - **deliverables**:
-  - [ ] `docs/reviews/walkthrough/WALKTHROUGH-variant-gap-remediation-{YYYYMMDD}-r1.md`
+  - [x] `docs/reviews/walkthrough/WALKTHROUGH-variant-gap-remediation-20260716-r1.md`
 - **context_load**:
   - variant-gap-triage-20260715-r1#§3
 - **notes**: 无自动化 oracle 覆盖"变体裁定映射是否符合用户视觉意图"这一层——T-192/T-210 差分守卫只判定"渲染是否 ≠ default"，不判定"渲染是否符合 triage 裁定的具体设计意图"，故仍需人工走查收口。
